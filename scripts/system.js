@@ -1,0 +1,1119 @@
+console.log("Mercenary System - system.js is loading...");
+
+// Index to Degree conversion table
+// Index 0 = degree -7, index 1 = degree -6, ..., index 7 = degree 0, ..., index 40 = degree 33
+const INDEX_TO_DEGREE = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33];
+
+// Degree calculation table: rows are Base values (4-28), columns are cumulative XP thresholds
+const DEGREE_TABLE = {
+  4: [0, 0, 0, 1, 1, 2, 3, 4, 5, 7, 10, 12, 16, 19, 23, 28, 32, 38, 43, 49, 56, 62, 70, 77, 85, 94, 102, 112, 121, 131, 142, 152, 164, 175, 187, 200, 212, 226, 239, 253, 268],
+  5: [0, 0, 0, 1, 1, 2, 3, 5, 7, 9, 12, 16, 20, 24, 29, 35, 41, 47, 54, 62, 70, 78, 87, 97, 107, 117, 128, 140, 152, 164, 177, 191, 205, 219, 234, 250, 266, 282, 299, 317, 335],
+  6: [0, 0, 1, 1, 2, 3, 4, 6, 8, 11, 15, 19, 24, 29, 35, 42, 49, 57, 65, 74, 84, 94, 105, 116, 128, 141, 154, 168, 182, 197, 213, 229, 246, 263, 281, 300, 319, 339, 359, 380, 402],
+  7: [0, 0, 1, 1, 2, 3, 5, 7, 9, 13, 17, 22, 28, 34, 41, 49, 57, 66, 76, 86, 98, 109, 122, 135, 149, 164, 179, 196, 212, 230, 248, 267, 287, 307, 328, 350, 372, 395, 419, 443, 469],
+  8: [0, 0, 1, 1, 2, 4, 6, 8, 11, 15, 20, 25, 32, 39, 47, 56, 65, 76, 87, 99, 112, 125, 140, 155, 171, 188, 205, 224, 243, 263, 284, 305, 328, 351, 375, 400, 425, 452, 479, 507, 536],
+  9: [0, 1, 1, 2, 3, 4, 6, 9, 12, 17, 22, 28, 36, 44, 53, 63, 73, 85, 98, 111, 126, 141, 157, 174, 192, 211, 231, 252, 273, 296, 319, 343, 369, 395, 422, 450, 478, 508, 539, 570, 603],
+  10: [0, 1, 1, 2, 3, 5, 7, 10, 14, 19, 25, 32, 40, 49, 59, 70, 82, 95, 109, 124, 140, 157, 175, 194, 214, 235, 257, 280, 304, 329, 355, 382, 410, 439, 469, 500, 532, 565, 599, 634, 670],
+  11: [0, 1, 1, 2, 3, 5, 8, 11, 15, 20, 27, 35, 44, 53, 64, 77, 90, 104, 119, 136, 154, 172, 192, 213, 235, 258, 282, 308, 334, 361, 390, 420, 451, 482, 515, 550, 585, 621, 658, 697, 737],
+  12: [0, 1, 1, 2, 4, 6, 9, 12, 16, 22, 30, 38, 48, 58, 70, 84, 98, 114, 130, 148, 168, 188, 210, 232, 256, 282, 308, 336, 364, 394, 426, 458, 492, 526, 562, 600, 638, 678, 718, 760, 804],
+  13: [0, 1, 1, 2, 4, 6, 9, 13, 18, 24, 32, 41, 52, 63, 76, 91, 106, 123, 141, 161, 182, 204, 227, 252, 278, 305, 334, 364, 395, 427, 461, 496, 533, 570, 609, 650, 691, 734, 778, 824, 871],
+  14: [0, 1, 1, 2, 4, 7, 10, 14, 19, 26, 35, 44, 56, 68, 82, 98, 114, 133, 152, 173, 196, 219, 245, 271, 299, 329, 359, 392, 425, 460, 497, 534, 574, 614, 656, 700, 744, 791, 838, 887, 938],
+  15: [0, 1, 2, 3, 5, 7, 11, 15, 21, 28, 37, 48, 60, 73, 88, 105, 123, 142, 163, 186, 210, 235, 262, 291, 321, 352, 385, 420, 456, 493, 532, 573, 615, 658, 703, 750, 798, 847, 898, 951, 1005],
+  16: [0, 1, 2, 3, 5, 8, 12, 16, 22, 30, 40, 51, 64, 78, 94, 112, 131, 152, 174, 198, 224, 251, 280, 310, 342, 376, 411, 448, 486, 526, 568, 611, 656, 702, 750, 800, 851, 904, 958, 1014, 1072],
+  17: [0, 1, 2, 3, 5, 8, 12, 17, 23, 32, 42, 54, 68, 83, 100, 119, 139, 161, 185, 210, 238, 266, 297, 329, 363, 399, 436, 476, 516, 559, 603, 649, 697, 746, 797, 850, 904, 960, 1018, 1077, 1139],
+  18: [0, 1, 2, 3, 6, 9, 13, 18, 25, 34, 45, 57, 72, 88, 106, 126, 147, 171, 196, 223, 252, 282, 315, 349, 385, 423, 462, 504, 547, 592, 639, 687, 738, 790, 844, 900, 957, 1017, 1078, 1141, 1206],
+  19: [0, 1, 2, 3, 6, 9, 14, 19, 26, 36, 47, 60, 76, 93, 112, 133, 155, 180, 207, 235, 266, 298, 332, 368, 406, 446, 488, 532, 577, 625, 674, 725, 779, 834, 891, 950, 1010, 1073, 1178, 1204, 1273],
+  20: [0, 1, 2, 3, 6, 10, 15, 20, 28, 38, 50, 64, 80, 98, 118, 140, 164, 190, 218, 248, 280, 314, 350, 388, 428, 470, 514, 560, 608, 658, 710, 764, 820, 878, 938, 1000, 1064, 1130, 1198, 1268, 1340],
+  21: [0, 1, 2, 4, 7, 10, 15, 21, 29, 39, 52, 67, 84, 102, 123, 147, 172, 199, 228, 260, 294, 329, 367, 407, 449, 493, 539, 588, 638, 690, 745, 802, 861, 921, 984, 1050, 1117, 1186, 1257, 1331, 1407],
+  22: [0, 1, 2, 4, 7, 11, 16, 22, 30, 41, 55, 70, 88, 107, 129, 154, 180, 209, 239, 272, 308, 345, 385, 426, 470, 517, 565, 616, 668, 723, 781, 840, 902, 965, 1031, 1100, 1170, 1243, 1317, 1394, 1474],
+  23: [0, 1, 2, 4, 7, 11, 17, 23, 32, 43, 57, 73, 92, 112, 135, 161, 188, 218, 250, 285, 322, 361, 402, 446, 492, 540, 591, 644, 699, 756, 816, 878, 943, 1009, 1078, 1150, 1223, 1299, 1377, 1458, 1541],
+  24: [0, 2, 3, 4, 8, 12, 18, 24, 33, 45, 60, 76, 96, 117, 141, 168, 196, 228, 261, 297, 336, 376, 420, 465, 513, 564, 616, 672, 729, 789, 852, 916, 984, 1053, 1125, 1200, 1276, 1356, 1437, 1521, 1608],
+  25: [0, 2, 3, 4, 8, 12, 18, 25, 35, 47, 62, 80, 100, 122, 147, 175, 205, 237, 272, 310, 350, 392, 437, 485, 535, 587, 642, 700, 760, 822, 887, 955, 1025, 1097, 1172, 1250, 1330, 1412, 1497, 1585, 1675],
+  26: [0, 2, 3, 4, 8, 13, 19, 26, 36, 49, 65, 83, 104, 127, 153, 182, 213, 247, 283, 322, 364, 408, 455, 504, 556, 611, 668, 728, 790, 855, 923, 993, 1066, 1141, 1219, 1300, 1383, 1469, 1557, 1648, 1742],
+  27: [0, 2, 3, 5, 9, 13, 20, 27, 37, 51, 67, 86, 108, 132, 159, 189, 221, 256, 294, 334, 378, 423, 472, 523, 577, 634, 693, 756, 820, 888, 958, 1031, 1107, 1185, 1266, 1350, 1436, 1525, 1617, 1711, 1809],
+  28: [0, 2, 3, 5, 9, 14, 21, 28, 39, 53, 70, 89, 112, 137, 165, 196, 229, 266, 305, 347, 392, 439, 490, 543, 599, 658, 719, 784, 851, 921, 994, 1069, 1148, 1229, 1313, 1400, 1489, 1582, 1677, 1775, 1876]
+};
+
+/**
+ * Calculates the degree value based on base and dev
+ * Uses a lookup table where each base row contains cumulative values
+ * The degree is determined by finding the largest value <= dev in that row
+ * @param {number} base - The base value (4-28)
+ * @param {number} dev - The development/experience points to lookup
+ * @returns {number} The degree from -7 to 33
+ */
+function getDegreeFromTable(base, dev) {
+  const baseRow = DEGREE_TABLE[base];
+  if (!baseRow) return -7; // Default to minimum degree if base not found
+  
+  // Find the rightmost (largest) value that is <= dev
+  let foundIndex = -1;
+  for (let i = baseRow.length - 1; i >= 0; i--) {
+    if (baseRow[i] <= dev) {
+      foundIndex = i;
+      break;
+    }
+  }
+  
+  // If no value found (dev is smaller than all), return -7 (minimum)
+  if (foundIndex === -1) return -7;
+  
+  // Convert index to degree using the conversion table
+  return INDEX_TO_DEGREE[foundIndex];
+}
+
+// Define MercCharacterSheet here directly
+class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+    classes: ["merc", "sheet", "actor"],
+    width: 800,
+    height: 900,
+    resizable: true,
+    minWidth: 800,
+    minHeight: 800,
+    parts: ["form"],
+    tabs: [
+      {
+        navSelector: ".sheet-tabs",
+        contentSelector: ".sheet-body",
+        initial: "stats"
+      }
+    ]
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/actor/character-sheet.hbs"
+    }
+  };
+
+  // Calculate Base: 30 - (ATTR1 + ATTR2) or 30 - (ATTR1 * 2)
+  computeSkillBase(actor, skillKey, skillData) {
+    if (!actor || !skillData) return 0;
+    
+    const attrs = actor.system?.attributes;
+    if (!attrs) return 0;
+    
+    // Get current values of linked attributes
+    const getAttrValue = (attrKey) => {
+      const attr = attrs[attrKey];
+      return typeof attr === 'object' ? (attr.current ?? 0) : (attr ?? 0);
+    };
+    
+    const abilities = skillData.abilities || [];
+    if (abilities.length === 0) return 0;
+    
+    if (abilities.length === 1) {
+      // Single attribute: 30 - (ATTR * 2)
+      const attrValue = getAttrValue(abilities[0]);
+      return 30 - (attrValue * 2);
+    } else if (abilities.length === 2) {
+      // Two attributes: 30 - (ATTR1 + ATTR2)
+      const attr1Value = getAttrValue(abilities[0]);
+      const attr2Value = getAttrValue(abilities[1]);
+      return 30 - (attr1Value + attr2Value);
+    }
+    
+    return 0;
+  }
+
+  // Calculate Degré using the lookup table based on base and dev
+  computeSkillDegree(actor, skillKey, skillData) {
+    if (!actor || !skillData) return 0;
+    
+    // Get base value (computed from attributes)
+    const base = this.computeSkillBase(actor, skillKey, skillData);
+    
+    // Get dev value (directly from skill data)
+    const dev = Number(skillData.dev ?? 0);
+    
+    // Use the lookup table to find degree
+    return getDegreeFromTable(base, dev);
+  }
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const actorDoc = this.actor ?? this.document;
+
+    // Migrate existing actors without biography data
+    if (actorDoc && !actorDoc.system?.biography) {
+      await actorDoc.update({
+        "system.biography": {
+          age: "",
+          height: 0,
+          weight: 0,
+          gender: "",
+          origin: "",
+          year: 0,
+          renown: 0
+        }
+      });
+    }
+
+    const defaultAttributes = {
+      intelligence: { origin: 0, current: 0 },
+      will: { origin: 0, current: 0 },
+      mental: { origin: 0, current: 0 },
+      charisma: { origin: 0, current: 0 },
+      chance: { origin: 0, current: 0 },
+      adaptation: { origin: 0, current: 0 },
+      strength: { origin: 0, current: 0 },
+      dexterity: { origin: 0, current: 0 },
+      speed: { origin: 0, current: 0 },
+      constitution: { origin: 0, current: 0 },
+      perception: 0,
+      perceptionDetail: {
+        sight: 0,
+        hearing: 0,
+        taste: 0,
+        smell: 0,
+        touch: 0
+      }
+    };
+
+    const normalizeAttr = (value) => {
+      if (value && typeof value === "object" && ("origin" in value || "current" in value)) {
+        const origin = Number(value.origin ?? 0);
+        const current = Number(value.current ?? value.origin ?? 0);
+        return { origin, current };
+      }
+      const num = Number(value ?? 0);
+      return { origin: num, current: num };
+    };
+
+    const normalizeNumber = (value) => {
+      if (value && typeof value === "object") {
+        const num = Number(value.current ?? value.origin ?? 0);
+        return Number.isNaN(num) ? 0 : num;
+      }
+      const num = Number(value ?? 0);
+      return Number.isNaN(num) ? 0 : num;
+    };
+
+    const normalizeAttributes = (attrs = {}) => ({
+      intelligence: normalizeAttr(attrs.intelligence),
+      will: normalizeAttr(attrs.will),
+      mental: normalizeAttr(attrs.mental),
+      charisma: normalizeAttr(attrs.charisma),
+      chance: normalizeAttr(attrs.chance),
+      adaptation: normalizeAttr(attrs.adaptation),
+      strength: normalizeAttr(attrs.strength),
+      dexterity: normalizeAttr(attrs.dexterity),
+      speed: normalizeAttr(attrs.speed),
+      constitution: normalizeAttr(attrs.constitution),
+      perception: normalizeNumber(attrs.perception),
+      perceptionDetail: {
+        sight: normalizeNumber(attrs.perceptionDetail?.sight),
+        hearing: normalizeNumber(attrs.perceptionDetail?.hearing),
+        taste: normalizeNumber(attrs.perceptionDetail?.taste),
+        smell: normalizeNumber(attrs.perceptionDetail?.smell),
+        touch: normalizeNumber(attrs.perceptionDetail?.touch)
+      }
+    });
+
+    if (actorDoc) {
+      const currentAttributes = actorDoc.system?.attributes ?? {};
+      const normalizedAttributes = normalizeAttributes(currentAttributes);
+      const mergedAttributes = foundry.utils.mergeObject(defaultAttributes, normalizedAttributes, { inplace: false, overwrite: true });
+
+      const hasMissingAttributes =
+        typeof currentAttributes.intelligence !== "object" ||
+        currentAttributes.intelligence?.origin === undefined ||
+        currentAttributes.intelligence?.current === undefined ||
+        typeof currentAttributes.will !== "object" ||
+        currentAttributes.will?.origin === undefined ||
+        currentAttributes.will?.current === undefined ||
+        typeof currentAttributes.mental !== "object" ||
+        currentAttributes.mental?.origin === undefined ||
+        currentAttributes.mental?.current === undefined ||
+        typeof currentAttributes.charisma !== "object" ||
+        currentAttributes.charisma?.origin === undefined ||
+        currentAttributes.charisma?.current === undefined ||
+        typeof currentAttributes.chance !== "object" ||
+        currentAttributes.chance?.origin === undefined ||
+        currentAttributes.chance?.current === undefined ||
+        typeof currentAttributes.adaptation !== "object" ||
+        currentAttributes.adaptation?.origin === undefined ||
+        currentAttributes.adaptation?.current === undefined ||
+        typeof currentAttributes.strength !== "object" ||
+        currentAttributes.strength?.origin === undefined ||
+        currentAttributes.strength?.current === undefined ||
+        typeof currentAttributes.dexterity !== "object" ||
+        currentAttributes.dexterity?.origin === undefined ||
+        currentAttributes.dexterity?.current === undefined ||
+        typeof currentAttributes.speed !== "object" ||
+        currentAttributes.speed?.origin === undefined ||
+        currentAttributes.speed?.current === undefined ||
+        typeof currentAttributes.constitution !== "object" ||
+        currentAttributes.constitution?.origin === undefined ||
+        currentAttributes.constitution?.current === undefined ||
+        currentAttributes.perception === undefined ||
+        currentAttributes.perceptionDetail?.sight === undefined ||
+        currentAttributes.perceptionDetail?.hearing === undefined ||
+        currentAttributes.perceptionDetail?.taste === undefined ||
+        currentAttributes.perceptionDetail?.smell === undefined ||
+        currentAttributes.perceptionDetail?.touch === undefined;
+
+      if (hasMissingAttributes) {
+        await actorDoc.update({ "system.attributes": mergedAttributes });
+      }
+    }
+
+    data.actor = actorDoc?.toObject ? actorDoc.toObject() : actorDoc;
+    if (actorDoc?.items) {
+      data.actor.items = actorDoc.items.map(item => item.toObject());
+    }
+    
+    // Add system config to template
+    data.config = CONFIG.MERC;
+    
+    // Ensure system data exists
+    if (!data.actor || !data.actor.system) {
+      data.actor = data.actor ?? {};
+      data.actor.system = data.actor.system ?? {};
+    }
+    if (!data.actor.system.biography) {
+      data.actor.system.biography = {
+        age: "",
+        height: 0,
+        weight: 0,
+        gender: "",
+        origin: "",
+        year: 0,
+        renown: 0
+      };
+    }
+    if (!data.actor.system.attributes) {
+      data.actor.system.attributes = defaultAttributes;
+    }
+    const defaultSkills = {
+        reaction: { value: 0, abilities: ["speed"] },
+        melee: { value: 0, abilities: ["strength", "dexterity"] },
+        bladed_weapons: { value: 0, abilities: ["strength", "dexterity"] },
+        mechanical_projectiles: { value: 0, abilities: ["dexterity", "perception"] },
+        powder_projectiles: { value: 0, abilities: ["dexterity", "perception"] },
+        throwing: { value: 0, abilities: ["strength", "perception"] },
+        maneuvers: { value: 0, abilities: ["dexterity", "speed"] },
+        heavy_weapons: { value: 0, abilities: ["strength", "perception"] },
+        electronic_weapons: { value: 0, abilities: ["intelligence", "dexterity"] },
+        running: { value: 0, abilities: ["constitution", "speed"] },
+        climbing: { value: 0, abilities: ["adaptation", "dexterity"] },
+        swimming: { value: 0, abilities: ["constitution", "dexterity"] },
+        sliding: { value: 0, abilities: ["dexterity", "speed"] },
+        air_sliding: { value: 0, abilities: ["dexterity", "speed"] },
+        drive_wheeled: { value: 0, abilities: ["dexterity", "perception"] },
+        drive_motorcycle: { value: 0, abilities: ["dexterity", "perception"] },
+        drive_boats: { value: 0, abilities: ["dexterity", "perception"] },
+        drive_tracked: { value: 0, abilities: ["dexterity", "perception"] },
+        drive_planes: { value: 0, abilities: ["speed", "perception"] },
+        drive_helicopters: { value: 0, abilities: ["speed", "perception"] },
+        riding: { value: 0, abilities: ["charisma", "mental"] },
+        tracking: { value: 0, abilities: ["intelligence", "perception"] },
+        stealth: { value: 0, abilities: ["dexterity", "charisma"] },
+        concealment: { value: 0, abilities: ["adaptation", "perception"] },
+        pickpocket: { value: 0, abilities: ["dexterity", "charisma"] },
+        lockpicking: { value: 0, abilities: ["dexterity", "perception"] },
+        tinkering: { value: 0, abilities: ["adaptation", "dexterity"] },
+        forgery: { value: 0, abilities: ["will", "dexterity"] },
+        survival: { value: 0, abilities: ["adaptation", "speed"] },
+        eloquence: { value: 0, abilities: ["intelligence", "charisma"] },
+        acting: { value: 0, abilities: ["charisma", "adaptation"] },
+        interrogation: { value: 0, abilities: ["intelligence", "adaptation"] },
+        command: { value: 0, abilities: ["will", "charisma"] },
+        instruction: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_serbian: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_arabic: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_english: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_russian: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_french: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_other_1: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_other_2: { value: 0, abilities: ["intelligence", "charisma"] },
+        bureaucracy: { value: 0, abilities: ["intelligence", "charisma"] },
+        illegality: { value: 0, abilities: ["intelligence", "charisma"] },
+        mathematics: { value: 0, abilities: ["intelligence"] },
+        metallurgy: { value: 0, abilities: ["intelligence"] },
+        engineering: { value: 0, abilities: ["intelligence", "perception"] },
+        electricity_electronics: { value: 0, abilities: ["intelligence"] },
+        computer_science: { value: 0, abilities: ["intelligence", "mental"] },
+        geography: { value: 0, abilities: ["intelligence", "perception"] },
+        meteorology: { value: 0, abilities: ["intelligence", "adaptation"] },
+        navigation: { value: 0, abilities: ["intelligence"] },
+        history_politics: { value: 0, abilities: ["intelligence", "charisma"] },
+        chemistry: { value: 0, abilities: ["intelligence", "will"] },
+        geology: { value: 0, abilities: ["intelligence", "perception"] },
+        nature: { value: 0, abilities: ["intelligence", "adaptation"] },
+        biology: { value: 0, abilities: ["intelligence", "adaptation"] },
+        human_medicine: { value: 0, abilities: ["intelligence", "will"] },
+        surgery: { value: 0, abilities: ["will", "mental"] },
+        construction_avionics: { value: 0, abilities: ["intelligence", "dexterity"] },
+        construction_vehicle: { value: 0, abilities: ["intelligence", "dexterity"] },
+        construction_weaponry: { value: 0, abilities: ["intelligence", "dexterity"] },
+        construction_tools: { value: 0, abilities: ["intelligence", "dexterity"] },
+        spec_melee_mma: { value: 0, abilities: ["strength", "perception"] },
+        spec_blades_knife: { value: 0, abilities: ["strength", "dexterity"] },
+        spec_powder_ak47: { value: 0, abilities: ["dexterity", "perception"] }
+    };
+    const buildDefaultSkillSet = (skillDefs) => {
+      const result = {};
+      for (const [key, def] of Object.entries(skillDefs)) {
+        result[key] = {
+          base: 0,
+          dev: 0,
+          bonus: 0,
+          degree: 0,
+          abilities: def.abilities || []
+        };
+      }
+      return result;
+    };
+
+    const defaultSkillSet = buildDefaultSkillSet(defaultSkills);
+    if (!data.actor.system.skills) {
+      data.actor.system.skills = foundry.utils.deepClone(defaultSkillSet);
+      // Persist skills to actor if they were just created
+      await actorDoc.update({ "system.skills": data.actor.system.skills });
+    } else {
+      data.actor.system.skills = foundry.utils.mergeObject(defaultSkillSet, data.actor.system.skills, {
+        inplace: false,
+        overwrite: true
+      });
+    }
+
+    // Prepare skills list for display
+    data.skillList = [];
+    if (data.actor.system.skills) {
+      for (const skillKey of Object.keys(defaultSkills)) {
+        const skillData = data.actor.system.skills[skillKey] ?? defaultSkillSet[skillKey];
+        const base = this.computeSkillBase(actorDoc, skillKey, skillData);
+        const dev = Number(skillData.dev ?? skillData.value ?? 0);
+        const degree = this.computeSkillDegree(actorDoc, skillKey, skillData);
+        const bonus = Number(skillData.bonus ?? 0);
+        
+        data.skillList.push({
+          key: skillKey,
+          label: game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey,
+          abilities: skillData.abilities || [],
+          base,
+          dev,
+          bonus,
+          degree,
+          total: degree + bonus
+        });
+      }
+    }
+
+    // Group skills by theme for tabbed display
+    const skillByKey = new Map(data.skillList.map(skill => [skill.key, skill]));
+    const usedKeys = new Set();
+    const makeGroup = (id, label, keys) => {
+      const skills = keys
+        .map((key) => {
+          usedKeys.add(key);
+          return skillByKey.get(key);
+        })
+        .filter(Boolean);
+      return { id, label, skills };
+    };
+
+    data.skillGroups = [
+      makeGroup("combat", "Combat", [
+        "reaction",
+        "melee",
+        "bladed_weapons",
+        "mechanical_projectiles",
+        "powder_projectiles",
+        "throwing",
+        "maneuvers",
+        "heavy_weapons",
+        "electronic_weapons"
+      ]),
+      makeGroup("aptitudes", "Aptitudes", [
+        "running",
+        "climbing",
+        "swimming",
+        "sliding",
+        "air_sliding",
+        "drive_wheeled",
+        "drive_motorcycle",
+        "drive_boats",
+        "drive_tracked",
+        "drive_planes",
+        "drive_helicopters",
+        "riding",
+        "tracking",
+        "stealth",
+        "concealment",
+        "pickpocket",
+        "lockpicking",
+        "tinkering",
+        "forgery",
+        "survival"
+      ]),
+      makeGroup("social", "Social", [
+        "eloquence",
+        "acting",
+        "interrogation",
+        "command",
+        "instruction"
+      ]),
+      makeGroup("languages", "Langues", [
+        "language_serbian",
+        "language_arabic",
+        "language_english",
+        "language_russian",
+        "language_french",
+        "language_other_1",
+        "language_other_2"
+      ]),
+      makeGroup("knowledge", "Connaissances", [
+        "bureaucracy",
+        "illegality",
+        "mathematics",
+        "metallurgy",
+        "engineering",
+        "electricity_electronics",
+        "computer_science",
+        "geography",
+        "meteorology",
+        "navigation",
+        "history_politics",
+        "chemistry",
+        "geology",
+        "nature",
+        "biology",
+        "human_medicine",
+        "surgery"
+      ]),
+      makeGroup("construction", "Construction", [
+        "construction_avionics",
+        "construction_vehicle",
+        "construction_weaponry",
+        "construction_tools"
+      ]),
+      makeGroup("specializations", "Spécialisations", [
+        "spec_melee_mma",
+        "spec_blades_knife",
+        "spec_powder_ak47"
+      ])
+    ];
+
+    const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
+    if (remaining.length) {
+      data.skillGroups.push({ id: "other", label: "Autres", skills: remaining });
+    }
+
+    return data;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    
+    const html = this.element;
+    if (!html) return;
+
+    // Handle tab switching
+    const tabItems = html.querySelectorAll(".sheet-tabs .item");
+
+    // Restore last active main tab
+    if (this._currentTab) {
+      html.querySelectorAll(".sheet-tabs .item").forEach(t => t.classList.remove("active"));
+      html.querySelectorAll(".sheet-body .tab-content").forEach(c => c.classList.remove("active"));
+      const tab = html.querySelector(`.sheet-tabs .item[data-tab="${this._currentTab}"]`);
+      const tabContent = html.querySelector(`.sheet-body .tab-content[data-tab="${this._currentTab}"]`);
+      if (tab && tabContent) {
+        tab.classList.add("active");
+        tabContent.classList.add("active");
+      }
+    }
+    
+    tabItems.forEach(tab => {
+      tab.addEventListener("click", (event) => {
+        event.preventDefault();
+        const tabName = tab.dataset.tab;
+        
+        // Remove active class from all tabs and content
+        html.querySelectorAll(".sheet-tabs .item").forEach(t => t.classList.remove("active"));
+        html.querySelectorAll(".sheet-body .tab-content").forEach(c => c.classList.remove("active"));
+        
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add("active");
+        const tabContent = html.querySelector(`.sheet-body .tab-content[data-tab="${tabName}"]`);
+        if (tabContent) tabContent.classList.add("active");
+        this._currentTab = tabName;
+      });
+    });
+
+    // Handle skills tab switching
+    const skillTabItems = html.querySelectorAll(".skills-tabs .item");
+
+    // Restore last active skills tab
+    if (this._currentSkillTab) {
+      html.querySelectorAll(".skills-tabs .item").forEach(t => t.classList.remove("active"));
+      html.querySelectorAll(".skills-tabs-body .skills-tab-content").forEach(c => c.classList.remove("active"));
+      const skillTab = html.querySelector(`.skills-tabs .item[data-tab="${this._currentSkillTab}"]`);
+      const skillContent = html.querySelector(`.skills-tabs-body .skills-tab-content[data-tab="${this._currentSkillTab}"]`);
+      if (skillTab && skillContent) {
+        skillTab.classList.add("active");
+        skillContent.classList.add("active");
+      }
+    }
+    skillTabItems.forEach(tab => {
+      tab.addEventListener("click", (event) => {
+        event.preventDefault();
+        const tabName = tab.dataset.tab;
+
+        html.querySelectorAll(".skills-tabs .item").forEach(t => t.classList.remove("active"));
+        html.querySelectorAll(".skills-tabs-body .skills-tab-content").forEach(c => c.classList.remove("active"));
+
+        tab.classList.add("active");
+        const tabContent = html.querySelector(`.skills-tabs-body .skills-tab-content[data-tab="${tabName}"]`);
+        if (tabContent) tabContent.classList.add("active");
+        this._currentSkillTab = tabName;
+      });
+    });
+
+    // Handle attribute label clicks only
+    const attribLabels = html.querySelectorAll(".headerActorAttribLabel");
+
+    attribLabels.forEach(label => {
+      label.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const attribDiv = label.closest(".headerActorAttrib");
+        const abilityKey = attribDiv?.dataset.ability;
+        if (abilityKey) {
+          this.rollAbilityCheck(abilityKey);
+        }
+      });
+    });
+
+    // Handle sub-attribute label clicks only (Perception details)
+    const subAttribLabels = html.querySelectorAll(".headerActorSubAttribLabel");
+    subAttribLabels.forEach(label => {
+      label.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const subAttrib = label.closest(".headerActorSubAttrib");
+        const subKey = subAttrib?.dataset.subAbility;
+        const subLabel = subAttrib?.dataset.label || subKey;
+        if (subKey) {
+          this.rollSubAttributeCheck(subKey, subLabel);
+        }
+      });
+    });
+
+    // Persist individual field changes immediately
+    const formElement = html.querySelector("form");
+    if (formElement) {
+      const allInputs = formElement.querySelectorAll("input, select, textarea");
+
+      allInputs.forEach(input => {
+        const saveFieldOnChange = async () => {
+          const fieldPath = input.name;
+          if (!fieldPath) return;
+
+          let value = input.value;
+          
+          // Handle number inputs
+          if (input.type === "number") {
+            if (value === "" || value === null) return;
+            const numberValue = Number(value);
+            if (Number.isNaN(numberValue)) return;
+            value = numberValue;
+          }
+
+          const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
+          if (value === currentValue) return;
+
+          console.log(`[Merc] Field persisted -> ${fieldPath}:`, value);
+          await this.actor.update({ [fieldPath]: value });
+        };
+
+        if (input.type === "text" || input.tagName === "TEXTAREA") {
+          input.addEventListener("blur", saveFieldOnChange);
+        } else if (input.type === "number" || input.tagName === "SELECT") {
+          input.addEventListener("change", saveFieldOnChange);
+        } else if (input.type === "radio") {
+          input.addEventListener("change", saveFieldOnChange);
+        }
+      });
+    }
+
+    // Ensure gender radio buttons reflect current actor data
+    const genderValue = this.actor?.system?.biography?.gender || "";
+    if (genderValue) {
+      const genderRadios = html.querySelectorAll('input[name="system.biography.gender"]');
+      genderRadios.forEach(radio => {
+        radio.checked = radio.value === genderValue;
+      });
+    }
+
+    // Synchronize attribute origin to current, and perception to sub-attributes
+    const attributeOriginInputs = html.querySelectorAll('input[name*="system.attributes."][name*=".origin"]');
+    attributeOriginInputs.forEach(input => {
+      input.addEventListener("change", async (event) => {
+        const originPath = input.name; // e.g., "system.attributes.strength.origin"
+        const currentPath = originPath.replace(".origin", ".current");
+        const value = Number(input.value) || 0;
+        
+        // Sync origin -> current
+        await this.actor.update({ [currentPath]: value });
+        console.log(`[Merc] Synced ${originPath} to ${currentPath}:`, value);
+      });
+    });
+
+    // Synchronize perception main value to all sub-attributes
+    const perceptionMainInput = html.querySelector('input[name="system.attributes.perception"]');
+    if (perceptionMainInput) {
+      perceptionMainInput.addEventListener("change", async (event) => {
+        const perceptionValue = Number(perceptionMainInput.value) || 0;
+        const perceptionDetail = {
+          "system.attributes.perceptionDetail.sight": perceptionValue,
+          "system.attributes.perceptionDetail.hearing": perceptionValue,
+          "system.attributes.perceptionDetail.taste": perceptionValue,
+          "system.attributes.perceptionDetail.smell": perceptionValue,
+          "system.attributes.perceptionDetail.touch": perceptionValue
+        };
+        
+        await this.actor.update(perceptionDetail);
+        console.log(`[Merc] Synced perception to all sub-attributes:`, perceptionValue);
+      });
+    }
+
+    // Make skill names clickable to roll
+    const skillNames = html.querySelectorAll(".skill-name");
+    skillNames.forEach(skillName => {
+      skillName.addEventListener("click", (event) => {
+        const skillItem = skillName.closest(".skill-item");
+        const skillKey = skillItem.dataset.skill;
+        if (skillKey) {
+          this.rollSkillCheck(skillKey);
+        }
+      });
+    });
+
+    // Roll buttons
+    const rollBtns = html.querySelectorAll(".skill-roll-btn");
+    
+    // Function to update button color based on total (degree + bonus)
+    const updateButtonColor = (btn) => {
+      const skillItem = btn.closest(".skill-item");
+      const degreeInput = skillItem?.querySelector('input[name*=".degree"]');
+      const bonusInput = skillItem?.querySelector('input[name*=".bonus"]');
+      
+      const degree = Number(degreeInput?.value || 0);
+      const bonus = Number(bonusInput?.value || 0);
+      const total = degree + bonus;
+      
+      // Remove all color classes
+      btn.classList.remove("very-negative", "negative", "neutral", "positive");
+      
+      // Apply appropriate class
+      if (total === -7) {
+        btn.classList.add("very-negative");
+      } else if (total < 0) {
+        btn.classList.add("negative");
+      } else if (total === 0) {
+        btn.classList.add("neutral");
+      } else {
+        btn.classList.add("positive");
+      }
+    };
+    
+    rollBtns.forEach(btn => {
+      // Initial color on render
+      updateButtonColor(btn);
+      
+      // Click to roll
+      btn.addEventListener("click", (event) => {
+        const skillItem = btn.closest(".skill-item");
+        const skillKey = skillItem.dataset.skill;
+        this.rollSkillCheck(skillKey);
+      });
+    });
+
+    // Update button colors when degree or bonus inputs change
+    const skillInputs = html.querySelectorAll(".skill-item input");
+    skillInputs.forEach(input => {
+      input.addEventListener("change", (event) => {
+        const skillItem = input.closest(".skill-item");
+        const btn = skillItem?.querySelector(".skill-roll-btn");
+        if (btn) {
+          updateButtonColor(btn);
+        }
+      });
+    });
+
+    // Item usage
+    const createBtns = html.querySelectorAll(".item-create");
+    createBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        this.createItem(event);
+      });
+    });
+
+    const deleteBtns = html.querySelectorAll(".item-delete");
+    deleteBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        this.deleteItem(event);
+      });
+    });
+
+    const editBtns = html.querySelectorAll(".item-edit");
+    editBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        this.editItem(event);
+      });
+    });
+  }
+
+  async _updateObject(event, formData) {
+    // Only update fields that actually changed and ignore null/undefined values
+    const updateData = {};
+    for (const [path, rawValue] of Object.entries(formData)) {
+      if (rawValue === null || rawValue === undefined) continue;
+
+      const currentValue = foundry.utils.getProperty(this.actor, path);
+      let value = rawValue;
+
+      if (typeof currentValue === "number" && rawValue !== "" && rawValue !== null) {
+        const numberValue = Number(rawValue);
+        if (!Number.isNaN(numberValue)) {
+          value = numberValue;
+        }
+      }
+
+      if (value === currentValue) continue;
+      updateData[path] = value;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      console.log("[Merc] Form submit: no changes detected");
+      return;
+    }
+
+    console.log("[Merc] Form submit update:", updateData);
+    return this.actor.update(updateData);
+  }
+
+  async rollAbilityCheck(abilityKey) {
+    const actor = this.actor ?? this.document;
+    const systemData = actor.system || actor._source?.system || {};
+    
+    // If no attributes, initialize them from the actor update
+    if (!systemData.attributes) {
+      await actor.update({
+        "system.attributes": {
+          intelligence: { origin: 0, current: 0 },
+          will: { origin: 0, current: 0 },
+          mental: { origin: 0, current: 0 },
+          charisma: { origin: 0, current: 0 },
+          chance: { origin: 0, current: 0 },
+          adaptation: { origin: 0, current: 0 },
+          strength: { origin: 0, current: 0 },
+          dexterity: { origin: 0, current: 0 },
+          speed: { origin: 0, current: 0 },
+          constitution: { origin: 0, current: 0 },
+          perception: 0,
+          perceptionDetail: {
+            sight: 0,
+            hearing: 0,
+            taste: 0,
+            smell: 0,
+            touch: 0
+          }
+        }
+      });
+      ui.notifications.info(game.i18n.localize("MERC.Labels.attributesInitialized"));
+      return;
+    }
+    
+    const rawAbility = systemData.attributes?.[abilityKey];
+    const abilityScore = Number(typeof rawAbility === "object" ? (rawAbility.current ?? 0) : (rawAbility ?? 0));
+    const abilityName = game.i18n.localize(CONFIG.MERC.abilities[abilityKey]);
+    
+    const roll = new Roll("1d20");
+    await roll.evaluate();
+    
+    const total = roll.total + abilityScore;
+    
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      rolls: [roll],
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${abilityName}</span>
+          <span class="merc-roll-badge">${total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20">d20: <strong>${roll.total}</strong></span>
+          <span class="roll-modifier">${abilityScore > 0 ? ' + ' : ' - '}${Math.abs(abilityScore)}</span>
+        </div>
+      </div>`
+    };
+    
+    await ChatMessage.create(chatData);
+  }
+
+  async rollSkillCheck(skillKey) {
+    const actor = this.actor ?? this.document;
+    const systemData = actor.system || actor._source?.system || {};
+    const skillData = systemData.skills?.[skillKey];
+    
+    if (!skillData) {
+      console.error(game.i18n.localize("MERC.Labels.skillNotFound") + ":", skillKey);
+      return;
+    }
+    
+    const base = this.computeSkillBase(actor, skillKey, skillData);
+    const dev = Number(skillData.dev ?? skillData.value ?? 0);
+    const degree = this.computeSkillDegree(actor, skillKey, skillData);
+    const bonus = Number(skillData.bonus ?? 0);
+    const total_modifier = degree + bonus;
+    
+    const skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+    
+    const roll = new Roll("1d20");
+    await roll.evaluate();
+    
+    const total = roll.total + total_modifier;
+    
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      rolls: [roll],
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${skillName}</span>
+          <span class="merc-roll-badge">${total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20">d20: <strong>${roll.total}</strong></span>
+          <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
+          <!--<span class="roll-modifier">(Base ${base} / Dev ${dev} / Degré ${degree} / Bonus ${bonus})</span>-->
+        </div>
+      </div>`
+    };
+    
+    await ChatMessage.create(chatData);
+  }
+
+  async rollSubAttributeCheck(subKey, subLabel) {
+    const actor = this.actor ?? this.document;
+    const systemData = actor.system || actor._source?.system || {};
+    const detail = systemData.attributes?.perceptionDetail || {};
+    const detailValue = detail?.[subKey];
+    const subValue = Number(typeof detailValue === "object" ? (detailValue.current ?? 0) : (detailValue ?? 0));
+
+    const perceptionName = game.i18n.localize(CONFIG.MERC.abilities.perception);
+    const label = `${perceptionName} - ${subLabel}`;
+
+    const roll = new Roll("1d20");
+    await roll.evaluate();
+
+    const total = roll.total + subValue;
+
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      rolls: [roll],
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${label}</span>
+          <span class="merc-roll-badge">${total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20">d20: <strong>${roll.total}</strong></span>
+          <span class="roll-modifier">${subValue > 0 ? ' + ' : ' - '}${Math.abs(subValue)}</span>
+        </div>
+      </div>`
+    };
+
+    await ChatMessage.create(chatData);
+  }
+
+  async createItem(event) {
+    const type = event.currentTarget.dataset.type;
+    const newItem = {
+      name: `New ${type}`,
+      type: type,
+      system: {}
+    };
+    
+    const item = await Item.create(newItem, { parent: this.actor });
+    item.sheet.render(true);
+  }
+
+  async deleteItem(event) {
+    const itemId = event.currentTarget.closest(".item").dataset.itemId;
+    await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+  }
+
+  async editItem(event) {
+    const itemId = event.currentTarget.closest(".item").dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    item.sheet.render(true);
+  }
+}
+
+// Initialize the system
+Hooks.once("init", () => {
+  // Define custom config with i18n keys
+  CONFIG.MERC = {
+    abilities: {
+      intelligence: "MERC.Abilities.intelligence",
+      will: "MERC.Abilities.will",
+      mental: "MERC.Abilities.mental",
+      charisma: "MERC.Abilities.charisma",
+      chance: "MERC.Abilities.chance",
+      adaptation: "MERC.Abilities.adaptation",
+      strength: "MERC.Abilities.strength",
+      dexterity: "MERC.Abilities.dexterity",
+      speed: "MERC.Abilities.speed",
+      constitution: "MERC.Abilities.constitution",
+      perception: "MERC.Abilities.perception"
+    },
+    skills: {
+      reaction: { label: "MERC.Skills.reaction", abilities: ["speed"] },
+      melee: { label: "MERC.Skills.melee", abilities: ["strength", "dexterity"] },
+      bladed_weapons: { label: "MERC.Skills.bladed_weapons", abilities: ["strength", "dexterity"] },
+      mechanical_projectiles: { label: "MERC.Skills.mechanical_projectiles", abilities: ["dexterity", "perception"] },
+      powder_projectiles: { label: "MERC.Skills.powder_projectiles", abilities: ["dexterity", "perception"] },
+      throwing: { label: "MERC.Skills.throwing", abilities: ["strength", "perception"] },
+      maneuvers: { label: "MERC.Skills.maneuvers", abilities: ["dexterity", "speed"] },
+      heavy_weapons: { label: "MERC.Skills.heavy_weapons", abilities: ["strength", "perception"] },
+      electronic_weapons: { label: "MERC.Skills.electronic_weapons", abilities: ["intelligence", "dexterity"] },
+      running: { label: "MERC.Skills.running", abilities: ["constitution", "speed"] },
+      climbing: { label: "MERC.Skills.climbing", abilities: ["adaptation", "dexterity"] },
+      swimming: { label: "MERC.Skills.swimming", abilities: ["constitution", "dexterity"] },
+      sliding: { label: "MERC.Skills.sliding", abilities: ["dexterity", "speed"] },
+      air_sliding: { label: "MERC.Skills.air_sliding", abilities: ["dexterity", "speed"] },
+      drive_wheeled: { label: "MERC.Skills.drive_wheeled", abilities: ["dexterity", "perception"] },
+      drive_motorcycle: { label: "MERC.Skills.drive_motorcycle", abilities: ["dexterity", "perception"] },
+      drive_boats: { label: "MERC.Skills.drive_boats", abilities: ["dexterity", "perception"] },
+      drive_tracked: { label: "MERC.Skills.drive_tracked", abilities: ["dexterity", "perception"] },
+      drive_planes: { label: "MERC.Skills.drive_planes", abilities: ["speed", "perception"] },
+      drive_helicopters: { label: "MERC.Skills.drive_helicopters", abilities: ["speed", "perception"] },
+      riding: { label: "MERC.Skills.riding", abilities: ["charisma", "mental"] },
+      tracking: { label: "MERC.Skills.tracking", abilities: ["intelligence", "perception"] },
+      stealth: { label: "MERC.Skills.stealth", abilities: ["dexterity", "charisma"] },
+      concealment: { label: "MERC.Skills.concealment", abilities: ["adaptation", "perception"] },
+      pickpocket: { label: "MERC.Skills.pickpocket", abilities: ["dexterity", "charisma"] },
+      lockpicking: { label: "MERC.Skills.lockpicking", abilities: ["dexterity", "perception"] },
+      tinkering: { label: "MERC.Skills.tinkering", abilities: ["adaptation", "dexterity"] },
+      forgery: { label: "MERC.Skills.forgery", abilities: ["will", "dexterity"] },
+      survival: { label: "MERC.Skills.survival", abilities: ["adaptation", "speed"] },
+      eloquence: { label: "MERC.Skills.eloquence", abilities: ["intelligence", "charisma"] },
+      acting: { label: "MERC.Skills.acting", abilities: ["charisma", "adaptation"] },
+      interrogation: { label: "MERC.Skills.interrogation", abilities: ["intelligence", "adaptation"] },
+      command: { label: "MERC.Skills.command", abilities: ["will", "charisma"] },
+      instruction: { label: "MERC.Skills.instruction", abilities: ["intelligence", "charisma"] },
+      language_serbian: { label: "MERC.Skills.language_serbian", abilities: ["intelligence", "charisma"] },
+      language_arabic: { label: "MERC.Skills.language_arabic", abilities: ["intelligence", "charisma"] },
+      language_english: { label: "MERC.Skills.language_english", abilities: ["intelligence", "charisma"] },
+      language_russian: { label: "MERC.Skills.language_russian", abilities: ["intelligence", "charisma"] },
+      language_french: { label: "MERC.Skills.language_french", abilities: ["intelligence", "charisma"] },
+      language_other_1: { label: "MERC.Skills.language_other_1", abilities: ["intelligence", "charisma"] },
+      language_other_2: { label: "MERC.Skills.language_other_2", abilities: ["intelligence", "charisma"] },
+      bureaucracy: { label: "MERC.Skills.bureaucracy", abilities: ["intelligence", "charisma"] },
+      illegality: { label: "MERC.Skills.illegality", abilities: ["intelligence", "charisma"] },
+      mathematics: { label: "MERC.Skills.mathematics", abilities: ["intelligence"] },
+      metallurgy: { label: "MERC.Skills.metallurgy", abilities: ["intelligence"] },
+      engineering: { label: "MERC.Skills.engineering", abilities: ["intelligence", "perception"] },
+      electricity_electronics: { label: "MERC.Skills.electricity_electronics", abilities: ["intelligence"] },
+      computer_science: { label: "MERC.Skills.computer_science", abilities: ["intelligence", "mental"] },
+      geography: { label: "MERC.Skills.geography", abilities: ["intelligence", "perception"] },
+      meteorology: { label: "MERC.Skills.meteorology", abilities: ["intelligence", "adaptation"] },
+      navigation: { label: "MERC.Skills.navigation", abilities: ["intelligence"] },
+      history_politics: { label: "MERC.Skills.history_politics", abilities: ["intelligence", "charisma"] },
+      chemistry: { label: "MERC.Skills.chemistry", abilities: ["intelligence", "will"] },
+      geology: { label: "MERC.Skills.geology", abilities: ["intelligence", "perception"] },
+      nature: { label: "MERC.Skills.nature", abilities: ["intelligence", "adaptation"] },
+      biology: { label: "MERC.Skills.biology", abilities: ["intelligence", "adaptation"] },
+      human_medicine: { label: "MERC.Skills.human_medicine", abilities: ["intelligence", "will"] },
+      surgery: { label: "MERC.Skills.surgery", abilities: ["will", "mental"] },
+      construction_avionics: { label: "MERC.Skills.construction_avionics", abilities: ["intelligence", "dexterity"] },
+      construction_vehicle: { label: "MERC.Skills.construction_vehicle", abilities: ["intelligence", "dexterity"] },
+      construction_weaponry: { label: "MERC.Skills.construction_weaponry", abilities: ["intelligence", "dexterity"] },
+      construction_tools: { label: "MERC.Skills.construction_tools", abilities: ["intelligence", "dexterity"] },
+      spec_melee_mma: { label: "MERC.Skills.spec_melee_mma", abilities: ["strength", "perception"] },
+      spec_blades_knife: { label: "MERC.Skills.spec_blades_knife", abilities: ["strength", "dexterity"] },
+      spec_powder_ak47: { label: "MERC.Skills.spec_powder_ak47", abilities: ["dexterity", "perception"] }
+    }
+  };
+
+  // Register Handlebars helpers
+  Handlebars.registerHelper("filterItems", function(items, type) {
+    if (!items) return [];
+    return items.filter(item => item.type === type);
+  });
+  Handlebars.registerHelper("gt", function(a, b) {
+    return a > b;
+  });
+  Handlebars.registerHelper("eq", function(a, b) {
+    return a === b;
+  });
+  Handlebars.registerHelper("mod", function(a, b) {
+    return a % b;
+  });
+
+  // Register Actor Sheets
+  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+  foundry.documents.collections.Actors.registerSheet("merc", MercCharacterSheet, { types: ["character", "npc"], makeDefault: true });
+});
+
+// Hook for initializing actor data
+Hooks.on("preCreateActor", (actor, data, options, userId) => {
+  // Initialize system data in the data object
+  if (!data.system) {
+    data.system = {};
+  }
+  
+  const systemData = {
+    biography: {
+      age: "",
+      height: 0,
+      weight: 0,
+      gender: "",
+      origin: "",
+      year: 0,
+      renown: 0
+    },
+    attributes: {
+      intelligence: { origin: 0, current: 0 },
+      will: { origin: 0, current: 0 },
+      mental: { origin: 0, current: 0 },
+      charisma: { origin: 0, current: 0 },
+      chance: { origin: 0, current: 0 },
+      adaptation: { origin: 0, current: 0 },
+      strength: { origin: 0, current: 0 },
+      dexterity: { origin: 0, current: 0 },
+      speed: { origin: 0, current: 0 },
+      constitution: { origin: 0, current: 0 },
+      perception: 0,
+      perceptionDetail: {
+        sight: 0,
+        hearing: 0,
+        taste: 0,
+        smell: 0,
+        touch: 0
+      }
+    },
+    skills: Object.fromEntries(
+      Object.entries(CONFIG.MERC.skills).map(([key, def]) => [
+        key,
+        {
+          base: 0,
+          dev: 0,
+          bonus: 0,
+          degree: 0,
+          abilities: def.abilities || []
+        }
+      ])
+    )
+  };
+  
+  data.system = foundry.utils.mergeObject(data.system, systemData);
+});
+
+console.log("Mercenary System - system.js loaded successfully ✓");

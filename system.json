@@ -1,0 +1,55 @@
+{
+  "id": "merc",
+  "title": "Mercenary System",
+  "description": "Un système simple basé sur des attributs et des compétences avec des jets de D20",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13.0",
+    "verified": "13.351",
+    "maximum": "13.351"
+  },
+  "authors": [
+    {
+      "name": "Game Master"
+    }
+  ],
+  "scripts": [
+    "scripts/system.js"
+  ],
+  "styles": [
+    "css/style.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "templates": ["base"]
+      },
+      "npc": {
+        "templates": ["base"]
+      }
+    },
+    "Item": {
+      "weapon": {},
+      "armor": {},
+      "equipment": {},
+      "feature": {}
+    }
+  },
+  "url": "",
+  "bugs": "",
+  "changelog": "",
+  "license": "MIT",
+  "flags": {}
+}

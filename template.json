@@ -1,0 +1,122 @@
+{
+  "Actor": {
+    "base": {
+      "biography": {
+        "age": "",
+        "height": 0,
+        "weight": 0,
+        "gender": "",
+        "origin": "",
+        "year": 0,
+        "renown": 0
+      },
+      "attributes": {
+        "intelligence": { "origin": 0, "current": 0 },
+        "will": { "origin": 0, "current": 0 },
+        "mental": { "origin": 0, "current": 0 },
+        "charisma": { "origin": 0, "current": 0 },
+        "chance": { "origin": 0, "current": 0 },
+        "adaptation": { "origin": 0, "current": 0 },
+        "strength": { "origin": 0, "current": 0 },
+        "dexterity": { "origin": 0, "current": 0 },
+        "speed": { "origin": 0, "current": 0 },
+        "constitution": { "origin": 0, "current": 0 },
+        "perception": 0,
+        "perceptionDetail": {
+          "sight": 0,
+          "hearing": 0,
+          "taste": 0,
+          "smell": 0,
+          "touch": 0
+        }
+      },
+      "skills": {
+      "reaction": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "speed" },
+      "melee": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
+      "bladed_weapons": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
+      "mechanical_projectiles": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "powder_projectiles": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "throwing": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "maneuvers": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "heavy_weapons": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
+      "electronic_weapons": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "running": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "speed" },
+      "climbing": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
+      "swimming": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "constitution" },
+      "sliding": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "air_sliding": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "drive_wheeled": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "drive_motorcycle": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "drive_boats": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "drive_tracked": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "drive_planes": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "drive_helicopters": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "riding": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "adaptation" },
+      "tracking": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "perception" },
+      "stealth": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "concealment": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "pickpocket": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "lockpicking": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },
+      "tinkering": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "forgery": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "survival": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "adaptation" },
+      "eloquence": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "charisma" },
+      "acting": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "charisma" },
+      "interrogation": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "charisma" },
+      "command": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "charisma" },
+      "instruction": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "language_serbian": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "language_arabic": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "language_english": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "language_russian": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "language_french": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "language_other_1": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "language_other_2": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "bureaucracy": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "illegality": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "mathematics": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "metallurgy": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "engineering": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "electricity_electronics": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "computer_science": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "geography": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "meteorology": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "navigation": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "history_politics": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "chemistry": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "geology": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "nature": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "biology": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "human_medicine": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "surgery": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "construction_avionics": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "construction_vehicle": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "construction_weaponry": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "construction_tools": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+      "spec_melee_mma": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
+      "spec_blades_knife": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
+      "spec_powder_ak47": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" }
+    }
+    }
+  },
+  "Item": {
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "slashing",
+      "weight": 5,
+      "rarity": "common"
+    },
+    "armor": {
+      "armorClass": 10,
+      "weight": 10,
+      "rarity": "common"
+    },
+    "equipment": {
+      "weight": 1,
+      "rarity": "common"
+    },
+    "feature": {
+      "description": ""
+    }
+  }
+}

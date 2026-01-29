@@ -1,0 +1,935 @@
+/* ============================================ */
+/* Mercenary System CSS Styles                 */
+/* Adapted from Foundry Custom Style           */
+/* ============================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap");
+
+/* Global Styles */
+.merc {
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+.merc.sheet {
+  background: white;
+}
+
+/* Sheet Layout */
+.merc.actor-sheet {
+  background: white;
+}
+
+.merc.actor-sheet .window-content {
+  background-color: white;
+  padding: 15px;
+}
+
+.merc .sheet-header {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 260px;
+  flex: 0 0 260px;
+  overflow: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.sheet-header {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  /*border-bottom: 2px solid #999;*/
+}
+
+.header-columns {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 15px;
+  align-items: start;
+}
+
+/* Left Column: Character Portrait */
+.header-image-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.character-portrait {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 2px solid #999;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.character-portrait:hover {
+  border-color: #666;
+}
+
+/* Right Column: Character Info */
+.header-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: space-between;
+  height: 150px;
+}
+
+.header-info-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Row 1: Name + Gender */
+.header-row-1 {
+  flex: 1;
+}
+
+.field-name-large {
+  flex: 1;
+}
+
+.field-name-large input {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  background-color: white;
+  border: 1px solid #d6d6d6;
+  padding: 5px 8px;
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Row 2 & 3: Inline fields */
+.header-row-2,
+.header-row-3 {
+  flex: 1;
+}
+
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+
+.field-inline.field-gender {
+  justify-content: center;
+}
+
+.field-inline label {
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  white-space: nowrap;
+}
+
+.field-inline input,
+.field-inline select {
+  flex: 1;
+  font-size: 12px;
+  padding: 3px 5px;
+  border: 1px solid #dcdcdc;
+  border-radius: 3px;
+  background-color: white;
+  color: #333;
+  min-width: 50px;
+}
+
+.field-inline input:focus,
+.field-inline select:focus {
+  outline: none;
+  background-color: #f9f9f9;
+  border-color: #666;
+  box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
+}
+
+/* Gender toggle (icon radios) */
+.field-gender .gender-toggle {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.gender-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gender-option input {
+  display: none;
+}
+
+.gender-icon {
+  width: 26px;
+  height: 26px;
+  border: 1px solid #999;
+  border-radius: 6px;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+  opacity: 0.45;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s, opacity 0.2s;
+}
+
+.gender-option.male .gender-icon {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='10' cy='14' r='5'/><line x1='14.5' y1='9.5' x2='20' y2='4'/><polyline points='15 4 20 4 20 9'/></svg>");
+}
+
+.gender-option.female .gender-icon {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='9' r='5'/><line x1='12' y1='14' x2='12' y2='20'/><line x1='9' y1='17' x2='15' y2='17'/></svg>");
+}
+
+.gender-option input:checked + .gender-icon {
+  border-color: #222;
+  background-color: #d5dcdfef;
+  box-shadow: 0 0 6px rgba(34, 34, 34, 0.5), inset 0 0 3px rgba(114, 158, 168, 0.4);
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
+.gender-option input:checked + .gender-icon + .gender-text {
+  font-weight: bold;
+  color: #222;
+  opacity: 1;
+}
+
+.gender-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  opacity: 0.5;
+}
+
+.header-row {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.actor-name {
+  flex: 1;
+}
+
+.actor-name input {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  background-color: white;
+  border: 1px solid #999;
+  padding: 5px;
+  border-radius: 3px;
+  width: 100%;
+}
+
+.actor-type {
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  font-weight: bold;
+  color: #666;
+}
+
+/* Tabs */
+.merc .sheet-tabs {
+  -webkit-box-flex: 0;
+  -ms-flex: 0;
+  flex: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  border-top: none;
+  border-bottom: 1px solid #999;
+  padding-bottom: 2px;
+}
+
+.tabs .item {
+  flex: 1;
+  text-align: center;
+  padding: 4px 12px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  color: #999;
+  font-weight: normal;
+  line-height: 18px;
+  height: 22px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tabs .item.active {
+  background-color: #e9e9e9;
+  color: #333;
+  border-color: #333;
+  font-weight: bold;
+  position: relative;
+  top: 1px;
+  text-shadow: none;
+}
+
+.tabs .item:hover {
+  background-color: #e9e9e9;
+  text-shadow: none;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Attributes Section - Header Style */
+.headerActorsAttribs {
+  background-color: #f5f5f5;
+  padding: 8px 10px;
+  border-radius: 6px;
+  /* border-left: 3px solid #e94560; */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 12px;
+  width: 100%;
+  height: auto;
+  justify-items: stretch;
+  align-items: start;
+  margin: 15px 0;
+}
+
+.attrib-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.headerActorAttrib {
+  text-transform: uppercase;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: #999;
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  height: auto;
+  width: 100%;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.headerActorAttrib.perception-attrib {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.perception-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+/* Column headers for Origine/Actuel */
+.attrib-column-headers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 5px;
+  /*
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #e94560;
+  */
+}
+
+.attrib-name-header {
+  flex: 1;
+}
+
+.attrib-values-headers {
+  display: flex;
+  gap: 6px;
+}
+
+.attrib-value-header {
+  width: 36px;
+  text-align: center;
+  font-size: 10px;
+  /*font-weight: bold;*/
+  color: #474749;
+  text-transform: uppercase;
+}
+.attrib-column-headers.is-ghost-header {
+  visibility: hidden;
+}
+
+.attrib-values {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 0;
+}
+
+.attrib-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.headerActorAttribLabel {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+}
+
+.headerActorAttribLabel:hover {
+  text-decoration: underline;
+}
+
+.headerActorAttrib:hover {
+  background-color: #f0f0f0;
+}
+
+.headerActorAttribValue {
+  float: none;
+  width: 36px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #999;
+  background-color: #c6d3e1;
+  vertical-align: middle;
+  font-weight: bold;
+  /*margin-left: 5px;*/
+  color: #333;
+  padding: 0;
+}
+
+.headerActorSubAttrib {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /*padding: 3px 0;*/
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 4px;
+}
+
+.perception-attrib .headerActorSubAttrib {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 4px;
+}
+
+.headerActorSubAttribLabel {
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  text-align: right;
+  flex: 1;
+  padding-right: 5px;
+}
+
+.headerActorSubAttribLabel:hover {
+  text-decoration: underline;
+}
+
+/* Health & Resources */
+.resources-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.resource-block {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 5px;
+  border-left: 3px solid #999;
+}
+
+.resource-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.resource-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.resource-bar input {
+  width: 50px;
+  text-align: center;
+  background-color: white;
+  color: #333;
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 3px;
+}
+
+.resource-separator {
+  font-weight: bold;
+  color: #999;
+}
+
+/* Skills Section */
+.skills-section {
+  background-color: #f5f5f5;
+  padding: 8px 10px;
+  border-radius: 6px;
+  /*border-left: 3px solid #e94560;*/
+  margin-bottom: 12px;
+}
+
+.skills-section h3 {
+  margin: 0 0 6px 0;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 3px;
+  font-size: 12px;
+}
+
+.skills-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0 8px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.skills-tabs .item {
+  flex: 1 1 calc(25% - 3px);
+  text-align: center;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+.skills-tabs .item.active {
+  background: #e9e9e9;
+  color: #333;
+  border-color: #333;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.skills-tabs .item:hover  {
+  background-color: #e9e9e9;
+  text-shadow: none;
+}
+
+.skills-tabs-body .skills-tab-content {
+  display: none;
+}
+
+.skills-tabs-body .skills-tab-content.active {
+  display: block;
+}
+
+/* Two columns layout for skills */
+.skills-two-columns {
+  display: flex;
+  gap: 10px;
+}
+
+.skills-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Skills column header */
+.skills-column-headers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 5px;
+  /*
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+  */
+}
+
+.skill-name-header {
+  flex: 1;
+}
+
+.skill-values-headers {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.skill-value-header {
+  width: 32px;
+  text-align: center;
+  font-size: 8px;
+  font-weight: normal;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 4px 6px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #999;
+  transition: background-color 0.2s;
+  min-height: 32px;
+}
+
+.skill-item:hover {
+  background-color: #f0f0f0;
+}
+
+.skill-name {
+  width: 100%;
+  font-weight: 600;
+  cursor: pointer;
+  color: #333;
+  font-size: 10px;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.skill-name:hover {
+  color: #666;
+}
+
+.skill-value {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.skill-inputs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.skill-input {
+  width: 32px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  background-color: #c6d3e1;
+  border: 1px solid #999;
+  border-radius: 10px;
+  color: #333;
+  font-weight: bold;
+  padding: 0;
+  font-size: 10px;
+}
+
+.skill-input[readonly] {
+  background-color: #e5e5e5;
+  color: #666;
+}
+
+.skill-roll-btn {
+  width: 32px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0;
+  background-color: #e94560;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.skill-roll-btn:hover {
+  background-color: #cf3e55;
+}
+
+.skill-roll-btn.very-negative {
+  background-color: #e94560;
+}
+
+.skill-roll-btn.very-negative:hover {
+  background-color: #cf3e55;
+}
+
+.skill-roll-btn.negative {
+  background-color: #ffb347;
+  color: #333;
+}
+
+.skill-roll-btn.negative:hover {
+  background-color: #ff9500;
+  color: #333;
+}
+
+.skill-roll-btn.neutral {
+  background-color: #90ee90;
+  color: #333;
+}
+
+.skill-roll-btn.neutral:hover {
+  background-color: #7ed97e;
+  color: #333;
+}
+
+.skill-roll-btn.positive {
+  background-color: #3cb371;
+  color: white;
+}
+
+.skill-roll-btn.positive:hover {
+  background-color: #2d9959;
+  color: white;
+}
+
+/* Items Section */
+.items-section {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+  border-left: 3px solid #999;
+  margin-bottom: 20px;
+}
+
+.items-section h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  border-bottom: 1px solid #999;
+  padding-bottom: 5px;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: white;
+  border-radius: 3px;
+  border-left: 2px solid #999;
+  border: 1px solid #ddd;
+  transition: background-color 0.2s;
+}
+
+.item-card:hover {
+  background-color: #f9f9f9;
+}
+
+.item-name {
+  flex: 1;
+  font-weight: 500;
+  cursor: pointer;
+  color: #333;
+}
+
+.item-edit {
+  padding: 3px 8px;
+  background-color: #0f3460;
+  color: #e94560;
+  border: 1px solid #e94560;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.item-edit:hover {
+  background-color: #1a4680;
+}
+
+.item-delete {
+  padding: 3px 8px;
+  background-color: #cc3344;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.item-delete:hover {
+  background-color: #aa2233;
+}
+
+
+/* Inputs */
+/*
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  background-color: white;
+  color: #333;
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  background-color: #f9f9f9;
+  border-color: #666;
+  box-shadow: 0 0 5px rgba(100, 100, 100, 0.3);
+}
+*/
+
+/* Buttons */
+.btn {
+  padding: 8px 15px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: #555;
+}
+
+/* Chat Rolls - Match Attribute Style */
+.merc-roll {
+  padding: 8px 10px;
+  margin: 5px 0;
+  border-radius: 10px;
+  background-color: #fff;
+  border: 1px solid #999;
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  color: #333;
+}
+
+.merc-roll-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-transform: uppercase;
+  line-height: 20px;
+}
+
+.merc-roll-label {
+  display: inline-block;
+  font-weight: 500;
+}
+
+.merc-roll-badge {
+  min-width: 40px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #999;
+  background-color: #c6d3e1;
+  font-weight: bold;
+  color: #333;
+  padding: 0 6px;
+}
+
+.merc-roll-breakdown {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #ddd;
+  font-weight: 500;
+  text-transform: none;
+  color: #333;
+}
+
+.merc-roll-breakdown .roll-d20 {
+  font-size: 13px;
+  color: #666;
+}
+
+.merc-roll-breakdown .roll-modifier {
+  color: #999;
+}
+
+/* Utility Classes */
+.rollable:hover,
+.rollable:focus {
+  color: #000;
+  text-shadow: 0 0 10px #333;
+  cursor: pointer;
+}
+

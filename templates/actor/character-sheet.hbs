@@ -287,16 +287,19 @@
                 <div class="skills-list">
                   {{#each group.skills as |skill|}}
                     {{#if (eq (mod @index 2) 0)}}
-                    <div class="skill-item" data-skill="{{skill.key}}">
-                      <div class="skill-name" title="Click to roll {{skill.label}}">{{skill.label}}</div>
+                    <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}">
+                      <div class="skill-name" title="{{skill.displayLabel}}">
+                        {{skill.displayLabel}}
+                        {{#unless skill.unlocked}}<i class="fas fa-lock" title="Prérequis non remplis: {{skill.missingPrereqsText}}"></i>{{/unless}}
+                      </div>
                       <div class="skill-value">
                         <div class="skill-inputs">
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="Base" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="Dev">
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="Dev" {{#unless skill.unlocked}}disabled{{/unless}}>
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="Degré" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="Bonus">
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="Bonus" {{#unless skill.unlocked}}disabled{{/unless}}>
                         </div>
-                        <button type="button" class="skill-roll-btn">{{#if (gt skill.total 0)}}+{{/if}}{{skill.total}}</button>
+                        <button type="button" class="skill-roll-btn" {{#unless skill.unlocked}}disabled{{/unless}}>{{#if (gt skill.total 0)}}+{{/if}}{{skill.total}}</button>
                       </div>
                     </div>
                     {{/if}}
@@ -320,16 +323,19 @@
                 <div class="skills-list">
                   {{#each group.skills as |skill|}}
                     {{#unless (eq (mod @index 2) 0)}}
-                    <div class="skill-item" data-skill="{{skill.key}}">
-                      <div class="skill-name" title="Click to roll {{skill.label}}">{{skill.label}}</div>
+                    <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}">
+                      <div class="skill-name" title="{{skill.displayLabel}}">
+                        {{skill.displayLabel}}
+                        {{#unless skill.unlocked}}<i class="fas fa-lock" title="Prérequis non remplis: {{skill.missingPrereqsText}}"></i>{{/unless}}
+                      </div>
                       <div class="skill-value">
                         <div class="skill-inputs">
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="Base" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="Dev">
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="Dev" {{#unless skill.unlocked}}disabled{{/unless}}>
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="Degré" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="Bonus">
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="Bonus" {{#unless skill.unlocked}}disabled{{/unless}}>
                         </div>
-                        <button type="button" class="skill-roll-btn">{{#if (gt skill.total 0)}}+{{/if}}{{skill.total}}</button>
+                        <button type="button" class="skill-roll-btn" {{#unless skill.unlocked}}disabled{{/unless}}>{{#if (gt skill.total 0)}}+{{/if}}{{skill.total}}</button>
                       </div>
                     </div>
                     {{/unless}}

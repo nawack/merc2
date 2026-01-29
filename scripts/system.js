@@ -33,6 +33,24 @@ const DEGREE_TABLE = {
   28: [0, 2, 3, 5, 9, 14, 21, 28, 39, 53, 70, 89, 112, 137, 165, 196, 229, 266, 305, 347, 392, 439, 490, 543, 599, 658, 719, 784, 851, 921, 994, 1069, 1148, 1229, 1313, 1400, 1489, 1582, 1677, 1775, 1876]
 };
 
+// Skill prerequisites: defines which skills unlock others
+// Each key is a skill key, value is an array of required skills (must have degree >= 0)
+const SKILL_PREREQUISITES = {
+  "illegality": ["bureaucracy"],
+  "metallurgy": ["mathematics"],
+  "engineering": ["mathematics"],
+  "electricity_electronics": ["mathematics"],
+  "computer_science": ["mathematics"],
+  "geography": ["mathematics"],
+  "meteorology": ["mathematics"],
+  "navigation": ["mathematics", "geography"],
+  "history_politics": ["geography", "bureaucracy"],
+  "chemistry": ["mathematics"],
+  "geology": ["mathematics"],
+  "human_medicine": ["chemistry", "mathematics"],
+  "surgery": ["human_medicine"]
+};
+
 /**
  * Calculates the degree value based on base and dev
  * Uses a lookup table where each base row contains cumulative values
@@ -59,6 +77,71 @@ function getDegreeFromTable(base, dev) {
   
   // Convert index to degree using the conversion table
   return INDEX_TO_DEGREE[foundIndex];
+}
+
+/**
+ * Checks if a skill is unlocked (all prerequisites met)
+ * @param {Object} actor - The actor document
+ * @param {string} skillKey - The skill key to check
+ * @returns {Object} { unlocked: boolean, missingPrereqs: string[] }
+ */
+function checkSkillUnlocked(actor, skillKey) {
+  const prerequisites = SKILL_PREREQUISITES[skillKey];
+  
+  // If no prerequisites defined, skill is always unlocked
+  if (!prerequisites || prerequisites.length === 0) {
+    return { unlocked: true, missingPrereqs: [] };
+  }
+  
+  const skills = actor?.system?.skills;
+  if (!skills) return { unlocked: false, missingPrereqs: prerequisites };
+  
+  const missingPrereqs = [];
+  
+  for (const prereqKey of prerequisites) {
+    const prereqSkill = skills[prereqKey];
+    if (!prereqSkill) {
+      missingPrereqs.push(prereqKey);
+      continue;
+    }
+    
+    // Calculate base for the prerequisite skill
+    const attrs = actor?.system?.attributes;
+    if (!attrs) {
+      missingPrereqs.push(prereqKey);
+      continue;
+    }
+    
+    const getAttrValue = (attrKey) => {
+      const attr = attrs[attrKey];
+      return typeof attr === 'object' ? (attr.current ?? 0) : (attr ?? 0);
+    };
+    
+    const abilities = CONFIG.MERC.skills[prereqKey]?.abilities || [];
+    let base = 0;
+    
+    if (abilities.length === 1) {
+      const attrValue = getAttrValue(abilities[0]);
+      base = 30 - (attrValue * 2);
+    } else if (abilities.length === 2) {
+      const attr1Value = getAttrValue(abilities[0]);
+      const attr2Value = getAttrValue(abilities[1]);
+      base = 30 - (attr1Value + attr2Value);
+    }
+    
+    const prereqDev = Number(prereqSkill.dev ?? 0);
+    const prereqDegree = getDegreeFromTable(base, prereqDev);
+    
+    // Skill is missing if its degree is < 0
+    if (prereqDegree < 0) {
+      missingPrereqs.push(prereqKey);
+    }
+  }
+  
+  return {
+    unlocked: missingPrereqs.length === 0,
+    missingPrereqs: missingPrereqs
+  };
 }
 
 // Define MercCharacterSheet here directly
@@ -388,15 +471,39 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const degree = this.computeSkillDegree(actorDoc, skillKey, skillData);
         const bonus = Number(skillData.bonus ?? 0);
         
+        // Check if skill is unlocked
+        const unlockStatus = checkSkillUnlocked(actorDoc, skillKey);
+        
+        // Format missing prerequisites with localized names
+        const missingPrereqsText = unlockStatus.missingPrereqs
+          .map(k => game.i18n.localize(CONFIG.MERC.skills[k]?.label) || k)
+          .join(", ");
+        
+        // Get skill prerequisites (what this skill requires to unlock)
+        const skillPrereqs = SKILL_PREREQUISITES[skillKey] || [];
+        const prereqsText = skillPrereqs.length > 0
+          ? skillPrereqs.map(k => game.i18n.localize(CONFIG.MERC.skills[k]?.label) || k).join(", ")
+          : "";
+        
+        // Build display label with prerequisites info
+        const baseLabel = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+        const displayLabel = prereqsText ? `${baseLabel} (Requis: ${prereqsText})` : baseLabel;
+        
         data.skillList.push({
           key: skillKey,
-          label: game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey,
+          label: baseLabel,
+          displayLabel: displayLabel,
           abilities: skillData.abilities || [],
           base,
           dev,
           bonus,
           degree,
-          total: degree + bonus
+          total: degree + bonus,
+          unlocked: unlockStatus.unlocked,
+          missingPrereqs: unlockStatus.missingPrereqs,
+          missingPrereqsText: missingPrereqsText,
+          hasPrerequisites: prereqsText.length > 0,
+          prerequisitesText: prereqsText
         });
       }
     }
@@ -739,6 +846,24 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const btn = skillItem?.querySelector(".skill-roll-btn");
         if (btn) {
           updateButtonColor(btn);
+        }
+        
+        // If dev input changed, validate prerequisites
+        if (input.name && input.name.includes(".dev")) {
+          const skillKey = skillItem?.dataset.skill;
+          if (skillKey) {
+            const unlockStatus = checkSkillUnlocked(this.actor, skillKey);
+            
+            // If skill is locked, prevent adding dev points
+            if (!unlockStatus.unlocked && Number(input.value) > 0) {
+              ui.notifications.warn(
+                `${game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey} est verrouillée. Prérequis manquants: ${unlockStatus.missingPrereqs.map(k => game.i18n.localize(CONFIG.MERC.skills[k]?.label) || k).join(", ")}`
+              );
+              input.value = 0;
+              event.preventDefault();
+              return;
+            }
+          }
         }
       });
     });

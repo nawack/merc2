@@ -4,7 +4,14 @@
     <div class="header-columns">
       <!-- Left Column: Character Image -->
       <div class="header-image-column">
-        <img class="character-portrait" src="{{actor.img}}" data-edit="img" alt="{{actor.name}}" title="Click to change image">
+        <div class="portrait-container">
+          <img class="character-portrait" src="{{actor.img}}" alt="{{actor.name}}" title="Click to browse for image">
+          <div class="portrait-overlay">
+            <button type="button" class="portrait-browse-btn" title="Choisir une image">
+              <i class="fas fa-folder-open"></i>
+            </button>
+          </div>
+        </div>
       </div>
       
       <!-- Right Column: Character Info -->

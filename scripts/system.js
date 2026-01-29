@@ -1,4 +1,54 @@
-console.log("Mercenary System - system.js is loading...");
+/**
+ * Initialize portrait image selection functionality
+ * Uses Foundry's native FilePicker API to browse the image library
+ */
+function initPortraitSelection(actor) {
+  const browseBtn = document.querySelector('.portrait-browse-btn');
+  const portraitImg = document.querySelector('.character-portrait');
+  
+  if (!browseBtn) return;
+  
+  // Click button to open Foundry's FilePicker
+  browseBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    new FilePicker({
+      type: "image",
+      callback: (path) => {
+        // Update the image source
+        portraitImg.src = path;
+        // Update the actor's image
+        if (actor) {
+          actor.update({ img: path });
+        }
+      },
+      top: 100,
+      left: 100
+    }).browse();
+  });
+  
+  // Also allow clicking directly on the image to browse
+  portraitImg.addEventListener('click', (e) => {
+    e.preventDefault();
+    new FilePicker({
+      type: "image",
+      callback: (path) => {
+        portraitImg.src = path;
+        if (actor) {
+          actor.update({ img: path });
+        }
+      },
+      top: 100,
+      left: 100
+    }).browse();
+  });
+}
+
+function setCharacterPortrait(imageUrl) {
+  const portraitElement = document.querySelector('.character-portrait');
+  if (portraitElement) {
+    portraitElement.src = imageUrl;
+  }
+}
 
 // Index to Degree conversion table
 // Index 0 = degree -7, index 1 = degree -6, ..., index 7 = degree 0, ..., index 40 = degree 33
@@ -616,6 +666,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     
     const html = this.element;
     if (!html) return;
+
+    // Initialize portrait selection with Foundry FilePicker
+    initPortraitSelection(this.actor);
 
     // Handle tab switching
     const tabItems = html.querySelectorAll(".sheet-tabs .item");

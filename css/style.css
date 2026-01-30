@@ -57,11 +57,6 @@
   -ms-flex-pack: start;
   justify-content: flex-start;
   margin-bottom: 10px;
-}
-
-.sheet-header {
-  margin-bottom: 15px;
-  padding-bottom: 15px;
   /*border-bottom: 2px solid #999;*/
 }
 
@@ -856,8 +851,8 @@
   background-color: #f5f5f5;
   padding: 15px;
   border-radius: 5px;
-  border-left: 3px solid #999;
-  margin-bottom: 20px;
+  border-left: 3px solid #999; /* Updated border style */
+  margin-bottom: 25px; /* Increased margin */
 }
 
 .items-section h3 {
@@ -865,6 +860,7 @@
   color: #333;
   border-bottom: 1px solid #999;
   padding-bottom: 5px;
+  margin-bottom: 12px; /* Added margin */
 }
 
 .items-list {
@@ -880,7 +876,6 @@
   padding: 10px;
   background-color: white;
   border-radius: 3px;
-  border-left: 2px solid #999;
   border: 1px solid #ddd;
   transition: background-color 0.2s;
 }
@@ -922,6 +917,39 @@
   background-color: #aa2233;
 }
 
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.item-damage {
+  font-size: 11px;
+  color: #999;
+}
+
+.item-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.item-create {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #0f3460;
+  color: white;
+  border: 1px solid #0f3460;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.item-create:hover {
+  background-color: #1a4680;
+}
 
 /* Inputs */
 /*
@@ -1002,6 +1030,200 @@ select:focus {
   font-weight: bold;
   color: #333;
   padding: 0 6px;
+}
+
+/* Stats Grid - Matching Attributes Design */
+.headerStatsGrid {
+  background-color: #f5f5f5;
+  padding: 8px 10px;
+  border-radius: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 12px;
+  width: 100%;
+  height: auto;
+  justify-items: stretch;
+  align-items: start;
+  margin: 15px 0;
+}
+
+.stats-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.stats-column-headers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 5px;
+}
+
+.stats-name-header {
+  flex: 1;
+  font-size: 11px;
+  font-weight: bold;
+  color: #474749;
+  text-transform: uppercase;
+}
+
+.headerStat {
+  text-transform: uppercase;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: #999;
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  height: auto;
+  width: 100%;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.headerStat:hover {
+  background-color: #f0f0f0;
+}
+
+.headerStatLabel {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+}
+
+.headerStatLabel:hover {
+  text-decoration: underline;
+}
+
+.stat-values {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.stat-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value-large {
+  width: 40px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #999;
+  background-color: #e5e5e5;
+  font-weight: bold;
+  color: #333;
+  font-size: 12px;
+}
+
+.stat-unit {
+  font-size: 9px;
+  color: #999;
+  text-transform: uppercase;
+  margin-left: 2px;
+}
+
+/* Three-column grid utility */
+.three-columns {
+  grid-template-columns: repeat(3, minmax(140px, 1fr)) !important;
+}
+
+.weapons-section {
+  background-color: #f5f5f5;
+  padding: 12px 10px;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+
+.weapons-section h3 {
+  color: #474749;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+}
+
+.weapons-section .items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.weapons-section .item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 8px 6px;
+  border: 1px solid #999;
+  border-radius: 10px;
+  font-size: 11px;
+  transition: background-color 0.2s;
+}
+
+.weapons-section .item-card:hover {
+  background-color: #f0f0f0;
+}
+
+.weapons-section .item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.weapons-section .item-name {
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.weapons-section .item-name:hover {
+  text-decoration: underline;
+}
+
+.weapons-section .item-damage {
+  font-size: 10px;
+  color: #999;
+}
+
+.weapons-section .item-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.weapons-section .item-edit {
+  padding: 4px 8px;
+  background-color: white;
+  color: #999;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.weapons-section .item-edit:hover {
+  background-color: #e94560;
+  color: white;
+  border-color: #e94560;
 }
 
 .merc-roll-breakdown {

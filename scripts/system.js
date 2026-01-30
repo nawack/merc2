@@ -54,6 +54,19 @@ function setCharacterPortrait(imageUrl) {
 // Index 0 = degree -7, index 1 = degree -6, ..., index 7 = degree 0, ..., index 40 = degree 33
 const INDEX_TO_DEGREE = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33];
 
+// Combat & Movement Tables
+// These correspond to attribute indices from -11 to 20
+const STATS_TABLES = {
+  taille: [49, 57, 65, 73, 81, 89, 97, 105, 113, 121, 129, 137, 145, 153, 161, 169, 177, 186, 195, 206, 219, 235, 253, 275, 301, 332, 367, 408, 455, 509, 569, 600],
+  poids: [1.6, 2.5, 3.7, 5.3, 7, 9, 12, 15, 19, 24, 29, 34, 41, 48, 56, 64, 74, 85, 99, 116, 140, 172, 216, 277, 363, 485, 658, 904, 1253, 1749, 2449, 3000],
+  reptation: [0.5, 1, 1, 1, 1, 1, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2, 2, 2.5, 2.5, 2.5, 3, 3, 3.5, 3.5, 4, 4.5, 4.5, 5, 5.5, 6.5],
+  marche: [2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 10, 11, 12, 13, 15, 16, 18, 20, 23, 25],
+  course: [10, 11, 13, 15, 16, 18, 19, 21, 23, 24, 26, 27, 29, 31, 32, 34, 35, 37, 39, 41, 44, 47, 51, 55, 60, 66, 73, 82, 91, 102, 114, 128],
+  dissimulation: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15],
+  discretion: [10, 9, 9, 8, 7, 7, 6, 5, 5, 4, 3, 3, 2, 1, 1, 0, 0, 0, -1, -1, -2, -3, -3, -4, -5, -5, -6, -7, -7, -8, -9, -9],
+  ajustementPC: [-3, -3, -3, -3, -3, -3, -3, -2, -2, -2, -2, -2, -2, -1, -1, -1, 0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 7, 8]
+};
+
 // Degree calculation table: rows are Base values (4-28), columns are cumulative XP thresholds
 const DEGREE_TABLE = {
   4: [0, 0, 0, 1, 1, 2, 3, 4, 5, 7, 10, 12, 16, 19, 23, 28, 32, 38, 43, 49, 56, 62, 70, 77, 85, 94, 102, 112, 121, 131, 142, 152, 164, 175, 187, 200, 212, 226, 239, 253, 268],
@@ -942,6 +955,22 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         this.editItem(event);
       });
     });
+
+    // Initialize combat statistics calculations
+    const stats = this.calculateCombatStats();
+    if (stats) {
+      this.actor.update({
+        "system.combat.endurance": stats.endurance,
+        "system.combat.pointCorporence": stats.pointCorporence,
+        "system.combat.capaciteCharge": stats.capaciteCharge,
+        "system.combat.bonusDiscretion": stats.bonusDiscretion,
+        "system.combat.bonusDissimulation": stats.bonusDissimulation,
+        "system.combat.corpulence": stats.corpulence,
+        "system.movement.reptation": stats.vitesses.reptation,
+        "system.movement.marche": stats.vitesses.marche,
+        "system.movement.course": stats.vitesses.course
+      }, { render: false });
+    }
   }
 
   async _updateObject(event, formData) {
@@ -1132,7 +1161,97 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const item = this.actor.items.get(itemId);
     item.sheet.render(true);
   }
+
+  // ===== Combat & Movement Calculations =====
+  
+  /**
+   * Find index in table based on value
+   * Returns the index of the immediately lower value
+   */
+  findTableIndex(value, table) {
+    if (!value || value <= 0) return 0;
+    for (let i = table.length - 1; i >= 0; i--) {
+      if (value >= table[i]) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  /**
+   * Calculate combat statistics for the character
+   */
+  calculateCombatStats() {
+    const system = this.actor.system;
+    const attrs = system.attributes || {};
+    
+    // Get height and weight from biography
+    const height = system.biography?.height || 0;
+    const weight = system.biography?.weight || 0;
+    
+    // Rapidité is derived from speed attribute (Rapidité = Vitesse)
+    const rapidite = attrs.speed?.current || 0;
+    
+    // Find indices in tables
+    const indexTaille = this.findTableIndex(height, STATS_TABLES.taille);
+    const indexPoids = this.findTableIndex(weight, STATS_TABLES.poids);
+    
+    // Get attribute values (-11 to 20 = indices 0-31)
+    // The table position directly represents the attribute value
+    // index 0 = attribute -11, index 11 = attribute 0, index 20 = attribute 9, etc.
+    const attTaille = indexTaille - 11;
+    const attPoids = indexPoids - 11;
+    
+    // Calculate corpulence
+    const avgAtt = (attTaille + attPoids) / 2;
+    const corpulence = avgAtt > 5 ? Math.ceil(avgAtt) : Math.floor(avgAtt);
+    
+    // Clamp corpulence to valid table range (-11 to 20)
+    const corpulenceTableIdx = Math.max(0, Math.min(31, corpulence + 11));
+    
+    // Calculate index_vitesse (clamped to valid range)
+    const indexVitesse = Math.max(0, Math.min(31, corpulence + rapidite - 5 + 11));
+    
+    // Endurance = floor((Volonté + Constitution) / 2)
+    const volonte = attrs.will?.current || 0;
+    const constitution = attrs.constitution?.current || 0;
+    const endurance = Math.floor((volonte + constitution) / 2);
+    
+    // Point de corpulence = Constitution + ajustement PC
+    const pcAjust = STATS_TABLES.ajustementPC[corpulenceTableIdx] || 0;
+    const pointCorporence = constitution + pcAjust;
+    
+    // Capacité de Charge = Force + Constitution * 2
+    const force = attrs.strength?.current || 0;
+    const capaciteCharge = (force + constitution) * 2;
+    
+    // Bonus discrétion et dissimulation
+    const bonusDiscretion = STATS_TABLES.discretion[corpulenceTableIdx] || 0;
+    const bonusDissimulation = STATS_TABLES.dissimulation[corpulenceTableIdx] || 0;
+    
+    // Vitesses de déplacement (using indexVitesse)
+    const vitesses = {
+      reptation: STATS_TABLES.reptation[indexVitesse] || 0,
+      marche: STATS_TABLES.marche[indexVitesse] || 0,
+      course: STATS_TABLES.course[indexVitesse] || 0
+    };
+    
+    // Return calculated values
+    return {
+      endurance: Math.max(0, endurance),
+      pointCorporence: Math.max(0, pointCorporence),
+      capaciteCharge: Math.max(0, capaciteCharge),
+      bonusDiscretion,
+      bonusDissimulation,
+      vitesses,
+      corpulence,
+      indexVitesse,
+      indexTaille,
+      indexPoids
+    };
+  }
 }
+
 
 // Initialize the system
 Hooks.once("init", () => {
@@ -1240,6 +1359,274 @@ Hooks.once("init", () => {
   foundry.documents.collections.Actors.registerSheet("merc", MercCharacterSheet, { types: ["character", "npc"], makeDefault: true });
 });
 
+const DEFAULT_BIOGRAPHY = {
+  age: "",
+  height: 0,
+  weight: 0,
+  gender: "",
+  origin: "",
+  year: 0,
+  renown: 0
+};
+
+const DEFAULT_ATTRIBUTES = {
+  intelligence: { origin: 0, current: 0 },
+  will: { origin: 0, current: 0 },
+  mental: { origin: 0, current: 0 },
+  charisma: { origin: 0, current: 0 },
+  chance: { origin: 0, current: 0 },
+  adaptation: { origin: 0, current: 0 },
+  strength: { origin: 0, current: 0 },
+  dexterity: { origin: 0, current: 0 },
+  speed: { origin: 0, current: 0 },
+  constitution: { origin: 0, current: 0 },
+  perception: 0,
+  perceptionDetail: {
+    sight: 0,
+    hearing: 0,
+    taste: 0,
+    smell: 0,
+    touch: 0
+  }
+};
+
+const DEFAULT_COMBAT = {
+  initiative: 0,
+  defense: 0,
+  health: 0,
+  fatigue: 0,
+  endurance: 0,
+  pointCorporence: 0,
+  capaciteCharge: 0,
+  bonusDiscretion: 0,
+  bonusDissimulation: 0,
+  corpulence: 0
+};
+
+const DEFAULT_MOVEMENT = {
+  walk: 0,
+  run: 0,
+  sprint: 0,
+  charge: 0,
+  reptation: 0,
+  marche: 0,
+  course: 0
+};
+
+const buildSkillDefaults = () => Object.fromEntries(
+  Object.entries(CONFIG.MERC.skills).map(([key, def]) => [
+    key,
+    {
+      base: 0,
+      dev: 0,
+      bonus: 0,
+      degree: 0,
+      abilities: def.abilities || []
+    }
+  ])
+);
+
+const findTableIndex = (value, table) => {
+  if (!value || value <= 0) return 0;
+  for (let i = table.length - 1; i >= 0; i--) {
+    if (value >= table[i]) return i;
+  }
+  return 0;
+};
+
+const computeCombatStatsFromSystem = (system) => {
+  const attrs = system?.attributes || {};
+  const height = system?.biography?.height || 0;
+  const weight = system?.biography?.weight || 0;
+  const rapidite = attrs.speed?.current ?? attrs.speed ?? 0;
+
+  const indexTaille = findTableIndex(height, STATS_TABLES.taille);
+  const indexPoids = findTableIndex(weight, STATS_TABLES.poids);
+
+  const attTaille = indexTaille - 11;
+  const attPoids = indexPoids - 11;
+
+  const avgAtt = (attTaille + attPoids) / 2;
+  const corpulence = avgAtt > 5 ? Math.ceil(avgAtt) : Math.floor(avgAtt);
+  const corpulenceTableIdx = Math.max(0, Math.min(31, corpulence + 11));
+  const indexVitesse = Math.max(0, Math.min(31, corpulence + rapidite - 5 + 11));
+
+  const volonte = attrs.will?.current ?? attrs.will ?? 0;
+  const constitution = attrs.constitution?.current ?? attrs.constitution ?? 0;
+  const endurance = Math.floor((volonte + constitution) / 2);
+
+  const pcAjust = STATS_TABLES.ajustementPC[corpulenceTableIdx] || 0;
+  const pointCorporence = constitution + pcAjust;
+
+  const force = attrs.strength?.current ?? attrs.strength ?? 0;
+  const capaciteCharge = force + (constitution * 2);
+
+  const bonusDiscretion = STATS_TABLES.discretion[corpulenceTableIdx] || 0;
+  const bonusDissimulation = STATS_TABLES.dissimulation[corpulenceTableIdx] || 0;
+
+  return {
+    endurance: Math.max(0, endurance),
+    pointCorporence: Math.max(0, pointCorporence),
+    capaciteCharge: Math.max(0, capaciteCharge),
+    bonusDiscretion,
+    bonusDissimulation,
+    corpulence,
+    vitesses: {
+      reptation: STATS_TABLES.reptation[indexVitesse] || 0,
+      marche: STATS_TABLES.marche[indexVitesse] || 0,
+      course: STATS_TABLES.course[indexVitesse] || 0
+    }
+  };
+};
+
+const getActorMigrationData = (actor) => {
+  const updateData = {};
+  const system = actor.system || {};
+
+  if (!system.biography) {
+    for (const [key, value] of Object.entries(DEFAULT_BIOGRAPHY)) {
+      updateData[`system.biography.${key}`] = value;
+    }
+  }
+
+  if (!system.attributes) {
+    for (const [key, value] of Object.entries(DEFAULT_ATTRIBUTES)) {
+      updateData[`system.attributes.${key}`] = foundry.utils.duplicate(value);
+    }
+  } else {
+    for (const [key, value] of Object.entries(DEFAULT_ATTRIBUTES)) {
+      const current = foundry.utils.getProperty(system, `attributes.${key}`);
+      const path = `system.attributes.${key}`;
+
+      if (current === undefined) {
+        updateData[path] = foundry.utils.duplicate(value);
+        continue;
+      }
+
+      if (typeof value === "object" && value !== null && ("origin" in value || "current" in value)) {
+        if (typeof current !== "object" || current === null) {
+          const num = Number(current ?? 0);
+          updateData[path] = { origin: num, current: num };
+        } else {
+          if (current.origin === undefined) updateData[`${path}.origin`] = Number(current.current ?? 0);
+          if (current.current === undefined) updateData[`${path}.current`] = Number(current.origin ?? 0);
+        }
+      }
+    }
+
+    const perceptionDetail = system.attributes?.perceptionDetail;
+    if (!perceptionDetail) {
+      updateData["system.attributes.perceptionDetail"] = foundry.utils.duplicate(DEFAULT_ATTRIBUTES.perceptionDetail);
+    } else {
+      for (const [subKey, subValue] of Object.entries(DEFAULT_ATTRIBUTES.perceptionDetail)) {
+        if (perceptionDetail[subKey] === undefined) {
+          updateData[`system.attributes.perceptionDetail.${subKey}`] = subValue;
+        }
+      }
+    }
+  }
+
+  if (!system.skills) {
+    for (const [key, def] of Object.entries(CONFIG.MERC.skills)) {
+      updateData[`system.skills.${key}`] = {
+        base: 0,
+        dev: 0,
+        bonus: 0,
+        degree: 0,
+        abilities: def.abilities || []
+      };
+    }
+  } else {
+    for (const [key, def] of Object.entries(CONFIG.MERC.skills)) {
+      const skill = system.skills[key];
+      if (!skill) {
+        updateData[`system.skills.${key}`] = {
+          base: 0,
+          dev: 0,
+          bonus: 0,
+          degree: 0,
+          abilities: def.abilities || []
+        };
+        continue;
+      }
+
+      if (skill.base === undefined) updateData[`system.skills.${key}.base`] = 0;
+      if (skill.dev === undefined) updateData[`system.skills.${key}.dev`] = 0;
+      if (skill.bonus === undefined) updateData[`system.skills.${key}.bonus`] = 0;
+      if (skill.degree === undefined) updateData[`system.skills.${key}.degree`] = 0;
+      if (skill.abilities === undefined) updateData[`system.skills.${key}.abilities`] = def.abilities || [];
+    }
+  }
+
+  if (!system.combat) {
+    for (const [key, value] of Object.entries(DEFAULT_COMBAT)) {
+      updateData[`system.combat.${key}`] = value;
+    }
+  } else {
+    for (const [key, value] of Object.entries(DEFAULT_COMBAT)) {
+      if (system.combat?.[key] === undefined) {
+        updateData[`system.combat.${key}`] = value;
+      }
+    }
+  }
+
+  if (!system.movement) {
+    for (const [key, value] of Object.entries(DEFAULT_MOVEMENT)) {
+      updateData[`system.movement.${key}`] = value;
+    }
+  } else {
+    for (const [key, value] of Object.entries(DEFAULT_MOVEMENT)) {
+      if (system.movement?.[key] === undefined) {
+        updateData[`system.movement.${key}`] = value;
+      }
+    }
+  }
+
+  const needsCombatValues =
+    system.combat?.endurance === undefined ||
+    system.combat?.pointCorporence === undefined ||
+    system.combat?.capaciteCharge === undefined ||
+    system.combat?.bonusDiscretion === undefined ||
+    system.combat?.bonusDissimulation === undefined ||
+    system.movement?.reptation === undefined ||
+    system.movement?.marche === undefined ||
+    system.movement?.course === undefined;
+
+  if (needsCombatValues) {
+    const mergedSystem = foundry.utils.mergeObject(
+      foundry.utils.duplicate(system),
+      foundry.utils.expandObject(updateData),
+      { inplace: false }
+    );
+    const computed = computeCombatStatsFromSystem(mergedSystem);
+
+    updateData["system.combat.endurance"] = computed.endurance;
+    updateData["system.combat.pointCorporence"] = computed.pointCorporence;
+    updateData["system.combat.capaciteCharge"] = computed.capaciteCharge;
+    updateData["system.combat.bonusDiscretion"] = computed.bonusDiscretion;
+    updateData["system.combat.bonusDissimulation"] = computed.bonusDissimulation;
+    updateData["system.combat.corpulence"] = computed.corpulence;
+    updateData["system.movement.reptation"] = computed.vitesses.reptation;
+    updateData["system.movement.marche"] = computed.vitesses.marche;
+    updateData["system.movement.course"] = computed.vitesses.course;
+  }
+
+  return updateData;
+};
+
+Hooks.once("ready", async () => {
+  if (!game.user.isGM) return;
+
+  const actors = game.actors?.contents ?? [];
+  for (const actor of actors) {
+    if (!actor || !["character", "npc"].includes(actor.type)) continue;
+    const updateData = getActorMigrationData(actor);
+    if (Object.keys(updateData).length > 0) {
+      await actor.update(updateData, { render: false });
+    }
+  }
+});
+
 // Hook for initializing actor data
 Hooks.on("preCreateActor", (actor, data, options, userId) => {
   // Initialize system data in the data object
@@ -1277,6 +1664,27 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
         touch: 0
       }
     },
+    combat: {
+      initiative: 0,
+      defense: 0,
+      health: 0,
+      fatigue: 0,
+      endurance: 0,
+      pointCorporence: 0,
+      capaciteCharge: 0,
+      bonusDiscretion: 0,
+      bonusDissimulation: 0,
+      corpulence: 0
+    },
+    movement: {
+      walk: 0,
+      run: 0,
+      sprint: 0,
+      charge: 0,
+      reptation: 0,
+      marche: 0,
+      course: 0
+    },
     skills: Object.fromEntries(
       Object.entries(CONFIG.MERC.skills).map(([key, def]) => [
         key,
@@ -1294,4 +1702,44 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
   data.system = foundry.utils.mergeObject(data.system, systemData);
 });
 
+// Hook to update combat statistics when actor data changes
+Hooks.on("updateActor", (actor, changes, options, userId) => {
+  // Only update for character actors
+  if (actor.type !== "character") return;
+  
+  // Check if we need to recalculate combat stats
+  const needsUpdate = 
+    changes.system?.biography?.height ||
+    changes.system?.biography?.weight ||
+    changes.system?.attributes?.will ||
+    changes.system?.attributes?.constitution ||
+    changes.system?.attributes?.strength ||
+    changes.system?.attributes?.speed;
+  
+  if (!needsUpdate) return;
+  
+  // Get the sheet instance if it's open
+  const sheets = actor.apps;
+  for (const [key, sheet] of Object.entries(sheets)) {
+    if (sheet instanceof MercCharacterSheet) {
+      const stats = sheet.calculateCombatStats();
+      if (stats) {
+        actor.update({
+          "system.combat.endurance": stats.endurance,
+          "system.combat.pointCorporence": stats.pointCorporence,
+          "system.combat.capaciteCharge": stats.capaciteCharge,
+          "system.combat.bonusDiscretion": stats.bonusDiscretion,
+          "system.combat.bonusDissimulation": stats.bonusDissimulation,
+          "system.combat.corpulence": stats.corpulence,
+          "system.movement.reptation": stats.vitesses.reptation,
+          "system.movement.marche": stats.vitesses.marche,
+          "system.movement.course": stats.vitesses.course
+        }, { render: false });
+      }
+      break;
+    }
+  }
+});
+
 console.log("Mercenary System - system.js loaded successfully ✓");
+

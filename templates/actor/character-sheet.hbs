@@ -74,8 +74,9 @@
 
   <!-- NAVIGATION TABS -->
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="stats">Stats & Attributes</a>
+    <a class="item active" data-tab="stats">Attributs</a>
     <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="combat">Combat</a>
     <a class="item" data-tab="items">Items</a>
   </nav>
 
@@ -262,6 +263,107 @@
         </div>
       </div>
 
+      <!-- Stat Grid-->
+      <div class="headerStatsGrid three-columns">
+        
+        <!-- COLUMN 1: Physical Characteristics -->
+        <div class="stats-column">
+          <div class="stats-column-headers">
+            <span class="stats-name-header">Caractéristiques Physiques</span>
+          </div>
+          
+          <div class="headerStat" data-stat="endurance">
+            <span class="headerStatLabel">Endurance</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.combat.endurance}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="headerStat" data-stat="pointCorporence">
+            <span class="headerStatLabel">Points de Corpulence</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.combat.pointCorporence}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="headerStat" data-stat="capaciteCharge">
+            <span class="headerStatLabel">Capacité de Charge</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.combat.capaciteCharge}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: Bonuses -->
+        <div class="stats-column">
+          <div class="stats-column-headers">
+            <span class="stats-name-header">Bonus Combat</span>
+          </div>
+
+          <div class="headerStat" data-stat="bonusDiscretion">
+            <span class="headerStatLabel">Bonus Discrétion</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.combat.bonusDiscretion}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="headerStat" data-stat="bonusDissimulation">
+            <span class="headerStatLabel">Bonus Dissimulation</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.combat.bonusDissimulation}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 3: Movement Speeds -->
+        <div class="stats-column">
+          <div class="stats-column-headers">
+            <span class="stats-name-header">Vitesses Déplacement</span>
+          </div>
+
+          <div class="headerStat" data-stat="reptation">
+            <span class="headerStatLabel">Reptation</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.movement.reptation}}</div>
+                <div class="stat-unit">m/seg</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="headerStat" data-stat="marche">
+            <span class="headerStatLabel">Marche</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.movement.marche}}</div>
+                <div class="stat-unit">m/seg</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="headerStat" data-stat="course">
+            <span class="headerStatLabel">Course</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large">{{actor.system.movement.course}}</div>
+                <div class="stat-unit">m/seg</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
     <!-- SKILLS TAB -->
@@ -358,6 +460,29 @@
 
     </div>
 
+    <!-- COMBAT TAB -->
+    <div class="tab-content" data-tab="combat">
+      
+      <!-- Weapons Quick Access -->
+      <div class="weapons-section">
+        <h3>Armes Équipées</h3>
+        <div class="items-list">
+          {{#each (filterItems actor.items "weapon") as |item|}}
+          <div class="item-card" data-item-id="{{item._id}}">
+            <div class="item-info">
+              <div class="item-name">{{item.name}}</div>
+              <div class="item-damage">{{item.system.damage}}</div>
+            </div>
+            <div class="item-controls">
+              <button type="button" class="item-edit">✎</button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+    </div>
+
     <!-- ITEMS TAB -->
     <div class="tab-content" data-tab="items">
       
@@ -367,54 +492,56 @@
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
           <div class="item-card" data-item-id="{{item._id}}">
-            <div>
-              <div class="item-name" style="cursor: pointer;">{{item.name}}</div>
-              <div style="font-size: 11px; color: #999;">{{item.system.damage}}</div>
+            <div class="item-info">
+              <div class="item-name">{{item.name}}</div>
+              <div class="item-damage">{{item.system.damage}}</div>
             </div>
-            <div style="display: flex; gap: 5px;">
-              <button type="button" class="item-edit" style="padding: 3px 8px; background-color: #0f3460; color: #e94560; border: 1px solid #e94560; border-radius: 3px; cursor: pointer;">✎</button>
-              <button type="button" class="item-delete" style="padding: 3px 8px; background-color: #cc3344; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+            <div class="item-controls">
+              <button type="button" class="item-edit">✎</button>
+              <button type="button" class="item-delete">✕</button>
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="weapon" style="width: 100%; margin-top: 10px;">+ Add Weapon</button>
+          <button type="button" class="item-create btn" data-type="weapon">+ Add Weapon</button>
         </div>
       </div>
 
       <!-- Armor -->
-      <div class="items-section" style="margin-top: 20px;">
+      <div class="items-section">
         <h3>Armor & Protection</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "armor") as |item|}}
           <div class="item-card" data-item-id="{{item._id}}">
-            <div>
-              <div class="item-name" style="cursor: pointer;">{{item.name}}</div>
-              <div style="font-size: 11px; color: #999;">AC {{item.system.armorClass}}</div>
+            <div class="item-info">
+              <div class="item-name">{{item.name}}</div>
+              <div class="item-damage">AC {{item.system.armorClass}}</div>
             </div>
-            <div style="display: flex; gap: 5px;">
-              <button type="button" class="item-edit" style="padding: 3px 8px; background-color: #0f3460; color: #e94560; border: 1px solid #e94560; border-radius: 3px; cursor: pointer;">✎</button>
-              <button type="button" class="item-delete" style="padding: 3px 8px; background-color: #cc3344; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+            <div class="item-controls">
+              <button type="button" class="item-edit">✎</button>
+              <button type="button" class="item-delete">✕</button>
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="armor" style="width: 100%; margin-top: 10px;">+ Add Armor</button>
+          <button type="button" class="item-create btn" data-type="armor">+ Add Armor</button>
         </div>
       </div>
 
       <!-- Equipment -->
-      <div class="items-section" style="margin-top: 20px;">
+      <div class="items-section">
         <h3>Equipment</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "equipment") as |item|}}
           <div class="item-card" data-item-id="{{item._id}}">
-            <div class="item-name" style="cursor: pointer;">{{item.name}}</div>
-            <div style="display: flex; gap: 5px;">
-              <button type="button" class="item-edit" style="padding: 3px 8px; background-color: #0f3460; color: #e94560; border: 1px solid #e94560; border-radius: 3px; cursor: pointer;">✎</button>
-              <button type="button" class="item-delete" style="padding: 3px 8px; background-color: #cc3344; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+            <div class="item-info">
+              <div class="item-name">{{item.name}}</div>
+            </div>
+            <div class="item-controls">
+              <button type="button" class="item-edit">✎</button>
+              <button type="button" class="item-delete">✕</button>
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="equipment" style="width: 100%; margin-top: 10px;">+ Add Equipment</button>
+          <button type="button" class="item-create btn" data-type="equipment">+ Add Equipment</button>
         </div>
       </div>
 

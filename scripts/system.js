@@ -67,6 +67,20 @@ const STATS_TABLES = {
   ajustementPC: [-3, -3, -3, -3, -3, -3, -3, -2, -2, -2, -2, -2, -2, -1, -1, -1, 0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 7, 8]
 };
 
+// Base melee damage table (Force 1-10 x Degree -7 to 19)
+const BASE_DAMAGE_TABLE = [
+  ["1", "1", "1", "1", "1", "1", "2", "2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1"],
+  ["1", "1", "1", "1", "1", "2", "2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1"],
+  ["1", "1", "1", "1", "2", "2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1"],
+  ["1", "1", "1", "2", "2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1", "2d6+1"],
+  ["1", "1", "2", "2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1", "2d6+1", "2d6+2"],
+  ["1", "2", "2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1", "2d6+1", "2d6+2", "2d6+2"],
+  ["2", "2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1", "2d6+1", "2d6+2", "2d6+2", "2d6+2"],
+  ["2", "2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1", "2d6+1", "2d6+2", "2d6+2", "2d6+2", "2d6+2"],
+  ["2", "2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1", "2d6+1", "2d6+2", "2d6+2", "2d6+2", "2d6+2", "3d6"],
+  ["2", "1d6", "1d6", "1d6", "1d6", "1d6+1", "1d6+1", "1d6+1", "1d6+1", "1d6+2", "1d6+2", "1d6+2", "1d6+2", "2d6", "2d6", "2d6", "2d6", "2d6+1", "2d6+1", "2d6+1", "2d6+1", "2d6+2", "2d6+2", "2d6+2", "2d6+2", "3d6", "3d6"]
+];
+
 // Degree calculation table: rows are Base values (4-28), columns are cumulative XP thresholds
 const DEGREE_TABLE = {
   4: [0, 0, 0, 1, 1, 2, 3, 4, 5, 7, 10, 12, 16, 19, 23, 28, 32, 38, 43, 49, 56, 62, 70, 77, 85, 94, 102, 112, 121, 131, 142, 152, 164, 175, 187, 200, 212, 226, 239, 253, 268],
@@ -140,6 +154,21 @@ function getDegreeFromTable(base, dev) {
   
   // Convert index to degree using the conversion table
   return INDEX_TO_DEGREE[foundIndex];
+}
+
+/**
+ * Get base damage formula from Force and Degree using lookup table
+ * Force is clamped to 1-10, Degree is clamped to -7 to 19
+ * @param {number} forceValue
+ * @param {number} degreeValue
+ * @returns {string} Dice formula (e.g., "1d6+1")
+ */
+function getBaseDamageFromTable(forceValue, degreeValue) {
+  const force = Math.min(10, Math.max(1, Number(forceValue) || 1));
+  const degree = Math.min(19, Math.max(-7, Number(degreeValue) || -7));
+  const rowIndex = force - 1;
+  const colIndex = degree + 7;
+  return BASE_DAMAGE_TABLE[rowIndex]?.[colIndex] ?? "1";
 }
 
 /**
@@ -777,6 +806,20 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // Handle base damage roll buttons (combat tab)
+    const baseDamageButtons = html.querySelectorAll(".combat-base-damage-roll");
+    baseDamageButtons.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const formula = btn.dataset.rollFormula;
+        const label = btn.dataset.rollLabel;
+        if (formula) {
+          this.rollBaseDamage(formula, label);
+        }
+      });
+    });
+
     // Persist individual field changes immediately
     const formElement = html.querySelector("form");
     if (formElement) {
@@ -801,7 +844,68 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           if (value === currentValue) return;
 
           console.log(`[Merc] Field persisted -> ${fieldPath}:`, value);
-          await this.actor.update({ [fieldPath]: value });
+          
+          // Special handling for attribute current changes
+          if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
+            // Update actor first (this updates this.actor.system)
+            await this.actor.update({ [fieldPath]: value });
+            
+            // Now calculate stats with the updated data
+            const stats = this.calculateCombatStats();
+            if (stats) {
+              const updateData = {
+                "system.combat.endurance": stats.endurance,
+                "system.combat.pointCorporence": stats.pointCorporence,
+                "system.combat.capaciteCharge": stats.capaciteCharge,
+                "system.combat.bonusDiscretion": stats.bonusDiscretion,
+                "system.combat.bonusDissimulation": stats.bonusDissimulation,
+                "system.combat.corpulence": stats.corpulence,
+                "system.combat.baseDamageMelee": stats.baseDamageMelee,
+                "system.combat.baseDamageBladed": stats.baseDamageBladed,
+                "system.movement.reptation": stats.vitesses.reptation,
+                "system.movement.marche": stats.vitesses.marche,
+                "system.movement.course": stats.vitesses.course
+              };
+              
+              await this.actor.update(updateData, { render: false });
+            }
+            
+            await this.render();
+            return;
+          }
+          
+          // Special handling for melee/bladed_weapons dev changes
+          if (fieldPath === "system.skills.melee.dev" || fieldPath === "system.skills.bladed_weapons.dev") {
+            const skillKey = fieldPath.includes("melee.") ? "melee" : "bladed_weapons";
+            const skillData = { ...this.actor.system.skills[skillKey], dev: value };
+            const newDegree = this.computeSkillDegree(this.actor, skillKey, skillData);
+            
+            // Update local actor data to match what we're about to persist
+            this.actor.system.skills[skillKey].dev = value;
+            this.actor.system.skills[skillKey].degree = newDegree;
+            
+            // Calculate stats with updated local data
+            const stats = this.calculateCombatStats();
+            
+            // Update combat stats in local data
+            this.actor.system.combat.baseDamageMelee = stats.baseDamageMelee;
+            this.actor.system.combat.baseDamageBladed = stats.baseDamageBladed;
+            // Single update with all changes
+            const updateData = {
+              [fieldPath]: value,
+              [fieldPath.replace(".dev", ".degree")]: newDegree,
+              "system.combat.baseDamageMelee": stats.baseDamageMelee,
+              "system.combat.baseDamageBladed": stats.baseDamageBladed
+            };
+            
+            // Update without triggering render (we'll do it manually)
+            await this.actor.update(updateData, { render: false });
+            
+            // Render immediately with updated data already in memory
+            await this.render();
+          } else {
+            await this.actor.update({ [fieldPath]: value });
+          }
         };
 
         if (input.type === "text" || input.tagName === "TEXTAREA") {
@@ -831,8 +935,32 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const currentPath = originPath.replace(".origin", ".current");
         const value = Number(input.value) || 0;
         
-        // Sync origin -> current
+        // Update actor first (this updates this.actor.system)
         await this.actor.update({ [currentPath]: value });
+        
+        // Now calculate stats with the updated data
+        const stats = this.calculateCombatStats();
+        
+        // Update all derived combat stats
+        const updateData = {};
+        
+        if (stats) {
+          updateData["system.combat.endurance"] = stats.endurance;
+          updateData["system.combat.pointCorporence"] = stats.pointCorporence;
+          updateData["system.combat.capaciteCharge"] = stats.capaciteCharge;
+          updateData["system.combat.bonusDiscretion"] = stats.bonusDiscretion;
+          updateData["system.combat.bonusDissimulation"] = stats.bonusDissimulation;
+          updateData["system.combat.corpulence"] = stats.corpulence;
+          updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
+          updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+          updateData["system.movement.reptation"] = stats.vitesses.reptation;
+          updateData["system.movement.marche"] = stats.vitesses.marche;
+          updateData["system.movement.course"] = stats.vitesses.course;
+          
+          await this.actor.update(updateData, { render: false });
+        }
+        
+        await this.render();
         console.log(`[Merc] Synced ${originPath} to ${currentPath}:`, value);
       });
     });
@@ -937,6 +1065,17 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
               event.preventDefault();
               return;
             }
+            
+            // Recalculate base damage if melee or bladed weapons changed
+            if (skillKey === "melee" || skillKey === "bladed_weapons") {
+              const stats = this.calculateCombatStats();
+              if (stats) {
+                this.actor.update({
+                  "system.combat.baseDamageMelee": stats.baseDamageMelee,
+                  "system.combat.baseDamageBladed": stats.baseDamageBladed
+                }, { render: false });
+              }
+            }
           }
         }
       });
@@ -974,10 +1113,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "system.combat.bonusDiscretion": stats.bonusDiscretion,
         "system.combat.bonusDissimulation": stats.bonusDissimulation,
         "system.combat.corpulence": stats.corpulence,
+        "system.combat.baseDamageMelee": stats.baseDamageMelee,
+        "system.combat.baseDamageBladed": stats.baseDamageBladed,
         "system.movement.reptation": stats.vitesses.reptation,
         "system.movement.marche": stats.vitesses.marche,
         "system.movement.course": stats.vitesses.course
       }, { render: false });
+      
     }
   }
 
@@ -1113,6 +1255,35 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     await ChatMessage.create(chatData);
   }
 
+  async rollBaseDamage(formula, skillLabel) {
+    const actor = this.actor ?? this.document;
+    if (!formula) return;
+
+    const roll = new Roll(formula);
+    await roll.evaluate();
+
+    const headerLabel = game.i18n.format("MERC.UI.combat.baseDamageRoll", {
+      skill: skillLabel || game.i18n.localize("MERC.UI.combat.baseDamage")
+    });
+
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      rolls: [roll],
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${headerLabel}</span>
+          <span class="merc-roll-badge">${roll.total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20">${formula}: <strong>${roll.total}</strong></span>
+        </div>
+      </div>`
+    };
+
+    await ChatMessage.create(chatData);
+  }
+
   async rollSubAttributeCheck(subKey, subLabel) {
     const actor = this.actor ?? this.document;
     const systemData = actor.system || actor._source?.system || {};
@@ -1243,6 +1414,15 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       marche: STATS_TABLES.marche[indexVitesse] || 0,
       course: STATS_TABLES.course[indexVitesse] || 0
     };
+
+    // Base damage calculations (melee + bladed weapons)
+    const skills = system.skills || {};
+    const meleeSkill = { abilities: CONFIG.MERC.skills?.melee?.abilities || [], ...(skills.melee || {}) };
+    const bladedSkill = { abilities: CONFIG.MERC.skills?.bladed_weapons?.abilities || [], ...(skills.bladed_weapons || {}) };
+    const meleeDegree = this.computeSkillDegree(this.actor, "melee", meleeSkill);
+    const bladedDegree = this.computeSkillDegree(this.actor, "bladed_weapons", bladedSkill);
+    const baseDamageMelee = getBaseDamageFromTable(force, meleeDegree);
+    const baseDamageBladed = getBaseDamageFromTable(force, bladedDegree);
     
     // Return calculated values
     return {
@@ -1252,6 +1432,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       bonusDiscretion,
       bonusDissimulation,
       vitesses,
+      baseDamageMelee,
+      baseDamageBladed,
       corpulence,
       indexVitesse,
       indexTaille,
@@ -1682,7 +1864,9 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
       capaciteCharge: 0,
       bonusDiscretion: 0,
       bonusDissimulation: 0,
-      corpulence: 0
+      corpulence: 0,
+      baseDamageMelee: "1",
+      baseDamageBladed: "1"
     },
     movement: {
       walk: 0,
@@ -1724,7 +1908,20 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
     changes.system?.attributes?.strength ||
     changes.system?.attributes?.speed;
   
-  if (!needsUpdate) return;
+  // Check if linked skills changed (melee or bladed_weapons dev/bonus/degree)
+  const meleeChanged = 
+    changes.system?.skills?.melee?.dev !== undefined ||
+    changes.system?.skills?.melee?.bonus !== undefined ||
+    changes.system?.skills?.melee?.degree !== undefined;
+    
+  const bladedChanged = 
+    changes.system?.skills?.bladed_weapons?.dev !== undefined ||
+    changes.system?.skills?.bladed_weapons?.bonus !== undefined ||
+    changes.system?.skills?.bladed_weapons?.degree !== undefined;
+  
+  const skillsChanged = meleeChanged || bladedChanged;
+  
+  if (!needsUpdate && !skillsChanged) return;
   
   // Get the sheet instance if it's open
   const sheets = actor.apps;
@@ -1732,17 +1929,36 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
     if (sheet instanceof MercCharacterSheet) {
       const stats = sheet.calculateCombatStats();
       if (stats) {
-        actor.update({
-          "system.combat.endurance": stats.endurance,
-          "system.combat.pointCorporence": stats.pointCorporence,
-          "system.combat.capaciteCharge": stats.capaciteCharge,
-          "system.combat.bonusDiscretion": stats.bonusDiscretion,
-          "system.combat.bonusDissimulation": stats.bonusDissimulation,
-          "system.combat.corpulence": stats.corpulence,
-          "system.movement.reptation": stats.vitesses.reptation,
-          "system.movement.marche": stats.vitesses.marche,
-          "system.movement.course": stats.vitesses.course
-        }, { render: false });
+        const updateData = {};
+        
+        // Always update base damage if skills changed
+        if (skillsChanged) {
+          updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
+          updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+        }
+        
+        // Update combat stats if attributes/biometrics changed
+        if (needsUpdate) {
+          updateData["system.combat.endurance"] = stats.endurance;
+          updateData["system.combat.pointCorporence"] = stats.pointCorporence;
+          updateData["system.combat.capaciteCharge"] = stats.capaciteCharge;
+          updateData["system.combat.bonusDiscretion"] = stats.bonusDiscretion;
+          updateData["system.combat.bonusDissimulation"] = stats.bonusDissimulation;
+          updateData["system.combat.corpulence"] = stats.corpulence;
+          updateData["system.movement.reptation"] = stats.vitesses.reptation;
+          updateData["system.movement.marche"] = stats.vitesses.marche;
+          updateData["system.movement.course"] = stats.vitesses.course;
+        }
+        
+        // Update base damage in both cases (needs recalc)
+        if (!skillsChanged && needsUpdate) {
+          updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
+          updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+        }
+        
+        if (Object.keys(updateData).length > 0) {
+          actor.update(updateData, { render: false });
+        }
       }
       break;
     }

@@ -142,6 +142,15 @@
         "walk": "Walk",
         "run": "Run"
       },
+      "combat": {
+        "baseDamageHeader": "Base Damage",
+        "baseDamageMelee": "Melee Base Damage",
+        "baseDamageBladed": "Bladed Weapons Base Damage",
+        "linkedSkill": "Linked skill:",
+        "rollBaseDamage": "Roll damage",
+        "baseDamageRoll": "Base damage - {skill}",
+        "baseDamage": "Base damage"
+      },
       "units": {
         "mPerSeg": "m/seg"
       },

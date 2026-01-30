@@ -107,7 +107,9 @@
       "capaciteCharge": 0,
       "bonusDiscretion": 0,
       "bonusDissimulation": 0,
-      "corpulence": 0
+      "corpulence": 0,
+      "baseDamageMelee": "1",
+      "baseDamageBladed": "1"
     },
     "movement": {
       "walk": 0,

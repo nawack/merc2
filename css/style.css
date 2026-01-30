@@ -1153,6 +1153,83 @@ select:focus {
   margin-top: 20px;
 }
 
+.combat-base-damage-section {
+  background-color: #f5f5f5;
+  padding: 12px 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.combat-base-damage-section h3 {
+  color: #474749;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+}
+
+.combat-base-damage-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.combat-base-damage-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #999;
+  border-radius: 10px;
+  padding: 8px 6px;
+  font-size: 11px;
+}
+
+.combat-base-damage-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.combat-base-damage-title {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.combat-base-damage-skill {
+  font-size: 10px;
+  color: #666;
+  line-height: 1.2;
+}
+
+.combat-base-damage-value {
+  min-width: 60px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #999;
+  background-color: #e5e5e5;
+  font-weight: bold;
+  color: #333;
+}
+
+.combat-base-damage-roll {
+  width: 32px;
+  height: 24px;
+  border-radius: 10px;
+  border: 1px solid #999;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.combat-base-damage-roll:hover {
+  background-color: #555;
+}
+
 .weapons-section h3 {
   color: #474749;
   font-size: 11px;

@@ -142,6 +142,15 @@
         "walk": "Marche",
         "run": "Course"
       },
+      "combat": {
+        "baseDamageHeader": "Base dégâts",
+        "baseDamageMelee": "Base dégâts corps à corps",
+        "baseDamageBladed": "Base dégâts armes blanches",
+        "linkedSkill": "Compétence liée :",
+        "rollBaseDamage": "Lancer les dégâts",
+        "baseDamageRoll": "Base dégâts - {skill}",
+        "baseDamage": "Base dégâts"
+      },
       "units": {
         "mPerSeg": "m/seg"
       },

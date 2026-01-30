@@ -463,6 +463,29 @@
     <!-- COMBAT TAB -->
     <div class="tab-content" data-tab="combat">
       
+      <!-- Base Damage -->
+      <div class="combat-base-damage-section">
+        <h3>{{localize "MERC.UI.combat.baseDamageHeader"}}</h3>
+        <div class="combat-base-damage-grid">
+          <div class="combat-base-damage-row">
+            <div class="combat-base-damage-label">
+              <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageMelee"}}</span>
+              <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.melee"}}</span>
+            </div>
+            <div class="combat-base-damage-value">{{actor.system.combat.baseDamageMelee}}</div>
+            <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageMelee}}" data-roll-label="{{localize "MERC.Skills.melee"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
+          </div>
+          <div class="combat-base-damage-row">
+            <div class="combat-base-damage-label">
+              <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageBladed"}}</span>
+              <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.bladed_weapons"}}</span>
+            </div>
+            <div class="combat-base-damage-value">{{actor.system.combat.baseDamageBladed}}</div>
+            <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageBladed}}" data-roll-label="{{localize "MERC.Skills.bladed_weapons"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Weapons Quick Access -->
       <div class="weapons-section">
         <h3>{{localize "MERC.UI.items.equippedWeapons"}}</h3>

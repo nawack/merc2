@@ -2,7 +2,7 @@
   "id": "merc",
   "title": "Mercenary System",
   "description": "Un système de jeu de rôle basé sur des attributs et des compétences avec des jets de D20. Système simple et flexible pour Foundry VTT.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "compatibility": {
     "minimum": "13.0",
     "verified": "13.351",

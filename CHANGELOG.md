@@ -2,6 +2,19 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.2] - 2026-01-30
+
+### Fixed
+- 🐛 **Synchronisation UI** : Correction du lag lors de la mise à jour des attributs (origine et courant)
+- 🐛 **API Deprecated** : Mise à jour FilePicker vers namespace `foundry.applications.apps.FilePicker.implementation` (v13)
+- 🐛 **Bouton Portrait** : Rendu plus discret (opacité réduite, taille réduite)
+
+### Changed
+- 🔄 **Nettoyage CSS** : Suppression de doublons et classes inutilisées (`.character-portrait`, `.header-row`, `.actor-*`, `.resources-*`)
+- 🔄 **Optimisation** : Amélioration des performances avec suppression du code de debug
+
+---
+
 ## [1.0.1] - 2026-01-30
 
 ### Added

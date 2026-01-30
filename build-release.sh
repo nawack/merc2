@@ -41,9 +41,9 @@ for item in "${ITEMS_TO_ZIP[@]}"; do
         else
             cp "$SOURCE_PATH" "$DEST_PATH"
         fi
-        echo "✓ Added: $item"
+        echo "[+] Added: $item"
     else
-        echo "✗ Warning: Not found: $item"
+        echo "[-] Warning: Not found: $item"
     fi
 done
 
@@ -55,7 +55,7 @@ zip -r "$ZIP_PATH" merc > /dev/null 2>&1
 
 if [ -f "$ZIP_PATH" ]; then
     SIZE=$(du -h "$ZIP_PATH" | cut -f1)
-    echo "✓ ZIP created successfully!"
+    echo "[+] ZIP created successfully!"
     echo "  Path: $ZIP_PATH"
     echo "  Size: $SIZE"
     echo ""
@@ -64,7 +64,7 @@ if [ -f "$ZIP_PATH" ]; then
     echo "2. Update the download URL in system.json:"
     echo "   https://github.com/nawack/merc2/releases/download/v$VERSION/$ZIP_NAME"
 else
-    echo "✗ Error: Failed to create ZIP file"
+    echo "[-] Error: Failed to create ZIP file"
     rm -rf "$TEMP_DIR"
     exit 1
 fi
@@ -73,4 +73,4 @@ fi
 rm -rf "$TEMP_DIR"
 
 echo ""
-echo "✓ Build complete!"
+echo "[+] Build complete!"

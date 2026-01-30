@@ -55,9 +55,9 @@ foreach ($item in $itemsToZip) {
         } else {
             Copy-Item -Path $sourcePath -Destination $destPath -Force
         }
-        Write-Host "✓ Added: $item"
+        Write-Host "[+] Added: $item"
     } else {
-        Write-Host "✗ Warning: Not found: $item"
+        Write-Host "[-] Warning: Not found: $item"
     }
 }
 
@@ -67,7 +67,7 @@ Compress-Archive -Path $stagingDir -DestinationPath $zipPath -Force
 
 if (Test-Path $zipPath) {
     $size = (Get-Item $zipPath).Length / 1MB
-    Write-Host "✓ ZIP created successfully!"
+    Write-Host "[+] ZIP created successfully!"
     Write-Host "  Path: $zipPath"
     Write-Host "  Size: $([Math]::Round($size, 2)) MB"
     Write-Host "`nNext steps:"
@@ -75,11 +75,11 @@ if (Test-Path $zipPath) {
     Write-Host "2. Update the download URL in system.json:"
     Write-Host "   https://github.com/nawack/merc2/releases/download/v$version/$zipName"
 } else {
-    Write-Host "✗ Error: Failed to create ZIP file"
+    Write-Host "[-] Error: Failed to create ZIP file"
     exit 1
 }
 
 # Cleanup temp directory
 Remove-Item -Path $tempDir -Recurse -Force
 
-Write-Host "`n✓ Build complete!"
+Write-Host "`n[+] Build complete!"

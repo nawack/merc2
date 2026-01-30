@@ -80,6 +80,92 @@
       "spec_blades_knife": "Armes blanches : Couteau",
       "spec_powder_ak47": "Projectiles à poudre : AK47"
     },
+    "SkillGroups": {
+      "combat": "Combat",
+      "aptitudes": "Aptitudes",
+      "social": "Social",
+      "languages": "Langues",
+      "knowledge": "Connaissances",
+      "construction": "Construction",
+      "specializations": "Spécialisations",
+      "other": "Autres"
+    },
+    "UI": {
+      "tabs": {
+        "attributes": "Attributs",
+        "skills": "Compétences",
+        "combat": "Combat",
+        "items": "Objets"
+      },
+      "gender": {
+        "male": "Homme",
+        "female": "Femme"
+      },
+      "biography": {
+        "imageTitle": "Cliquez pour choisir une image",
+        "chooseImage": "Choisir une image",
+        "namePlaceholder": "Nom du personnage",
+        "age": "Âge",
+        "agePlaceholder": "25",
+        "height": "Taille (cm)",
+        "heightPlaceholder": "180",
+        "weight": "Poids (kg)",
+        "weightPlaceholder": "75",
+        "year": "Année",
+        "yearPlaceholder": "1250",
+        "origin": "Origine",
+        "originPlaceholder": "Royaume",
+        "renown": "Renommé",
+        "renownPlaceholder": "5"
+      },
+      "attributes": {
+        "origin": "Origine",
+        "current": "Actuel"
+      },
+      "perception": {
+        "sight": "Vue",
+        "hearing": "Ouïe",
+        "taste": "Goût",
+        "smell": "Odorat",
+        "touch": "Toucher"
+      },
+      "stats": {
+        "physical": "Caractéristiques physiques",
+        "endurance": "Endurance",
+        "bodyPoints": "Points de corpulence",
+        "carryCapacity": "Capacité de charge",
+        "combatBonuses": "Bonus de combat",
+        "stealthBonus": "Bonus discrétion",
+        "concealmentBonus": "Bonus dissimulation",
+        "movementSpeeds": "Vitesses de déplacement",
+        "reptation": "Reptation",
+        "walk": "Marche",
+        "run": "Course"
+      },
+      "units": {
+        "mPerSeg": "m/seg"
+      },
+      "skills": {
+        "base": "Base",
+        "dev": "Dev",
+        "degree": "Degré",
+        "bonus": "Bonus",
+        "total": "Total",
+        "missingPrereqs": "Prérequis non remplis",
+        "required": "Requis : {prereqs}",
+        "lockedWarning": "{skill} est verrouillée. Prérequis manquants : {prereqs}"
+      },
+      "items": {
+        "equippedWeapons": "Armes équipées",
+        "weapons": "Armes",
+        "armor": "Armure & Protection",
+        "equipment": "Équipement",
+        "addWeapon": "+ Ajouter une arme",
+        "addArmor": "+ Ajouter une armure",
+        "addEquipment": "+ Ajouter un équipement",
+        "armorClassShort": "CA"
+      }
+    },
     "Tabs": {
       "stats": "Statistiques",
       "biography": "Biographie",

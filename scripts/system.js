@@ -550,7 +550,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         
         // Build display label with prerequisites info
         const baseLabel = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
-        const displayLabel = prereqsText ? `${baseLabel} (Requis: ${prereqsText})` : baseLabel;
+        const requiredText = prereqsText
+          ? game.i18n.format("MERC.UI.skills.required", { prereqs: prereqsText })
+          : "";
+        const displayLabel = requiredText ? `${baseLabel} (${requiredText})` : baseLabel;
         
         data.skillList.push({
           key: skillKey,
@@ -585,7 +588,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     };
 
     data.skillGroups = [
-      makeGroup("combat", "Combat", [
+      makeGroup("combat", game.i18n.localize("MERC.SkillGroups.combat"), [
         "reaction",
         "melee",
         "bladed_weapons",
@@ -596,7 +599,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "heavy_weapons",
         "electronic_weapons"
       ]),
-      makeGroup("aptitudes", "Aptitudes", [
+      makeGroup("aptitudes", game.i18n.localize("MERC.SkillGroups.aptitudes"), [
         "running",
         "climbing",
         "swimming",
@@ -618,14 +621,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "forgery",
         "survival"
       ]),
-      makeGroup("social", "Social", [
+      makeGroup("social", game.i18n.localize("MERC.SkillGroups.social"), [
         "eloquence",
         "acting",
         "interrogation",
         "command",
         "instruction"
       ]),
-      makeGroup("languages", "Langues", [
+      makeGroup("languages", game.i18n.localize("MERC.SkillGroups.languages"), [
         "language_serbian",
         "language_arabic",
         "language_english",
@@ -634,7 +637,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "language_other_1",
         "language_other_2"
       ]),
-      makeGroup("knowledge", "Connaissances", [
+      makeGroup("knowledge", game.i18n.localize("MERC.SkillGroups.knowledge"), [
         "bureaucracy",
         "illegality",
         "mathematics",
@@ -653,13 +656,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "human_medicine",
         "surgery"
       ]),
-      makeGroup("construction", "Construction", [
+      makeGroup("construction", game.i18n.localize("MERC.SkillGroups.construction"), [
         "construction_avionics",
         "construction_vehicle",
         "construction_weaponry",
         "construction_tools"
       ]),
-      makeGroup("specializations", "Spécialisations", [
+      makeGroup("specializations", game.i18n.localize("MERC.SkillGroups.specializations"), [
         "spec_melee_mma",
         "spec_blades_knife",
         "spec_powder_ak47"
@@ -668,7 +671,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
     if (remaining.length) {
-      data.skillGroups.push({ id: "other", label: "Autres", skills: remaining });
+      data.skillGroups.push({ id: "other", label: game.i18n.localize("MERC.SkillGroups.other"), skills: remaining });
     }
 
     return data;
@@ -923,7 +926,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             // If skill is locked, prevent adding dev points
             if (!unlockStatus.unlocked && Number(input.value) > 0) {
               ui.notifications.warn(
-                `${game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey} est verrouillée. Prérequis manquants: ${unlockStatus.missingPrereqs.map(k => game.i18n.localize(CONFIG.MERC.skills[k]?.label) || k).join(", ")}`
+                game.i18n.format("MERC.UI.skills.lockedWarning", {
+                  skill: game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey,
+                  prereqs: unlockStatus.missingPrereqs
+                    .map(k => game.i18n.localize(CONFIG.MERC.skills[k]?.label) || k)
+                    .join(", ")
+                })
               );
               input.value = 0;
               event.preventDefault();

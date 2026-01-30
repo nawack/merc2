@@ -5,9 +5,9 @@
       <!-- Left Column: Character Image -->
       <div class="header-image-column">
         <div class="portrait-container">
-          <img class="character-portrait" src="{{actor.img}}" alt="{{actor.name}}" title="Click to browse for image">
+          <img class="character-portrait" src="{{actor.img}}" alt="{{actor.name}}" title="{{localize "MERC.UI.biography.imageTitle"}}">
           <div class="portrait-overlay">
-            <button type="button" class="portrait-browse-btn" title="Choisir une image">
+            <button type="button" class="portrait-browse-btn" title="{{localize "MERC.UI.biography.chooseImage"}}">
               <i class="fas fa-folder-open"></i>
             </button>
           </div>
@@ -19,19 +19,19 @@
         <!-- Row 1: Name + Gender -->
         <div class="header-info-row header-row-1">
           <div class="field-name-large">
-            <input type="text" name="name" value="{{actor.name}}" placeholder="Nom du personnage">
+            <input type="text" name="name" value="{{actor.name}}" placeholder="{{localize "MERC.UI.biography.namePlaceholder"}}">
           </div>
           <div class="field-inline field-gender">
             <div class="gender-toggle">
               <label class="gender-option male">
                 <input type="radio" name="system.biography.gender" value="male" {{#eq actor.system.biography.gender "male"}}checked{{/eq}}>
                 <span class="gender-icon" aria-hidden="true"></span>
-                <span class="gender-text">Homme</span>
+                <span class="gender-text">{{localize "MERC.UI.gender.male"}}</span>
               </label>
               <label class="gender-option female">
                 <input type="radio" name="system.biography.gender" value="female" {{#eq actor.system.biography.gender "female"}}checked{{/eq}}>
                 <span class="gender-icon" aria-hidden="true"></span>
-                <span class="gender-text">Femme</span>
+                <span class="gender-text">{{localize "MERC.UI.gender.female"}}</span>
               </label>
             </div>
           </div>
@@ -40,32 +40,32 @@
         <!-- Row 2: Age + Taille + Poids -->
         <div class="header-info-row header-row-2">
           <div class="field-inline">
-            <label>Age</label>
-            <input type="text" name="system.biography.age" value="{{actor.system.biography.age}}" placeholder="25">
+            <label>{{localize "MERC.UI.biography.age"}}</label>
+            <input type="text" name="system.biography.age" value="{{actor.system.biography.age}}" placeholder="{{localize "MERC.UI.biography.agePlaceholder"}}">
           </div>
           <div class="field-inline">
-            <label>Taille (cm)</label>
-            <input type="number" name="system.biography.height" value="{{actor.system.biography.height}}" min="0" placeholder="180">
+            <label>{{localize "MERC.UI.biography.height"}}</label>
+            <input type="number" name="system.biography.height" value="{{actor.system.biography.height}}" min="0" placeholder="{{localize "MERC.UI.biography.heightPlaceholder"}}">
           </div>
           <div class="field-inline">
-            <label>Poids (kg)</label>
-            <input type="number" name="system.biography.weight" value="{{actor.system.biography.weight}}" min="0" placeholder="75">
+            <label>{{localize "MERC.UI.biography.weight"}}</label>
+            <input type="number" name="system.biography.weight" value="{{actor.system.biography.weight}}" min="0" placeholder="{{localize "MERC.UI.biography.weightPlaceholder"}}">
           </div>
         </div>
         
         <!-- Row 3: Année + Origine + Renommé -->
         <div class="header-info-row header-row-3">
           <div class="field-inline">
-            <label>Année</label>
-            <input type="number" name="system.biography.year" value="{{actor.system.biography.year}}" min="0" placeholder="1250">
+            <label>{{localize "MERC.UI.biography.year"}}</label>
+            <input type="number" name="system.biography.year" value="{{actor.system.biography.year}}" min="0" placeholder="{{localize "MERC.UI.biography.yearPlaceholder"}}">
           </div>
           <div class="field-inline">
-            <label>Origine</label>
-            <input type="text" name="system.biography.origin" value="{{actor.system.biography.origin}}" placeholder="Royaume">
+            <label>{{localize "MERC.UI.biography.origin"}}</label>
+            <input type="text" name="system.biography.origin" value="{{actor.system.biography.origin}}" placeholder="{{localize "MERC.UI.biography.originPlaceholder"}}">
           </div>
           <div class="field-inline">
-            <label>Renommé</label>
-            <input type="number" name="system.biography.renown" value="{{actor.system.biography.renown}}" min="0" placeholder="5">
+            <label>{{localize "MERC.UI.biography.renown"}}</label>
+            <input type="number" name="system.biography.renown" value="{{actor.system.biography.renown}}" min="0" placeholder="{{localize "MERC.UI.biography.renownPlaceholder"}}">
           </div>
         </div>
       </div>
@@ -74,10 +74,10 @@
 
   <!-- NAVIGATION TABS -->
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="stats">Attributs</a>
-    <a class="item" data-tab="skills">Skills</a>
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="items">Items</a>
+    <a class="item active" data-tab="stats">{{localize "MERC.UI.tabs.attributes"}}</a>
+    <a class="item" data-tab="skills">{{localize "MERC.UI.tabs.skills"}}</a>
+    <a class="item" data-tab="combat">{{localize "MERC.UI.tabs.combat"}}</a>
+    <a class="item" data-tab="items">{{localize "MERC.UI.tabs.items"}}</a>
   </nav>
 
   <!-- TAB CONTENT -->
@@ -92,12 +92,12 @@
           <div class="attrib-column-headers">
             <span class="attrib-name-header"></span>
             <div class="attrib-values-headers">
-              <span class="attrib-value-header">Origine</span>
-              <span class="attrib-value-header">Actuel</span>
+              <span class="attrib-value-header">{{localize "MERC.UI.attributes.origin"}}</span>
+              <span class="attrib-value-header">{{localize "MERC.UI.attributes.current"}}</span>
             </div>
           </div>
           <div class="headerActorAttrib" data-ability="intelligence">
-            <span class="headerActorAttribLabel">Intelligence</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.intelligence"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.intelligence.origin" value="{{actor.system.attributes.intelligence.origin}}" min="0">
@@ -109,7 +109,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="will">
-            <span class="headerActorAttribLabel">Volonté</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.will"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.will.origin" value="{{actor.system.attributes.will.origin}}" min="0">
@@ -121,7 +121,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="mental">
-            <span class="headerActorAttribLabel">Santé Mentale</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.mental"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.mental.origin" value="{{actor.system.attributes.mental.origin}}" min="0">
@@ -133,7 +133,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="charisma">
-            <span class="headerActorAttribLabel">Charisme</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.charisma"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.charisma.origin" value="{{actor.system.attributes.charisma.origin}}" min="0">
@@ -145,7 +145,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="adaptation">
-            <span class="headerActorAttribLabel">Adaptation</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.adaptation"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.adaptation.origin" value="{{actor.system.attributes.adaptation.origin}}" min="0">
@@ -161,12 +161,12 @@
           <div class="attrib-column-headers">
             <span class="attrib-name-header"></span>
             <div class="attrib-values-headers">
-              <span class="attrib-value-header">Origine</span>
-              <span class="attrib-value-header">Actuel</span>
+              <span class="attrib-value-header">{{localize "MERC.UI.attributes.origin"}}</span>
+              <span class="attrib-value-header">{{localize "MERC.UI.attributes.current"}}</span>
             </div>
           </div>
           <div class="headerActorAttrib" data-ability="strength">
-            <span class="headerActorAttribLabel">Force</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.strength"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.strength.origin" value="{{actor.system.attributes.strength.origin}}" min="0">
@@ -178,7 +178,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="dexterity">
-            <span class="headerActorAttribLabel">Dextérité</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.dexterity"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.dexterity.origin" value="{{actor.system.attributes.dexterity.origin}}" min="0">
@@ -190,7 +190,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="speed">
-            <span class="headerActorAttribLabel">Rapidité</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.speed"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.speed.origin" value="{{actor.system.attributes.speed.origin}}" min="0">
@@ -202,7 +202,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="constitution">
-            <span class="headerActorAttribLabel">Constitution</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.constitution"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.constitution.origin" value="{{actor.system.attributes.constitution.origin}}" min="0">
@@ -214,7 +214,7 @@
           </div>
 
           <div class="headerActorAttrib" data-ability="chance">
-            <span class="headerActorAttribLabel">Chance</span>
+            <span class="headerActorAttribLabel">{{localize "MERC.Abilities.chance"}}</span>
             <div class="attrib-values">
               <div class="attrib-value">
                 <input type="number" class="headerActorAttribValue" name="system.attributes.chance.origin" value="{{actor.system.attributes.chance.origin}}" min="0">
@@ -230,33 +230,33 @@
           <div class="attrib-column-headers is-ghost-header">
             <span class="attrib-name-header"></span>
             <div class="attrib-values-headers">
-              <span class="attrib-value-header">Origine</span>
-              <span class="attrib-value-header">Actuel</span>
+              <span class="attrib-value-header">{{localize "MERC.UI.attributes.origin"}}</span>
+              <span class="attrib-value-header">{{localize "MERC.UI.attributes.current"}}</span>
             </div>
           </div>
           <div class="headerActorAttrib perception-attrib" data-ability="perception">
             <div class="perception-header">
-              <span class="headerActorAttribLabel">Perception</span>
+              <span class="headerActorAttribLabel">{{localize "MERC.Abilities.perception"}}</span>
               <input type="number" class="headerActorAttribValue" name="system.attributes.perception" value="{{actor.system.attributes.perception}}" min="0">
             </div>
             <div class="headerActorSubAttrib" data-sub-ability="sight" data-label="Vue">
-              <span class="headerActorSubAttribLabel">Vue</span>
+              <span class="headerActorSubAttribLabel">{{localize "MERC.UI.perception.sight"}}</span>
               <input type="number" class="headerActorAttribValue" name="system.attributes.perceptionDetail.sight" value="{{actor.system.attributes.perceptionDetail.sight}}" min="0">
             </div>
             <div class="headerActorSubAttrib" data-sub-ability="hearing" data-label="Ouie">
-              <span class="headerActorSubAttribLabel">Ouie</span>
+              <span class="headerActorSubAttribLabel">{{localize "MERC.UI.perception.hearing"}}</span>
               <input type="number" class="headerActorAttribValue" name="system.attributes.perceptionDetail.hearing" value="{{actor.system.attributes.perceptionDetail.hearing}}" min="0">
             </div>
             <div class="headerActorSubAttrib" data-sub-ability="taste" data-label="Goût">
-              <span class="headerActorSubAttribLabel">Goût</span>
+              <span class="headerActorSubAttribLabel">{{localize "MERC.UI.perception.taste"}}</span>
               <input type="number" class="headerActorAttribValue" name="system.attributes.perceptionDetail.taste" value="{{actor.system.attributes.perceptionDetail.taste}}" min="0">
             </div>
             <div class="headerActorSubAttrib" data-sub-ability="smell" data-label="Odorat">
-              <span class="headerActorSubAttribLabel">Odorat</span>
+              <span class="headerActorSubAttribLabel">{{localize "MERC.UI.perception.smell"}}</span>
               <input type="number" class="headerActorAttribValue" name="system.attributes.perceptionDetail.smell" value="{{actor.system.attributes.perceptionDetail.smell}}" min="0">
             </div>
             <div class="headerActorSubAttrib" data-sub-ability="touch" data-label="Toucher">
-              <span class="headerActorSubAttribLabel">Toucher</span>
+              <span class="headerActorSubAttribLabel">{{localize "MERC.UI.perception.touch"}}</span>
               <input type="number" class="headerActorAttribValue" name="system.attributes.perceptionDetail.touch" value="{{actor.system.attributes.perceptionDetail.touch}}" min="0">
             </div>
           </div>
@@ -269,11 +269,11 @@
         <!-- COLUMN 1: Physical Characteristics -->
         <div class="stats-column">
           <div class="stats-column-headers">
-            <span class="stats-name-header">Caractéristiques Physiques</span>
+            <span class="stats-name-header">{{localize "MERC.UI.stats.physical"}}</span>
           </div>
           
           <div class="headerStat" data-stat="endurance">
-            <span class="headerStatLabel">Endurance</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.endurance"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.combat.endurance}}</div>
@@ -282,7 +282,7 @@
           </div>
 
           <div class="headerStat" data-stat="pointCorporence">
-            <span class="headerStatLabel">Points de Corpulence</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.bodyPoints"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.combat.pointCorporence}}</div>
@@ -291,7 +291,7 @@
           </div>
 
           <div class="headerStat" data-stat="capaciteCharge">
-            <span class="headerStatLabel">Capacité de Charge</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.carryCapacity"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.combat.capaciteCharge}}</div>
@@ -303,11 +303,11 @@
         <!-- COLUMN 2: Bonuses -->
         <div class="stats-column">
           <div class="stats-column-headers">
-            <span class="stats-name-header">Bonus Combat</span>
+            <span class="stats-name-header">{{localize "MERC.UI.stats.combatBonuses"}}</span>
           </div>
 
           <div class="headerStat" data-stat="bonusDiscretion">
-            <span class="headerStatLabel">Bonus Discrétion</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.stealthBonus"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.combat.bonusDiscretion}}</div>
@@ -316,7 +316,7 @@
           </div>
 
           <div class="headerStat" data-stat="bonusDissimulation">
-            <span class="headerStatLabel">Bonus Dissimulation</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.concealmentBonus"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.combat.bonusDissimulation}}</div>
@@ -328,35 +328,35 @@
         <!-- COLUMN 3: Movement Speeds -->
         <div class="stats-column">
           <div class="stats-column-headers">
-            <span class="stats-name-header">Vitesses Déplacement</span>
+            <span class="stats-name-header">{{localize "MERC.UI.stats.movementSpeeds"}}</span>
           </div>
 
           <div class="headerStat" data-stat="reptation">
-            <span class="headerStatLabel">Reptation</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.reptation"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.reptation}}</div>
-                <div class="stat-unit">m/seg</div>
+                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
               </div>
             </div>
           </div>
 
           <div class="headerStat" data-stat="marche">
-            <span class="headerStatLabel">Marche</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.walk"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.marche}}</div>
-                <div class="stat-unit">m/seg</div>
+                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
               </div>
             </div>
           </div>
 
           <div class="headerStat" data-stat="course">
-            <span class="headerStatLabel">Course</span>
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.run"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.course}}</div>
-                <div class="stat-unit">m/seg</div>
+                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
               </div>
             </div>
           </div>
@@ -385,11 +385,11 @@
                 <div class="skills-column-headers">
                   <div class="skill-name-header"></div>
                   <div class="skill-values-headers">
-                    <div class="skill-value-header">Base</div>
-                    <div class="skill-value-header">Dev</div>
-                    <div class="skill-value-header">Degré</div>
-                    <div class="skill-value-header">Bonus</div>
-                    <div class="skill-value-header">Total</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.base"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.dev"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.degree"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.bonus"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.total"}}</div>
                   </div>
                 </div>
                 
@@ -399,14 +399,14 @@
                     <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}">
                       <div class="skill-name" title="{{skill.displayLabel}}">
                         {{skill.displayLabel}}
-                        {{#unless skill.unlocked}}<i class="fas fa-lock" title="Prérequis non remplis: {{skill.missingPrereqsText}}"></i>{{/unless}}
+                        {{#unless skill.unlocked}}<i class="fas fa-lock" title="{{localize "MERC.UI.skills.missingPrereqs"}}: {{skill.missingPrereqsText}}"></i>{{/unless}}
                       </div>
                       <div class="skill-value">
                         <div class="skill-inputs">
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="Base" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="Dev" {{#unless skill.unlocked}}disabled{{/unless}}>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="Degré" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="Bonus" {{#unless skill.unlocked}}disabled{{/unless}}>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{localize "MERC.UI.skills.base"}}" readonly>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}" {{#unless skill.unlocked}}disabled{{/unless}}>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="{{localize "MERC.UI.skills.degree"}}" readonly>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="{{localize "MERC.UI.skills.bonus"}}" {{#unless skill.unlocked}}disabled{{/unless}}>
                         </div>
                         <button type="button" class="skill-roll-btn" {{#unless skill.unlocked}}disabled{{/unless}}>{{#if (gt skill.total 0)}}+{{/if}}{{skill.total}}</button>
                       </div>
@@ -421,11 +421,11 @@
                 <div class="skills-column-headers">
                   <div class="skill-name-header"></div>
                   <div class="skill-values-headers">
-                    <div class="skill-value-header">Base</div>
-                    <div class="skill-value-header">Dev</div>
-                    <div class="skill-value-header">Degré</div>
-                    <div class="skill-value-header">Bonus</div>
-                    <div class="skill-value-header">Total</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.base"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.dev"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.degree"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.bonus"}}</div>
+                    <div class="skill-value-header">{{localize "MERC.UI.skills.total"}}</div>
                   </div>
                 </div>
                 
@@ -435,14 +435,14 @@
                     <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}">
                       <div class="skill-name" title="{{skill.displayLabel}}">
                         {{skill.displayLabel}}
-                        {{#unless skill.unlocked}}<i class="fas fa-lock" title="Prérequis non remplis: {{skill.missingPrereqsText}}"></i>{{/unless}}
+                        {{#unless skill.unlocked}}<i class="fas fa-lock" title="{{localize "MERC.UI.skills.missingPrereqs"}}: {{skill.missingPrereqsText}}"></i>{{/unless}}
                       </div>
                       <div class="skill-value">
                         <div class="skill-inputs">
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="Base" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="Dev" {{#unless skill.unlocked}}disabled{{/unless}}>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="Degré" readonly>
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="Bonus" {{#unless skill.unlocked}}disabled{{/unless}}>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{localize "MERC.UI.skills.base"}}" readonly>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}" {{#unless skill.unlocked}}disabled{{/unless}}>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="{{localize "MERC.UI.skills.degree"}}" readonly>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.bonus" value="{{skill.bonus}}" min="0" title="{{localize "MERC.UI.skills.bonus"}}" {{#unless skill.unlocked}}disabled{{/unless}}>
                         </div>
                         <button type="button" class="skill-roll-btn" {{#unless skill.unlocked}}disabled{{/unless}}>{{#if (gt skill.total 0)}}+{{/if}}{{skill.total}}</button>
                       </div>
@@ -465,7 +465,7 @@
       
       <!-- Weapons Quick Access -->
       <div class="weapons-section">
-        <h3>Armes Équipées</h3>
+        <h3>{{localize "MERC.UI.items.equippedWeapons"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
           <div class="item-card" data-item-id="{{item._id}}">
@@ -488,7 +488,7 @@
       
       <!-- Weapons -->
       <div class="items-section">
-        <h3>Weapons</h3>
+        <h3>{{localize "MERC.UI.items.weapons"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
           <div class="item-card" data-item-id="{{item._id}}">
@@ -502,19 +502,19 @@
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="weapon">+ Add Weapon</button>
+          <button type="button" class="item-create btn" data-type="weapon">{{localize "MERC.UI.items.addWeapon"}}</button>
         </div>
       </div>
 
       <!-- Armor -->
       <div class="items-section">
-        <h3>Armor & Protection</h3>
+        <h3>{{localize "MERC.UI.items.armor"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "armor") as |item|}}
           <div class="item-card" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
-              <div class="item-damage">AC {{item.system.armorClass}}</div>
+              <div class="item-damage">{{localize "MERC.UI.items.armorClassShort"}} {{item.system.armorClass}}</div>
             </div>
             <div class="item-controls">
               <button type="button" class="item-edit">✎</button>
@@ -522,13 +522,13 @@
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="armor">+ Add Armor</button>
+          <button type="button" class="item-create btn" data-type="armor">{{localize "MERC.UI.items.addArmor"}}</button>
         </div>
       </div>
 
       <!-- Equipment -->
       <div class="items-section">
-        <h3>Equipment</h3>
+        <h3>{{localize "MERC.UI.items.equipment"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "equipment") as |item|}}
           <div class="item-card" data-item-id="{{item._id}}">
@@ -541,7 +541,7 @@
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="equipment">+ Add Equipment</button>
+          <button type="button" class="item-create btn" data-type="equipment">{{localize "MERC.UI.items.addEquipment"}}</button>
         </div>
       </div>
 

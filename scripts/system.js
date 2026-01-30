@@ -11,7 +11,7 @@ function initPortraitSelection(actor) {
   // Click button to open Foundry's FilePicker
   browseBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    new FilePicker({
+    new foundry.applications.apps.FilePicker.implementation({
       type: "image",
       callback: (path) => {
         // Update the image source
@@ -29,7 +29,7 @@ function initPortraitSelection(actor) {
   // Also allow clicking directly on the image to browse
   portraitImg.addEventListener('click', (e) => {
     e.preventDefault();
-    new FilePicker({
+    new foundry.applications.apps.FilePicker.implementation({
       type: "image",
       callback: (path) => {
         portraitImg.src = path;

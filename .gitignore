@@ -25,6 +25,7 @@ build/
 .env
 .env.local
 *.log
+.todo
 
 # Temporary
 temp/

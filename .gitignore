@@ -1,0 +1,35 @@
+# Node modules
+node_modules/
+npm-debug.log
+package-lock.json
+yarn.lock
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+.directory
+
+# Build output
+releases/
+dist/
+build/
+
+# Development
+.env
+.env.local
+*.log
+
+# Temporary
+temp/
+tmp/
+*.tmp
+
+# System files
+.git/config.local

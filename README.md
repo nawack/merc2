@@ -206,8 +206,36 @@ INDEX_TO_DEGREE = [-7, -6, -5, ..., 32, 33]
 
 ---
 
-**Version** : 2.0.0  
-**Auteur** : Jerome / GitHub Copilot  
+## 📦 Installation
+
+### Méthode 1 : Installateur Web Foundry (Recommandé)
+
+1. Ouvrez Foundry VTT
+2. Allez dans **Game Settings** → **System & Module Management**
+3. Cliquez sur **Install System**
+4. Collez cette URL dans le champ **Manifest URL** :
+   ```
+   https://raw.githubusercontent.com/nawack/merc2/main/system.json
+   ```
+5. Cliquez sur **Install**
+6. Attendez la fin de l'installation
+7. Sélectionnez "Mercenary System" lors de la création d'un nouveau monde
+
+### Méthode 2 : Installation Manuelle
+
+1. Téléchargez le dossier complet `merc`
+2. Placez-le dans `Data/systems/` de votre installation Foundry
+3. Relancez Foundry VTT
+4. Sélectionnez "Mercenary System" lors de la création d'un monde
+
+### Mise à Jour Automatique
+
+Une fois installé via Manifest URL, le système vérifiera automatiquement les mises à jour.
+
+---
+
+**Version** : 1.0.0  
+**Auteur** : Game Master  
 **Système** : Mercenary RPG  
 **Licence** : MIT
 

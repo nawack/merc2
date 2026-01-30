@@ -1,0 +1,78 @@
+# Changelog
+
+Toutes les modifications notables de ce projet sont documentées dans ce fichier.
+
+## [1.0.0] - 2026-01-30
+
+### Added
+- ✨ Système complet pour Foundry VTT v13
+- ✨ 10 attributs principaux avec synchronisation automatique
+- ✨ Perception avec 5 sous-attributs détaillés (Vue, Ouïe, Goût, Odorat, Toucher)
+- ✨ 65 compétences organisées en 7 catégories (Combat, Aptitudes, Social, Langues, Connaissances, Construction, Spécialisations)
+- ✨ Calcul automatique des degrés via table de progression (base 4-28, degrés -7 à +33)
+- ✨ Système de jets D20 avec modificateurs dynamiques
+- ✨ Sélection d'image de portrait via FilePicker Foundry natif
+- ✨ Gestion des objets : Armes, Armures, Équipement
+- ✨ Interface moderne avec onglets et colonnes multiples
+- ✨ Indicateurs visuels pour les modificateurs (couleurs)
+- ✨ Synchronisation attribution origine → actuelle
+- ✨ Synchronisation perception → sous-attributs
+- ✨ Système de prérequis de compétences
+- ✨ Support multilingue (Français, Anglais)
+- ✨ Validation des champs avec sauvegarde immédiate
+
+### Technical
+- Manifeste system.json complètement configuré pour installation via URL
+- Scripts build PowerShell et Bash pour générer les releases
+- Workflow GitHub Actions pour automatiser la création de releases
+- Documentation complète (README, INSTALLATION)
+- Structure de projet optimisée pour publication sur GitHub
+
+---
+
+## [Planifié pour futures versions]
+
+### À venir
+- 📋 Gestion des objets améliorée
+- 📋 Système de statuts et conditions
+- 📋 Amélioration du système de degrés
+- 📋 Module d'images de portrait préselectionnées
+- 📋 Système de faveurs/réputation
+- 📋 Macros prédéfinies
+- 📋 Fiche de campagne
+- 📋 Support des tokens
+
+---
+
+## Format
+
+Ce fichier suit le [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format.
+
+### Types de changements
+- **Added** : Nouvelles fonctionnalités
+- **Changed** : Changements dans les fonctionnalités existantes
+- **Deprecated** : Fonctionnalités qui seront bientôt supprimées
+- **Removed** : Fonctionnalités supprimées
+- **Fixed** : Corrections de bugs
+- **Security** : Corrections de vulnérabilités de sécurité
+- **Technical** : Changements techniques (dépendances, structure, etc.)
+
+---
+
+## Comment Signaler un Bug
+
+Si vous trouvez un bug, veuillez ouvrir une issue sur GitHub :
+https://github.com/nawack/merc2/issues
+
+Décrivez :
+- 🐛 La description du bug
+- 📝 Les étapes pour reproduire
+- 🖼️ Des captures d'écran si possible
+- 💻 Votre version Foundry VTT
+- 🌐 Votre navigateur
+
+---
+
+## Contribution
+
+Les contributions sont bienvenues ! Consultez le [guide de contribution](CONTRIBUTING.md) pour savoir comment démarrer.

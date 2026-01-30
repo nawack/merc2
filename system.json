@@ -1,7 +1,7 @@
 {
   "id": "merc",
   "title": "Mercenary System",
-  "description": "Un système simple basé sur des attributs et des compétences avec des jets de D20",
+  "description": "Un système de jeu de rôle basé sur des attributs et des compétences avec des jets de D20. Système simple et flexible pour Foundry VTT.",
   "version": "1.0.0",
   "compatibility": {
     "minimum": "13.0",
@@ -10,7 +10,7 @@
   },
   "authors": [
     {
-      "name": "Game Master"
+      "name": "Nawack"
     }
   ],
   "scripts": [
@@ -47,9 +47,12 @@
       "feature": {}
     }
   },
-  "url": "",
-  "bugs": "",
-  "changelog": "",
+  "url": "https://github.com/nawack/merc2",
+  "bugs": "https://github.com/nawack/merc2/issues",
+  "changelog": "https://github.com/nawack/merc2/releases",
+  "manifest": "https://raw.githubusercontent.com/nawack/merc2/main/system.json",
+  "download": "https://github.com/nawack/merc2/releases/download/v1.0.0/merc-system-1.0.0.zip",
   "license": "MIT",
+  "readme": "README.md",
   "flags": {}
 }

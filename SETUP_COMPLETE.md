@@ -191,5 +191,5 @@ Votre système Mercenary System est maintenant prêt à être partagé avec la c
 ---
 
 **Date** : 2026-01-30  
-**Version du Système** : 1.0.0  
+**Version du Système** : 1.0.1  
 **État** : ✅ Prêt pour Publication

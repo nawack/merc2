@@ -24,11 +24,12 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 
 ### Onglets de la Feuille
 
-#### **Stats & Attributes**
+#### **Attributs**
 - 10 attributs principaux répartis en 3 colonnes
 - Chaque attribut a une valeur d'**Origine** et **Actuelle**
 - Synchronisation automatique : modifier l'Origine met à jour l'Actuelle
 - Perception avec 5 sous-attributs détaillés
+- **Grille de statistiques de combat** : Caractéristiques physiques (Taille, Poids, Corpulence, etc.), Bonus de combat (Init, Attaque, Parade, etc.), Vitesses de mouvement (Marche, Course, Sprint)
 - **Cliquer sur un label d'attribut pour faire un jet d20 + valeur**
 
 #### **Skills** 
@@ -46,12 +47,12 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 ## 🎲 Système de Jets
 
 ### Jet d'Attribut
-1. Allez à l'onglet "Stats & Attributes"
+1. Allez à l'onglet "Attributs"
 2. Cliquez sur le **label** d'un attribut (pas sur l'input)
 3. Un jet de **d20 + valeur de l'attribut** est lancé au chat
 
 ### Jet de Sous-Attribut Perception
-1. Allez à l'onglet "Stats & Attributes"
+1. Allez à l'onglet "Attributs"
 2. Cliquez sur le label d'un sous-attribut (Vue, Ouïe, etc.)
 3. Un jet de **d20 + valeur du sous-attribut** est lancé
 
@@ -129,7 +130,7 @@ d20: [résultat du dé]
 
 ## 🎨 Interface & Ergonomie
 
-- **Onglets principaux** répartis équitablement sur toute la largeur
+- **Onglets principaux** : Attributs, Compétences, Combat, Objets (répartis équitablement sur toute la largeur)
 - **Onglets de compétences** sur 2 lignes (4 + 3), style discret quand inactif
 - **Colonnes de compétences** avec en-têtes alignés (Base/Dev/Degré/Bonus/Total)
 - **Affichage vertical** : Label sur ligne 1, Inputs + Bouton sur ligne 2
@@ -234,7 +235,7 @@ Une fois installé via Manifest URL, le système vérifiera automatiquement les 
 
 ---
 
-**Version** : 1.0.0  
+**Version** : 1.0.1  
 **Auteur** : Game Master  
 **Système** : Mercenary RPG  
 **Licence** : MIT

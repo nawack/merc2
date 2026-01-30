@@ -2,6 +2,26 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.1] - 2026-01-30
+
+### Added
+- ✨ **Internationalisation complète** : Support bilingue Français/Anglais pour toute l'interface
+- ✨ Traduction complète des 65 compétences en anglais
+- ✨ Structure i18n hiérarchique avec clés MERC.UI.* et MERC.Skills.*
+
+### Changed
+- 🔄 **Réorganisation de l'interface** : Grille de statistiques de combat déplacée de l'onglet Combat vers l'onglet Attributs
+- 🔄 **Renommage des onglets** : "Stats & Attributes" → "Attributs", "Combat & Mouvement" → "Combat"
+- 🔄 Refactorisation des classes CSS : `.headerCombatStats` → `.headerStatsGrid`, `.combat-column` → `.stats-column`
+- 🔄 Amélioration de la cohérence sémantique du code (suppression des préfixes "combat" dans les classes de statistiques)
+
+### Technical
+- Ajout de lang/en.json avec traductions complètes
+- Utilisation systématique de `{{localize "MERC.*"}}` dans les templates Handlebars
+- Localisation JavaScript avec `game.i18n.localize()` et `game.i18n.format()`
+
+---
+
 ## [1.0.0] - 2026-01-30
 
 ### Added

@@ -219,4 +219,4 @@ Rendu dans Foundry VTT
 ---
 
 **Dernière mise à jour** : 2026-01-30  
-**Version** : 1.0.0
+**Version** : 1.0.1

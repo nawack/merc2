@@ -233,5 +233,5 @@ Vous avez créé un système Foundry VTT complet et installable ! 🎉
 ---
 
 **Créé** : 2026-01-30  
-**Version** : 1.0.0  
+**Version** : 1.0.1  
 **Statut** : ✅ Prêt pour publication

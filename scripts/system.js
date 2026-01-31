@@ -495,13 +495,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         interrogation: { value: 0, abilities: ["intelligence", "adaptation"] },
         command: { value: 0, abilities: ["will", "charisma"] },
         instruction: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_serbian: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_arabic: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_english: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_russian: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_french: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_other_1: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_other_2: { value: 0, abilities: ["intelligence", "charisma"] },
+        language_native: { value: 0, abilities: ["intelligence", "charisma"] },
         bureaucracy: { value: 0, abilities: ["intelligence", "charisma"] },
         illegality: { value: 0, abilities: ["intelligence", "charisma"] },
         mathematics: { value: 0, abilities: ["intelligence"] },
@@ -603,6 +597,40 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       }
     }
 
+    // Load and process custom languages (dynamic languages based on intelligence and charisma)
+    const customLanguages = data.actor.system.customLanguages || {};
+    const intelligenceValue = data.actor.system.attributes?.intelligence?.current ?? 0;
+    const charismaValue = data.actor.system.attributes?.charisma?.current ?? 0;
+    
+    for (const [langName, langData] of Object.entries(customLanguages)) {
+      if (!langData) continue;
+      // Calculate base for custom languages: base = 30 - (intelligence + charisma)
+      const base = 30 - (intelligenceValue + charismaValue);
+      const dev = Number(langData.dev ?? 0);
+      const degree = this.computeSkillDegree(actorDoc, `custom_lang_${langName}`, { ...langData, base, abilities: ["intelligence", "charisma"] });
+      const bonus = Number(langData.bonus ?? 0);
+      
+      // Add to skillList as a special skill
+      data.skillList.push({
+        key: `custom_lang_${langName}`,
+        label: game.i18n.format("MERC.Skills.language_custom", { name: langName }),
+        displayLabel: game.i18n.format("MERC.Skills.language_custom", { name: langName }),
+        abilities: ["intelligence", "charisma"],
+        base,
+        dev,
+        bonus,
+        degree,
+        total: degree + bonus,
+        unlocked: true,
+        isCustomLanguage: true,
+        customLanguageName: langName,
+        missingPrereqs: [],
+        missingPrereqsText: "",
+        hasPrerequisites: false,
+        prerequisitesText: ""
+      });
+    }
+
     // Group skills by theme for tabbed display
     const skillByKey = new Map(data.skillList.map(skill => [skill.key, skill]));
     const usedKeys = new Set();
@@ -657,46 +685,48 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "command",
         "instruction"
       ]),
-      makeGroup("languages", game.i18n.localize("MERC.SkillGroups.languages"), [
-        "language_serbian",
-        "language_arabic",
-        "language_english",
-        "language_russian",
-        "language_french",
-        "language_other_1",
-        "language_other_2"
-      ]),
-      makeGroup("knowledge", game.i18n.localize("MERC.SkillGroups.knowledge"), [
-        "bureaucracy",
-        "illegality",
-        "mathematics",
-        "metallurgy",
-        "engineering",
-        "electricity_electronics",
-        "computer_science",
-        "geography",
-        "meteorology",
-        "navigation",
-        "history_politics",
-        "chemistry",
-        "geology",
-        "nature",
-        "biology",
-        "human_medicine",
-        "surgery"
-      ]),
-      makeGroup("construction", game.i18n.localize("MERC.SkillGroups.construction"), [
-        "construction_avionics",
-        "construction_vehicle",
-        "construction_weaponry",
-        "construction_tools"
-      ]),
-      makeGroup("specializations", game.i18n.localize("MERC.SkillGroups.specializations"), [
-        "spec_melee_mma",
-        "spec_blades_knife",
-        "spec_powder_ak47"
-      ])
     ];
+
+    // Build languages group with predefined languages + custom languages
+    const languageKeys = [
+      "language_native"
+    ];
+    // Add custom language keys
+    for (const [langName, langData] of Object.entries(data.actor.system.customLanguages || {})) {
+      if (!langData) continue;
+      languageKeys.push(`custom_lang_${langName}`);
+    }
+    data.skillGroups.push(makeGroup("languages", game.i18n.localize("MERC.SkillGroups.languages"), languageKeys));
+    data.skillGroups.push(makeGroup("knowledge", game.i18n.localize("MERC.SkillGroups.knowledge"), [
+      "bureaucracy",
+      "illegality",
+      "mathematics",
+      "metallurgy",
+      "engineering",
+      "electricity_electronics",
+      "computer_science",
+      "geography",
+      "meteorology",
+      "navigation",
+      "history_politics",
+      "chemistry",
+      "geology",
+      "nature",
+      "biology",
+      "human_medicine",
+      "surgery"
+    ]));
+    data.skillGroups.push(makeGroup("construction", game.i18n.localize("MERC.SkillGroups.construction"), [
+      "construction_avionics",
+      "construction_vehicle",
+      "construction_weaponry",
+      "construction_tools"
+    ]));
+    data.skillGroups.push(makeGroup("specializations", game.i18n.localize("MERC.SkillGroups.specializations"), [
+      "spec_melee_mma",
+      "spec_blades_knife",
+      "spec_powder_ak47"
+    ]));
 
     const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
     if (remaining.length) {
@@ -842,8 +872,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
           const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
           if (value === currentValue) return;
-
-          console.log(`[Merc] Field persisted -> ${fieldPath}:`, value);
           
           // Special handling for attribute current changes
           if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
@@ -961,7 +989,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         }
         
         await this.render();
-        console.log(`[Merc] Synced ${originPath} to ${currentPath}:`, value);
       });
     });
 
@@ -979,7 +1006,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         };
         
         await this.actor.update(perceptionDetail);
-        console.log(`[Merc] Synced perception to all sub-attributes:`, perceptionValue);
       });
     }
 
@@ -1081,6 +1107,129 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // Custom Languages Management
+    const addLanguageBtn = html.querySelector(".btn-add-language");
+    if (addLanguageBtn) {
+      addLanguageBtn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Generate a unique language name
+        const customLanguages = this.actor.system.customLanguages || {};
+        let langNum = 1;
+        while (customLanguages[`Language ${langNum}`]) {
+          langNum++;
+        }
+        const newLangName = `Language ${langNum}`;
+        
+        // Add new empty language
+        const updateData = {
+          [`system.customLanguages.${newLangName}`]: {
+            base: 0,
+            dev: 0,
+            bonus: 0,
+            degree: 0,
+            ability: "intelligence"
+          }
+        };
+        
+        await this.actor.update(updateData);
+        await this.render();
+      });
+    }
+
+    // Handle remove language buttons
+    const removeLanguageBtns = html.querySelectorAll(".btn-remove-language");
+    removeLanguageBtns.forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const langItem = btn.closest(".custom-language-item");
+        let langName = langItem?.dataset.languageName;
+
+        if (!langName) {
+          const skillItem = btn.closest(".skill-item");
+          const skillKey = skillItem?.dataset.skill;
+          if (skillKey?.startsWith("custom_lang_")) {
+            langName = skillKey.replace("custom_lang_", "");
+          }
+        }
+
+        if (langName) {
+          const updateData = {
+            [`system.customLanguages.-=${langName}`]: null
+          };
+
+          await this.actor.update(updateData);
+          await this.render();
+        }
+      });
+    });
+
+    // Handle custom language name edits
+    const languageNameInputs = html.querySelectorAll(".language-name-edit");
+    languageNameInputs.forEach(input => {
+      input.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+      });
+      input.addEventListener("blur", async (event) => {
+        const skillItem = input.closest(".skill-item");
+        const oldName = skillItem?.dataset.languageName;
+        const newName = input.value.trim();
+        
+        if (!oldName || !newName || oldName === newName) return;
+        
+        const customLanguages = { ...this.actor.system.customLanguages };
+        if (customLanguages[newName]) {
+          // Language already exists with new name
+          input.value = oldName;
+          ui.notifications.warn(game.i18n.localize("MERC.UI.skills.languageAlreadyExists"));
+          return;
+        }
+        
+        // Move language to new name using Foundry's deletion syntax
+        const updateData = {
+          [`system.customLanguages.${newName}`]: customLanguages[oldName],
+          [`system.customLanguages.-=${oldName}`]: null
+        };
+        
+        await this.actor.update(updateData);
+        await this.render();
+      });
+    });
+
+    // Handle custom language dev/bonus changes
+    const customLanguageDevs = html.querySelectorAll(".custom-language-dev");
+    const customLanguageBonuses = html.querySelectorAll(".custom-language-bonus");
+    
+    const customLanguageInputs = [...customLanguageDevs, ...customLanguageBonuses];
+    customLanguageInputs.forEach(input => {
+      input.addEventListener("change", async (event) => {
+        const fieldPath = input.name;
+        if (!fieldPath) return;
+
+        let value = input.value;
+        if (input.type === "number") {
+          if (value === "" || value === null) return;
+          const numberValue = Number(value);
+          if (Number.isNaN(numberValue)) return;
+          value = numberValue;
+        }
+
+        const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
+        if (value === currentValue) return;
+
+        await this.actor.update({ [fieldPath]: value });
+      });
+    });
+
     // Item usage
     const createBtns = html.querySelectorAll(".item-create");
     createBtns.forEach(btn => {
@@ -1144,11 +1293,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
 
     if (Object.keys(updateData).length === 0) {
-      console.log("[Merc] Form submit: no changes detected");
       return;
     }
 
-    console.log("[Merc] Form submit update:", updateData);
     return this.actor.update(updateData);
   }
 
@@ -1215,20 +1362,36 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   async rollSkillCheck(skillKey) {
     const actor = this.actor ?? this.document;
     const systemData = actor.system || actor._source?.system || {};
-    const skillData = systemData.skills?.[skillKey];
-    
+    let skillData = systemData.skills?.[skillKey];
+    let isCustomLanguage = false;
+    let customLanguageName = null;
+
+    if (!skillData && skillKey?.startsWith("custom_lang_")) {
+      isCustomLanguage = true;
+      customLanguageName = skillKey.replace("custom_lang_", "");
+      const customLangData = systemData.customLanguages?.[customLanguageName];
+      if (customLangData) {
+        skillData = {
+          ...customLangData,
+          abilities: ["intelligence", "charisma"]
+        };
+      }
+    }
+
     if (!skillData) {
       console.error(game.i18n.localize("MERC.Labels.skillNotFound") + ":", skillKey);
       return;
     }
-    
+
     const base = this.computeSkillBase(actor, skillKey, skillData);
     const dev = Number(skillData.dev ?? skillData.value ?? 0);
     const degree = this.computeSkillDegree(actor, skillKey, skillData);
     const bonus = Number(skillData.bonus ?? 0);
     const total_modifier = degree + bonus;
-    
-    const skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+
+    const skillName = isCustomLanguage
+      ? game.i18n.format("MERC.Skills.language_custom", { name: customLanguageName })
+      : (game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey);
     
     const roll = new Roll("1d20");
     await roll.evaluate();
@@ -1495,13 +1658,7 @@ Hooks.once("init", () => {
       interrogation: { label: "MERC.Skills.interrogation", abilities: ["intelligence", "adaptation"] },
       command: { label: "MERC.Skills.command", abilities: ["will", "charisma"] },
       instruction: { label: "MERC.Skills.instruction", abilities: ["intelligence", "charisma"] },
-      language_serbian: { label: "MERC.Skills.language_serbian", abilities: ["intelligence", "charisma"] },
-      language_arabic: { label: "MERC.Skills.language_arabic", abilities: ["intelligence", "charisma"] },
-      language_english: { label: "MERC.Skills.language_english", abilities: ["intelligence", "charisma"] },
-      language_russian: { label: "MERC.Skills.language_russian", abilities: ["intelligence", "charisma"] },
-      language_french: { label: "MERC.Skills.language_french", abilities: ["intelligence", "charisma"] },
-      language_other_1: { label: "MERC.Skills.language_other_1", abilities: ["intelligence", "charisma"] },
-      language_other_2: { label: "MERC.Skills.language_other_2", abilities: ["intelligence", "charisma"] },
+      language_native: { label: "MERC.Skills.language_native", abilities: ["intelligence", "charisma"] },
       bureaucracy: { label: "MERC.Skills.bureaucracy", abilities: ["intelligence", "charisma"] },
       illegality: { label: "MERC.Skills.illegality", abilities: ["intelligence", "charisma"] },
       mathematics: { label: "MERC.Skills.mathematics", abilities: ["intelligence"] },
@@ -1672,6 +1829,11 @@ const computeCombatStatsFromSystem = (system) => {
 const getActorMigrationData = (actor) => {
   const updateData = {};
   const system = actor.system || {};
+
+  if (system.skills?.language_serbian && !system.skills?.language_native) {
+    updateData["system.skills.language_native"] = foundry.utils.duplicate(system.skills.language_serbian);
+    updateData["system.skills.-=language_serbian"] = null;
+  }
 
   if (!system.biography) {
     for (const [key, value] of Object.entries(DEFAULT_BIOGRAPHY)) {

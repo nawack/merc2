@@ -158,7 +158,7 @@
         "missingPrereqs": "Prérequis non remplis",
         "required": "Requis : {prereqs}",
         "lockedWarning": "{skill} est verrouillée. Prérequis manquants: {prereqs}",
-        "addCustomLanguage": "Ajouter une langue personnalisée",
+        "addCustomLanguage": "Ajouter une langue",
         "removeCustomLanguage": "Supprimer cette langue",
         "customLanguagesHeader": "Personnalisées",
         "languageLabel": "Langue",

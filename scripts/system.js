@@ -1170,9 +1170,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     // Handle custom language name edits
     const languageNameInputs = html.querySelectorAll(".language-name-edit");
     languageNameInputs.forEach(input => {
+      input.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+      });
       input.addEventListener("blur", async (event) => {
-        const langItem = input.closest(".custom-language-item");
-        const oldName = langItem?.dataset.languageName;
+        const skillItem = input.closest(".skill-item");
+        const oldName = skillItem?.dataset.languageName;
         const newName = input.value.trim();
         
         if (!oldName || !newName || oldName === newName) return;
@@ -1185,11 +1194,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           return;
         }
         
-        // Move language to new name
-        customLanguages[newName] = customLanguages[oldName];
-        delete customLanguages[oldName];
+        // Move language to new name using Foundry's deletion syntax
+        const updateData = {
+          [`system.customLanguages.${newName}`]: customLanguages[oldName],
+          [`system.customLanguages.-=${oldName}`]: null
+        };
         
-        await this.actor.update({ "system.customLanguages": customLanguages });
+        await this.actor.update(updateData);
         await this.render();
       });
     });

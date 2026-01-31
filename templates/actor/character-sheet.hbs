@@ -396,10 +396,15 @@
                 <div class="skills-list">
                   {{#each group.skills as |skill|}}
                     {{#if (eq (mod @index 2) 0)}}
-                    <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}">
+                    <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}"{{#if skill.isCustomLanguage}} data-language-name="{{skill.customLanguageName}}"{{/if}}>
                       <div class="skill-name" title="{{skill.displayLabel}}">
+                        {{#if skill.isCustomLanguage}}
+                        <span class="custom-language-label">{{localize "MERC.UI.skills.languageLabel"}}:</span>
+                        <input type="text" class="language-name-edit" value="{{skill.customLanguageName}}" title="{{localize "MERC.UI.skills.languageLabel"}}">
+                        {{else}}
                         {{skill.displayLabel}}
                         {{#unless skill.unlocked}}<i class="fas fa-lock" title="{{localize "MERC.UI.skills.missingPrereqs"}}: {{skill.missingPrereqsText}}"></i>{{/unless}}
+                        {{/if}}
                       </div>
                       <div class="skill-value">
                         <div class="skill-inputs">
@@ -443,10 +448,15 @@
                 <div class="skills-list">
                   {{#each group.skills as |skill|}}
                     {{#unless (eq (mod @index 2) 0)}}
-                    <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}">
+                    <div class="skill-item {{#unless skill.unlocked}}locked{{/unless}}" data-skill="{{skill.key}}"{{#if skill.isCustomLanguage}} data-language-name="{{skill.customLanguageName}}"{{/if}}>
                       <div class="skill-name" title="{{skill.displayLabel}}">
+                        {{#if skill.isCustomLanguage}}
+                        <span class="custom-language-label">{{localize "MERC.UI.skills.languageLabel"}}:</span>
+                        <input type="text" class="language-name-edit" value="{{skill.customLanguageName}}" title="{{localize "MERC.UI.skills.languageLabel"}}">
+                        {{else}}
                         {{skill.displayLabel}}
                         {{#unless skill.unlocked}}<i class="fas fa-lock" title="{{localize "MERC.UI.skills.missingPrereqs"}}: {{skill.missingPrereqsText}}"></i>{{/unless}}
+                        {{/if}}
                       </div>
                       <div class="skill-value">
                         <div class="skill-inputs">

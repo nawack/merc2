@@ -646,6 +646,30 @@
   gap: 4px;
 }
 
+.custom-language-label {
+  font-weight: 600;
+}
+
+.language-name-edit {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  height: 1em;
+  line-height: 1;
+  min-height: 0;
+  min-width: 40px;
+  width: 120px;
+  box-shadow: none;
+  outline: none;
+}
+
+.language-name-edit:focus {
+  border-bottom: 1px dotted #888;
+}
+
 .skill-name:hover {
   color: #666;
 }

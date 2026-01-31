@@ -158,7 +158,7 @@
         "missingPrereqs": "Missing prerequisites",
         "required": "Required: {prereqs}",
         "lockedWarning": "{skill} is locked. Missing prerequisites: {prereqs}",
-        "addCustomLanguage": "Add Custom Language",
+        "addCustomLanguage": "Add Language",
         "removeCustomLanguage": "Remove this language",
         "customLanguagesHeader": "Custom",
         "languageLabel": "Language",

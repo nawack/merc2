@@ -616,6 +616,7 @@
   border: 1px solid #999;
   transition: background-color 0.2s;
   min-height: 32px;
+  position: relative;
 }
 
 .skill-item:hover {
@@ -865,6 +866,153 @@
 }
 
 .item-create:hover {
+  background-color: #1a4680;
+}
+
+/* Custom Languages Styling */
+.custom-languages-section {
+  background-color: #f9f9f9;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.custom-languages-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #474749;
+}
+
+.custom-languages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.custom-language-item {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  gap: 8px;
+}
+
+.custom-language-name-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-language-name-input label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.custom-language-name-input input {
+  flex: 1;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.custom-language-values {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.custom-language-values .skill-values-headers {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.custom-language-values .skill-inputs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.custom-language-values .skill-input {
+  width: 32px;
+  height: 20px;
+  padding: 0 3px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.custom-language-values .skill-roll-btn {
+  min-width: 40px;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 10px;
+}
+
+.custom-language-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.btn-remove-language {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  color: #2b2b2b;
+  /*
+  background-color: #5a5a5a;
+  border: 1px solid #4a4a4a;
+  */
+  background: none;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 16px;
+  transition: background-color 0.2s, color 0.2s;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.btn-remove-language:hover {
+  text-shadow: 0 0 2px #000;
+  background: none
+  /*background-color: #aa2233;*/
+}
+
+.btn-add-language {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #0f3460;
+  color: white;
+  border: 1px solid #0f3460;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.custom-languages-footer {
+  margin-top: 12px;
+}
+
+.btn-add-language:hover {
   background-color: #1a4680;
 }
 

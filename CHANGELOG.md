@@ -2,6 +2,32 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.4] - 2026-01-30
+
+### Fixed
+- 🐛 **Langues personnalisées** : Correction de l'architecture des groupes de compétences pour inclure les langues dynamiques
+- 🐛 **Erreur de syntaxe** : Suppression des déclarations const/for dans les littéraux de tableau
+- 🧹 **Nettoyage** : Suppression de tous les logs de debug
+
+### Technical
+- 🔧 Refactorisation: `data.skillGroups` - construction dynamique des langues avec boucle `Object.keys()`
+- 🔧 Pattern clés: Langues personnalisées ajoutées avec préfixe `custom_lang_{name}`
+
+---
+
+## [1.0.3] - 2026-01-30
+
+### Added
+- ✨ **Langues personnalisées dynamiques** : Ajout/suppression de langues individuellement par acteur
+- ✨ Chaque langue personnalisée utilise Intelligence comme attribut principal (calcul de base automatique)
+- ✨ Format des labels "Langue : {nom}" avec possibilité de modifier le nom
+- ✨ Système de calcul de degrés pour les langues dynamiques via table de progression
+
+### Changed
+- 🔄 **Onglet Langues** : Réorganisation avec section dédiée aux langues personnalisées
+
+---
+
 ## [1.0.2] - 2026-01-30
 
 ### Fixed

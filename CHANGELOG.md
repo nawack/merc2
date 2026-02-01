@@ -2,16 +2,16 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
-## [1.0.4] - 2026-01-30
+## [1.0.4] - 2026-02-01
 
-### Fixed
-- 🐛 **Langues personnalisées** : Correction de l'architecture des groupes de compétences pour inclure les langues dynamiques
-- 🐛 **Erreur de syntaxe** : Suppression des déclarations const/for dans les littéraux de tableau
-- 🧹 **Nettoyage** : Suppression de tous les logs de debug
+### Added
+- ✨ **Langue natale** : champ dédié pour préciser la langue affichée et utilisée dans les jets
+- ✨ **Spécialisations personnalisées** : ajout/suppression/renommage avec sélection de compétence de base
 
-### Technical
-- 🔧 Refactorisation: `data.skillGroups` - construction dynamique des langues avec boucle `Object.keys()`
-- 🔧 Pattern clés: Langues personnalisées ajoutées avec préfixe `custom_lang_{name}`
+### Changed
+- 🔄 **Spécialisations** : retrait des spécialisations pré-définies (onglet conservé)
+- 🎨 **UI Spécialisations** : sélecteur de compétence de base discret et cohérent avec le style des langues
+- 📘 **Documentation** : mise à jour des descriptions, comptage des compétences et sections Langues/Spécialisations
 
 ---
 

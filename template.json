@@ -65,13 +65,7 @@
         "interrogation": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "charisma" },
         "command": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "charisma" },
         "instruction": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "language_serbian": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "language_arabic": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "language_english": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "language_russian": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "language_french": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "language_other_1": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "language_other_2": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
+        "language_native": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence", "name": "" },
         "bureaucracy": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
         "illegality": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
         "mathematics": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
@@ -92,14 +86,10 @@
         "construction_avionics": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
         "construction_vehicle": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
         "construction_weaponry": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "construction_tools": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" },
-        "spec_melee_mma": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
-        "spec_blades_knife": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
-        "spec_powder_ak47": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" }
+        "construction_tools": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" }
       },
-      "customLanguages": {
-        "Natale": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "intelligence" }
-      },
+      "customLanguages": {},
+      "customSpecializations": {},
       "combat": {
         "initiative": 0,
         "defense": 0,

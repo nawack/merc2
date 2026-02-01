@@ -277,15 +277,19 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const abilities = skillData.abilities || [];
     if (abilities.length === 0) return 0;
     
+    const isCustomSpec = typeof skillKey === "string" && skillKey.startsWith("custom_spec_");
+
     if (abilities.length === 1) {
       // Single attribute: 30 - (ATTR * 2)
       const attrValue = getAttrValue(abilities[0]);
-      return 30 - (attrValue * 2);
+      const base = 30 - (attrValue * 2);
+      return isCustomSpec ? Math.floor(base / 2) : base;
     } else if (abilities.length === 2) {
       // Two attributes: 30 - (ATTR1 + ATTR2)
       const attr1Value = getAttrValue(abilities[0]);
       const attr2Value = getAttrValue(abilities[1]);
-      return 30 - (attr1Value + attr2Value);
+      const base = 30 - (attr1Value + attr2Value);
+      return isCustomSpec ? Math.floor(base / 2) : base;
     }
     
     return 0;
@@ -297,12 +301,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     
     // Get base value (computed from attributes)
     const base = this.computeSkillBase(actor, skillKey, skillData);
+    const isCustomSpec = typeof skillKey === "string" && skillKey.startsWith("custom_spec_");
+    const baseForDegree = isCustomSpec ? Math.floor(base) : base;
     
     // Get dev value (directly from skill data)
     const dev = Number(skillData.dev ?? 0);
     
     // Use the lookup table to find degree
-    return getDegreeFromTable(base, dev);
+    return getDegreeFromTable(baseForDegree, dev);
   }
 
   async _prepareContext(options) {
@@ -573,7 +579,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const requiredText = prereqsText
           ? game.i18n.format("MERC.UI.skills.required", { prereqs: prereqsText })
           : "";
-        const displayLabel = requiredText ? `${baseLabel} (${requiredText})` : baseLabel;
+        const isNativeLanguage = skillKey === "language_native";
+        const nativeLanguageName = isNativeLanguage
+          ? (data.actor.system.skills?.language_native?.name ?? "")
+          : "";
+        let displayLabel = requiredText ? `${baseLabel} (${requiredText})` : baseLabel;
+        if (isNativeLanguage && nativeLanguageName) {
+          displayLabel = `${baseLabel} : ${nativeLanguageName}`;
+        }
         
         data.skillList.push({
           key: skillKey,
@@ -589,7 +602,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           missingPrereqs: unlockStatus.missingPrereqs,
           missingPrereqsText: missingPrereqsText,
           hasPrerequisites: prereqsText.length > 0,
-          prerequisitesText: prereqsText
+          prerequisitesText: prereqsText,
+          isNativeLanguage,
+          nativeLanguageName
         });
       }
     }
@@ -1262,6 +1277,20 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // Handle native language name edits
+    const nativeLanguageInputs = html.querySelectorAll(".native-language-edit");
+    nativeLanguageInputs.forEach(input => {
+      input.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+      });
+    });
+
     // Handle custom language dev/bonus changes
     const customLanguageDevs = html.querySelectorAll(".custom-language-dev");
     const customLanguageBonuses = html.querySelectorAll(".custom-language-bonus");
@@ -1601,7 +1630,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const dev = Number(skillData.dev ?? skillData.value ?? 0);
     const degree = this.computeSkillDegree(actor, skillKey, skillData);
     const bonus = Number(skillData.bonus ?? 0);
-    const total_modifier = degree + bonus;
+    
+    // Apply combat bonuses for specific skills
+    let combatBonus = 0;
+    if (skillKey === "stealth") {
+      combatBonus = Number(systemData.combat?.bonusDiscretion ?? 0);
+    } else if (skillKey === "concealment") {
+      combatBonus = Number(systemData.combat?.bonusDissimulation ?? 0);
+    }
+    
+    const total_modifier = degree + bonus + combatBonus;
 
     let skillName;
     if (isCustomLanguage) {
@@ -1614,6 +1652,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       } else {
         skillName = customSpecializationName;
       }
+    } else if (skillKey === "language_native") {
+      const baseLabel = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+      const nativeName = systemData.skills?.language_native?.name ?? "";
+      skillName = nativeName ? `${baseLabel} : ${nativeName}` : baseLabel;
     } else {
       skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
     }
@@ -2036,6 +2078,31 @@ const computeCombatStatsFromSystem = (system) => {
   const bonusDiscretion = STATS_TABLES.discretion[corpulenceTableIdx] || 0;
   const bonusDissimulation = STATS_TABLES.dissimulation[corpulenceTableIdx] || 0;
 
+  console.log("[Merc] computeCombatStatsFromSystem inputs", {
+    height,
+    weight,
+    rapidite,
+    volonte,
+    constitution,
+    force
+  });
+  console.log("[Merc] computeCombatStatsFromSystem computed", {
+    indexTaille,
+    indexPoids,
+    attTaille,
+    attPoids,
+    avgAtt,
+    corpulence,
+    corpulenceTableIdx,
+    indexVitesse,
+    endurance,
+    pcAjust,
+    pointCorporence,
+    capaciteCharge,
+    bonusDiscretion,
+    bonusDissimulation
+  });
+
   return {
     endurance: Math.max(0, endurance),
     pointCorporence: Math.max(0, pointCorporence),
@@ -2195,6 +2262,14 @@ Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
 
   const actors = game.actors?.contents ?? [];
+  if (actors.length > 0) {
+    const preview = computeCombatStatsFromSystem(actors[0].system);
+    console.log("[Merc] computeCombatStatsFromSystem called (ready)", {
+      actorId: actors[0].id,
+      actorName: actors[0].name,
+      preview
+    });
+  }
   for (const actor of actors) {
     if (!actor || !["character", "npc"].includes(actor.type)) continue;
     const updateData = getActorMigrationData(actor);
@@ -2286,14 +2361,17 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
   // Only update for character actors
   if (actor.type !== "character") return;
   
+  // Prevent recursion when we're the ones updating combat stats
+  if (options.isRecalculatingCombatStats) return;
+  
   // Check if we need to recalculate combat stats
-  const needsUpdate = 
-    changes.system?.biography?.height ||
-    changes.system?.biography?.weight ||
-    changes.system?.attributes?.will ||
-    changes.system?.attributes?.constitution ||
-    changes.system?.attributes?.strength ||
-    changes.system?.attributes?.speed;
+  const needsUpdate =
+    changes.system?.biography?.height !== undefined ||
+    changes.system?.biography?.weight !== undefined ||
+    changes.system?.attributes?.will !== undefined ||
+    changes.system?.attributes?.constitution !== undefined ||
+    changes.system?.attributes?.strength !== undefined ||
+    changes.system?.attributes?.speed !== undefined;
   
   // Check if linked skills changed (melee or bladed_weapons dev/bonus/degree)
   const meleeChanged = 
@@ -2310,46 +2388,48 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
   
   if (!needsUpdate && !skillsChanged) return;
   
-  // Get the sheet instance if it's open
-  const sheets = actor.apps;
-  for (const [key, sheet] of Object.entries(sheets)) {
-    if (sheet instanceof MercCharacterSheet) {
-      const stats = sheet.calculateCombatStats();
-      if (stats) {
-        const updateData = {};
-        
-        // Always update base damage if skills changed
-        if (skillsChanged) {
-          updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
-          updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
-        }
-        
-        // Update combat stats if attributes/biometrics changed
-        if (needsUpdate) {
-          updateData["system.combat.endurance"] = stats.endurance;
-          updateData["system.combat.pointCorporence"] = stats.pointCorporence;
-          updateData["system.combat.capaciteCharge"] = stats.capaciteCharge;
-          updateData["system.combat.bonusDiscretion"] = stats.bonusDiscretion;
-          updateData["system.combat.bonusDissimulation"] = stats.bonusDissimulation;
-          updateData["system.combat.corpulence"] = stats.corpulence;
-          updateData["system.movement.reptation"] = stats.vitesses.reptation;
-          updateData["system.movement.marche"] = stats.vitesses.marche;
-          updateData["system.movement.course"] = stats.vitesses.course;
-        }
-        
-        // Update base damage in both cases (needs recalc)
-        if (!skillsChanged && needsUpdate) {
-          updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
-          updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
-        }
-        
-        if (Object.keys(updateData).length > 0) {
-          actor.update(updateData, { render: false });
-        }
+  console.log("[Merc] updateActor hook triggered for:", actor.name, { needsUpdate, skillsChanged, changes });
+  
+  // Use setTimeout to ensure actor data is fully updated
+  setTimeout(async () => {
+    // Recalculate using the current actor data (which now has the updates)
+    const stats = computeCombatStatsFromSystem(actor.system);
+    
+    if (stats) {
+      const updateData = {};
+      
+      // Always update base damage if skills changed
+      if (skillsChanged) {
+        updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
+        updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
       }
-      break;
+      
+      // Update combat stats if attributes/biometrics changed
+      if (needsUpdate) {
+        updateData["system.combat.endurance"] = stats.endurance;
+        updateData["system.combat.pointCorporence"] = stats.pointCorporence;
+        updateData["system.combat.capaciteCharge"] = stats.capaciteCharge;
+        updateData["system.combat.bonusDiscretion"] = stats.bonusDiscretion;
+        updateData["system.combat.bonusDissimulation"] = stats.bonusDissimulation;
+        updateData["system.combat.corpulence"] = stats.corpulence;
+        updateData["system.movement.reptation"] = stats.vitesses.reptation;
+        updateData["system.movement.marche"] = stats.vitesses.marche;
+        updateData["system.movement.course"] = stats.vitesses.course;
+      }
+      
+      // Update base damage in both cases (needs recalc)
+      if (!skillsChanged && needsUpdate) {
+        updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
+        updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+      }
+      
+      if (Object.keys(updateData).length > 0) {
+        console.log("[Merc] Updating actor combat stats:", updateData);
+        await actor.update(updateData, { render: true, isRecalculatingCombatStats: true });
+      }
     }
-  }
+  }, 10);
+
 });
 
 console.log("Mercenary System - system.js loaded successfully ✓");

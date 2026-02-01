@@ -411,6 +411,9 @@
                         {{#if skill.isCustomLanguage}}
                         <span class="custom-language-label">{{localize "MERC.UI.skills.languageLabel"}}:</span>
                         <input type="text" class="language-name-edit" value="{{skill.customLanguageName}}" title="{{localize "MERC.UI.skills.languageLabel"}}">
+                        {{else if skill.isNativeLanguage}}
+                        <span class="custom-language-label">{{localize "MERC.Skills.language_native"}}:</span>
+                        <input type="text" class="native-language-edit" name="system.skills.language_native.name" value="{{skill.nativeLanguageName}}" title="{{localize "MERC.Skills.language_native"}}">
                         {{else if skill.isCustomSpecialization}}
                         <span class="specialization-separator">Spécialisation: </span>
                         <input type="text" class="specialization-name-edit" value="{{skill.customSpecializationName}}" title="Spécialisation">
@@ -482,6 +485,9 @@
                         {{#if skill.isCustomLanguage}}
                         <span class="custom-language-label">{{localize "MERC.UI.skills.languageLabel"}}:</span>
                         <input type="text" class="language-name-edit" value="{{skill.customLanguageName}}" title="{{localize "MERC.UI.skills.languageLabel"}}">
+                        {{else if skill.isNativeLanguage}}
+                        <span class="custom-language-label">{{localize "MERC.Skills.language_native"}}:</span>
+                        <input type="text" class="native-language-edit" name="system.skills.language_native.name" value="{{skill.nativeLanguageName}}" title="{{localize "MERC.Skills.language_native"}}">
                         {{else if skill.isCustomSpecialization}}
                         <span class="specialization-separator">Spécialisation: </span>
                         <input type="text" class="specialization-name-edit" value="{{skill.customSpecializationName}}" title="Spécialisation">

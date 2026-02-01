@@ -516,10 +516,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         construction_avionics: { value: 0, abilities: ["intelligence", "dexterity"] },
         construction_vehicle: { value: 0, abilities: ["intelligence", "dexterity"] },
         construction_weaponry: { value: 0, abilities: ["intelligence", "dexterity"] },
-        construction_tools: { value: 0, abilities: ["intelligence", "dexterity"] },
-        spec_melee_mma: { value: 0, abilities: ["strength", "perception"] },
-        spec_blades_knife: { value: 0, abilities: ["strength", "dexterity"] },
-        spec_powder_ak47: { value: 0, abilities: ["dexterity", "perception"] }
+        construction_tools: { value: 0, abilities: ["intelligence", "dexterity"] }
     };
     const buildDefaultSkillSet = (skillDefs) => {
       const result = {};
@@ -763,11 +760,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       "construction_weaponry",
       "construction_tools"
     ]));
-    const specializationKeys = [
-      "spec_melee_mma",
-      "spec_blades_knife",
-      "spec_powder_ak47"
-    ];
+    const specializationKeys = [];
     for (const [specName] of Object.entries(data.actor.system.customSpecializations || {})) {
       specializationKeys.push(`custom_spec_${specName}`);
     }

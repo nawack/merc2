@@ -808,6 +808,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     return data;
   }
 
+  /**
+   * Update the window frame with the actor's name as title
+   */
+  _updateFrame(options) {
+    super._updateFrame(options);
+    if (this.window?.title && this.actor?.name) {
+      this.window.title.textContent = this.actor.name;
+    }
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     
@@ -2388,8 +2398,6 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
   
   if (!needsUpdate && !skillsChanged) return;
   
-  console.log("[Merc] updateActor hook triggered for:", actor.name, { needsUpdate, skillsChanged, changes });
-  
   // Use setTimeout to ensure actor data is fully updated
   setTimeout(async () => {
     // Recalculate using the current actor data (which now has the updates)
@@ -2424,7 +2432,6 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
       }
       
       if (Object.keys(updateData).length > 0) {
-        console.log("[Merc] Updating actor combat stats:", updateData);
         await actor.update(updateData, { render: true, isRecalculatingCombatStats: true });
       }
     }

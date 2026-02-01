@@ -162,7 +162,10 @@
         "removeCustomLanguage": "Supprimer cette langue",
         "customLanguagesHeader": "Personnalisées",
         "languageLabel": "Langue",
-        "languageAlreadyExists": "Une langue avec ce nom existe déjà"
+        "languageAlreadyExists": "Une langue avec ce nom existe déjà",
+        "addCustomSpecialization": "Ajouter une spécialisation",
+        "removeCustomSpecialization": "Supprimer cette spécialisation",
+        "baseSkillLabel": "Compétence de base"
       },
       "items": {
         "equippedWeapons": "Armes équipées",

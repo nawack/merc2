@@ -1,12 +1,13 @@
 # Mercenary System - Foundry VTT v13
 
-Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attributs principaux et 65 compétences avec calcul automatique de degrés via table de progression.
+Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attributs principaux et 56 compétences de base, avec compétences personnalisées (langues et spécialisations) et calcul automatique de degrés via table de progression.
 
 ## 📋 Caractéristiques
 
 - **10 Attributs de Base** : Intelligence, Volonté, Santé Mentale, Charisme, Chance, Adaptation, Force, Dextérité, Rapidité, Constitution
 - **Perception** : Attribut principal avec 5 sous-attributs (Vue, Ouïe, Goût, Odorat, Toucher)
-- **65 Compétences** : Organisées en 7 catégories thématiques (Combat, Aptitudes, Social, Langues, Connaissances, Construction, Spécialisations)
+- **56 Compétences de base** : Organisées en 7 catégories thématiques (Combat, Aptitudes, Social, Langues, Connaissances, Construction, Spécialisations)
+- **Compétences personnalisées** : Ajout/suppression/renommage pour Langues et Spécialisations
 - **Calcul Automatique** : 
   - Base = 30 - (Attribut × 2) ou 30 - (Attribut1 + Attribut2)
   - Degré calculé automatiquement via table de progression (base 4-28, degrés -7 à +33)
@@ -33,12 +34,13 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 - **Cliquer sur un label d'attribut pour faire un jet d20 + valeur**
 
 #### **Skills** 
-- 65 compétences organisées en 7 onglets thématiques
+- 56 compétences de base organisées en 7 onglets thématiques
 - Affichage en 2 colonnes avec en-têtes alignés
 - Pour chaque compétence : **Base** (calculée) / **Dev** (XP) / **Degré** (auto) / **Bonus** (manuel)
 - **Boutons colorés** selon le total (Rouge si -7, Orange si négatif, Vert clair si 0, Vert foncé si positif)
 - **Cliquer sur le nom** de la compétence pour lancer un jet
 - **Jet = d20 + Degré + Bonus** (l'attribut est déjà intégré dans le calcul de Base/Degré)
+- **Langue natale** : champ dédié pour préciser la langue affichée
 
 #### **Items**
 - Gérer les Armes, Armures et Équipement
@@ -99,13 +101,13 @@ d20: [résultat du dé]
 
 **Social (5)** : Éloquence, Comédie, Interrogation, Commandement, Instruction
 
-**Langues (7)** : Serbe, Arabe, Anglais, Russe, Français, Autre 1, Autre 2
+**Langues (1 + personnalisées)** : Langue natale + langues personnalisées
 
 **Connaissances (18)** : Bureaucratie, Illégalité, Mathématiques, Métallurgie, Ingénierie, Électricité/Électronique, Informatique, Géographie, Météorologie, Navigation, Histoire/Politique, Chimie, Géologie, Nature, Biologie, Médecine humaine, Chirurgie
 
 **Construction (4)** : Avionique, Véhicules, Armement, Outils
 
-**Spécialisations (3)** : Mêlée MMA, Lames Couteau, Armes à poudre AK47
+**Spécialisations (personnalisées)** : spécialisations créées par l’utilisateur, avec choix d’une compétence de base
 
 ## 🔢 Système de Calcul des Compétences
 
@@ -176,6 +178,7 @@ merc/
 - Les attributs Origine se synchronisent automatiquement avec Actuel
 - La Perception principale synchronise tous ses sous-attributs
 - Les compétences sont **initialisées automatiquement** à la création du personnage
+- Les langues et spécialisations personnalisées peuvent être gérées directement dans l’onglet Compétences
 - Tous les jets sont persistés et calculés correctement même après rechargement
 
 ## 🔧 Fonctionnalités Techniques

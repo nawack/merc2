@@ -631,6 +631,47 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     }
 
+
+    // Load and process custom specializations
+    const customSpecializations = data.actor.system.customSpecializations || {};
+    
+    for (const [specName, specData] of Object.entries(customSpecializations)) {
+      if (!specData) continue;
+      const skillData = { ...specData, abilities: specData.abilities || [] };
+      const base = this.computeSkillBase(actorDoc, `custom_spec_${specName}`, skillData);
+      const dev = Number(specData.dev ?? 0);
+      const degree = this.computeSkillDegree(actorDoc, `custom_spec_${specName}`, { ...skillData, base });
+      const bonus = Number(specData.bonus ?? 0);
+      
+      // Build display label with base skill if set
+      const baseSkillKey = specData.baseSkill || "";
+      let displayLabel = specName;
+      if (baseSkillKey) {
+        const baseSkillLabel = game.i18n.localize(`MERC.Skills.${baseSkillKey}`);
+        displayLabel = `${baseSkillLabel} : ${specName}`;
+      }
+      
+      // Add to skillList as a special skill
+      data.skillList.push({
+        key: `custom_spec_${specName}`,
+        label: specName,
+        displayLabel: displayLabel,
+        abilities: skillData.abilities,
+        base,
+        dev,
+        bonus,
+        degree,
+        total: degree + bonus,
+        unlocked: true,
+        isCustomSpecialization: true,
+        customSpecializationName: specName,
+        customSpecializationBaseSkill: baseSkillKey,
+        missingPrereqs: [],
+        missingPrereqsText: "",
+        hasPrerequisites: false,
+        prerequisitesText: ""
+      });
+    }
     // Group skills by theme for tabbed display
     const skillByKey = new Map(data.skillList.map(skill => [skill.key, skill]));
     const usedKeys = new Set();
@@ -722,13 +763,36 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       "construction_weaponry",
       "construction_tools"
     ]));
-    data.skillGroups.push(makeGroup("specializations", game.i18n.localize("MERC.SkillGroups.specializations"), [
+    const specializationKeys = [
       "spec_melee_mma",
       "spec_blades_knife",
       "spec_powder_ak47"
-    ]));
+    ];
+    for (const [specName] of Object.entries(data.actor.system.customSpecializations || {})) {
+      specializationKeys.push(`custom_spec_${specName}`);
+    }
+    data.skillGroups.push(makeGroup("specializations", game.i18n.localize("MERC.SkillGroups.specializations"), specializationKeys));
 
-    const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
+
+    // Build list of all skills for specialization base skill selector
+    const allBaseSkills = [];
+    // Combat skills
+    const combatSkills = ["reaction", "melee", "bladed_weapons", "mechanical_projectiles", "powder_projectiles", "throwing", "maneuvers", "heavy_weapons", "electronic_weapons"];
+    // Aptitudes skills
+    const aptitudesSkills = ["running", "climbing", "swimming", "sliding", "air_sliding", "drive_wheeled", "drive_motorcycle", "drive_boats", "drive_tracked", "drive_planes", "drive_helicopters", "riding", "tracking", "stealth", "concealment", "pickpocket", "lockpicking", "tinkering", "forgery", "survival"];
+    // Social skills
+    const socialSkills = ["eloquence", "acting", "interrogation", "command", "instruction"];
+    // Knowledge skills
+    const knowledgeSkills = ["bureaucracy", "illegality", "mathematics", "metallurgy", "engineering", "electricity_electronics", "computer_science", "geography", "meteorology", "navigation", "history_politics", "chemistry", "geology", "nature", "biology", "human_medicine", "surgery"];
+    
+    for (const skillKey of [...combatSkills, ...aptitudesSkills, ...socialSkills, ...knowledgeSkills]) {
+      allBaseSkills.push({
+        key: skillKey,
+        label: game.i18n.localize(`MERC.Skills.${skillKey}`)
+      });
+    }
+    data.allBaseSkills = allBaseSkills;
+        const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
     if (remaining.length) {
       data.skillGroups.push({ id: "other", label: game.i18n.localize("MERC.SkillGroups.other"), skills: remaining });
     }
@@ -1230,7 +1294,150 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
-    // Item usage
+
+    // Handle add specialization button
+    const addSpecializationBtn = html.querySelector(".btn-add-specialization");
+    if (addSpecializationBtn) {
+      addSpecializationBtn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const customSpecializations = this.actor.system.customSpecializations || {};
+        let specNum = 1;
+        while (customSpecializations[`Specialization ${specNum}`]) {
+          specNum++;
+        }
+        const newSpecName = `Specialization ${specNum}`;
+        
+        const updateData = {
+          [`system.customSpecializations.${newSpecName}`]: {
+            base: 0,
+            dev: 0,
+            bonus: 0,
+            degree: 0,
+            abilities: [],
+            baseSkill: ""
+          }
+        };
+        
+        await this.actor.update(updateData);
+        await this.render();
+      });
+    }
+
+    // Handle remove specialization buttons
+    const removeSpecializationBtns = html.querySelectorAll(".btn-remove-specialization");
+    removeSpecializationBtns.forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const skillItem = btn.closest(".skill-item");
+        const specName = skillItem?.dataset.specializationName;
+
+        if (specName) {
+          const updateData = {
+            [`system.customSpecializations.-=${specName}`]: null
+          };
+
+          await this.actor.update(updateData);
+          await this.render();
+        }
+      });
+    });
+
+    // Handle custom specialization name edits
+    const specializationNameInputs = html.querySelectorAll(".specialization-name-edit");
+    specializationNameInputs.forEach(input => {
+      input.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+      });
+      input.addEventListener("blur", async (event) => {
+        const skillItem = input.closest(".skill-item");
+        const oldName = skillItem?.dataset.specializationName;
+        const newName = input.value.trim();
+        
+        if (!oldName || !newName || oldName === newName) return;
+        
+        const customSpecializations = { ...this.actor.system.customSpecializations };
+        if (customSpecializations[newName]) {
+          input.value = oldName;
+          ui.notifications.warn("Une spécialisation avec ce nom existe déjà");
+          return;
+        }
+        
+        const updateData = {
+          [`system.customSpecializations.${newName}`]: customSpecializations[oldName],
+          [`system.customSpecializations.-=${oldName}`]: null
+        };
+        
+        await this.actor.update(updateData);
+        await this.render();
+      });
+    });
+
+    // Handle custom specialization dev/bonus changes
+    const customSpecializationDevs = html.querySelectorAll(".custom-specialization-dev");
+    const customSpecializationBonuses = html.querySelectorAll(".custom-specialization-bonus");
+    
+    const customSpecializationInputs = [...customSpecializationDevs, ...customSpecializationBonuses];
+    customSpecializationInputs.forEach(input => {
+      input.addEventListener("change", async (event) => {
+        const fieldPath = input.name;
+        if (!fieldPath) return;
+
+        let value = input.value;
+        if (input.type === "number") {
+          if (value === "" || value === null) return;
+          const numberValue = Number(value);
+          if (Number.isNaN(numberValue)) return;
+          value = numberValue;
+        }
+
+        const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
+        if (value === currentValue) return;
+
+        await this.actor.update({ [fieldPath]: value });
+      });
+    });
+
+    // Handle base skill selection for specializations
+    const baseSkillSelects = html.querySelectorAll(".specialization-base-skill-select");
+    baseSkillSelects.forEach(select => {
+      select.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+      select.addEventListener("change", async (event) => {
+        const specName = select.dataset.specializationName;
+        const newBaseSkill = select.value;
+        
+        if (!specName) return;
+        
+        const customSpecializations = { ...this.actor.system.customSpecializations };
+        if (!customSpecializations[specName]) return;
+        
+        const updateData = {
+          [`system.customSpecializations.${specName}.baseSkill`]: newBaseSkill
+        };
+        
+        if (newBaseSkill) {
+          const baseSkillData = this.actor.system.skills[newBaseSkill];
+          if (baseSkillData?.abilities) {
+            updateData[`system.customSpecializations.${specName}.abilities`] = baseSkillData.abilities;
+          }
+        }
+        
+        await this.actor.update(updateData);
+        await this.render();
+      });
+    });
+        // Item usage
     const createBtns = html.querySelectorAll(".item-create");
     createBtns.forEach(btn => {
       btn.addEventListener("click", (event) => {
@@ -1364,7 +1571,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const systemData = actor.system || actor._source?.system || {};
     let skillData = systemData.skills?.[skillKey];
     let isCustomLanguage = false;
+    let isCustomSpecialization = false;
     let customLanguageName = null;
+    let customSpecializationName = null;
 
     if (!skillData && skillKey?.startsWith("custom_lang_")) {
       isCustomLanguage = true;
@@ -1374,6 +1583,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         skillData = {
           ...customLangData,
           abilities: ["intelligence", "charisma"]
+        };
+      }
+    }
+
+    if (!skillData && skillKey?.startsWith("custom_spec_")) {
+      isCustomSpecialization = true;
+      customSpecializationName = skillKey.replace("custom_spec_", "");
+      const customSpecData = systemData.customSpecializations?.[customSpecializationName];
+      if (customSpecData) {
+        skillData = {
+          ...customSpecData,
+          abilities: customSpecData.abilities || []
         };
       }
     }
@@ -1389,9 +1610,20 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const bonus = Number(skillData.bonus ?? 0);
     const total_modifier = degree + bonus;
 
-    const skillName = isCustomLanguage
-      ? game.i18n.format("MERC.Skills.language_custom", { name: customLanguageName })
-      : (game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey);
+    let skillName;
+    if (isCustomLanguage) {
+      skillName = game.i18n.format("MERC.Skills.language_custom", { name: customLanguageName });
+    } else if (isCustomSpecialization) {
+      const baseSkillKey = skillData.baseSkill || "";
+      if (baseSkillKey) {
+        const baseSkillLabel = game.i18n.localize(`MERC.Skills.${baseSkillKey}`);
+        skillName = `${baseSkillLabel} : ${customSpecializationName}`;
+      } else {
+        skillName = customSpecializationName;
+      }
+    } else {
+      skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+    }
     
     const roll = new Roll("1d20");
     await roll.evaluate();
@@ -2128,4 +2360,8 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
 });
 
 console.log("Mercenary System - system.js loaded successfully ✓");
+
+
+
+
 

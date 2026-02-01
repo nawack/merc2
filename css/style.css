@@ -670,9 +670,112 @@
   border-bottom: 1px dotted #888;
 }
 
-.skill-name:hover {
-  color: #666;
+.specialization-base-skill-wrapper {
+  margin-bottom: 2px;
 }
+
+.specialization-base-skill-select {
+  font: inherit;
+  font-size: 10px;
+  color: #999;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  height: 1em;
+  line-height: 1;
+  min-height: 0;
+  min-width: 40px;
+  width: 80%;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0.8em;
+  padding-left: 1em;
+}
+
+.specialization-base-skill-select:focus {
+  color: inherit;
+  border-bottom: 1px dotted #888;
+}
+
+.specialization-separator {
+  margin-right: 4px;
+  color: inherit;
+}
+
+.specialization-name-edit {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  height: 1em;
+  line-height: 1;
+  min-height: 0;
+  min-width: 40px;
+  width: 120px;
+  box-shadow: none;
+  outline: none;
+}
+
+.specialization-name-edit:focus {
+  border-bottom: 1px dotted #888;
+}
+
+.btn-add-specialization {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #0f3460;
+  color: white;
+  border: 1px solid #0f3460;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.btn-add-specialization:hover {
+  background-color: #1a4680;
+}
+
+.custom-specializations-footer {
+  margin-top: 12px;
+}
+
+.btn-remove-specialization {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  color: #2b2b2b;
+  background: none;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 16px;
+  transition: background-color 0.2s, color 0.2s;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.btn-remove-specialization:hover {
+  text-shadow: 0 0 2px #000;
+  background: none;
+}
+
+
 
 .skill-name .fa-lock {
   font-size: 9px;

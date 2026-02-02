@@ -424,13 +424,13 @@
                       </div>
                       <div class="skill-value">
                         <div class="skill-inputs">
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{localize "MERC.UI.skills.base"}}" readonly>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{#if skill.baseTooltip}}{{skill.baseTooltip}}{{else}}{{localize "MERC.UI.skills.base"}}{{/if}}" readonly>
                           {{#if skill.isCustomLanguage}}
-                          <input type="number" class="skill-input" name="system.customLanguages.{{skill.customLanguageName}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}">
+                          <input type="number" class="skill-input" name="system.customLanguages.{{skill.customLanguageName}}.dev" value="{{skill.dev}}" min="0" title="{{#if skill.devTooltip}}{{skill.devTooltip}}{{else}}{{localize "MERC.UI.skills.dev"}}{{/if}}">
                           {{else if skill.isCustomSpecialization}}
-                          <input type="number" class="skill-input" name="system.customSpecializations.{{skill.customSpecializationName}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}">
+                          <input type="number" class="skill-input" name="system.customSpecializations.{{skill.customSpecializationName}}.dev" value="{{skill.dev}}" min="0" title="{{#if skill.devTooltip}}{{skill.devTooltip}}{{else}}{{localize "MERC.UI.skills.dev"}}{{/if}}">
                           {{else}}
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}" {{#unless skill.unlocked}}disabled{{/unless}}>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="{{#if skill.devTooltip}}{{skill.devTooltip}}{{else}}{{localize "MERC.UI.skills.dev"}}{{/if}}" {{#unless skill.unlocked}}disabled{{/unless}}>
                           {{/if}}
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="{{localize "MERC.UI.skills.degree"}}" readonly>
                           {{#if skill.isCustomLanguage}}
@@ -498,13 +498,13 @@
                       </div>
                       <div class="skill-value">
                         <div class="skill-inputs">
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{localize "MERC.UI.skills.base"}}" readonly>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{#if skill.baseTooltip}}{{skill.baseTooltip}}{{else}}{{localize "MERC.UI.skills.base"}}{{/if}}" readonly>
                           {{#if skill.isCustomLanguage}}
-                          <input type="number" class="skill-input" name="system.customLanguages.{{skill.customLanguageName}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}">
+                          <input type="number" class="skill-input" name="system.customLanguages.{{skill.customLanguageName}}.dev" value="{{skill.dev}}" min="0" title="{{#if skill.devTooltip}}{{skill.devTooltip}}{{else}}{{localize "MERC.UI.skills.dev"}}{{/if}}">
                           {{else if skill.isCustomSpecialization}}
-                          <input type="number" class="skill-input" name="system.customSpecializations.{{skill.customSpecializationName}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}">
+                          <input type="number" class="skill-input" name="system.customSpecializations.{{skill.customSpecializationName}}.dev" value="{{skill.dev}}" min="0" title="{{#if skill.devTooltip}}{{skill.devTooltip}}{{else}}{{localize "MERC.UI.skills.dev"}}{{/if}}">
                           {{else}}
-                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="{{localize "MERC.UI.skills.dev"}}" {{#unless skill.unlocked}}disabled{{/unless}}>
+                          <input type="number" class="skill-input" name="system.skills.{{skill.key}}.dev" value="{{skill.dev}}" min="0" title="{{#if skill.devTooltip}}{{skill.devTooltip}}{{else}}{{localize "MERC.UI.skills.dev"}}{{/if}}" {{#unless skill.unlocked}}disabled{{/unless}}>
                           {{/if}}
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.degree" value="{{skill.degree}}" min="0" title="{{localize "MERC.UI.skills.degree"}}" readonly>
                           {{#if skill.isCustomLanguage}}

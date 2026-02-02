@@ -157,6 +157,71 @@ function getDegreeFromTable(base, dev) {
 }
 
 /**
+ * Get the next dev threshold from DEGREE_TABLE to reach the next degree
+ * @param {number} base - The base value (4-28)
+ * @param {number} dev - Current dev value
+ * @returns {number|null} The next dev threshold, or null if already max or base invalid
+ */
+function getNextDevThreshold(base, dev) {
+  const baseRow = DEGREE_TABLE[base];
+  if (!baseRow) return null;
+
+  let currentIndex = -1;
+  for (let i = baseRow.length - 1; i >= 0; i--) {
+    if (baseRow[i] <= dev) {
+      currentIndex = i;
+      break;
+    }
+  }
+
+  const nextIndex = currentIndex + 1;
+  if (nextIndex < 0) return baseRow[0] ?? null;
+  if (nextIndex >= baseRow.length) return null;
+  return baseRow[nextIndex];
+}
+
+/**
+ * Build tooltip text for base calculation showing attributes and their values
+ * @param {Object} actor - The actor document
+ * @param {Object} skillData - Skill data including abilities
+ * @param {number} baseValue - Computed base value
+ * @param {boolean} isCustomSpec - Whether this is a custom specialization
+ * @returns {string}
+ */
+function buildBaseTooltip(actor, skillData, baseValue, isCustomSpec = false) {
+  const attrs = actor?.system?.attributes ?? {};
+  const abilities = skillData?.abilities || [];
+
+  if (!abilities.length) {
+    return `Base: ${baseValue}`;
+  }
+
+  const parts = abilities.map((abilityKey) => {
+    const label = game.i18n.localize(CONFIG.MERC.abilities?.[abilityKey]) || abilityKey;
+    const raw = attrs[abilityKey];
+    const value = typeof raw === "object" ? (raw.current ?? 0) : (raw ?? 0);
+    return `${label} (${value})`;
+  });
+
+  const attrsText = parts.join(abilities.length === 2 ? " + " : ", ");
+  const suffix = isCustomSpec ? " (spécialisation)" : "";
+  return `Attributs: ${attrsText}\nBase${suffix}: ${baseValue}`;
+}
+
+/**
+ * Build tooltip text for dev field showing next degree threshold
+ * @param {number} base - The base value (4-28)
+ * @param {number} dev - Current dev value
+ * @returns {string}
+ */
+function buildDevTooltip(base, dev) {
+  if (!DEGREE_TABLE[base]) return "Base hors table";
+  const next = getNextDevThreshold(base, dev);
+  if (next === null) return "Degré maximal";
+  return `Prochain degré à: ${next}`;
+}
+
+/**
  * Get base damage formula from Force and Degree using lookup table
  * Force is clamped to 1-10, Degree is clamped to -7 to 19
  * @param {number} forceValue
@@ -559,6 +624,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const dev = Number(skillData.dev ?? skillData.value ?? 0);
         const degree = this.computeSkillDegree(actorDoc, skillKey, skillData);
         const bonus = Number(skillData.bonus ?? 0);
+        const baseTooltip = buildBaseTooltip(actorDoc, skillData, base, false);
+        const devTooltip = buildDevTooltip(base, dev);
         
         // Check if skill is unlocked
         const unlockStatus = checkSkillUnlocked(actorDoc, skillKey);
@@ -604,7 +671,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           hasPrerequisites: prereqsText.length > 0,
           prerequisitesText: prereqsText,
           isNativeLanguage,
-          nativeLanguageName
+          nativeLanguageName,
+          baseTooltip,
+          devTooltip
         });
       }
     }
@@ -621,6 +690,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       const dev = Number(langData.dev ?? 0);
       const degree = this.computeSkillDegree(actorDoc, `custom_lang_${langName}`, { ...langData, base, abilities: ["intelligence", "charisma"] });
       const bonus = Number(langData.bonus ?? 0);
+      const baseTooltip = buildBaseTooltip(actorDoc, { abilities: ["intelligence", "charisma"] }, base, false);
+      const devTooltip = buildDevTooltip(base, dev);
       
       // Add to skillList as a special skill
       data.skillList.push({
@@ -639,7 +710,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         missingPrereqs: [],
         missingPrereqsText: "",
         hasPrerequisites: false,
-        prerequisitesText: ""
+        prerequisitesText: "",
+        baseTooltip,
+        devTooltip
       });
     }
 
@@ -654,6 +727,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       const dev = Number(specData.dev ?? 0);
       const degree = this.computeSkillDegree(actorDoc, `custom_spec_${specName}`, { ...skillData, base });
       const bonus = Number(specData.bonus ?? 0);
+      const baseForDegree = Math.floor(base);
+      const baseTooltip = buildBaseTooltip(actorDoc, skillData, base, true);
+      const devTooltip = buildDevTooltip(baseForDegree, dev);
       
       // Build display label with base skill if set
       const baseSkillKey = specData.baseSkill || "";
@@ -681,7 +757,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         missingPrereqs: [],
         missingPrereqsText: "",
         hasPrerequisites: false,
-        prerequisitesText: ""
+        prerequisitesText: "",
+        baseTooltip,
+        devTooltip
       });
     }
     // Group skills by theme for tabbed display

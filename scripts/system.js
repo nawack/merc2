@@ -221,6 +221,34 @@ function buildDevTooltip(base, dev) {
   return `Prochain degré à: ${next}`;
 }
 
+async function rollD20WithSecond() {
+  const firstRoll = new Roll("1d20");
+  await firstRoll.evaluate();
+
+  let secondRoll = null;
+  let adjustedTotal = firstRoll.total;
+  let secondRollDirection = null;
+
+  if (firstRoll.total === 20 || firstRoll.total === 1) {
+    secondRoll = new Roll("1d20");
+    await secondRoll.evaluate();
+    if (firstRoll.total === 20) {
+      adjustedTotal += secondRoll.total;
+      secondRollDirection = "ajoutée";
+    } else {
+      adjustedTotal -= secondRoll.total;
+      secondRollDirection = "soustraite";
+    }
+  }
+
+  return {
+    firstRoll,
+    secondRoll,
+    adjustedTotal,
+    secondRollDirection
+  };
+}
+
 /**
  * Get base damage formula from Force and Degree using lookup table
  * Force is clamped to 1-10, Degree is clamped to -7 to 19
@@ -1652,22 +1680,21 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const abilityScore = Number(typeof rawAbility === "object" ? (rawAbility.current ?? 0) : (rawAbility ?? 0));
     const abilityName = game.i18n.localize(CONFIG.MERC.abilities[abilityKey]);
     
-    const roll = new Roll("1d20");
-    await roll.evaluate();
-    
-    const total = roll.total + abilityScore;
+    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
+    const total = adjustedTotal + abilityScore;
+    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
     
     const chatData = {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: actor }),
-      rolls: [roll],
+      rolls,
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
           <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${abilityName}</span>
           <span class="merc-roll-badge">${total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20">d20: <strong>${roll.total}</strong></span>
+          <span class="roll-d20"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
           <span class="roll-modifier">${abilityScore > 0 ? ' + ' : ' - '}${Math.abs(abilityScore)}</span>
         </div>
       </div>`
@@ -1748,24 +1775,22 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
     }
     
-    const roll = new Roll("1d20");
-    await roll.evaluate();
-    
-    const total = roll.total + total_modifier;
+    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
+    const total = adjustedTotal + total_modifier;
+    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
     
     const chatData = {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: actor }),
-      rolls: [roll],
+      rolls,
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
           <span class="merc-roll-label">${actor.name} - ${skillName}</span>
           <span class="merc-roll-badge">${total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20">d20: <strong>${roll.total}</strong></span>
-          <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
-          <!--<span class="roll-modifier">(Base ${base} / Dev ${dev} / Degré ${degree} / Bonus ${bonus})</span>-->
+          <span class="roll-modifier"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong>${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
+          <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus} / Attribut ${combatBonus})</span>
         </div>
       </div>`
     };
@@ -1812,22 +1837,21 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const perceptionName = game.i18n.localize(CONFIG.MERC.abilities.perception);
     const label = `${perceptionName} - ${subLabel}`;
 
-    const roll = new Roll("1d20");
-    await roll.evaluate();
-
-    const total = roll.total + subValue;
+    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
+    const total = adjustedTotal + subValue;
+    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
 
     const chatData = {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: actor }),
-      rolls: [roll],
+      rolls,
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
           <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${label}</span>
           <span class="merc-roll-badge">${total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20">d20: <strong>${roll.total}</strong></span>
+          <span class="roll-d20"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
           <span class="roll-modifier">${subValue > 0 ? ' + ' : ' - '}${Math.abs(subValue)}</span>
         </div>
       </div>`
@@ -2166,31 +2190,6 @@ const computeCombatStatsFromSystem = (system) => {
   const bonusDiscretion = STATS_TABLES.discretion[corpulenceTableIdx] || 0;
   const bonusDissimulation = STATS_TABLES.dissimulation[corpulenceTableIdx] || 0;
 
-  console.log("[Merc] computeCombatStatsFromSystem inputs", {
-    height,
-    weight,
-    rapidite,
-    volonte,
-    constitution,
-    force
-  });
-  console.log("[Merc] computeCombatStatsFromSystem computed", {
-    indexTaille,
-    indexPoids,
-    attTaille,
-    attPoids,
-    avgAtt,
-    corpulence,
-    corpulenceTableIdx,
-    indexVitesse,
-    endurance,
-    pcAjust,
-    pointCorporence,
-    capaciteCharge,
-    bonusDiscretion,
-    bonusDissimulation
-  });
-
   return {
     endurance: Math.max(0, endurance),
     pointCorporence: Math.max(0, pointCorporence),
@@ -2351,12 +2350,7 @@ Hooks.once("ready", async () => {
 
   const actors = game.actors?.contents ?? [];
   if (actors.length > 0) {
-    const preview = computeCombatStatsFromSystem(actors[0].system);
-    console.log("[Merc] computeCombatStatsFromSystem called (ready)", {
-      actorId: actors[0].id,
-      actorName: actors[0].name,
-      preview
-    });
+    computeCombatStatsFromSystem(actors[0].system);
   }
   for (const actor of actors) {
     if (!actor || !["character", "npc"].includes(actor.type)) continue;
@@ -2516,8 +2510,6 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
   }, 10);
 
 });
-
-console.log("Mercenary System - system.js loaded successfully ✓");
 
 
 

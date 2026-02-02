@@ -2,6 +2,18 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.5] - 2026-02-02
+
+### Added
+- ✨ **Jets critiques** : sur 20 ou 1, un second d20 est lancé (ajouté/soustrait) et affiché
+- 🎨 **UI jets** : badge et texte du breakdown colorés selon ajout/soustraction
+
+### Changed
+- 🧹 **Nettoyage** : suppression de logs console et refactor des calculs de stats
+- 🧼 **CSS** : retrait de styles inutilisés et commentaires ajoutés
+
+---
+
 ## [1.0.4] - 2026-02-01
 
 ### Added

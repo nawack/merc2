@@ -1016,103 +1016,6 @@
   background-color: #1a4680;
 }
 
-/* Custom Languages Styling */
-.custom-languages-section {
-  background-color: #f9f9f9;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-top: 15px;
-}
-
-.custom-languages-section h3 {
-  margin: 0 0 12px 0;
-  font-size: 12px;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #474749;
-}
-
-.custom-languages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.custom-language-item {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 8px;
-  gap: 8px;
-}
-
-.custom-language-name-input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.custom-language-name-input label {
-  font-size: 11px;
-  font-weight: bold;
-  color: #666;
-  text-transform: uppercase;
-  white-space: nowrap;
-  min-width: 80px;
-}
-
-.custom-language-name-input input {
-  flex: 1;
-  padding: 4px 6px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 11px;
-}
-
-.custom-language-values {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.custom-language-values .skill-values-headers {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-.custom-language-values .skill-inputs {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.custom-language-values .skill-input {
-  width: 32px;
-  height: 20px;
-  padding: 0 3px;
-  font-size: 10px;
-  text-align: center;
-}
-
-.custom-language-values .skill-roll-btn {
-  min-width: 40px;
-  height: 20px;
-  padding: 0 4px;
-  font-size: 10px;
-}
-
-.custom-language-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 4px;
-}
-
 .btn-remove-language {
   width: 18px;
   height: 18px;
@@ -1217,6 +1120,7 @@ select:focus {
   color: #333;
 }
 
+/* Chat roll card layout */
 .merc-roll-header {
   display: flex;
   align-items: center;
@@ -1231,6 +1135,7 @@ select:focus {
   font-weight: 500;
 }
 
+/* Roll total badge (neutral) */
 .merc-roll-badge {
   min-width: 40px;
   height: 20px;
@@ -1242,6 +1147,28 @@ select:focus {
   font-weight: bold;
   color: #333;
   padding: 0 6px;
+}
+
+/* Roll total badge (critical add/remove) */
+.merc-roll-badge--bonus {
+  background-color: #2e7d32;
+  border-color: #1b5e20;
+  color: #fff;
+}
+
+.merc-roll-badge--penalty {
+  background-color: #c62828;
+  border-color: #8e0000;
+  color: #fff;
+}
+
+/* Roll breakdown text accents (critical add/remove) */
+.merc-roll-text--bonus {
+  color: #1b5e20;
+}
+
+.merc-roll-text--penalty {
+  color: #8e0000;
 }
 
 /* Stats Grid - Matching Attributes Design */
@@ -1536,6 +1463,7 @@ select:focus {
   color: #333;
 }
 
+/* Roll breakdown default colors */
 .merc-roll-breakdown .roll-d20 {
   font-size: 13px;
   color: #666;
@@ -1545,11 +1473,15 @@ select:focus {
   color: #999;
 }
 
-/* Utility Classes */
-.rollable:hover,
-.rollable:focus {
-  color: #000;
-  text-shadow: 0 0 10px #333;
-  cursor: pointer;
+/* Override breakdown colors when critical add/remove classes are present */
+.merc-roll-breakdown .roll-d20.merc-roll-text--bonus,
+.merc-roll-breakdown .roll-modifier.merc-roll-text--bonus {
+  color: #1b5e20;
 }
+
+.merc-roll-breakdown .roll-d20.merc-roll-text--penalty,
+.merc-roll-breakdown .roll-modifier.merc-roll-text--penalty {
+  color: #8e0000;
+}
+
 

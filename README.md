@@ -65,6 +65,11 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 4. Un jet de **d20 + (Degré + Bonus)** est lancé
 5. Le résultat affiche : Base / Dev / Degré / Bonus pour référence
 
+### Critiques (20/1)
+- Sur un **20** naturel, un second d20 est lancé et **ajouté**
+- Sur un **1** naturel, un second d20 est lancé et **soustrait**
+- Les deux jets sont affichés dans le breakdown du chat
+
 ### Résultat d'un Jet
 ```
 d20: [résultat du dé]

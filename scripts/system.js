@@ -43,13 +43,6 @@ function initPortraitSelection(actor) {
   });
 }
 
-function setCharacterPortrait(imageUrl) {
-  const portraitElement = document.querySelector('.character-portrait');
-  if (portraitElement) {
-    portraitElement.src = imageUrl;
-  }
-}
-
 // Index to Degree conversion table
 // Index 0 = degree -7, index 1 = degree -6, ..., index 7 = degree 0, ..., index 40 = degree 33
 const INDEX_TO_DEGREE = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33];
@@ -221,6 +214,51 @@ function buildDevTooltip(base, dev) {
   return `Prochain degré à: ${next}`;
 }
 
+// Resolve attribute values from either {origin,current} or plain numbers.
+function getAttributeValueFromSystem(system, attrKey) {
+  const attrs = system?.attributes ?? {};
+  const attr = attrs[attrKey];
+  return typeof attr === "object" ? (attr.current ?? 0) : (attr ?? 0);
+}
+
+// Compute the base value for a skill from system data only (no actor instance required).
+function computeSkillBaseFromSystem(system, skillKey, skillData) {
+  if (!system || !skillData) return 0;
+
+  const abilities = skillData.abilities || [];
+  if (abilities.length === 0) return 0;
+
+  const isCustomSpec = typeof skillKey === "string" && skillKey.startsWith("custom_spec_");
+
+  if (abilities.length === 1) {
+    const attrValue = getAttributeValueFromSystem(system, abilities[0]);
+    const base = 30 - (attrValue * 2);
+    return isCustomSpec ? Math.floor(base / 2) : base;
+  }
+
+  if (abilities.length === 2) {
+    const attr1Value = getAttributeValueFromSystem(system, abilities[0]);
+    const attr2Value = getAttributeValueFromSystem(system, abilities[1]);
+    const base = 30 - (attr1Value + attr2Value);
+    return isCustomSpec ? Math.floor(base / 2) : base;
+  }
+
+  return 0;
+}
+
+// Compute degree from base/dev for any skill (system-only, no actor instance required).
+function computeSkillDegreeFromSystem(system, skillKey, skillData) {
+  if (!system || !skillData) return 0;
+
+  const base = computeSkillBaseFromSystem(system, skillKey, skillData);
+  const isCustomSpec = typeof skillKey === "string" && skillKey.startsWith("custom_spec_");
+  const baseForDegree = isCustomSpec ? Math.floor(base) : base;
+  const dev = Number(skillData.dev ?? 0);
+
+  return getDegreeFromTable(baseForDegree, dev);
+}
+
+// Roll 1d20 with a second roll on 20 (add) or 1 (subtract).
 async function rollD20WithSecond() {
   const firstRoll = new Roll("1d20");
   await firstRoll.evaluate();
@@ -357,51 +395,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   // Calculate Base: 30 - (ATTR1 + ATTR2) or 30 - (ATTR1 * 2)
   computeSkillBase(actor, skillKey, skillData) {
     if (!actor || !skillData) return 0;
-    
-    const attrs = actor.system?.attributes;
-    if (!attrs) return 0;
-    
-    // Get current values of linked attributes
-    const getAttrValue = (attrKey) => {
-      const attr = attrs[attrKey];
-      return typeof attr === 'object' ? (attr.current ?? 0) : (attr ?? 0);
-    };
-    
-    const abilities = skillData.abilities || [];
-    if (abilities.length === 0) return 0;
-    
-    const isCustomSpec = typeof skillKey === "string" && skillKey.startsWith("custom_spec_");
-
-    if (abilities.length === 1) {
-      // Single attribute: 30 - (ATTR * 2)
-      const attrValue = getAttrValue(abilities[0]);
-      const base = 30 - (attrValue * 2);
-      return isCustomSpec ? Math.floor(base / 2) : base;
-    } else if (abilities.length === 2) {
-      // Two attributes: 30 - (ATTR1 + ATTR2)
-      const attr1Value = getAttrValue(abilities[0]);
-      const attr2Value = getAttrValue(abilities[1]);
-      const base = 30 - (attr1Value + attr2Value);
-      return isCustomSpec ? Math.floor(base / 2) : base;
-    }
-    
-    return 0;
+    return computeSkillBaseFromSystem(actor.system, skillKey, skillData);
   }
 
   // Calculate Degré using the lookup table based on base and dev
   computeSkillDegree(actor, skillKey, skillData) {
     if (!actor || !skillData) return 0;
-    
-    // Get base value (computed from attributes)
-    const base = this.computeSkillBase(actor, skillKey, skillData);
-    const isCustomSpec = typeof skillKey === "string" && skillKey.startsWith("custom_spec_");
-    const baseForDegree = isCustomSpec ? Math.floor(base) : base;
-    
-    // Get dev value (directly from skill data)
-    const dev = Number(skillData.dev ?? 0);
-    
-    // Use the lookup table to find degree
-    return getDegreeFromTable(baseForDegree, dev);
+    return computeSkillDegreeFromSystem(actor.system, skillKey, skillData);
   }
 
   async _prepareContext(options) {
@@ -1683,6 +1683,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
     const total = adjustedTotal + abilityScore;
     const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
+    const badgeClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-badge--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-badge--penalty"
+        : "";
+    const rollTextClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-text--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-text--penalty"
+        : "";
     
     const chatData = {
       user: game.user.id,
@@ -1691,10 +1701,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
           <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${abilityName}</span>
-          <span class="merc-roll-badge">${total}</span>
+          <span class="merc-roll-badge${badgeClass}">${total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
+          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
           <span class="roll-modifier">${abilityScore > 0 ? ' + ' : ' - '}${Math.abs(abilityScore)}</span>
         </div>
       </div>`
@@ -1778,6 +1788,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
     const total = adjustedTotal + total_modifier;
     const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
+    const badgeClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-badge--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-badge--penalty"
+        : "";
+    const rollTextClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-text--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-text--penalty"
+        : "";
     
     const chatData = {
       user: game.user.id,
@@ -1786,10 +1806,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
           <span class="merc-roll-label">${actor.name} - ${skillName}</span>
-          <span class="merc-roll-badge">${total}</span>
+          <span class="merc-roll-badge${badgeClass}">${total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-modifier"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong>${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
+          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
+          <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
           <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus} / Attribut ${combatBonus})</span>
         </div>
       </div>`
@@ -1819,7 +1840,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           <span class="merc-roll-badge">${roll.total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20">${formula}: <strong>${roll.total}</strong></span>
+          <span class="roll-d20"><strong>${roll.total}</strong></span>
         </div>
       </div>`
     };
@@ -1840,6 +1861,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
     const total = adjustedTotal + subValue;
     const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
+    const badgeClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-badge--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-badge--penalty"
+        : "";
+    const rollTextClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-text--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-text--penalty"
+        : "";
 
     const chatData = {
       user: game.user.id,
@@ -1848,10 +1879,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
           <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${label}</span>
-          <span class="merc-roll-badge">${total}</span>
+          <span class="merc-roll-badge${badgeClass}">${total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
+          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
           <span class="roll-modifier">${subValue > 0 ? ' + ' : ' - '}${Math.abs(subValue)}</span>
         </div>
       </div>`
@@ -1886,101 +1917,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   // ===== Combat & Movement Calculations =====
   
   /**
-   * Find index in table based on value
-   * Returns the index of the immediately lower value
-   */
-  findTableIndex(value, table) {
-    if (!value || value <= 0) return 0;
-    for (let i = table.length - 1; i >= 0; i--) {
-      if (value >= table[i]) {
-        return i;
-      }
-    }
-    return 0;
-  }
-
-  /**
    * Calculate combat statistics for the character
    */
   calculateCombatStats() {
-    const system = this.actor.system;
-    const attrs = system.attributes || {};
-    
-    // Get height and weight from biography
-    const height = system.biography?.height || 0;
-    const weight = system.biography?.weight || 0;
-    
-    // Rapidité is derived from speed attribute (Rapidité = Vitesse)
-    const rapidite = attrs.speed?.current || 0;
-    
-    // Find indices in tables
-    const indexTaille = this.findTableIndex(height, STATS_TABLES.taille);
-    const indexPoids = this.findTableIndex(weight, STATS_TABLES.poids);
-    
-    // Get attribute values (-11 to 20 = indices 0-31)
-    // The table position directly represents the attribute value
-    // index 0 = attribute -11, index 11 = attribute 0, index 20 = attribute 9, etc.
-    const attTaille = indexTaille - 11;
-    const attPoids = indexPoids - 11;
-    
-    // Calculate corpulence
-    const avgAtt = (attTaille + attPoids) / 2;
-    const corpulence = avgAtt > 5 ? Math.ceil(avgAtt) : Math.floor(avgAtt);
-    
-    // Clamp corpulence to valid table range (-11 to 20)
-    const corpulenceTableIdx = Math.max(0, Math.min(31, corpulence + 11));
-    
-    // Calculate index_vitesse (clamped to valid range)
-    const indexVitesse = Math.max(0, Math.min(31, corpulence + rapidite - 5 + 11));
-    
-    // Endurance = floor((Volonté + Constitution) / 2)
-    const volonte = attrs.will?.current || 0;
-    const constitution = attrs.constitution?.current || 0;
-    const endurance = Math.floor((volonte + constitution) / 2);
-    
-    // Point de corpulence = Constitution + ajustement PC
-    const pcAjust = STATS_TABLES.ajustementPC[corpulenceTableIdx] || 0;
-    const pointCorporence = constitution + pcAjust;
-    
-    // Capacité de Charge = Force + Constitution * 2
-    const force = attrs.strength?.current || 0;
-    const capaciteCharge = (force + constitution) * 2;
-    
-    // Bonus discrétion et dissimulation
-    const bonusDiscretion = STATS_TABLES.discretion[corpulenceTableIdx] || 0;
-    const bonusDissimulation = STATS_TABLES.dissimulation[corpulenceTableIdx] || 0;
-    
-    // Vitesses de déplacement (using indexVitesse)
-    const vitesses = {
-      reptation: STATS_TABLES.reptation[indexVitesse] || 0,
-      marche: STATS_TABLES.marche[indexVitesse] || 0,
-      course: STATS_TABLES.course[indexVitesse] || 0
-    };
-
-    // Base damage calculations (melee + bladed weapons)
-    const skills = system.skills || {};
-    const meleeSkill = { abilities: CONFIG.MERC.skills?.melee?.abilities || [], ...(skills.melee || {}) };
-    const bladedSkill = { abilities: CONFIG.MERC.skills?.bladed_weapons?.abilities || [], ...(skills.bladed_weapons || {}) };
-    const meleeDegree = this.computeSkillDegree(this.actor, "melee", meleeSkill);
-    const bladedDegree = this.computeSkillDegree(this.actor, "bladed_weapons", bladedSkill);
-    const baseDamageMelee = getBaseDamageFromTable(force, meleeDegree);
-    const baseDamageBladed = getBaseDamageFromTable(force, bladedDegree);
-    
-    // Return calculated values
-    return {
-      endurance: Math.max(0, endurance),
-      pointCorporence: Math.max(0, pointCorporence),
-      capaciteCharge: Math.max(0, capaciteCharge),
-      bonusDiscretion,
-      bonusDissimulation,
-      vitesses,
-      baseDamageMelee,
-      baseDamageBladed,
-      corpulence,
-      indexVitesse,
-      indexTaille,
-      indexPoids
-    };
+    return computeCombatStatsFromSystem(this.actor?.system);
   }
 }
 
@@ -2139,19 +2079,7 @@ const DEFAULT_MOVEMENT = {
   course: 0
 };
 
-const buildSkillDefaults = () => Object.fromEntries(
-  Object.entries(CONFIG.MERC.skills).map(([key, def]) => [
-    key,
-    {
-      base: 0,
-      dev: 0,
-      bonus: 0,
-      degree: 0,
-      abilities: def.abilities || []
-    }
-  ])
-);
-
+// Locate the closest lower/equal value index in a lookup table.
 const findTableIndex = (value, table) => {
   if (!value || value <= 0) return 0;
   for (let i = table.length - 1; i >= 0; i--) {
@@ -2160,7 +2088,8 @@ const findTableIndex = (value, table) => {
   return 0;
 };
 
-const computeCombatStatsFromSystem = (system) => {
+// Base combat calculations (movement, corpulence, bonuses), without damage formulas.
+const computeCombatStatsBase = (system) => {
   const attrs = system?.attributes || {};
   const height = system?.biography?.height || 0;
   const weight = system?.biography?.weight || 0;
@@ -2201,10 +2130,34 @@ const computeCombatStatsFromSystem = (system) => {
       reptation: STATS_TABLES.reptation[indexVitesse] || 0,
       marche: STATS_TABLES.marche[indexVitesse] || 0,
       course: STATS_TABLES.course[indexVitesse] || 0
-    }
+    },
+    indexVitesse,
+    indexTaille,
+    indexPoids,
+    force
   };
 };
 
+// Full combat calculations including base damage from skills/force.
+const computeCombatStatsFromSystem = (system) => {
+  const baseStats = computeCombatStatsBase(system);
+  const skills = system?.skills || {};
+
+  const meleeSkill = { abilities: CONFIG.MERC.skills?.melee?.abilities || [], ...(skills.melee || {}) };
+  const bladedSkill = { abilities: CONFIG.MERC.skills?.bladed_weapons?.abilities || [], ...(skills.bladed_weapons || {}) };
+  const meleeDegree = computeSkillDegreeFromSystem(system, "melee", meleeSkill);
+  const bladedDegree = computeSkillDegreeFromSystem(system, "bladed_weapons", bladedSkill);
+  const baseDamageMelee = getBaseDamageFromTable(baseStats.force, meleeDegree);
+  const baseDamageBladed = getBaseDamageFromTable(baseStats.force, bladedDegree);
+
+  return {
+    ...baseStats,
+    baseDamageMelee,
+    baseDamageBladed
+  };
+};
+
+// Build migration patch to fill missing fields on existing actors.
 const getActorMigrationData = (actor) => {
   const updateData = {};
   const system = actor.system || {};
@@ -2349,9 +2302,6 @@ Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
 
   const actors = game.actors?.contents ?? [];
-  if (actors.length > 0) {
-    computeCombatStatsFromSystem(actors[0].system);
-  }
   for (const actor of actors) {
     if (!actor || !["character", "npc"].includes(actor.type)) continue;
     const updateData = getActorMigrationData(actor);

@@ -303,7 +303,7 @@
             <span class="headerStatLabel">{{localize "MERC.UI.stats.burden"}}</span>
             <div class="stat-values">
               <div class="stat-display">
-                <div class="stat-value-large" id="total-weight">0</div>
+                <div class="stat-value-large burden-display" id="total-weight">0</div>
               </div>
             </div>
           </div>
@@ -345,7 +345,9 @@
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.reptation}}</div>
-                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
+              </div>
+              <div class="stat-display burden-speed" id="speed-reptation-actual">
+                <div class="stat-value-large burden-speed">-</div>
               </div>
             </div>
           </div>
@@ -355,7 +357,9 @@
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.marche}}</div>
-                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
+              </div>
+              <div class="stat-display burden-speed" id="speed-marche-actual">
+                <div class="stat-value-large burden-speed">-</div>
               </div>
             </div>
           </div>
@@ -365,7 +369,9 @@
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.course}}</div>
-                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
+              </div>
+              <div class="stat-display burden-speed" id="speed-course-actual">
+                <div class="stat-value-large burden-speed">-</div>
               </div>
             </div>
           </div>

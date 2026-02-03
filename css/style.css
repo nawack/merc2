@@ -1628,6 +1628,40 @@
   color: #666;
 }
 
+/* Burden level styling - color only */
+.burden-display.burden-level-1 {
+  color: #388E3C;
+}
+
+.burden-display.burden-level-2 {
+  color: #F9A825;
+}
+
+.burden-display.burden-level-3 {
+  color: #E65100;
+}
+
+.burden-display.burden-level-4 {
+  color: #C62828;
+}
+
+/* Actual speed display styling - color only */
+.burden-speed.burden-level-1 {
+  color: #388E3C;
+}
+
+.burden-speed.burden-level-2 {
+  color: #F9A825;
+}
+
+.burden-speed.burden-level-3 {
+  color: #E65100;
+}
+
+.burden-speed.burden-level-4 {
+  color: #C62828;
+}
+
 /* Hide ammo type, magazine capacity, and ranges */
 .weapon-sheet-grid > .weapon-field:nth-child(3) {
   display: none;

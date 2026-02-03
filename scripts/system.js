@@ -1673,7 +1673,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       
     }
 
-    // Calculate and display total weight (encombrement)
+    // Calculate and display total weight (encombrement) with burden levels
     const totalWeightElement = html.querySelector("#total-weight");
     if (totalWeightElement) {
       let totalWeight = 0;
@@ -1686,6 +1686,55 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         });
       }
       totalWeightElement.textContent = totalWeight.toFixed(1);
+      
+      // Calculate burden level
+      const capaciteCharge = this.actor?.system?.combat?.capaciteCharge || 0;
+      let burdenLevel = 1;
+      
+      if (totalWeight >= 0 && totalWeight <= (capaciteCharge / 2)) {
+        burdenLevel = 1;
+      } else if (totalWeight > (capaciteCharge / 2) && totalWeight <= capaciteCharge) {
+        burdenLevel = 2;
+      } else if (totalWeight > capaciteCharge && totalWeight <= capaciteCharge * 2 ) {
+        burdenLevel = 3;
+      } else if (totalWeight > capaciteCharge * 2) {
+        burdenLevel = 4;
+      }
+      
+      // Apply burden styling to weight display
+      totalWeightElement.classList.remove('burden-level-1', 'burden-level-2', 'burden-level-3', 'burden-level-4');
+      totalWeightElement.classList.add(`burden-level-${burdenLevel}`);
+      
+      // Calculate and apply actual movement speeds based on burden level
+      const baseReptation = this.actor?.system?.movement?.reptation || 0;
+      const baseMarche = this.actor?.system?.movement?.marche || 0;
+      const baseCourse = this.actor?.system?.movement?.course || 0;
+      
+      let speedDiviseur = 1;
+      if (burdenLevel === 1) speedDiviseur = 1;
+      else if (burdenLevel === 2) speedDiviseur = 1.5;
+      else if (burdenLevel === 3) speedDiviseur = 2;
+      else if (burdenLevel === 4) speedDiviseur = 3;
+      
+      const actualReptation = burdenLevel === 1 ? baseReptation : Math.ceil(baseReptation / speedDiviseur);
+      const actualMarche = burdenLevel === 1 ? baseMarche : Math.ceil(baseMarche / speedDiviseur);
+      const actualCourse = burdenLevel === 1 ? baseCourse : Math.ceil(baseCourse / speedDiviseur);
+      
+      // Update actual speed displays
+      const speedReptationEl = html.querySelector("#speed-reptation-actual .stat-value-large");
+      const speedMarcheEl = html.querySelector("#speed-marche-actual .stat-value-large");
+      const speedCourseEl = html.querySelector("#speed-course-actual .stat-value-large");
+      
+      if (speedReptationEl) speedReptationEl.textContent = actualReptation;
+      if (speedMarcheEl) speedMarcheEl.textContent = actualMarche;
+      if (speedCourseEl) speedCourseEl.textContent = actualCourse;
+      
+      // Apply burden styling to speed displays
+      const speedElements = html.querySelectorAll(".burden-speed");
+      speedElements.forEach(el => {
+        el.classList.remove('burden-level-1', 'burden-level-2', 'burden-level-3', 'burden-level-4');
+        el.classList.add(`burden-level-${burdenLevel}`);
+      });
     }
   }
 

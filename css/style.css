@@ -938,13 +938,15 @@
 }
 
 .item-card {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  /*gap: 10px;*/
   align-items: center;
-  padding: 8px 10px;
+  padding: 3px 6px;
   background-color: white;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  border: 1px solid #999;
+  font-size: 11px;
   transition: background-color 0.2s;
 }
 
@@ -954,7 +956,8 @@
 
 .item-name {
   flex: 1;
-  font-weight: 500;
+  font-weight: bold;
+  text-transform: uppercase;
   cursor: pointer;
   color: #333;
 }
@@ -996,14 +999,49 @@
   flex: 1;
 }
 
-.item-damage {
-  font-size: 11px;
-  color: #999;
+.item-damage-skill {
+  font-size: 10px;
+  color: #666;
 }
 
 .item-controls {
   display: flex;
   gap: 5px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.weapon-skill-roll,
+.weapon-damage-roll {
+  width: 32px;
+  height: 24px;
+  border-radius: 10px;
+  /*
+  border: 1px solid #999;
+  background-color: #333;
+  */
+  border: none;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  /*
+  padding: 3px 8px;
+  background-color: white;
+  color: #666;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s;
+  */
+}
+
+.weapon-skill-roll,
+.weapon-damage-roll {
+  background-color: #e94560;
+  color: white;
+  border-color: #e94560;
 }
 
 .item-create {
@@ -1361,7 +1399,9 @@ select:focus {
   color: #333;
 }
 
-.combat-base-damage-roll {
+.combat-base-damage-roll,
+.weapon-skill-roll,
+.weapon-damage-roll {
   width: 32px;
   height: 24px;
   border-radius: 10px;
@@ -1376,7 +1416,9 @@ select:focus {
   font-size: 18px;
 }
 
-.combat-base-damage-roll:hover {
+.combat-base-damage-roll:hover,
+.weapon-skill-roll:hover,
+.weapon-damage-roll:hover {
   /*
   background-color: #555;
   border: none;
@@ -1500,11 +1542,44 @@ select:focus {
   color: #333;
 }
 
+.weapon-field select {
+  font-size: 12px;
+  padding: 5px 6px;
+  border-radius: 3px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  color: #333;
+}
+
 .weapon-field input:focus {
   outline: none;
   background-color: #f9f9f9;
   border-color: #666;
   box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
+}
+
+.weapon-field select:focus {
+  outline: none;
+  background-color: #f9f9f9;
+  border-color: #666;
+  box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
+}
+
+.weapon-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #333;
+  background: white;
+  border: 1px solid #dcdcdc;
+  border-radius: 3px;
+  padding: 5px 6px;
+}
+
+.weapon-checkbox input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
 }
 
 .weapon-field--full {
@@ -1522,20 +1597,27 @@ select:focus {
 }
 
 .weapon-damage-roll {
-  padding: 4px 8px;
-  background-color: white;
-  color: #666;
+  width: 32px;
+  height: 24px;
+  border-radius: 10px;
+  /*
   border: 1px solid #999;
-  border-radius: 4px;
+  background-color: #333;
+  */
+  border: none;
+  background: none;
+  color: #fff;
   cursor: pointer;
-  font-size: 11px;
-  transition: all 0.2s;
+  font-size: 18px;
 }
 
 .weapon-damage-roll:hover {
-  background-color: #e94560;
-  color: white;
-  border-color: #e94560;
+  /*
+  background-color: #555;
+  border: none;
+  */
+  background-color: none;
+  text-shadow: 0 0 5px #000;
 }
 
 .weapon-ranges {

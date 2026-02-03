@@ -10,6 +10,29 @@
   <section class="weapon-sheet-body">
     <div class="weapon-sheet-grid">
       <div class="weapon-field">
+        <label>{{localize "MERC.UI.items.weaponSheet.skill"}}</label>
+        <select name="system.weaponSkill">
+          <option value="">{{localize "MERC.UI.items.weaponSheet.skillPlaceholder"}}</option>
+          <option value="melee" {{#eq item.system.weaponSkill "melee"}}selected{{/eq}}>{{localize "MERC.Skills.melee"}}</option>
+          <option value="bladed_weapons" {{#eq item.system.weaponSkill "bladed_weapons"}}selected{{/eq}}>{{localize "MERC.Skills.bladed_weapons"}}</option>
+          <option value="mechanical_projectiles" {{#eq item.system.weaponSkill "mechanical_projectiles"}}selected{{/eq}}>{{localize "MERC.Skills.mechanical_projectiles"}}</option>
+          <option value="powder_projectiles" {{#eq item.system.weaponSkill "powder_projectiles"}}selected{{/eq}}>{{localize "MERC.Skills.powder_projectiles"}}</option>
+          <option value="throwing" {{#eq item.system.weaponSkill "throwing"}}selected{{/eq}}>{{localize "MERC.Skills.throwing"}}</option>
+          <option value="maneuvers" {{#eq item.system.weaponSkill "maneuvers"}}selected{{/eq}}>{{localize "MERC.Skills.maneuvers"}}</option>
+          <option value="heavy_weapons" {{#eq item.system.weaponSkill "heavy_weapons"}}selected{{/eq}}>{{localize "MERC.Skills.heavy_weapons"}}</option>
+          <option value="electronic_weapons" {{#eq item.system.weaponSkill "electronic_weapons"}}selected{{/eq}}>{{localize "MERC.Skills.electronic_weapons"}}</option>
+        </select>
+      </div>
+
+      <div class="weapon-field">
+        <label>{{localize "MERC.UI.items.weaponSheet.proficiency"}}</label>
+        <div class="weapon-checkbox">
+          <input type="checkbox" name="system.proficiency" {{#if item.system.proficiency}}checked{{/if}}>
+          <span>{{localize "MERC.UI.items.weaponSheet.proficiencyYes"}}</span>
+        </div>
+      </div>
+
+      <div class="weapon-field">
         <label>{{localize "MERC.UI.items.weaponSheet.ammoType"}}</label>
         <input type="text" name="system.ammoType" value="{{item.system.ammoType}}" placeholder="{{localize "MERC.UI.items.weaponSheet.ammoTypePlaceholder"}}">
       </div>

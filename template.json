@@ -124,6 +124,8 @@
       "ammoType": "",
       "weightKg": 0,
       "magazineCapacity": 0,
+      "weaponSkill": "",
+      "proficiency": false,
       "range": {
         "pointBlank": 0,
         "short": 0,

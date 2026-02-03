@@ -287,6 +287,39 @@ async function rollD20WithSecond() {
   };
 }
 
+function formatRollBreakdown(roll) {
+  if (!roll?.terms?.length) return `${roll?.total ?? ""}`.trim();
+
+  const parts = [];
+  for (const term of roll.terms) {
+    if (term?.results && Array.isArray(term.results)) {
+      const results = term.results
+        .map(r => (typeof r === "number" ? r : r?.result))
+        .filter(r => r !== undefined && r !== null);
+      if (results.length) {
+        parts.push(results.join(" + "));
+        continue;
+      }
+    }
+
+    if (term?.operator) {
+      parts.push(term.operator);
+      continue;
+    }
+
+    if (term?.number !== undefined) {
+      parts.push(String(term.number));
+      continue;
+    }
+
+    if (typeof term?.total === "number") {
+      parts.push(String(term.total));
+    }
+  }
+
+  return parts.join(" ").replace(/\s+/g, " ").trim();
+}
+
 /**
  * Get base damage formula from Force and Degree using lookup table
  * Force is clamped to 1-10, Degree is clamped to -7 to 19
@@ -1597,6 +1630,30 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    const weaponSkillBtns = html.querySelectorAll(".weapon-skill-roll");
+    weaponSkillBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          this.rollWeaponSkillCheck(item);
+        }
+      });
+    });
+
+    const weaponDamageBtns = html.querySelectorAll(".weapon-damage-roll");
+    weaponDamageBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          this.rollWeaponDamage(item);
+        }
+      });
+    });
+
     // Initialize combat statistics calculations
     const stats = this.calculateCombatStats();
     if (stats) {
@@ -1819,12 +1876,105 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     await ChatMessage.create(chatData);
   }
 
+  async rollWeaponSkillCheck(item) {
+    const actor = this.actor ?? this.document;
+    if (!actor || !item) return;
+
+    const skillKey = item.system?.weaponSkill;
+    if (!skillKey) {
+      ui.notifications?.warn(game.i18n.localize("MERC.Labels.skillNotFound"));
+      return;
+    }
+
+    const systemData = actor.system || actor._source?.system || {};
+    const skillData = systemData.skills?.[skillKey];
+    if (!skillData) {
+      console.error(game.i18n.localize("MERC.Labels.skillNotFound") + ":", skillKey);
+      return;
+    }
+
+    const base = this.computeSkillBase(actor, skillKey, skillData);
+    const dev = Number(skillData.dev ?? skillData.value ?? 0);
+    const degree = this.computeSkillDegree(actor, skillKey, skillData);
+    const bonus = Number(skillData.bonus ?? 0);
+    const proficiencyBonus = item.system?.proficiency ? 3 : 0;
+
+    const total_modifier = degree + bonus + proficiencyBonus;
+    const skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+    const weaponName = item.name || game.i18n.localize("MERC.UI.items.weapons");
+
+    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
+    const total = adjustedTotal + total_modifier;
+    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
+    const badgeClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-badge--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-badge--penalty"
+        : "";
+    const rollTextClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-text--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-text--penalty"
+        : "";
+
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      rolls,
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${weaponName} (${skillName})</span>
+          <span class="merc-roll-badge${badgeClass}">${total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
+          <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
+          <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus} / Maîtrise ${proficiencyBonus})</span>
+        </div>
+      </div>`
+    };
+
+    await ChatMessage.create(chatData);
+  }
+
+  async rollWeaponDamage(item) {
+    const actor = this.actor ?? this.document;
+    if (!actor || !item) return;
+    const formula = item.system?.damage;
+    if (!formula) {
+      ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
+      return;
+    }
+
+    const roll = new Roll(formula);
+    await roll.evaluate();
+    const breakdown = formatRollBreakdown(roll);
+
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      rolls: [roll],
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${item.name}</span>
+          <span class="merc-roll-badge">${roll.total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20"><strong>${breakdown}</strong></span>
+        </div>
+      </div>`
+    };
+
+    await ChatMessage.create(chatData);
+  }
+
   async rollBaseDamage(formula, skillLabel) {
     const actor = this.actor ?? this.document;
     if (!formula) return;
 
     const roll = new Roll(formula);
     await roll.evaluate();
+    const breakdown = formatRollBreakdown(roll);
 
     const headerLabel = game.i18n.format("MERC.UI.combat.baseDamageRoll", {
       skill: skillLabel || game.i18n.localize("MERC.UI.combat.baseDamage")
@@ -1840,7 +1990,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           <span class="merc-roll-badge">${roll.total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20"><strong>${roll.total}</strong></span>
+          <span class="roll-d20"><strong>${breakdown}</strong></span>
         </div>
       </div>`
     };

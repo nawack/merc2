@@ -1936,34 +1936,138 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     await ChatMessage.create(chatData);
   }
 
+  /**
+   * Roll weapon damage with optional base damage bonus based on weapon skill
+   * If the weapon is melee or bladed_weapons, adds the corresponding base damage
+   * @param {Item} item - The weapon item to roll damage for
+   */
   async rollWeaponDamage(item) {
     const actor = this.actor ?? this.document;
     if (!actor || !item) return;
-    const formula = item.system?.damage;
-    if (!formula) {
+    
+    // Get the weapon's base damage formula
+    const weaponDamageFormula = item.system?.damage;
+    if (!weaponDamageFormula) {
       ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
       return;
     }
 
-    const roll = new Roll(formula);
-    await roll.evaluate();
-    const breakdown = formatRollBreakdown(roll);
+    // Initialize base damage variables
+    let baseDamageLabel = "";
+    let baseDamageFormula = "";
+    const weaponSkill = item.system?.weaponSkill;
+    const actorSystem = actor.system || actor._source?.system || {};
+    
+    // Determine which base damage bonus to apply based on weapon skill
+    if (weaponSkill === "melee") {
+      baseDamageFormula = actorSystem.combat?.baseDamageMelee || "1";
+      baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageMelee");
+    } else if (weaponSkill === "bladed_weapons") {
+      baseDamageFormula = actorSystem.combat?.baseDamageBladed || "1";
+      baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageBladed");
+    }
 
+    // Roll weapon damage separately (makes it easier to display detail)
+    const weaponRoll = new Roll(weaponDamageFormula);
+    await weaponRoll.evaluate();
+    
+    // Roll base damage bonus separately if applicable
+    let baseRoll = null;
+    if (baseDamageFormula) {
+      baseRoll = new Roll(baseDamageFormula);
+      await baseRoll.evaluate();
+    }
+    
+    // Calculate total damage (weapon damage + base damage)
+    const totalDamage = weaponRoll.total + (baseRoll?.total || 0);
+
+    // Build the detailed HTML breakdown for the chat message
+    let detailsHtml = `<div style="font-size: 12px; margin-top: 8px;">`;
+    
+    // Display weapon damage formula and base damage bonus info
+    if (baseDamageLabel) {
+      detailsHtml += `<div style="margin-bottom: 6px;">
+        <strong>Dégâts de l'arme :</strong> ${weaponDamageFormula}<br>
+        <strong>Bonus (${baseDamageLabel}) :</strong> +${baseDamageFormula}
+      </div>`;
+    } else {
+      detailsHtml += `<div style="margin-bottom: 6px;">
+        <strong>Formule :</strong> ${weaponDamageFormula}
+      </div>`;
+    }
+    
+    // Extract and display individual dice results from weapon roll
+    detailsHtml += `<div style="border-top: 1px solid #ccc; padding-top: 6px;">
+      <strong>Détail des dés lancés :</strong><br>
+      <em>Dégâts de l'arme :</em><br>`;
+    
+    // Iterate through all terms in the weapon roll (dice and modifiers)
+    for (const term of weaponRoll.terms) {
+      // Check if this term contains dice results
+      if (term?.results && Array.isArray(term.results) && term.results.length > 0) {
+        const diceStr = term.formula || "?";
+        // Extract individual die results (handling both number and object formats)
+        const results = term.results
+          .map(r => typeof r === "number" ? r : r?.result)
+          .filter(r => r !== undefined && r !== null);
+        
+        // Display each dice result with its subtotal
+        if (results.length > 0) {
+          const resultStr = results.join(", ");
+          const subtotal = results.reduce((a, b) => a + b, 0);
+          detailsHtml += `&nbsp;&nbsp;${diceStr}: [${resultStr}] = <strong>${subtotal}</strong><br>`;
+        }
+      }
+    }
+    
+    // Extract and display individual dice results from base damage roll
+    if (baseRoll) {
+      detailsHtml += `<em>Bonus (${baseDamageLabel}) :</em><br>`;
+      
+      // Iterate through all terms in the base damage roll
+      for (const term of baseRoll.terms) {
+        // Check if this term contains dice results
+        if (term?.results && Array.isArray(term.results) && term.results.length > 0) {
+          const diceStr = term.formula || "?";
+          // Extract individual die results
+          const results = term.results
+            .map(r => typeof r === "number" ? r : r?.result)
+            .filter(r => r !== undefined && r !== null);
+          
+          // Display each dice result with its subtotal
+          if (results.length > 0) {
+            const resultStr = results.join(", ");
+            const subtotal = results.reduce((a, b) => a + b, 0);
+            detailsHtml += `&nbsp;&nbsp;${diceStr}: [${resultStr}] = <strong>${subtotal}</strong><br>`;
+          }
+        }
+      }
+    }
+    
+    // Display the total damage at the bottom
+    detailsHtml += `<div style="border-top: 1px solid #999; margin-top: 6px; padding-top: 6px;">
+      <strong style="font-size: 13px;">Total des dégâts : ${totalDamage}</strong>
+    </div></div></div>`;
+
+    // Prepare the chat message data
     const chatData = {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: actor }),
-      rolls: [roll],
+      // Include both rolls for Foundry's roll tracking system
+      rolls: [weaponRoll, ...(baseRoll ? [baseRoll] : [])],
+      // Build the HTML content for the chat message
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
           <span class="merc-roll-label">${actor.name} - ${item.name}</span>
-          <span class="merc-roll-badge">${roll.total}</span>
+          <span class="merc-roll-badge">${totalDamage}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20"><strong>${breakdown}</strong></span>
+          ${detailsHtml}
         </div>
       </div>`
     };
 
+    // Post the chat message to the game
     await ChatMessage.create(chatData);
   }
 

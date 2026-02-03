@@ -125,6 +125,7 @@
       "weightKg": 0,
       "magazineCapacity": 0,
       "weaponSkill": "",
+      "proficiency": 0,
       "range": {
         "pointBlank": 0,
         "short": 0,

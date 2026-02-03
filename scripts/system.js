@@ -1897,8 +1897,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const dev = Number(skillData.dev ?? skillData.value ?? 0);
     const degree = this.computeSkillDegree(actor, skillKey, skillData);
     const bonus = Number(skillData.bonus ?? 0);
+    const proficiencyBonus = item.system?.proficiency ? 3 : 0;
 
-    const total_modifier = degree + bonus;
+    const total_modifier = degree + bonus + proficiencyBonus;
     const skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
     const weaponName = item.name || game.i18n.localize("MERC.UI.items.weapons");
 
@@ -1928,7 +1929,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         <div class="merc-roll-breakdown">
           <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
           <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
-          <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus})</span>
+          <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus} / Maîtrise ${proficiencyBonus})</span>
         </div>
       </div>`
     };

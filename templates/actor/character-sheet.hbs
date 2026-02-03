@@ -578,7 +578,7 @@
           {{#each (filterItems actor.items "weapon") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
-              <div class="item-name">{{item.name}}</div>
+              <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency "1")}}<span class="proficiency-star">★</span>{{/if}}</div>
               <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">
@@ -604,7 +604,7 @@
           {{#each (filterItems actor.items "weapon") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
-              <div class="item-name">{{item.name}}</div>
+              <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency "1")}}<span class="proficiency-star">★</span>{{/if}}</div>
               <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">

@@ -25,6 +25,14 @@
       </div>
 
       <div class="weapon-field">
+        <label>{{localize "MERC.UI.items.weaponSheet.proficiency"}}</label>
+        <select name="system.proficiency" value="{{item.system.proficiency}}" data-dtype="Number">
+          <option value="0" {{#if (eq item.system.proficiency "0")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyNo"}}</option>
+          <option value="1" {{#if (eq item.system.proficiency "1")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyYes"}}</option>
+        </select>
+      </div>
+
+      <div class="weapon-field">
         <label>{{localize "MERC.UI.items.weaponSheet.ammoType"}}</label>
         <input type="text" name="system.ammoType" value="{{item.system.ammoType}}" placeholder="{{localize "MERC.UI.items.weaponSheet.ammoTypePlaceholder"}}">
       </div>

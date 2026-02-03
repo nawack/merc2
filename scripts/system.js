@@ -400,6 +400,117 @@ function checkSkillUnlocked(actor, skillKey) {
   };
 }
 
+/**
+ * Migrate actor and item data to new schema versions
+ * Ensures backwards compatibility when the system is updated
+ */
+async function migrateWorld() {
+  const schemaVersion = game.system.schemaVersion || "1.0.5";
+  
+  console.log(`MERC System Migration: Starting migration from schema version ${schemaVersion}`);
+  
+  // Migrate all actors
+  for (const actor of game.actors) {
+    try {
+      await migrateActor(actor);
+    } catch (err) {
+      console.error(`Error migrating actor ${actor.name}:`, err);
+    }
+  }
+  
+  // Migrate all items in actors and world
+  for (const actor of game.actors) {
+    for (const item of actor.items) {
+      try {
+        await migrateItem(item, actor);
+      } catch (err) {
+        console.error(`Error migrating item ${item.name}:`, err);
+      }
+    }
+  }
+  
+  // Migrate world items
+  for (const item of game.items) {
+    try {
+      await migrateItem(item);
+    } catch (err) {
+      console.error(`Error migrating world item ${item.name}:`, err);
+    }
+  }
+  
+  console.log("MERC System Migration: Migration complete");
+}
+
+/**
+ * Migrate actor to new data structure
+ */
+async function migrateActor(actor) {
+  if (!actor.system) return;
+  
+  const updateData = {};
+  
+  // Ensure biography exists
+  if (!actor.system.biography) {
+    updateData["system.biography"] = {
+      age: "",
+      height: 0,
+      weight: 0,
+      gender: "",
+      origin: "",
+      year: 0,
+      renown: 0
+    };
+  }
+  
+  // Ensure all movement speeds exist
+  if (!actor.system.movement) {
+    updateData["system.movement"] = {
+      walk: 0,
+      run: 0,
+      sprint: 0,
+      charge: 0,
+      reptation: 0,
+      marche: 0,
+      course: 0
+    };
+  }
+  
+  if (Object.keys(updateData).length > 0) {
+    await actor.update(updateData, { render: false });
+  }
+}
+
+/**
+ * Migrate item to new data structure
+ */
+async function migrateItem(item, actor = null) {
+  if (!item.system) return;
+  
+  // Only migrate weapons
+  if (item.type !== "weapon") return;
+  
+  const updateData = {};
+  
+  // Ensure proficiency field exists (default to 0)
+  if (item.system.proficiency === undefined || item.system.proficiency === null) {
+    updateData["system.proficiency"] = 0;
+  }
+  
+  // Ensure weaponSkill exists
+  if (!item.system.weaponSkill) {
+    updateData["system.weaponSkill"] = "";
+  }
+  
+  // Ensure weightKg exists
+  if (item.system.weightKg === undefined || item.system.weightKg === null) {
+    updateData["system.weightKg"] = 0;
+  }
+  
+  if (Object.keys(updateData).length > 0) {
+    await item.update(updateData, { render: false });
+  }
+}
+
 // Define MercCharacterSheet here directly
 class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
@@ -2733,6 +2844,9 @@ const getActorMigrationData = (actor) => {
 
 Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
+
+  // Run world migration to ensure all data is up to date
+  await migrateWorld();
 
   const actors = game.actors?.contents ?? [];
   for (const actor of actors) {

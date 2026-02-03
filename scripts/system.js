@@ -1672,6 +1672,21 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       }, { render: false });
       
     }
+
+    // Calculate and display total weight (encombrement)
+    const totalWeightElement = html.querySelector("#total-weight");
+    if (totalWeightElement) {
+      let totalWeight = 0;
+      if (this.actor?.items) {
+        this.actor.items.forEach(item => {
+          const weight = Number(item.system?.weightKg ?? 0);
+          if (!Number.isNaN(weight)) {
+            totalWeight += weight;
+          }
+        });
+      }
+      totalWeightElement.textContent = totalWeight.toFixed(1);
+    }
   }
 
   async _updateObject(event, formData) {
@@ -2483,7 +2498,7 @@ const computeCombatStatsBase = (system) => {
   const pointCorporence = constitution + pcAjust;
 
   const force = attrs.strength?.current ?? attrs.strength ?? 0;
-  const capaciteCharge = force + (constitution * 2);
+  const capaciteCharge = (force + constitution) * 2;
 
   const bonusDiscretion = STATS_TABLES.discretion[corpulenceTableIdx] || 0;
   const bonusDissimulation = STATS_TABLES.dissimulation[corpulenceTableIdx] || 0;

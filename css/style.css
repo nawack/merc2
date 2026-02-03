@@ -1629,11 +1629,11 @@
 }
 
 /* Hide ammo type, magazine capacity, and ranges */
-.weapon-sheet-grid > .weapon-field:nth-child(1) {
+.weapon-sheet-grid > .weapon-field:nth-child(3) {
   display: none;
 }
 
-.weapon-sheet-grid > .weapon-field:nth-child(3) {
+.weapon-sheet-grid > .weapon-field:nth-child(5) {
   display: none;
 }
 

@@ -2,6 +2,28 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.6] - 2026-02-03
+
+### Added
+- 🎯 **Système de Maîtrise d'arme** : Ajout d'un champ "Maîtrise" (Oui/Non) sur les armes pour bonus +3 aux jets pour toucher
+- ⭐ **Indicateur visuel** : Étoile jaune affichée à côté du nom des armes maitrisées dans la fiche de personnage
+- 📦 **Système d'Encombrement** : Calcul automatique du poids total des items
+- 🎨 **Niveaux d'Encombrement** : 4 niveaux avec couleurs dynamiques (vert/jaune/orange/rouge)
+- 🏃 **Vitesses actuelles** : Calcul des vitesses affectées par le niveau d'encombrement
+- 🔧 **Migration automatique** : Les anciens personnages et items sont mis à jour automatiquement
+- ✅ **Formule corrigée** : Capacité de charge = (Force + Constitution) × 2
+- 🔫 **Système de gestions des armes v1** : Interface complète pour gérer les armes avec compétences liées et dégâts
+
+### Fixed
+- 🐛 **Affichage proficiency** : Correction du select qui n'affichait pas la valeur enregistrée
+- 🐛 **Migration backwards compatibility** : Système complet pour assurer la compatibilité avec les anciennes données
+
+### Changed
+- 🎨 **UI Armes** : Masquage des champs "Type de munition", "Capacité de chargeur" et "Portées"
+- 📘 **Documentation** : Mise à jour des guides d'implémentation
+
+---
+
 ## [1.0.5] - 2026-02-02
 
 ### Added

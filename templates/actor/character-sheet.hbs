@@ -298,6 +298,15 @@
               </div>
             </div>
           </div>
+
+          <div class="headerStat" data-stat="encombrement">
+            <span class="headerStatLabel">{{localize "MERC.UI.stats.burden"}}</span>
+            <div class="stat-values">
+              <div class="stat-display">
+                <div class="stat-value-large burden-display" id="total-weight">0</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- COLUMN 2: Bonuses -->
@@ -336,7 +345,9 @@
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.reptation}}</div>
-                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
+              </div>
+              <div class="stat-display burden-speed" id="speed-reptation-actual">
+                <div class="stat-value-large burden-speed">-</div>
               </div>
             </div>
           </div>
@@ -346,7 +357,9 @@
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.marche}}</div>
-                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
+              </div>
+              <div class="stat-display burden-speed" id="speed-marche-actual">
+                <div class="stat-value-large burden-speed">-</div>
               </div>
             </div>
           </div>
@@ -356,7 +369,9 @@
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.movement.course}}</div>
-                <div class="stat-unit">{{localize "MERC.UI.units.mPerSeg"}}</div>
+              </div>
+              <div class="stat-display burden-speed" id="speed-course-actual">
+                <div class="stat-value-large burden-speed">-</div>
               </div>
             </div>
           </div>
@@ -576,13 +591,16 @@
         <h3>{{localize "MERC.UI.items.equippedWeapons"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
-              <div class="item-name">{{item.name}}</div>
-              <div class="item-damage">{{item.system.damage}}</div>
+              <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency "1")}}<span class="proficiency-star">★</span>{{/if}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">
-              <button type="button" class="item-edit">✎</button>
+              <button type="button" class="weapon-skill-roll" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">🎯</button>
+              <div class="combat-base-damage-value">{{item.system.damage}}</div>
+              <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+              <!--<button type="button" class="item-edit">✎</button>-->
             </div>
           </div>
           {{/each}}
@@ -599,14 +617,14 @@
         <h3>{{localize "MERC.UI.items.weapons"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
-              <div class="item-name">{{item.name}}</div>
-              <div class="item-damage">{{item.system.damage}}</div>
+              <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency "1")}}<span class="proficiency-star">★</span>{{/if}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">
               <button type="button" class="item-edit">✎</button>
-              <button type="button" class="item-delete">✕</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           {{/each}}
@@ -619,14 +637,14 @@
         <h3>{{localize "MERC.UI.items.armor"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "armor") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
-              <div class="item-damage">{{localize "MERC.UI.items.armorClassShort"}} {{item.system.armorClass}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.items.armorClassShort"}} {{item.system.armorClass}}</div>
             </div>
             <div class="item-controls">
               <button type="button" class="item-edit">✎</button>
-              <button type="button" class="item-delete">✕</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           {{/each}}
@@ -639,13 +657,13 @@
         <h3>{{localize "MERC.UI.items.equipment"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "equipment") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
             </div>
             <div class="item-controls">
               <button type="button" class="item-edit">✎</button>
-              <button type="button" class="item-delete">✕</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           {{/each}}

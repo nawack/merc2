@@ -287,6 +287,39 @@ async function rollD20WithSecond() {
   };
 }
 
+function formatRollBreakdown(roll) {
+  if (!roll?.terms?.length) return `${roll?.total ?? ""}`.trim();
+
+  const parts = [];
+  for (const term of roll.terms) {
+    if (term?.results && Array.isArray(term.results)) {
+      const results = term.results
+        .map(r => (typeof r === "number" ? r : r?.result))
+        .filter(r => r !== undefined && r !== null);
+      if (results.length) {
+        parts.push(results.join(" + "));
+        continue;
+      }
+    }
+
+    if (term?.operator) {
+      parts.push(term.operator);
+      continue;
+    }
+
+    if (term?.number !== undefined) {
+      parts.push(String(term.number));
+      continue;
+    }
+
+    if (typeof term?.total === "number") {
+      parts.push(String(term.total));
+    }
+  }
+
+  return parts.join(" ").replace(/\s+/g, " ").trim();
+}
+
 /**
  * Get base damage formula from Force and Degree using lookup table
  * Force is clamped to 1-10, Degree is clamped to -7 to 19
@@ -365,6 +398,117 @@ function checkSkillUnlocked(actor, skillKey) {
     unlocked: missingPrereqs.length === 0,
     missingPrereqs: missingPrereqs
   };
+}
+
+/**
+ * Migrate actor and item data to new schema versions
+ * Ensures backwards compatibility when the system is updated
+ */
+async function migrateWorld() {
+  const schemaVersion = game.system.schemaVersion || "1.0.5";
+  
+  console.log(`MERC System Migration: Starting migration from schema version ${schemaVersion}`);
+  
+  // Migrate all actors
+  for (const actor of game.actors) {
+    try {
+      await migrateActor(actor);
+    } catch (err) {
+      console.error(`Error migrating actor ${actor.name}:`, err);
+    }
+  }
+  
+  // Migrate all items in actors and world
+  for (const actor of game.actors) {
+    for (const item of actor.items) {
+      try {
+        await migrateItem(item, actor);
+      } catch (err) {
+        console.error(`Error migrating item ${item.name}:`, err);
+      }
+    }
+  }
+  
+  // Migrate world items
+  for (const item of game.items) {
+    try {
+      await migrateItem(item);
+    } catch (err) {
+      console.error(`Error migrating world item ${item.name}:`, err);
+    }
+  }
+  
+  console.log("MERC System Migration: Migration complete");
+}
+
+/**
+ * Migrate actor to new data structure
+ */
+async function migrateActor(actor) {
+  if (!actor.system) return;
+  
+  const updateData = {};
+  
+  // Ensure biography exists
+  if (!actor.system.biography) {
+    updateData["system.biography"] = {
+      age: "",
+      height: 0,
+      weight: 0,
+      gender: "",
+      origin: "",
+      year: 0,
+      renown: 0
+    };
+  }
+  
+  // Ensure all movement speeds exist
+  if (!actor.system.movement) {
+    updateData["system.movement"] = {
+      walk: 0,
+      run: 0,
+      sprint: 0,
+      charge: 0,
+      reptation: 0,
+      marche: 0,
+      course: 0
+    };
+  }
+  
+  if (Object.keys(updateData).length > 0) {
+    await actor.update(updateData, { render: false });
+  }
+}
+
+/**
+ * Migrate item to new data structure
+ */
+async function migrateItem(item, actor = null) {
+  if (!item.system) return;
+  
+  // Only migrate weapons
+  if (item.type !== "weapon") return;
+  
+  const updateData = {};
+  
+  // Ensure proficiency field exists (default to 0)
+  if (item.system.proficiency === undefined || item.system.proficiency === null) {
+    updateData["system.proficiency"] = 0;
+  }
+  
+  // Ensure weaponSkill exists
+  if (!item.system.weaponSkill) {
+    updateData["system.weaponSkill"] = "";
+  }
+  
+  // Ensure weightKg exists
+  if (item.system.weightKg === undefined || item.system.weightKg === null) {
+    updateData["system.weightKg"] = 0;
+  }
+  
+  if (Object.keys(updateData).length > 0) {
+    await item.update(updateData, { render: false });
+  }
 }
 
 // Define MercCharacterSheet here directly
@@ -1597,6 +1741,30 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    const weaponSkillBtns = html.querySelectorAll(".weapon-skill-roll");
+    weaponSkillBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          this.rollWeaponSkillCheck(item);
+        }
+      });
+    });
+
+    const weaponDamageBtns = html.querySelectorAll(".weapon-damage-roll");
+    weaponDamageBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          this.rollWeaponDamage(item);
+        }
+      });
+    });
+
     // Initialize combat statistics calculations
     const stats = this.calculateCombatStats();
     if (stats) {
@@ -1614,6 +1782,70 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "system.movement.course": stats.vitesses.course
       }, { render: false });
       
+    }
+
+    // Calculate and display total weight (encombrement) with burden levels
+    const totalWeightElement = html.querySelector("#total-weight");
+    if (totalWeightElement) {
+      let totalWeight = 0;
+      if (this.actor?.items) {
+        this.actor.items.forEach(item => {
+          const weight = Number(item.system?.weightKg ?? 0);
+          if (!Number.isNaN(weight)) {
+            totalWeight += weight;
+          }
+        });
+      }
+      totalWeightElement.textContent = totalWeight.toFixed(1);
+      
+      // Calculate burden level
+      const capaciteCharge = this.actor?.system?.combat?.capaciteCharge || 0;
+      let burdenLevel = 1;
+      
+      if (totalWeight >= 0 && totalWeight <= (capaciteCharge / 2)) {
+        burdenLevel = 1;
+      } else if (totalWeight > (capaciteCharge / 2) && totalWeight <= capaciteCharge) {
+        burdenLevel = 2;
+      } else if (totalWeight > capaciteCharge && totalWeight <= capaciteCharge * 2 ) {
+        burdenLevel = 3;
+      } else if (totalWeight > capaciteCharge * 2) {
+        burdenLevel = 4;
+      }
+      
+      // Apply burden styling to weight display
+      totalWeightElement.classList.remove('burden-level-1', 'burden-level-2', 'burden-level-3', 'burden-level-4');
+      totalWeightElement.classList.add(`burden-level-${burdenLevel}`);
+      
+      // Calculate and apply actual movement speeds based on burden level
+      const baseReptation = this.actor?.system?.movement?.reptation || 0;
+      const baseMarche = this.actor?.system?.movement?.marche || 0;
+      const baseCourse = this.actor?.system?.movement?.course || 0;
+      
+      let speedDiviseur = 1;
+      if (burdenLevel === 1) speedDiviseur = 1;
+      else if (burdenLevel === 2) speedDiviseur = 1.5;
+      else if (burdenLevel === 3) speedDiviseur = 2;
+      else if (burdenLevel === 4) speedDiviseur = 3;
+      
+      const actualReptation = burdenLevel === 1 ? baseReptation : Math.ceil(baseReptation / speedDiviseur);
+      const actualMarche = burdenLevel === 1 ? baseMarche : Math.ceil(baseMarche / speedDiviseur);
+      const actualCourse = burdenLevel === 1 ? baseCourse : Math.ceil(baseCourse / speedDiviseur);
+      
+      // Update actual speed displays
+      const speedReptationEl = html.querySelector("#speed-reptation-actual .stat-value-large");
+      const speedMarcheEl = html.querySelector("#speed-marche-actual .stat-value-large");
+      const speedCourseEl = html.querySelector("#speed-course-actual .stat-value-large");
+      
+      if (speedReptationEl) speedReptationEl.textContent = actualReptation;
+      if (speedMarcheEl) speedMarcheEl.textContent = actualMarche;
+      if (speedCourseEl) speedCourseEl.textContent = actualCourse;
+      
+      // Apply burden styling to speed displays
+      const speedElements = html.querySelectorAll(".burden-speed");
+      speedElements.forEach(el => {
+        el.classList.remove('burden-level-1', 'burden-level-2', 'burden-level-3', 'burden-level-4');
+        el.classList.add(`burden-level-${burdenLevel}`);
+      });
     }
   }
 
@@ -1819,12 +2051,209 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     await ChatMessage.create(chatData);
   }
 
+  async rollWeaponSkillCheck(item) {
+    const actor = this.actor ?? this.document;
+    if (!actor || !item) return;
+
+    const skillKey = item.system?.weaponSkill;
+    if (!skillKey) {
+      ui.notifications?.warn(game.i18n.localize("MERC.Labels.skillNotFound"));
+      return;
+    }
+
+    const systemData = actor.system || actor._source?.system || {};
+    const skillData = systemData.skills?.[skillKey];
+    if (!skillData) {
+      console.error(game.i18n.localize("MERC.Labels.skillNotFound") + ":", skillKey);
+      return;
+    }
+
+    const base = this.computeSkillBase(actor, skillKey, skillData);
+    const dev = Number(skillData.dev ?? skillData.value ?? 0);
+    const degree = this.computeSkillDegree(actor, skillKey, skillData);
+    const bonus = Number(skillData.bonus ?? 0);
+    const proficiencyBonus = item.system?.proficiency ? 3 : 0;
+
+    const total_modifier = degree + bonus + proficiencyBonus;
+    const skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+    const weaponName = item.name || game.i18n.localize("MERC.UI.items.weapons");
+
+    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
+    const total = adjustedTotal + total_modifier;
+    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
+    const badgeClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-badge--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-badge--penalty"
+        : "";
+    const rollTextClass = secondRollDirection === "ajoutée"
+      ? " merc-roll-text--bonus"
+      : secondRollDirection === "soustraite"
+        ? " merc-roll-text--penalty"
+        : "";
+
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      rolls,
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${weaponName} (${skillName})</span>
+          <span class="merc-roll-badge${badgeClass}">${total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
+          <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
+          <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus} / Maîtrise ${proficiencyBonus})</span>
+        </div>
+      </div>`
+    };
+
+    await ChatMessage.create(chatData);
+  }
+
+  /**
+   * Roll weapon damage with optional base damage bonus based on weapon skill
+   * If the weapon is melee or bladed_weapons, adds the corresponding base damage
+   * @param {Item} item - The weapon item to roll damage for
+   */
+  async rollWeaponDamage(item) {
+    const actor = this.actor ?? this.document;
+    if (!actor || !item) return;
+    
+    // Get the weapon's base damage formula
+    const weaponDamageFormula = item.system?.damage;
+    if (!weaponDamageFormula) {
+      ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
+      return;
+    }
+
+    // Initialize base damage variables
+    let baseDamageLabel = "";
+    let baseDamageFormula = "";
+    const weaponSkill = item.system?.weaponSkill;
+    const actorSystem = actor.system || actor._source?.system || {};
+    
+    // Determine which base damage bonus to apply based on weapon skill
+    if (weaponSkill === "melee") {
+      baseDamageFormula = actorSystem.combat?.baseDamageMelee || "1";
+      baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageMelee");
+    } else if (weaponSkill === "bladed_weapons") {
+      baseDamageFormula = actorSystem.combat?.baseDamageBladed || "1";
+      baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageBladed");
+    }
+
+    // Roll weapon damage separately (makes it easier to display detail)
+    const weaponRoll = new Roll(weaponDamageFormula);
+    await weaponRoll.evaluate();
+    
+    // Roll base damage bonus separately if applicable
+    let baseRoll = null;
+    if (baseDamageFormula) {
+      baseRoll = new Roll(baseDamageFormula);
+      await baseRoll.evaluate();
+    }
+    
+    // Calculate total damage (weapon damage + base damage)
+    const totalDamage = weaponRoll.total + (baseRoll?.total || 0);
+
+    // Build the detailed HTML breakdown for the chat message
+    let detailsHtml = `<div style="font-size: 12px; margin-top: 8px;">`;
+    
+    // Display weapon damage formula and base damage bonus info
+    if (baseDamageLabel) {
+      detailsHtml += `<div style="margin-bottom: 6px;">
+        <strong>Dégâts de l'arme :</strong> ${weaponDamageFormula}<br>
+        <strong>Bonus (${baseDamageLabel}) :</strong> +${baseDamageFormula}
+      </div>`;
+    } else {
+      detailsHtml += `<div style="margin-bottom: 6px;">
+        <strong>Formule :</strong> ${weaponDamageFormula}
+      </div>`;
+    }
+    
+    // Extract and display individual dice results from weapon roll
+    detailsHtml += `<div style="border-top: 1px solid #ccc; padding-top: 6px;">
+      <strong>Détail des dés lancés :</strong><br>
+      <em>Dégâts de l'arme :</em><br>`;
+    
+    // Iterate through all terms in the weapon roll (dice and modifiers)
+    for (const term of weaponRoll.terms) {
+      // Check if this term contains dice results
+      if (term?.results && Array.isArray(term.results) && term.results.length > 0) {
+        const diceStr = term.formula || "?";
+        // Extract individual die results (handling both number and object formats)
+        const results = term.results
+          .map(r => typeof r === "number" ? r : r?.result)
+          .filter(r => r !== undefined && r !== null);
+        
+        // Display each dice result with its subtotal
+        if (results.length > 0) {
+          const resultStr = results.join(", ");
+          const subtotal = results.reduce((a, b) => a + b, 0);
+          detailsHtml += `&nbsp;&nbsp;${diceStr}: [${resultStr}] = <strong>${subtotal}</strong><br>`;
+        }
+      }
+    }
+    
+    // Extract and display individual dice results from base damage roll
+    if (baseRoll) {
+      detailsHtml += `<em>Bonus (${baseDamageLabel}) :</em><br>`;
+      
+      // Iterate through all terms in the base damage roll
+      for (const term of baseRoll.terms) {
+        // Check if this term contains dice results
+        if (term?.results && Array.isArray(term.results) && term.results.length > 0) {
+          const diceStr = term.formula || "?";
+          // Extract individual die results
+          const results = term.results
+            .map(r => typeof r === "number" ? r : r?.result)
+            .filter(r => r !== undefined && r !== null);
+          
+          // Display each dice result with its subtotal
+          if (results.length > 0) {
+            const resultStr = results.join(", ");
+            const subtotal = results.reduce((a, b) => a + b, 0);
+            detailsHtml += `&nbsp;&nbsp;${diceStr}: [${resultStr}] = <strong>${subtotal}</strong><br>`;
+          }
+        }
+      }
+    }
+    
+    // Display the total damage at the bottom
+    detailsHtml += `<div style="border-top: 1px solid #999; margin-top: 6px; padding-top: 6px;">
+      <strong style="font-size: 13px;">Total des dégâts : ${totalDamage}</strong>
+    </div></div></div>`;
+
+    // Prepare the chat message data
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      // Include both rolls for Foundry's roll tracking system
+      rolls: [weaponRoll, ...(baseRoll ? [baseRoll] : [])],
+      // Build the HTML content for the chat message
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${item.name}</span>
+          <span class="merc-roll-badge">${totalDamage}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          ${detailsHtml}
+        </div>
+      </div>`
+    };
+
+    // Post the chat message to the game
+    await ChatMessage.create(chatData);
+  }
+
   async rollBaseDamage(formula, skillLabel) {
     const actor = this.actor ?? this.document;
     if (!formula) return;
 
     const roll = new Roll(formula);
     await roll.evaluate();
+    const breakdown = formatRollBreakdown(roll);
 
     const headerLabel = game.i18n.format("MERC.UI.combat.baseDamageRoll", {
       skill: skillLabel || game.i18n.localize("MERC.UI.combat.baseDamage")
@@ -1840,7 +2269,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           <span class="merc-roll-badge">${roll.total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20"><strong>${roll.total}</strong></span>
+          <span class="roll-d20"><strong>${breakdown}</strong></span>
         </div>
       </div>`
     };
@@ -1921,6 +2350,117 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
    */
   calculateCombatStats() {
     return computeCombatStatsFromSystem(this.actor?.system);
+  }
+}
+
+class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+    classes: ["merc", "sheet", "item", "weapon"],
+    width: 520,
+    height: 520,
+    resizable: true,
+    parts: ["form"],
+    submitOnChange: true,
+    submitOnClose: true,
+    closeOnSubmit: false
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/item/weapon-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const itemDoc = this.document ?? this.item;
+    if (!data.item) {
+      data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
+    }
+    const systemData = data?.item?.system ?? itemDoc?.system ?? {};
+    const defaults = {
+      ammoType: "",
+      weightKg: 0,
+      magazineCapacity: 0,
+      damage: "",
+      range: {
+        pointBlank: 0,
+        short: 0,
+        medium: 0,
+        long: 0,
+        extreme: 0
+      }
+    };
+
+    if (!data.item) data.item = {};
+    data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+    return data;
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const itemDoc = this.document ?? this.item;
+    if (this.window?.title && itemDoc?.name) {
+      this.window.title.textContent = itemDoc.name;
+    }
+  }
+
+  async _updateObject(event, formData) {
+    const itemDoc = this.document ?? this.item;
+    if (!itemDoc) return;
+    const updateData = foundry.utils.expandObject(formData);
+    await itemDoc.update(updateData);
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;
+    if (!html) return;
+    const itemDoc = this.document ?? this.item;
+
+    const form = html.querySelector('form[data-application-part="form"]');
+    const inputs = form?.querySelectorAll("input, select, textarea") ?? [];
+    inputs.forEach((input) => {
+      input.addEventListener("change", async () => {
+        if (!itemDoc || !input.name) return;
+        let value;
+        if (input.type === "checkbox") {
+          value = input.checked;
+        } else if (input.type === "number") {
+          value = input.value === "" ? null : Number(input.value);
+        } else {
+          value = input.value;
+        }
+
+        const updateData = foundry.utils.expandObject({ [input.name]: value });
+        await itemDoc.update(updateData);
+      });
+    });
+
+    const rollBtn = html.querySelector(".weapon-damage-roll");
+    if (rollBtn) {
+      rollBtn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const damageInput = html.querySelector('input[name="system.damage"]');
+        const formula = damageInput?.value?.trim() || event.currentTarget.dataset.rollFormula || itemDoc?.system?.damage;
+        if (!formula) {
+          ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
+          return;
+        }
+
+        try {
+          const roll = new Roll(formula);
+          await roll.evaluate();
+          const label = game.i18n.format("MERC.UI.items.weaponSheet.damageRoll", { name: itemDoc?.name ?? "" });
+          await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor: itemDoc?.actor }),
+            flavor: label
+          });
+        } catch (error) {
+          ui.notifications?.error(game.i18n.localize("MERC.UI.items.weaponSheet.invalidDamage"));
+        }
+      });
+    }
   }
 }
 
@@ -2023,6 +2563,10 @@ Hooks.once("init", () => {
   // Register Actor Sheets
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("merc", MercCharacterSheet, { types: ["character", "npc"], makeDefault: true });
+
+  // Register Item Sheets
+  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+  foundry.documents.collections.Items.registerSheet("merc", MercWeaponSheet, { types: ["weapon"], makeDefault: true });
 });
 
 const DEFAULT_BIOGRAPHY = {
@@ -2114,7 +2658,7 @@ const computeCombatStatsBase = (system) => {
   const pointCorporence = constitution + pcAjust;
 
   const force = attrs.strength?.current ?? attrs.strength ?? 0;
-  const capaciteCharge = force + (constitution * 2);
+  const capaciteCharge = (force + constitution) * 2;
 
   const bonusDiscretion = STATS_TABLES.discretion[corpulenceTableIdx] || 0;
   const bonusDissimulation = STATS_TABLES.dissimulation[corpulenceTableIdx] || 0;
@@ -2300,6 +2844,9 @@ const getActorMigrationData = (actor) => {
 
 Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
+
+  // Run world migration to ensure all data is up to date
+  await migrateWorld();
 
   const actors = game.actors?.contents ?? [];
   for (const actor of actors) {

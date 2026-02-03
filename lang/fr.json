@@ -90,7 +90,7 @@
         "attributes": "Attributs",
         "skills": "Compétences",
         "combat": "Combat",
-        "items": "Objets"
+        "items": "Équipements"
       },
       "gender": {
         "male": "Homme",
@@ -129,6 +129,7 @@
         "endurance": "Endurance",
         "bodyPoints": "Points de corpulence",
         "carryCapacity": "Capacité de charge",
+        "burden": "Encombrement",
         "combatBonuses": "Bonus de combat",
         "stealthBonus": "Bonus discrétion",
         "concealmentBonus": "Bonus dissimulation",
@@ -175,7 +176,35 @@
         "addWeapon": "+ Ajouter une arme",
         "addArmor": "+ Ajouter une armure",
         "addEquipment": "+ Ajouter un équipement",
-        "armorClassShort": "CA"
+        "armorClassShort": "CA",
+        "rollWeaponSkill": "Jet de compétence",
+        "rollWeaponDamage": "Jet de dégâts",
+        "weaponSheet": {
+          "subtitle": "Fiche d'arme",
+          "namePlaceholder": "Nom de l'arme",
+          "skill": "Compétence associée",
+          "skillPlaceholder": "Sélectionner une compétence",
+          "proficiency": "Maîtrise",
+          "proficiencyYes": "Oui",
+          "proficiencyNo": "Non",
+          "ammoType": "Type de munition",
+          "ammoTypePlaceholder": "9mm, 12G, plasma...",
+          "weightKg": "Poids (kg)",
+          "magazineCapacity": "Capacité chargeur",
+          "damage": "Dégâts",
+          "damagePlaceholder": "1d6+2",
+          "rollDamage": "Lancer les dégâts",
+          "ranges": "Portées",
+          "rangePointBlank": "Bout portant",
+          "rangeShort": "Courte",
+          "rangeMedium": "Moyenne",
+          "rangeLong": "Longue",
+          "rangeExtreme": "Extrême",
+          "rangeUnit": "m",
+          "missingDamage": "Aucune formule de dégâts.",
+          "invalidDamage": "Formule de dégâts invalide.",
+          "damageRoll": "Dégâts - {name}"
+        }
       }
     },
     "Tabs": {

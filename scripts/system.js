@@ -1924,6 +1924,117 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   }
 }
 
+class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+    classes: ["merc", "sheet", "item", "weapon"],
+    width: 520,
+    height: 520,
+    resizable: true,
+    parts: ["form"],
+    submitOnChange: true,
+    submitOnClose: true,
+    closeOnSubmit: false
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/item/weapon-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const itemDoc = this.document ?? this.item;
+    if (!data.item) {
+      data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
+    }
+    const systemData = data?.item?.system ?? itemDoc?.system ?? {};
+    const defaults = {
+      ammoType: "",
+      weightKg: 0,
+      magazineCapacity: 0,
+      damage: "",
+      range: {
+        pointBlank: 0,
+        short: 0,
+        medium: 0,
+        long: 0,
+        extreme: 0
+      }
+    };
+
+    if (!data.item) data.item = {};
+    data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+    return data;
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const itemDoc = this.document ?? this.item;
+    if (this.window?.title && itemDoc?.name) {
+      this.window.title.textContent = itemDoc.name;
+    }
+  }
+
+  async _updateObject(event, formData) {
+    const itemDoc = this.document ?? this.item;
+    if (!itemDoc) return;
+    const updateData = foundry.utils.expandObject(formData);
+    await itemDoc.update(updateData);
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;
+    if (!html) return;
+    const itemDoc = this.document ?? this.item;
+
+    const form = html.querySelector('form[data-application-part="form"]');
+    const inputs = form?.querySelectorAll("input, select, textarea") ?? [];
+    inputs.forEach((input) => {
+      input.addEventListener("change", async () => {
+        if (!itemDoc || !input.name) return;
+        let value;
+        if (input.type === "checkbox") {
+          value = input.checked;
+        } else if (input.type === "number") {
+          value = input.value === "" ? null : Number(input.value);
+        } else {
+          value = input.value;
+        }
+
+        const updateData = foundry.utils.expandObject({ [input.name]: value });
+        await itemDoc.update(updateData);
+      });
+    });
+
+    const rollBtn = html.querySelector(".weapon-damage-roll");
+    if (rollBtn) {
+      rollBtn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const damageInput = html.querySelector('input[name="system.damage"]');
+        const formula = damageInput?.value?.trim() || event.currentTarget.dataset.rollFormula || itemDoc?.system?.damage;
+        if (!formula) {
+          ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
+          return;
+        }
+
+        try {
+          const roll = new Roll(formula);
+          await roll.evaluate();
+          const label = game.i18n.format("MERC.UI.items.weaponSheet.damageRoll", { name: itemDoc?.name ?? "" });
+          await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor: itemDoc?.actor }),
+            flavor: label
+          });
+        } catch (error) {
+          ui.notifications?.error(game.i18n.localize("MERC.UI.items.weaponSheet.invalidDamage"));
+        }
+      });
+    }
+  }
+}
+
 
 // Initialize the system
 Hooks.once("init", () => {
@@ -2023,6 +2134,10 @@ Hooks.once("init", () => {
   // Register Actor Sheets
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("merc", MercCharacterSheet, { types: ["character", "npc"], makeDefault: true });
+
+  // Register Item Sheets
+  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+  foundry.documents.collections.Items.registerSheet("merc", MercWeaponSheet, { types: ["weapon"], makeDefault: true });
 });
 
 const DEFAULT_BIOGRAPHY = {

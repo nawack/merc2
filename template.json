@@ -120,7 +120,17 @@
       "damage": "1d8",
       "damageType": "slashing",
       "weight": 5,
-      "rarity": "common"
+      "rarity": "common",
+      "ammoType": "",
+      "weightKg": 0,
+      "magazineCapacity": 0,
+      "range": {
+        "pointBlank": 0,
+        "short": 0,
+        "medium": 0,
+        "long": 0,
+        "extreme": 0
+      }
     },
     "armor": {
       "armorClass": 10,

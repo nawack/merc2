@@ -90,7 +90,7 @@
         "attributes": "Attributes",
         "skills": "Skills",
         "combat": "Combat",
-        "items": "Items"
+        "items": "Equipment"
       },
       "gender": {
         "male": "Male",
@@ -175,7 +175,28 @@
         "addWeapon": "+ Add Weapon",
         "addArmor": "+ Add Armor",
         "addEquipment": "+ Add Equipment",
-        "armorClassShort": "AC"
+        "armorClassShort": "AC",
+        "weaponSheet": {
+          "subtitle": "Weapon Sheet",
+          "namePlaceholder": "Weapon name",
+          "ammoType": "Ammo type",
+          "ammoTypePlaceholder": "9mm, 12G, plasma...",
+          "weightKg": "Weight (kg)",
+          "magazineCapacity": "Magazine capacity",
+          "damage": "Damage",
+          "damagePlaceholder": "1d6+2",
+          "rollDamage": "Roll damage",
+          "ranges": "Ranges",
+          "rangePointBlank": "Point blank",
+          "rangeShort": "Short",
+          "rangeMedium": "Medium",
+          "rangeLong": "Long",
+          "rangeExtreme": "Extreme",
+          "rangeUnit": "m",
+          "missingDamage": "No damage formula.",
+          "invalidDamage": "Invalid damage formula.",
+          "damageRoll": "Damage - {name}"
+        }
       }
     },
     "Tabs": {

@@ -911,21 +911,24 @@
   color: white;
 }
 
-/* Items Section */
-.items-section {
+/* Items & Weapons Sections */
+.items-section,
+.weapons-section {
   background-color: #f5f5f5;
-  padding: 15px;
-  border-radius: 5px;
-  border-left: 3px solid #999; /* Updated border style */
-  margin-bottom: 25px; /* Increased margin */
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
 }
 
-.items-section h3 {
-  margin: 0 0 10px 0;
+.items-section h3,
+.weapons-section h3 {
+  margin: 0 0 6px 0;
   color: #333;
-  border-bottom: 1px solid #999;
-  padding-bottom: 5px;
-  margin-bottom: 12px; /* Added margin */
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 3px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .items-list {
@@ -938,10 +941,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 8px 10px;
   background-color: white;
-  border-radius: 3px;
-  border: 1px solid #ddd;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
   transition: background-color 0.2s;
 }
 
@@ -958,15 +961,19 @@
 
 .item-edit {
   padding: 3px 8px;
-  background-color: #0f3460;
-  color: #e94560;
-  border: 1px solid #e94560;
-  border-radius: 3px;
+  background-color: white;
+  color: #666;
+  border: 1px solid #999;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s;
 }
 
 .item-edit:hover {
-  background-color: #1a4680;
+  background-color: #e94560;
+  color: white;
+  border-color: #e94560;
 }
 
 .item-delete {
@@ -974,7 +981,7 @@
   background-color: #cc3344;
   color: white;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -1378,78 +1385,6 @@ select:focus {
   text-shadow: 0 0 5px #000;
 }
 
-.weapons-section h3 {
-  color: #474749;
-  font-size: 11px;
-  font-weight: bold;
-  margin: 0 0 12px 0;
-  text-transform: uppercase;
-}
-
-.weapons-section .items-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.weapons-section .item-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  padding: 8px 6px;
-  border: 1px solid #999;
-  border-radius: 10px;
-  font-size: 11px;
-  transition: background-color 0.2s;
-}
-
-.weapons-section .item-card:hover {
-  background-color: #f0f0f0;
-}
-
-.weapons-section .item-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.weapons-section .item-name {
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-}
-
-.weapons-section .item-name:hover {
-  text-decoration: underline;
-}
-
-.weapons-section .item-damage {
-  font-size: 10px;
-  color: #999;
-}
-
-.weapons-section .item-controls {
-  display: flex;
-  gap: 5px;
-}
-
-.weapons-section .item-edit {
-  padding: 4px 8px;
-  background-color: white;
-  color: #999;
-  border: 1px solid #999;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
-  transition: all 0.2s;
-}
-
-.weapons-section .item-edit:hover {
-  background-color: #e94560;
-  color: white;
-  border-color: #e94560;
-}
 
 .merc-roll-breakdown {
   display: flex;
@@ -1482,6 +1417,158 @@ select:focus {
 .merc-roll-breakdown .roll-d20.merc-roll-text--penalty,
 .merc-roll-breakdown .roll-modifier.merc-roll-text--penalty {
   color: #8e0000;
+}
+
+/* Weapon Item Sheet */
+.merc.sheet.item.weapon .window-content {
+  background: #fff;
+  padding: 12px;
+}
+
+.weapon-sheet-header {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.weapon-sheet-img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #999;
+}
+
+.weapon-sheet-title input {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  background-color: white;
+  border: 1px solid #d6d6d6;
+  padding: 5px 8px;
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+}
+
+.weapon-sheet-subtitle {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.weapon-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weapon-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.weapon-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weapon-field label {
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.weapon-field input {
+  font-size: 12px;
+  padding: 5px 6px;
+  border-radius: 3px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  color: #333;
+}
+
+.weapon-field input:focus {
+  outline: none;
+  background-color: #f9f9f9;
+  border-color: #666;
+  box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
+}
+
+.weapon-field--full {
+  grid-column: 1 / -1;
+}
+
+.weapon-damage-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.weapon-damage-row input {
+  flex: 1;
+}
+
+.weapon-damage-roll {
+  padding: 4px 8px;
+  background-color: white;
+  color: #666;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.weapon-damage-roll:hover {
+  background-color: #e94560;
+  color: white;
+  border-color: #e94560;
+}
+
+.weapon-ranges {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.weapon-ranges-header {
+  margin: 0 0 6px 0;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 3px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.weapon-ranges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.weapon-range-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.weapon-range-unit {
+  font-size: 10px;
+  color: #666;
 }
 
 

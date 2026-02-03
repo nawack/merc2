@@ -576,7 +576,7 @@
         <h3>{{localize "MERC.UI.items.equippedWeapons"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
               <div class="item-damage">{{item.system.damage}}</div>
@@ -599,7 +599,7 @@
         <h3>{{localize "MERC.UI.items.weapons"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
               <div class="item-damage">{{item.system.damage}}</div>
@@ -619,7 +619,7 @@
         <h3>{{localize "MERC.UI.items.armor"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "armor") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
               <div class="item-damage">{{localize "MERC.UI.items.armorClassShort"}} {{item.system.armorClass}}</div>
@@ -639,7 +639,7 @@
         <h3>{{localize "MERC.UI.items.equipment"}}</h3>
         <div class="items-list">
           {{#each (filterItems actor.items "equipment") as |item|}}
-          <div class="item-card" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
             </div>

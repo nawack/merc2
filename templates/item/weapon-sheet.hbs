@@ -1,0 +1,77 @@
+<form class="{{cssClass}}" autocomplete="off" data-application-part="form">
+  <header class="weapon-sheet-header">
+    <img class="weapon-sheet-img" src="{{item.img}}" data-edit="img" title="{{item.name}}">
+    <div class="weapon-sheet-title">
+      <input type="text" name="name" value="{{item.name}}" placeholder="{{localize "MERC.UI.items.weaponSheet.namePlaceholder"}}">
+      <div class="weapon-sheet-subtitle">{{localize "MERC.UI.items.weaponSheet.subtitle"}}</div>
+    </div>
+  </header>
+
+  <section class="weapon-sheet-body">
+    <div class="weapon-sheet-grid">
+      <div class="weapon-field">
+        <label>{{localize "MERC.UI.items.weaponSheet.ammoType"}}</label>
+        <input type="text" name="system.ammoType" value="{{item.system.ammoType}}" placeholder="{{localize "MERC.UI.items.weaponSheet.ammoTypePlaceholder"}}">
+      </div>
+
+      <div class="weapon-field">
+        <label>{{localize "MERC.UI.items.weaponSheet.weightKg"}}</label>
+        <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="1">
+      </div>
+
+      <div class="weapon-field">
+        <label>{{localize "MERC.UI.items.weaponSheet.magazineCapacity"}}</label>
+        <input type="number" name="system.magazineCapacity" value="{{item.system.magazineCapacity}}" min="0" step="1">
+      </div>
+
+      <div class="weapon-field weapon-field--full">
+        <label>{{localize "MERC.UI.items.weaponSheet.damage"}}</label>
+        <div class="weapon-damage-row">
+          <input type="text" name="system.damage" value="{{item.system.damage}}" placeholder="{{localize "MERC.UI.items.weaponSheet.damagePlaceholder"}}">
+          <button type="button" class="weapon-damage-roll" data-roll-formula="{{item.system.damage}}" data-roll-label="{{item.name}}" title="{{localize "MERC.UI.items.weaponSheet.rollDamage"}}">🎲</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="weapon-ranges">
+      <div class="weapon-ranges-header">{{localize "MERC.UI.items.weaponSheet.ranges"}}</div>
+      <div class="weapon-ranges-grid">
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.rangePointBlank"}}</label>
+          <div class="weapon-range-input">
+            <input type="number" name="system.range.pointBlank" value="{{item.system.range.pointBlank}}" min="0" step="1">
+            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
+          </div>
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.rangeShort"}}</label>
+          <div class="weapon-range-input">
+            <input type="number" name="system.range.short" value="{{item.system.range.short}}" min="0" step="1">
+            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
+          </div>
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.rangeMedium"}}</label>
+          <div class="weapon-range-input">
+            <input type="number" name="system.range.medium" value="{{item.system.range.medium}}" min="0" step="1">
+            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
+          </div>
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.rangeLong"}}</label>
+          <div class="weapon-range-input">
+            <input type="number" name="system.range.long" value="{{item.system.range.long}}" min="0" step="1">
+            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
+          </div>
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.rangeExtreme"}}</label>
+          <div class="weapon-range-input">
+            <input type="number" name="system.range.extreme" value="{{item.system.range.extreme}}" min="0" step="1">
+            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</form>

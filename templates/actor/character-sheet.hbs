@@ -605,13 +605,11 @@
           <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
-              <div class="item-damage-skill">{{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">
-              <button type="button" class="weapon-skill-roll" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">🎯</button>
-              <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
               <button type="button" class="item-edit">✎</button>
-              <button type="button" class="item-delete">✕</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           {{/each}}
@@ -631,7 +629,7 @@
             </div>
             <div class="item-controls">
               <button type="button" class="item-edit">✎</button>
-              <button type="button" class="item-delete">✕</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           {{/each}}
@@ -650,7 +648,7 @@
             </div>
             <div class="item-controls">
               <button type="button" class="item-edit">✎</button>
-              <button type="button" class="item-delete">✕</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           {{/each}}

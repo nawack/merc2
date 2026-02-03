@@ -963,33 +963,43 @@
 }
 
 .item-edit {
-  padding: 3px 8px;
-  background-color: white;
-  color: #666;
-  border: 1px solid #999;
-  border-radius: 4px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  color: #2b2b2b;
+  background: none;
+  border: none;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 11px;
-  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 16px;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .item-edit:hover {
-  background-color: #e94560;
-  color: white;
-  border-color: #e94560;
+  text-shadow: 0 0 2px #000;
+  background: none;
 }
 
 .item-delete {
-  padding: 3px 8px;
-  background-color: #cc3344;
-  color: white;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  color: #2b2b2b;
+  background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 16px;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .item-delete:hover {
-  background-color: #aa2233;
+  text-shadow: 0 0 2px #000;
+  background: none;
 }
 
 .item-info {
@@ -1565,22 +1575,6 @@ select:focus {
   box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
 }
 
-.weapon-checkbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #333;
-  background: white;
-  border: 1px solid #dcdcdc;
-  border-radius: 3px;
-  padding: 5px 6px;
-}
-
-.weapon-checkbox input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
 
 .weapon-field--full {
   grid-column: 1 / -1;

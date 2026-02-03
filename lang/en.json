@@ -185,6 +185,7 @@
           "skillPlaceholder": "Select a skill",
           "proficiency": "Proficiency",
           "proficiencyYes": "Yes",
+          "proficiencyNo": "No",
           "ammoType": "Ammo type",
           "ammoTypePlaceholder": "9mm, 12G, plasma...",
           "weightKg": "Weight (kg)",

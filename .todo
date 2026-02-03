@@ -1,0 +1,68 @@
+Gestion des compétence de Langue :
+    ✔ Pouvoir ajouter une langue @done(26-01-31 01:15)
+    ✔ Pouvoir supprimer une langue @done(26-01-31 01:15)
+    ✔ supprimer les anciennes langue (serbe, anglais, russe, français, arabe) @done(26-01-31 01:15)
+    ✔ pouvoir renommer une langue personnalisée @done(26-01-31 01:42)
+    ✔ pouvoire préciser la langue natale @done(26-02-01 23:12)
+
+Spécialisation :
+    ✔ Pouvoir ajouter une compétence de base (parmi une liste de compétence de base) @done(26-02-01 23:12)
+    ✔ ajouter les spé de dans la partie calcule de dégàts de l'onglet de combat @done(26-02-01 23:12)
+    ✔ base spé = base compétence origine divisé par 2 @done(26-02-01 23:31)
+
+Revoir calcule bonus attributs:
+    ✔ problème avec le calcule Dissimulation / Discrétion @done(26-02-02 00:20)
+    ✔ ajouter le bonus aux compétences @done(26-02-02 00:20)
+
+Détail des compétences dans la fiche :
+    ✔ afficher les détails des bases (attributs et valeurs) @done(26-02-02 08:34)
+    ✔ afficher la valeur suivante de developpement @done(26-02-02 08:34)
+    ✔ afficher le détail des bonus (attributs, spé, autres bonus) @done(26-02-03 08:06)
+    ✔ revoir l'affichage du jet de dés pour bien visualiser les bonus @done(26-02-03 08:06)
+
+Gestion de la charge:
+    ✔ rajouter le champs de charge actuelle @done(26-02-03 23:22)
+    ✔ modifier vistesse de déplamcement en fonction de la charge @done(26-02-03 23:22)
+    ✔ gerer la charge en fonction de l'équipement @done(26-02-03 23:22)
+    - revoir la formule de malus qui diffère selon si c'est de la course, marche ou reptation
+
+Gestion des bonus de dégats:
+    ✔ calcule du bonus de corps a corps @done(26-02-04 00:30)
+    ✔ calcule du bonus d'armes blanche @done(26-02-04 00:30)
+    - calcule du bonus de spécialité
+    - envlever la possibilté roll les dégats pour armes blanches (section bonus) car forément lié a une arme
+    
+Gestion D20 illimité :
+    ✔  mettre en place les règles suivante lors de roll de D20 : sur un 20 :relancer 1 fois et ajouter et sur un 1 relancer 1 fois et soustrait @done(26-02-03 08:06)
+
+Controle des valeurs des champs:
+    - controle de la réaction (cf issue)
+    - format des dégats reg exp : ^(0|[1-9](?:[dD]6(?:\+[12])?)?)$
+
+Gestion des action de corps a corps (suite) :
+    - liste des actions de corps (qui définissent les difficultés)
+
+Gestion des difficultés et ajout gestion des coches :
+    - ajouter les difficultés lors d'un lancement de dés
+    - ajouter une validation de gain de dev (coches) en cas de réussite
+
+Gestion des dégats d'armes :
+    - dispertion des munitions (en cas de réussite ou d'échet)
+    - gestion des dispersions de grenades et explosifs
+
+Gestion des armes:
+    ✔ ajouter les armes de bases (liste) @done(26-02-03 08:06)
+    ✔ pouvoir ajouter des armes personnalisées @done(26-02-03 08:06)
+    - gestion des modificateurs d'armes (précision, puissance, cadence, portée)
+    - gestion des munitions
+    - gestion des attaques spéciales (explosif, perforant, etc)
+
+Gerer un styeme de blessures:
+    - lister les degrés de blessures
+    - lister les localisations
+    - réaliser un svg pour les localisations
+    - afficher les degrés de blessures par localisation sur svg
+
+Issues:
+    - liste des spécialités dans les compétences pour les armes
+    - problème dans la réaction : le dev ne peut pas être inférieur à la base (rajouter la base au dev)

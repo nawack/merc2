@@ -1,0 +1,28 @@
+{
+  "item_base": {
+    "properties": {
+      "weight": {
+        "type": "number",
+        "description": "Poids de l'item en kg"
+      },
+      "length": {
+        "type": "number",
+        "description": "Longueur de l'item en cm"
+      },
+      "rarity": {
+        "type": "string",
+        "enum": ["commun", "uncommun", "rare", "introuvable"],
+        "description": "Rareté de l'item"
+      },
+      "availability": {
+        "type": "string",
+        "enum": ["disponible", "indisponible", "restreint", "sur autorisation"],
+        "description": "Disponibilité de l'item"
+      },
+      "price": {
+        "type": "number",
+        "description": "Prix de l'item en unités monétaires"
+      }
+    }
+  }
+}

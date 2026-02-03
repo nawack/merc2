@@ -41,25 +41,10 @@
       }
     },
   "Item": {
-      "weapon": {
-        "templates": ["item_base"],
-        "subtypes": {
-          "melee": {},
-          "thrown": {},
-          "firearm": {},
-          "heavy": {},
-          "electronic": {}
-        }
-      },
-      "ammo": {
-        "templates": ["item_base"]
-      },
-      "armor": {
-        "templates": ["item_base"]
-      },
-      "equipment": {
-        "templates": ["item_base"]
-      },
+      "weapon": {},
+      "ammo": {},
+      "armor": {},
+      "equipment": {},
       "feature": {}
     }
   },

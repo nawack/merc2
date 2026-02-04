@@ -38,6 +38,7 @@ Gestion D20 illimité :
 Controle des valeurs des champs:
     - controle de la réaction (cf issue)
     - format des dégats reg exp : ^(0|[1-9](?:[dD]6(?:\+[12])?)?)$
+    - Controle des valeurs de discretion et dissimulation (cf issue)
 
 Gestion des action de corps a corps (suite) :
     - liste des actions de corps (qui définissent les difficultés)

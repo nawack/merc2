@@ -13,6 +13,7 @@ Spécialisation :
 Revoir calcule bonus attributs:
     ✔ problème avec le calcule Dissimulation / Discrétion @done(26-02-02 00:20)
     ✔ ajouter le bonus aux compétences @done(26-02-02 00:20)
+    - Gestion des attributs secondaires (Apparence, Taille, Poids, Endurance, Chance)(origine, actuel)
 
 Détail des compétences dans la fiche :
     ✔ afficher les détails des bases (attributs et valeurs) @done(26-02-02 08:34)

@@ -148,8 +148,8 @@
         "baseDamage": "Base dégâts",
         "segments": {
           "label": "Segment {segment}",
-          "previous": "Segment précédent",
-          "next": "Segment suivant",
+          "previous": "Précédent",
+          "next": "Suivant",
           "order": "Ordre : {order}",
           "endOfSegment": "Fin du segment. Changez de segment pour continuer.",
           "eligible": "Eligibles : {list}",

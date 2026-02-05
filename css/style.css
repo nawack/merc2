@@ -1577,6 +1577,12 @@
 }
 
 .weapon-sheet-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weapon-field-group {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
@@ -1734,19 +1740,6 @@
 
 .burden-speed.burden-level-4 {
   color: #C62828;
-}
-
-/* Hide ammo type, magazine capacity, and ranges */
-.weapon-sheet-grid > .weapon-field:nth-child(3) {
-  display: none;
-}
-
-.weapon-sheet-grid > .weapon-field:nth-child(5) {
-  display: none;
-}
-
-.weapon-ranges {
-  display: none;
 }
 
 

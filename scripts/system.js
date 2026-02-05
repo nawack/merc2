@@ -1092,10 +1092,34 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     }
     data.allBaseSkills = allBaseSkills;
-        const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
+    const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
     if (remaining.length) {
       data.skillGroups.push({ id: "other", label: game.i18n.localize("MERC.SkillGroups.other"), skills: remaining });
     }
+
+    // Build weapon skill labels (base combat skills + custom specializations)
+    const weaponSkillLabels = {};
+    const weaponBaseSkills = [
+      "melee",
+      "bladed_weapons",
+      "mechanical_projectiles",
+      "powder_projectiles",
+      "throwing",
+      "maneuvers",
+      "heavy_weapons",
+      "electronic_weapons"
+    ];
+    weaponBaseSkills.forEach(skillKey => {
+      weaponSkillLabels[skillKey] = game.i18n.localize(`MERC.Skills.${skillKey}`);
+    });
+    for (const [specName, specData] of Object.entries(data.actor.system.customSpecializations || {})) {
+      if (!specData) continue;
+      const baseSkillKey = specData.baseSkill || "";
+      const baseSkillLabel = baseSkillKey ? game.i18n.localize(`MERC.Skills.${baseSkillKey}`) : "";
+      const label = baseSkillLabel ? `${baseSkillLabel} : ${specName}` : specName;
+      weaponSkillLabels[`custom_spec_${specName}`] = label;
+    }
+    data.weaponSkillLabels = weaponSkillLabels;
 
     return data;
   }
@@ -2104,7 +2128,24 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
 
     const systemData = actor.system || actor._source?.system || {};
-    const skillData = systemData.skills?.[skillKey];
+    let skillData = systemData.skills?.[skillKey];
+    let skillName;
+
+    if (!skillData && skillKey?.startsWith("custom_spec_")) {
+      const customSpecializationName = skillKey.replace("custom_spec_", "");
+      const customSpecData = systemData.customSpecializations?.[customSpecializationName];
+      if (customSpecData) {
+        skillData = { ...customSpecData, abilities: customSpecData.abilities || [] };
+        const baseSkillKey = customSpecData.baseSkill || "";
+        if (baseSkillKey) {
+          const baseSkillLabel = game.i18n.localize(`MERC.Skills.${baseSkillKey}`);
+          skillName = `${baseSkillLabel} : ${customSpecializationName}`;
+        } else {
+          skillName = customSpecializationName;
+        }
+      }
+    }
+
     if (!skillData) {
       console.error(game.i18n.localize("MERC.Labels.skillNotFound") + ":", skillKey);
       return;
@@ -2117,7 +2158,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const proficiencyBonus = item.system?.proficiency ? 3 : 0;
 
     const total_modifier = degree + bonus + proficiencyBonus;
-    const skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+    if (!skillName) {
+      skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
+    }
     const weaponName = item.name || game.i18n.localize("MERC.UI.items.weapons");
 
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
@@ -2416,6 +2459,7 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
   async _prepareContext(options) {
     const data = await super._prepareContext(options);
     const itemDoc = this.document ?? this.item;
+    const actorDoc = itemDoc?.parent ?? this.actor ?? this.document?.parent;
     if (!data.item) {
       data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
     }
@@ -2436,6 +2480,20 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
 
     if (!data.item) data.item = {};
     data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+
+    // Build custom specialization options from owning actor
+    const customSpecializations = actorDoc?.system?.customSpecializations ?? {};
+    data.customSpecializations = Object.entries(customSpecializations)
+      .filter(([, specData]) => !!specData)
+      .map(([specName, specData]) => {
+        const baseSkillKey = specData.baseSkill || "";
+        const baseSkillLabel = baseSkillKey ? game.i18n.localize(`MERC.Skills.${baseSkillKey}`) : "";
+        const label = baseSkillLabel ? `${baseSkillLabel} : ${specName}` : specName;
+        return {
+          key: `custom_spec_${specName}`,
+          label
+        };
+      });
     return data;
   }
 

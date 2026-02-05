@@ -598,7 +598,7 @@
           <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency "1")}}<span class="proficiency-star">★</span>{{/if}}</div>
-              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">
               <button type="button" class="weapon-skill-roll" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">🎯</button>
@@ -624,7 +624,7 @@
           <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency "1")}}<span class="proficiency-star">★</span>{{/if}}</div>
-              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{localize (concat "MERC.Skills." item.system.weaponSkill)}}{{else}}-{{/if}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">
               <button type="button" class="item-edit">✎</button>

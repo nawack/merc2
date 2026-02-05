@@ -21,6 +21,13 @@
           <option value="maneuvers" {{#if (eq item.system.weaponSkill "maneuvers")}}selected{{/if}}>{{localize "MERC.Skills.maneuvers"}}</option>
           <option value="heavy_weapons" {{#if (eq item.system.weaponSkill "heavy_weapons")}}selected{{/if}}>{{localize "MERC.Skills.heavy_weapons"}}</option>
           <option value="electronic_weapons" {{#if (eq item.system.weaponSkill "electronic_weapons")}}selected{{/if}}>{{localize "MERC.Skills.electronic_weapons"}}</option>
+          {{#if customSpecializations.length}}
+          <optgroup label="{{localize "MERC.SkillGroups.specializations"}}">
+            {{#each customSpecializations as |spec|}}
+            <option value="{{spec.key}}" {{#if (eq ../item.system.weaponSkill spec.key)}}selected{{/if}}>{{spec.label}}</option>
+            {{/each}}
+          </optgroup>
+          {{/if}}
         </select>
       </div>
 

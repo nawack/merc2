@@ -40,6 +40,7 @@ Controle des valeurs des champs:
     - mettre en place des contrôles de valeurs pour les champs de la fiche (ex: pas de valeur négative pour les dev, valeur comprise en 1 et 10 pour les attributs, etc)
     - format des dégats reg exp : ^(0|[1-9](?:[dD]6(?:\+[12])?)?)$
 
+
 Gestion des difficultés et ajout gestion des coches :
     - liste des actions de corps (qui définissent les difficultés)
     - tableau de difficulté (distance, localisation, type d'action, etc)
@@ -56,11 +57,19 @@ Mise en place prise de notes :
     ✔ ajouter une section de prise de notes dans la fiche @done(26-02-05 13:24)
 
 Gestion des armes:
+    ✔ créer la fiche des armes @done(26-02-03 08:06)
     ✔ ajouter les armes de bases (liste) @done(26-02-03 08:06)
     ✔ pouvoir ajouter des armes personnalisées @done(26-02-03 08:06)
+    - gérer les sous-types d'armes (armes à feu, armes blanches, armes lourdes, armes électroniques, etc)
+    - créer la fiche de munition
+    - ajouter munition dans la fiche d'arme
     - gestion des modificateurs d'armes (précision, puissance, cadence, portée)
-    - gestion des munitions
-    - gestion des attaques spéciales (explosif, perforant, etc)
+    - gestion des munitions (quantité, consomation, etc)
+    - ajouter les champs commun a tous les items (rareté, prix, etc )
+
+Gestion des équipements & armures:
+    - creer la fiche d'équipement ==> (poids, prix, rareté, etc)
+    - creer la fiche d'armures ==> besoin liste de types d'armures et ce qui les caractérise (localisation de protection, valeur de protection, etc)
 
 Gerer un styeme de blessures:
     - lister les degrés de blessures

@@ -195,7 +195,7 @@ Aucune action manuelle n'est nécessaire - le système recalcule automatiquement
 **Résultats :**
 - Endurance = ⌊(3 + 2) / 2⌋ = 2
 - Points de Corpulence = 2 + (-2) = 0
-- Capacité de Charge = 4 + (2 × 2) = 8
+- Capacité de Charge = (4 + 2) × 2 = 12
 - Bonus Discrétion = 3 (table[11])
 - Bonus Dissimulation = 5 (table[11])
 - Reptation = 1.5 m/round

@@ -2,18 +2,29 @@
 
 Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attributs principaux et 56 compétences de base, avec compétences personnalisées (langues et spécialisations) et calcul automatique de degrés via table de progression.
 
+## 🔧 Compatibilité
+
+- **Version minimale :** Foundry VTT 13.0
+- **Version testée & vérifiée :** 13.351 (Stable)
+- **Version maximale :** 13.351
+
+⚠️ **Note :** Le système a été développé et testé sur Foundry VTT 13.351. Les versions antérieures à 13.0 ne sont pas supportées.
+
 ## 📋 Caractéristiques
 
 - **10 Attributs de Base** : Intelligence, Volonté, Santé Mentale, Charisme, Chance, Adaptation, Force, Dextérité, Rapidité, Constitution
 - **Perception** : Attribut principal avec 5 sous-attributs (Vue, Ouïe, Goût, Odorat, Toucher)
-- **56 Compétences de base** : Organisées en 7 catégories thématiques (Combat, Aptitudes, Social, Langues, Connaissances, Construction, Spécialisations)
+- **56 Compétences de base** : Organisées en 8 catégories (Combat, Aptitudes, Social, Langues, Connaissances, Construction, Spécialisations, Autres)
 - **Compétences personnalisées** : Ajout/suppression/renommage pour Langues et Spécialisations
 - **Calcul Automatique** : 
   - Base = 30 - (Attribut × 2) ou 30 - (Attribut1 + Attribut2)
   - Degré calculé automatiquement via table de progression (base 4-28, degrés -7 à +33)
 - **Système de Jets** : D20 pour attributs et compétences avec modificateurs dynamiques
 - **Interface Moderne** : Design épuré avec onglets, colonnes multiples et indicateurs visuels
-- **Gestion des Objets** : Armes, Armures et Équipement
+- **Gestion des Objets** : Armes, Armures, Équipement, Munitions et Traits
+- **Prérequis de compétences** : Certaines compétences avancées nécessitent l'apprentissage préalable
+- **Système de dégâts** : Table de référence combinant Force et Degré de compétence
+- **Statistiques de combat** : Calcul automatique des mouvements et bonus tactiques
 
 ## 🎮 Comment Utiliser
 
@@ -243,7 +254,31 @@ Une fois installé via Manifest URL, le système vérifiera automatiquement les 
 
 ---
 
-**Version** : 1.0.1  
+## 📚 Documentation Complète
+
+Le système inclut une documentation détaillée couvrant tous les aspects:
+
+### Pour les Joueurs
+- [SKILL_PREREQUISITES.md](SKILL_PREREQUISITES.md) - Prérequis des compétences avancées
+- [DAMAGE_SYSTEM.md](DAMAGE_SYSTEM.md) - Système de dégâts et table de référence
+- [COMBAT_STATISTICS.md](COMBAT_STATISTICS.md) - Statistiques de combat (taille, poids, mouvements)
+- [ITEM_TYPES_GUIDE.md](ITEM_TYPES_GUIDE.md) - Guide complet des types d'objets (Armes, Armures, etc.)
+
+### Pour les Développeurs
+- [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - Architecture du système
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Guide de contribution
+- [INSTALLATION.md](INSTALLATION.md) - Installation détaillée
+- [SETUP_COMBAT.md](SETUP_COMBAT.md) - Configuration du système de combat
+- [IMPLEMENTATION_COMBAT.md](IMPLEMENTATION_COMBAT.md) - Implémentation technique
+
+### Fichiers de Référence
+- [system.json](system.json) - Configuration et métadonnées
+- [template.json](template.json) - Schéma de données
+- [CHANGELOG.md](CHANGELOG.md) - Historique des versions
+
+---
+
+**Version** : 1.0.6  
 **Auteur** : Game Master  
 **Système** : Mercenary RPG  
 **Licence** : MIT

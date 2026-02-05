@@ -587,6 +587,26 @@
             <div class="combat-base-damage-value">{{actor.system.combat.baseDamageBladed}}</div>
             <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageBladed}}" data-roll-label="{{localize "MERC.Skills.bladed_weapons"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
           </div>
+          {{#each actor.system.customSpecializations as |specData specName|}}
+            {{#if (or (eq specData.baseSkill "melee") (eq specData.baseSkill "bladed_weapons"))}}
+            <div class="combat-base-damage-row">
+              <div class="combat-base-damage-label">
+                <span class="combat-base-damage-title">{{#if (eq specData.baseSkill "melee")}}{{localize "MERC.UI.combat.baseDamageMelee"}}{{else}}{{localize "MERC.UI.combat.baseDamageBladed"}}{{/if}}</span>
+                <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if (eq specData.baseSkill "melee")}}{{localize "MERC.Skills.melee"}}{{else}}{{localize "MERC.Skills.bladed_weapons"}}{{/if}} : {{specName}}</span>
+              </div>
+              {{#with (concat "custom_spec_" specName) as |specKey|}}
+                <div class="combat-base-damage-value">
+                  {{#if (lookup @root.actor.system.combat.specializationBaseDamage specKey)}}
+                    {{lookup @root.actor.system.combat.specializationBaseDamage specKey}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </div>
+                <button type="button" class="combat-base-damage-roll" data-roll-formula="{{lookup @root.actor.system.combat.specializationBaseDamage specKey}}" data-roll-label="{{specName}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
+              {{/with}}
+            </div>
+            {{/if}}
+          {{/each}}
         </div>
       </div>
 

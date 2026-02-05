@@ -102,7 +102,8 @@
         "bonusDissimulation": 0,
         "corpulence": 0,
         "baseDamageMelee": "1",
-        "baseDamageBladed": "1"
+        "baseDamageBladed": "1",
+        "specializationBaseDamage": {}
       },
       "movement": {
         "walk": 0,

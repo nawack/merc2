@@ -512,7 +512,6 @@ async function migrateItem(item, actor = null) {
   if (item.system.proficiency === undefined || item.system.proficiency === null) {
     updateData["system.proficiency"] = 0;
   }
-  
   // Ensure weaponSkill exists
   if (!item.system.weaponSkill) {
     updateData["system.weaponSkill"] = "";
@@ -727,6 +726,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
     if (!data.actor.system.attributes) {
       data.actor.system.attributes = defaultAttributes;
+    }
+    if (!data.actor.system.combat) {
+      data.actor.system.combat = {};
+    }
+    if (!data.actor.system.combat.specializationBaseDamage || Object.keys(data.actor.system.combat.specializationBaseDamage).length === 0) {
+      const computed = computeCombatStatsFromSystem(data.actor.system);
+      data.actor.system.combat.specializationBaseDamage = computed?.specializationBaseDamage || {};
     }
     const defaultSkills = {
         reaction: { value: 0, abilities: ["adaptation", "speed"] },
@@ -1288,6 +1294,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
                 "system.combat.corpulence": stats.corpulence,
                 "system.combat.baseDamageMelee": stats.baseDamageMelee,
                 "system.combat.baseDamageBladed": stats.baseDamageBladed,
+                "system.combat.specializationBaseDamage": stats.specializationBaseDamage,
                 "system.movement.reptation": stats.vitesses.reptation,
                 "system.movement.marche": stats.vitesses.marche,
                 "system.movement.course": stats.vitesses.course
@@ -1316,12 +1323,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             // Update combat stats in local data
             this.actor.system.combat.baseDamageMelee = stats.baseDamageMelee;
             this.actor.system.combat.baseDamageBladed = stats.baseDamageBladed;
+            this.actor.system.combat.specializationBaseDamage = stats.specializationBaseDamage;
             // Single update with all changes
             const updateData = {
               [fieldPath]: value,
               [fieldPath.replace(".dev", ".degree")]: newDegree,
               "system.combat.baseDamageMelee": stats.baseDamageMelee,
-              "system.combat.baseDamageBladed": stats.baseDamageBladed
+              "system.combat.baseDamageBladed": stats.baseDamageBladed,
+              "system.combat.specializationBaseDamage": stats.specializationBaseDamage
             };
             
             // Update without triggering render (we'll do it manually)
@@ -1379,6 +1388,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           updateData["system.combat.corpulence"] = stats.corpulence;
           updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
           updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+          updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
           updateData["system.movement.reptation"] = stats.vitesses.reptation;
           updateData["system.movement.marche"] = stats.vitesses.marche;
           updateData["system.movement.course"] = stats.vitesses.course;
@@ -1490,14 +1500,27 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
               return;
             }
             
-            // Recalculate base damage if melee or bladed weapons changed
+            // Recalculate base damage if melee/bladed or related specializations changed
             if (skillKey === "melee" || skillKey === "bladed_weapons") {
               const stats = this.calculateCombatStats();
               if (stats) {
                 this.actor.update({
                   "system.combat.baseDamageMelee": stats.baseDamageMelee,
-                  "system.combat.baseDamageBladed": stats.baseDamageBladed
+                  "system.combat.baseDamageBladed": stats.baseDamageBladed,
+                  "system.combat.specializationBaseDamage": stats.specializationBaseDamage
                 }, { render: false });
+              }
+            } else if (skillKey?.startsWith("custom_spec_")) {
+              const specName = skillKey.replace("custom_spec_", "");
+              const specData = this.actor?.system?.customSpecializations?.[specName];
+              const baseSkillKey = specData?.baseSkill || "";
+              if (baseSkillKey === "melee" || baseSkillKey === "bladed_weapons") {
+                const stats = this.calculateCombatStats();
+                if (stats) {
+                  this.actor.update({
+                    "system.combat.specializationBaseDamage": stats.specializationBaseDamage
+                  }, { render: false });
+                }
               }
             }
           }
@@ -1843,6 +1866,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "system.combat.corpulence": stats.corpulence,
         "system.combat.baseDamageMelee": stats.baseDamageMelee,
         "system.combat.baseDamageBladed": stats.baseDamageBladed,
+        "system.combat.specializationBaseDamage": stats.specializationBaseDamage,
         "system.movement.reptation": stats.vitesses.reptation,
         "system.movement.marche": stats.vitesses.marche,
         "system.movement.course": stats.vitesses.course
@@ -2226,6 +2250,21 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     } else if (weaponSkill === "bladed_weapons") {
       baseDamageFormula = actorSystem.combat?.baseDamageBladed || "1";
       baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageBladed");
+    } else if (weaponSkill?.startsWith("custom_spec_")) {
+      const specName = weaponSkill.replace("custom_spec_", "");
+      const specData = actorSystem.customSpecializations?.[specName];
+      const baseSkillKey = specData?.baseSkill || "";
+      if (baseSkillKey === "melee" || baseSkillKey === "bladed_weapons") {
+        const baseLabel = baseSkillKey === "melee"
+          ? game.i18n.localize("MERC.UI.combat.baseDamageMelee")
+          : game.i18n.localize("MERC.UI.combat.baseDamageBladed");
+        baseDamageLabel = `${baseLabel} (${specName})`;
+        baseDamageFormula = actorSystem.combat?.specializationBaseDamage?.[weaponSkill];
+        if (!baseDamageFormula) {
+          const computed = computeCombatStatsFromSystem(actorSystem);
+          baseDamageFormula = computed?.specializationBaseDamage?.[weaponSkill] || "1";
+        }
+      }
     }
 
     // Roll weapon damage separately (makes it easier to display detail)
@@ -2659,6 +2698,9 @@ Hooks.once("init", () => {
   Handlebars.registerHelper("mod", function(a, b) {
     return a % b;
   });
+  Handlebars.registerHelper("concat", function(...args) {
+    return args.slice(0, -1).join("");
+  });
 
   // Register Actor Sheets
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
@@ -2710,7 +2752,10 @@ const DEFAULT_COMBAT = {
   capaciteCharge: 0,
   bonusDiscretion: 0,
   bonusDissimulation: 0,
-  corpulence: 0
+  corpulence: 0,
+  baseDamageMelee: "1",
+  baseDamageBladed: "1",
+  specializationBaseDamage: {}
 };
 
 const DEFAULT_MOVEMENT = {
@@ -2794,10 +2839,22 @@ const computeCombatStatsFromSystem = (system) => {
   const baseDamageMelee = getBaseDamageFromTable(baseStats.force, meleeDegree);
   const baseDamageBladed = getBaseDamageFromTable(baseStats.force, bladedDegree);
 
+  const specializationBaseDamage = {};
+  const customSpecializations = system?.customSpecializations || {};
+  for (const [specName, specData] of Object.entries(customSpecializations)) {
+    if (!specData) continue;
+    const baseSkillKey = specData.baseSkill || "";
+    if (baseSkillKey !== "melee" && baseSkillKey !== "bladed_weapons") continue;
+    const skillData = { ...specData, abilities: specData.abilities || [] };
+    const degree = computeSkillDegreeFromSystem(system, `custom_spec_${specName}`, skillData);
+    specializationBaseDamage[`custom_spec_${specName}`] = getBaseDamageFromTable(baseStats.force, degree);
+  }
+
   return {
     ...baseStats,
     baseDamageMelee,
-    baseDamageBladed
+    baseDamageBladed,
+    specializationBaseDamage
   };
 };
 
@@ -2934,6 +2991,9 @@ const getActorMigrationData = (actor) => {
     updateData["system.combat.bonusDiscretion"] = computed.bonusDiscretion;
     updateData["system.combat.bonusDissimulation"] = computed.bonusDissimulation;
     updateData["system.combat.corpulence"] = computed.corpulence;
+    updateData["system.combat.baseDamageMelee"] = computed.baseDamageMelee;
+    updateData["system.combat.baseDamageBladed"] = computed.baseDamageBladed;
+    updateData["system.combat.specializationBaseDamage"] = computed.specializationBaseDamage;
     updateData["system.movement.reptation"] = computed.vitesses.reptation;
     updateData["system.movement.marche"] = computed.vitesses.marche;
     updateData["system.movement.course"] = computed.vitesses.course;
@@ -3007,7 +3067,8 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
       bonusDissimulation: 0,
       corpulence: 0,
       baseDamageMelee: "1",
-      baseDamageBladed: "1"
+      baseDamageBladed: "1",
+      specializationBaseDamage: {}
     },
     movement: {
       walk: 0,
@@ -3063,7 +3124,8 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
     changes.system?.skills?.bladed_weapons?.bonus !== undefined ||
     changes.system?.skills?.bladed_weapons?.degree !== undefined;
   
-  const skillsChanged = meleeChanged || bladedChanged;
+  const customSpecChanged = changes.system?.customSpecializations !== undefined;
+  const skillsChanged = meleeChanged || bladedChanged || customSpecChanged;
   
   if (!needsUpdate && !skillsChanged) return;
   
@@ -3079,6 +3141,7 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
       if (skillsChanged) {
         updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
         updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+        updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
       }
       
       // Update combat stats if attributes/biometrics changed
@@ -3092,12 +3155,14 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
         updateData["system.movement.reptation"] = stats.vitesses.reptation;
         updateData["system.movement.marche"] = stats.vitesses.marche;
         updateData["system.movement.course"] = stats.vitesses.course;
+        updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
       }
       
       // Update base damage in both cases (needs recalc)
       if (!skillsChanged && needsUpdate) {
         updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
         updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+        updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
       }
       
       if (Object.keys(updateData).length > 0) {

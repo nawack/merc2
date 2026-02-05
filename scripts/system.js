@@ -254,8 +254,9 @@ function computeSkillDegreeFromSystem(system, skillKey, skillData) {
   const isCustomSpec = typeof skillKey === "string" && skillKey.startsWith("custom_spec_");
   const baseForDegree = isCustomSpec ? Math.floor(base) : base;
   const dev = Number(skillData.dev ?? 0);
+  const devForDegree = skillKey === "reaction" ? dev + baseForDegree : dev;
 
-  return getDegreeFromTable(baseForDegree, dev);
+  return getDegreeFromTable(baseForDegree, devForDegree);
 }
 
 // Roll 1d20 with a second roll on 20 (add) or 1 (subtract).

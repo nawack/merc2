@@ -30,7 +30,7 @@ Gestion de la charge:
 Gestion des bonus de dégats:
     ✔ calcule du bonus de corps a corps @done(26-02-04 00:30)
     ✔ calcule du bonus d'armes blanche @done(26-02-04 00:30)
-    - calcule du bonus de spécialités
+    ✔ calcule du bonus de spécialités @done(26-02-05 15:21)
     - envlever la possibilté roll les dégats pour armes blanches (section bonus) car forément lié a une arme
     
 Gestion D20 illimité :
@@ -75,7 +75,7 @@ Issues:
     - Controle des valeurs des bonus de discretion et dissimulation (https://github.com/nawack/merc2/issues/11)
 
 Controle de la réaction (https://github.com/nawack/merc2/issues/9):
-    - ajouter la base de réaction au dev de réaction
+    ✔ ajouter la base de réaction au dev de réaction pour le calcule du degré @done(26-02-05 15:21)
     ✔ base : ADA / RAP @done(26-02-05 13:23)
 
 Revoir la mise en forme de la fiche (probléme hauteur de page):

@@ -475,6 +475,23 @@ async function migrateActor(actor) {
     };
   }
   
+  // Migrate reaction skill to include "adaptation" in abilities (was only "speed" before)
+  if (actor.system.skills?.reaction) {
+    const reactionSkill = actor.system.skills.reaction;
+    // Check if abilities is an array with only "speed" or if it's a single string "speed"
+    if (Array.isArray(reactionSkill.abilities)) {
+      if (reactionSkill.abilities.length === 1 && reactionSkill.abilities[0] === "speed") {
+        updateData["system.skills.reaction.abilities"] = ["adaptation", "speed"];
+      } else if (!reactionSkill.abilities.includes("adaptation") && reactionSkill.abilities.includes("speed")) {
+        // If speed is there but adaptation is missing, add adaptation
+        updateData["system.skills.reaction.abilities"] = ["adaptation", ...reactionSkill.abilities];
+      }
+    } else if (reactionSkill.abilities === "speed") {
+      // Handle case where abilities might be a string instead of array
+      updateData["system.skills.reaction.abilities"] = ["adaptation", "speed"];
+    }
+  }
+  
   if (Object.keys(updateData).length > 0) {
     await actor.update(updateData, { render: false });
   }
@@ -704,7 +721,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       data.actor.system.attributes = defaultAttributes;
     }
     const defaultSkills = {
-        reaction: { value: 0, abilities: ["speed"] },
+        reaction: { value: 0, abilities: ["adaptation", "speed"] },
         melee: { value: 0, abilities: ["strength", "dexterity"] },
         bladed_weapons: { value: 0, abilities: ["strength", "dexterity"] },
         mechanical_projectiles: { value: 0, abilities: ["dexterity", "perception"] },
@@ -785,6 +802,23 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         inplace: false,
         overwrite: true
       });
+      
+      // Migration: Fix old reaction skills that only had "speed" as ability
+      if (actorDoc && data.actor.system.skills.reaction) {
+        const reactionAbilities = data.actor.system.skills.reaction.abilities;
+        if (Array.isArray(reactionAbilities)) {
+          if (reactionAbilities.length === 1 && reactionAbilities[0] === "speed") {
+            // Old reaction skill - update to include both adaptation and speed
+            await actorDoc.update({ "system.skills.reaction.abilities": ["adaptation", "speed"] }, { render: false });
+            data.actor.system.skills.reaction.abilities = ["adaptation", "speed"];
+          } else if (!reactionAbilities.includes("adaptation") && reactionAbilities.includes("speed")) {
+            // Adaptation is missing but speed is there - add adaptation
+            const updatedAbilities = ["adaptation", ...reactionAbilities];
+            await actorDoc.update({ "system.skills.reaction.abilities": updatedAbilities }, { render: false });
+            data.actor.system.skills.reaction.abilities = updatedAbilities;
+          }
+        }
+      }
     }
 
     // Prepare skills list for display
@@ -2483,7 +2517,7 @@ Hooks.once("init", () => {
       perception: "MERC.Abilities.perception"
     },
     skills: {
-      reaction: { label: "MERC.Skills.reaction", abilities: ["speed"] },
+      reaction: { label: "MERC.Skills.reaction", abilities: ["adaptation", "speed"] },
       melee: { label: "MERC.Skills.melee", abilities: ["strength", "dexterity"] },
       bladed_weapons: { label: "MERC.Skills.bladed_weapons", abilities: ["strength", "dexterity"] },
       mechanical_projectiles: { label: "MERC.Skills.mechanical_projectiles", abilities: ["dexterity", "perception"] },

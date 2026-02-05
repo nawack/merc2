@@ -31,7 +31,7 @@
         }
       },
       "skills": {
-        "reaction": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "speed" },
+        "reaction": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "adaptation, speed" },
         "melee": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
         "bladed_weapons": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "strength" },
         "mechanical_projectiles": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "ability": "dexterity" },

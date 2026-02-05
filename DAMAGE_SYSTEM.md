@@ -198,5 +198,5 @@ Progression dans les dégâts:
 ---
 
 **Dernière mise à jour :** 2026-02-05  
-**Version du système :** 1.0.7  
+**Version du système :** 1.0.8  
 **Statut :** Documenté complètement

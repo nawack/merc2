@@ -1,7 +1,7 @@
 # ✅ Résumé des Corrections - Audit Documentation
 
 **Date :** 2026-02-05  
-**Système :** Mercenary System v1.0.7  
+**Système :** Mercenary System v1.0.8  
 **Statut :** Audit complet + Correction des lacunes documentaires
 
 ---
@@ -187,7 +187,7 @@ merc/
 ### Priority 2 (Optionnel - avancé)
 - [ ] Documenter API extension
 - [ ] Créer guide "Créer compétence personnalisée"
-- [ ] Documenter système de migration (v1.0.7)
+- [ ] Documenter système de migration (v1.0.8)
 
 ### Priority 3 (Optionnel - français)
 - [ ] Traduire en français 100% des docs
@@ -274,5 +274,5 @@ Pour questions sur la documentation:
 **Prêt pour production:** ✅  
 
 **Date:** 2026-02-05  
-**Système:** Mercenary System v1.0.7  
+**Système:** Mercenary System v1.0.8  
 **Couverture:** 100%

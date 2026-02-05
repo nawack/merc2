@@ -2,6 +2,13 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.8] - 2026-02-05
+
+### Changed
+- ⚡ **Réaction** : le degré est calculé avec $dev + base$ pour cette compétence
+
+---
+
 ## [1.0.7] - 2026-02-05
 
 ### Added

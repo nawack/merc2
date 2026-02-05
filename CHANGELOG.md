@@ -2,6 +2,19 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.9] - 2026-02-06
+
+### Added
+- 🎛️ **Tracker segments** : contrôles de segment dans le Combat Tracker
+- 👥 **Éligibilité** : affichage des combattants grisés selon le segment
+
+### Changed
+- ⚔️ **Ordre de combat** : tri par Réaction décroissante
+- 🧩 **Initiative** : remplacement visuel par la valeur de Réaction
+- 🧹 **Interface** : masquage des boutons de jets d'initiative
+
+---
+
 ## [1.0.8] - 2026-02-05
 
 ### Changed

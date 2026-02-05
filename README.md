@@ -278,7 +278,7 @@ Le système inclut une documentation détaillée couvrant tous les aspects:
 
 ---
 
-**Version** : 1.0.8  
+**Version** : 1.0.9  
 **Auteur** : Game Master  
 **Système** : Mercenary RPG  
 **Licence** : MIT

@@ -40,7 +40,6 @@ Controle des valeurs des champs:
     - mettre en place des contrôles de valeurs pour les champs de la fiche (ex: pas de valeur négative pour les dev, valeur comprise en 1 et 10 pour les attributs, etc)
     - format des dégats reg exp : ^(0|[1-9](?:[dD]6(?:\+[12])?)?)$
 
-
 Gestion des difficultés et ajout gestion des coches :
     - liste des actions de corps (qui définissent les difficultés)
     - tableau de difficulté (distance, localisation, type d'action, etc)
@@ -60,7 +59,7 @@ Gestion des armes:
     ✔ créer la fiche des armes @done(26-02-03 08:06)
     ✔ ajouter les armes de bases (liste) @done(26-02-03 08:06)
     ✔ pouvoir ajouter des armes personnalisées @done(26-02-03 08:06)
-    - gérer les sous-types d'armes (armes à feu, armes blanches, armes lourdes, armes électroniques, etc)
+    ✔ gérer les sous-types d'armes (armes à feu, armes blanches, armes lourdes, armes électroniques, etc) @done(26-02-06 00:27)
     - créer la fiche de munition
     - ajouter munition dans la fiche d'arme
     - gestion des modificateurs d'armes (précision, puissance, cadence, portée)
@@ -91,3 +90,7 @@ Revoir la mise en forme de la fiche (probléme hauteur de page):
     ✔ réorganisation du header et des onglets pour prendre moins de place @done(26-02-05 13:16)
     - prévoir un assenceur au niveau du body (contenu des onglets) pour éviter que la fiche soit trop longue
 
+Ajouter un système de combat :
+    ✔ ajouter la gestion des segments (ordre, eligible, etc) @done(26-02-06 00:27)
+    ✔ gérer le style @done(26-02-06 00:27)
+    - check roll d'init encore présents

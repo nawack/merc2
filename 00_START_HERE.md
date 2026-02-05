@@ -1,7 +1,7 @@
 # 🎉 Audit Documentation - RÉSUMÉ EXÉCUTIF
 
 **Date :** 2026-02-05  
-**Système :** Mercenary System v1.0.8  
+**Système :** Mercenary System v1.0.9  
 **Status :** ✅ COMPLET
 
 ---
@@ -306,4 +306,4 @@ Chaque fonctionnalité a :
 
 ---
 
-*Créé lors de l'audit de documentation Mercenary System v1.0.8*
+*Créé lors de l'audit de documentation Mercenary System v1.0.9*

@@ -366,5 +366,5 @@ Pour **ajouter des statistiques** personnalisées:
 ---
 
 **Dernière mise à jour :** 2026-02-05  
-**Version du système :** 1.0.8  
+**Version du système :** 1.0.9  
 **Statut :** Documenté complètement

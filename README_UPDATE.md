@@ -171,7 +171,7 @@ Déclenché quand un item est dragué sur la feuille.
 
 ### Dans "Introduction"
 ```markdown
-**Version actuelle :** 1.0.8
+**Version actuelle :** 1.0.9
 ```
 
 ### Dans "Compétences"

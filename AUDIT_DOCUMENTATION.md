@@ -1,7 +1,7 @@
 # 📋 AUDIT COMPLET - Documentation vs Code
 
 **Date :** 2026-02-05  
-**Système :** Mercenary System v1.0.6  
+**Système :** Mercenary System v1.0.7  
 **Objectif :** Vérifier l'alignement entre la documentation et le code réel
 
 ---
@@ -22,7 +22,7 @@
 - ✅ system.js (3015 lignes - complet)
 - ✅ character-sheet.hbs (678 lignes - avec tous les onglets)
 - ✅ style.css (1679 lignes - complet)
-- ✅ system.json (version 1.0.6)
+- ✅ system.json (version 1.0.7)
 - ✅ template.json (déclare les actor/item types)
 
 ### Traductions
@@ -429,7 +429,7 @@ Hooks.on('dropActorSheetData', ...) // Drag-drop items
 
 **README ne mentionne pas :**
 ```
-- Version actuelle : 1.0.6 (caché dans system.json)
+- Version actuelle : 1.0.7 (caché dans system.json)
 - Compatibilité : v13.0 minimum, v13.351 maximum
 - Vérifié sur v13.351
 ```

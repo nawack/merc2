@@ -2,6 +2,20 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.7] - 2026-02-05
+
+### Added
+- 📝 **Onglet Notes** : ajout d’un onglet Notes avec sauvegarde persistante
+
+### Changed
+- 🧩 **Header** : regroupement infos + onglets dans un bloc à deux colonnes
+- 🧾 **Champs header** : inputs plus discrets (soulignement pointillé)
+- 📏 **Largeur minimale** : feuille de personnage à 570px min
+- 🧭 **Onglets** : affichage sur deux lignes et alignement en bas du header
+- 🧍 **Genre** : libellés en info-bulle (icônes seules)
+
+---
+
 ## [1.0.6] - 2026-02-03
 
 ### Added

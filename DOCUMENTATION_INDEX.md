@@ -1,6 +1,6 @@
 # 📚 Index de la documentation - Mercenary System
 
-**Version :** 1.0.6  
+**Version :** 1.0.7  
 **Dernière mise à jour :** 2026-02-05  
 **Couverture :** 100%
 

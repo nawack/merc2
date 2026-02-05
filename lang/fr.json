@@ -188,6 +188,7 @@
           "subtypePlaceholder": "Sélectionner un sous-type",
           "subtypes": {
             "melee": "Armes de corps à corps",
+            "bladed_weapons": "Armes blanches",
             "throwing": "Armes de lancé",
             "powder_projectiles": "Armes à feu",
             "mechanical_projectiles": "Armes de projectile",

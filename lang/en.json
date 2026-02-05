@@ -188,6 +188,7 @@
           "subtypePlaceholder": "Select a subtype",
           "subtypes": {
             "melee": "Melee weapons",
+            "bladed_weapons": "Bladed weapons",
             "throwing": "Thrown weapons",
             "powder_projectiles": "Firearms",
             "mechanical_projectiles": "Projectile weapons",

@@ -532,10 +532,10 @@ async function migrateItem(item, actor = null) {
 class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
     classes: ["merc", "sheet", "actor"],
-    width: 800,
+    width: 570,
     height: 900,
     resizable: true,
-    minWidth: 800,
+    minWidth: 570,
     minHeight: 800,
     parts: ["form"],
     tabs: [

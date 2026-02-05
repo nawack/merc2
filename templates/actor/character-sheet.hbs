@@ -14,71 +14,75 @@
         </div>
       </div>
       
-      <!-- Right Column: Character Info -->
+      <!-- Right Column: Character Info + Tabs -->
       <div class="header-info-column">
-        <!-- Row 1: Name + Gender -->
-        <div class="header-info-row header-row-1">
-          <div class="field-name-large">
-            <input type="text" name="name" value="{{actor.name}}" placeholder="{{localize "MERC.UI.biography.namePlaceholder"}}">
-          </div>
-          <div class="field-inline field-gender">
-            <div class="gender-toggle">
-              <label class="gender-option male">
-                <input type="radio" name="system.biography.gender" value="male" {{#eq actor.system.biography.gender "male"}}checked{{/eq}}>
-                <span class="gender-icon" aria-hidden="true"></span>
-                <span class="gender-text">{{localize "MERC.UI.gender.male"}}</span>
-              </label>
-              <label class="gender-option female">
-                <input type="radio" name="system.biography.gender" value="female" {{#eq actor.system.biography.gender "female"}}checked{{/eq}}>
-                <span class="gender-icon" aria-hidden="true"></span>
-                <span class="gender-text">{{localize "MERC.UI.gender.female"}}</span>
-              </label>
+        <div class="header-info-and-tabs">
+          <!-- Block 1: Header Info (photo removed) -->
+          <div class="header-info-block">
+            <!-- Row 1: Name + Gender -->
+            <div class="header-info-row header-row-1">
+              <div class="field-name-large">
+                <input type="text" name="name" value="{{actor.name}}" placeholder="{{localize "MERC.UI.biography.namePlaceholder"}}">
+              </div>
+              <div class="field-inline field-gender">
+                <div class="gender-toggle">
+                  <label class="gender-option male" title="{{localize "MERC.UI.gender.male"}}">
+                    <input type="radio" name="system.biography.gender" value="male" {{#eq actor.system.biography.gender "male"}}checked{{/eq}}>
+                    <span class="gender-icon" aria-hidden="true"></span>
+                  </label>
+                  <label class="gender-option female" title="{{localize "MERC.UI.gender.female"}}">
+                    <input type="radio" name="system.biography.gender" value="female" {{#eq actor.system.biography.gender "female"}}checked{{/eq}}>
+                    <span class="gender-icon" aria-hidden="true"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Row 2: Age + Taille + Poids -->
+            <div class="header-info-row header-row-2">
+              <div class="field-inline">
+                <label>{{localize "MERC.UI.biography.age"}}</label>
+                <input type="text" name="system.biography.age" value="{{actor.system.biography.age}}" placeholder="{{localize "MERC.UI.biography.agePlaceholder"}}">
+              </div>
+              <div class="field-inline">
+                <label>{{localize "MERC.UI.biography.height"}}</label>
+                <input type="number" name="system.biography.height" value="{{actor.system.biography.height}}" min="0" placeholder="{{localize "MERC.UI.biography.heightPlaceholder"}}">
+              </div>
+              <div class="field-inline">
+                <label>{{localize "MERC.UI.biography.weight"}}</label>
+                <input type="number" name="system.biography.weight" value="{{actor.system.biography.weight}}" min="0" placeholder="{{localize "MERC.UI.biography.weightPlaceholder"}}">
+              </div>
+            </div>
+            
+            <!-- Row 3: Année + Origine + Renommé -->
+            <div class="header-info-row header-row-3">
+              <div class="field-inline">
+                <label>{{localize "MERC.UI.biography.year"}}</label>
+                <input type="number" name="system.biography.year" value="{{actor.system.biography.year}}" min="0" placeholder="{{localize "MERC.UI.biography.yearPlaceholder"}}">
+              </div>
+              <div class="field-inline">
+                <label>{{localize "MERC.UI.biography.origin"}}</label>
+                <input type="text" name="system.biography.origin" value="{{actor.system.biography.origin}}" placeholder="{{localize "MERC.UI.biography.originPlaceholder"}}">
+              </div>
+              <div class="field-inline">
+                <label>{{localize "MERC.UI.biography.renown"}}</label>
+                <input type="number" name="system.biography.renown" value="{{actor.system.biography.renown}}" min="0" placeholder="{{localize "MERC.UI.biography.renownPlaceholder"}}">
+              </div>
             </div>
           </div>
-        </div>
-        
-        <!-- Row 2: Age + Taille + Poids -->
-        <div class="header-info-row header-row-2">
-          <div class="field-inline">
-            <label>{{localize "MERC.UI.biography.age"}}</label>
-            <input type="text" name="system.biography.age" value="{{actor.system.biography.age}}" placeholder="{{localize "MERC.UI.biography.agePlaceholder"}}">
-          </div>
-          <div class="field-inline">
-            <label>{{localize "MERC.UI.biography.height"}}</label>
-            <input type="number" name="system.biography.height" value="{{actor.system.biography.height}}" min="0" placeholder="{{localize "MERC.UI.biography.heightPlaceholder"}}">
-          </div>
-          <div class="field-inline">
-            <label>{{localize "MERC.UI.biography.weight"}}</label>
-            <input type="number" name="system.biography.weight" value="{{actor.system.biography.weight}}" min="0" placeholder="{{localize "MERC.UI.biography.weightPlaceholder"}}">
-          </div>
-        </div>
-        
-        <!-- Row 3: Année + Origine + Renommé -->
-        <div class="header-info-row header-row-3">
-          <div class="field-inline">
-            <label>{{localize "MERC.UI.biography.year"}}</label>
-            <input type="number" name="system.biography.year" value="{{actor.system.biography.year}}" min="0" placeholder="{{localize "MERC.UI.biography.yearPlaceholder"}}">
-          </div>
-          <div class="field-inline">
-            <label>{{localize "MERC.UI.biography.origin"}}</label>
-            <input type="text" name="system.biography.origin" value="{{actor.system.biography.origin}}" placeholder="{{localize "MERC.UI.biography.originPlaceholder"}}">
-          </div>
-          <div class="field-inline">
-            <label>{{localize "MERC.UI.biography.renown"}}</label>
-            <input type="number" name="system.biography.renown" value="{{actor.system.biography.renown}}" min="0" placeholder="{{localize "MERC.UI.biography.renownPlaceholder"}}">
-          </div>
+
+          <!-- Block 2: Navigation Tabs -->
+          <nav class="sheet-tabs tabs" data-group="primary">
+            <a class="item active" data-tab="stats">{{localize "MERC.UI.tabs.attributes"}}</a>
+            <a class="item" data-tab="skills">{{localize "MERC.UI.tabs.skills"}}</a>
+            <a class="item" data-tab="combat">{{localize "MERC.UI.tabs.combat"}}</a>
+            <a class="item" data-tab="items">{{localize "MERC.UI.tabs.items"}}</a>
+            <a class="item" data-tab="notes">Notes</a>
+          </nav>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- NAVIGATION TABS -->
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="stats">{{localize "MERC.UI.tabs.attributes"}}</a>
-    <a class="item" data-tab="skills">{{localize "MERC.UI.tabs.skills"}}</a>
-    <a class="item" data-tab="combat">{{localize "MERC.UI.tabs.combat"}}</a>
-    <a class="item" data-tab="items">{{localize "MERC.UI.tabs.items"}}</a>
-  </nav>
 
   <!-- TAB CONTENT -->
   <section class="sheet-body">
@@ -671,6 +675,13 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- NOTES TAB -->
+    <div class="tab-content" data-tab="notes">
+      <div class="notes-section">
+        <textarea name="system.notes" rows="12" placeholder="Notes..."></textarea>
+      </div>
     </div>
 
   </section>

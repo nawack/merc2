@@ -14,6 +14,7 @@
 
 .merc.sheet {
   background: white;
+  min-width: 570px;
 }
 
 .merc.actor-sheet {
@@ -23,6 +24,7 @@
 .merc.actor-sheet .window-content {
   background-color: white;
   padding: 15px;
+  min-width: 570px;
 }
 
 .merc .sheet-header {
@@ -133,14 +135,29 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  justify-content: space-between;
-  height: 150px;
+  justify-content: flex-start;
+  height: auto;
+  min-height: 150px;
+}
+
+.header-info-and-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.header-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .header-info-row {
   display: flex;
   gap: 10px;
   align-items: center;
+  min-height: 22px;
 }
 
 /* Row 1: Name + Gender */
@@ -153,15 +170,17 @@
 }
 
 .field-name-large input {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 500;
   color: #333;
-  background-color: white;
-  border: 1px solid #d6d6d6;
-  padding: 5px 8px;
-  border-radius: 4px;
+  background-color: transparent;
+  border: none !important;
+  border-bottom: 1px dashed #bdbdbd !important;
+  padding: 3px 6px;
+  border-radius: 0;
   width: 100%;
   text-align: center;
+  height: 24px;
 }
 
 /* Row 2 & 3: Inline fields */
@@ -179,6 +198,7 @@
 
 .field-inline.field-gender {
   justify-content: center;
+  padding-top: 5px;
 }
 
 .field-inline label {
@@ -191,21 +211,46 @@
 .field-inline input,
 .field-inline select {
   flex: 1;
-  font-size: 12px;
-  padding: 3px 5px;
-  border: 1px solid #dcdcdc;
-  border-radius: 3px;
-  background-color: white;
+  font-size: 11px;
+  padding: 2px 4px;
+  border: none !important;
+  border-bottom: 1px dashed #bdbdbd !important;
+  border-radius: 0;
+  background-color: transparent;
   color: #333;
   min-width: 50px;
+  height: 20px;
 }
 
 .field-inline input:focus,
 .field-inline select:focus {
   outline: none;
-  background-color: #f9f9f9;
-  border-color: #666;
-  box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
+  background-color: transparent;
+  border-bottom-color: #666 !important;
+  box-shadow: none;
+}
+
+.header-info-and-tabs .sheet-tabs.tabs {
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid #999;
+  margin-top: auto;
+}
+
+/* Force header inputs to use dashed underline (override Foundry defaults) */
+.merc .sheet-header input,
+.merc .sheet-header select {
+  border: none !important;
+  border-bottom: 1px dashed #bdbdbd !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.merc .sheet-header input:focus,
+.merc .sheet-header select:focus {
+  outline: none;
+  border-bottom-color: #666 !important;
+  box-shadow: none !important;
 }
 
 /* Gender toggle (icon radios) */
@@ -279,6 +324,7 @@
 
 .tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 12px;
   border-top: none;
@@ -339,7 +385,7 @@
   height: auto;
   justify-items: stretch;
   align-items: start;
-  margin: 15px 0;
+  /*margin: 15px 0;*/
 }
 
 .attrib-column {
@@ -501,7 +547,7 @@
   padding: 8px 10px;
   border-radius: 6px;
   /*border-left: 3px solid #e94560;*/
-  margin-bottom: 12px;
+  /* margin-bottom: 12px; */
 }
 
 .skills-section h3 {
@@ -917,7 +963,7 @@
   background-color: #f5f5f5;
   padding: 8px 10px;
   border-radius: 6px;
-  margin-bottom: 12px;
+  margin-top: 5px;
 }
 
 .items-section h3,
@@ -1212,7 +1258,7 @@
   height: auto;
   justify-items: stretch;
   align-items: start;
-  margin: 15px 0;
+  margin-top: 5px;
 }
 
 .stats-column {
@@ -1318,7 +1364,7 @@
   background-color: #f5f5f5;
   padding: 12px 10px;
   border-radius: 6px;
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
 .combat-base-damage-section {

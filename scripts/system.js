@@ -3012,22 +3012,22 @@ Hooks.once("init", () => {
         const reactionTitle = game.i18n.localize("MERC.Skills.reaction");
         const tokenInitiative = element.querySelector(".token-initiative");
         if (tokenInitiative) {
-          tokenInitiative.textContent = `R${degreeLabel}`;
+          tokenInitiative.textContent = `${degreeLabel}`;
           tokenInitiative.title = reactionTitle;
           tokenInitiative.classList.add("merc-reaction-initiative");
           tokenInitiative.setAttribute("aria-label", reactionTitle);
-        } else {
-          const rollControl = element.querySelector(
-            ".combatant-control.roll, .combatant-control[data-control=\"roll\"], .combatant-control[data-control=\"rollInitiative\"], .combatant-initiative"
-          );
-
-          if (rollControl) {
-            rollControl.textContent = `R${degreeLabel}`;
-            rollControl.title = reactionTitle;
-            rollControl.classList.add("merc-reaction-initiative");
-            rollControl.setAttribute("aria-label", reactionTitle);
-          }
         }
+        // } else {
+        //   const rollControl = element.querySelector(
+        //     ".combatant-control.roll, .combatant-control[data-control=\"roll\"], .combatant-control[data-control=\"rollInitiative\"], .combatant-initiative"
+        //   );
+
+        //   if (rollControl) {
+        //     rollControl.textContent = `R${degreeLabel}`;
+        //     rollControl.title = reactionTitle;
+        //     rollControl.classList.add("merc-reaction-initiative");
+        //     rollControl.setAttribute("aria-label", reactionTitle);
+        //   }
       }
       if (id && !eligibleIds.has(id)) {
         element.classList.add("merc-combatant--ineligible");

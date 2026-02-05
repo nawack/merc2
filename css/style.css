@@ -1772,6 +1772,14 @@
   background-color: #e0e0e0;
 }
 
+.merc-segment-button[data-segment-delta="1"]::before {
+  content: "<< ";
+}
+
+.merc-segment-button[data-segment-delta="-1"]::after {
+  content: " >>";
+}
+
 .merc-segment-label {
   color: #e7d1b1;
   font-size: 14px;

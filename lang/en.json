@@ -145,7 +145,16 @@
         "linkedSkill": "Linked skill:",
         "rollBaseDamage": "Roll damage",
         "baseDamageRoll": "Base damage - {skill}",
-        "baseDamage": "Base damage"
+        "baseDamage": "Base damage",
+        "segments": {
+          "label": "Segment {segment}",
+          "previous": "Previous segment",
+          "next": "Next segment",
+          "order": "Order: {order}",
+          "endOfSegment": "End of segment. Change the segment to continue.",
+          "eligible": "Eligible: {list}",
+          "eligibleEmpty": "Eligible: none"
+        }
       },
       "units": {
         "mPerSeg": "m/seg"

@@ -145,7 +145,16 @@
         "linkedSkill": "Compétence liée :",
         "rollBaseDamage": "Lancer les dégâts",
         "baseDamageRoll": "Base dégâts - {skill}",
-        "baseDamage": "Base dégâts"
+        "baseDamage": "Base dégâts",
+        "segments": {
+          "label": "Segment {segment}",
+          "previous": "Segment précédent",
+          "next": "Segment suivant",
+          "order": "Ordre : {order}",
+          "endOfSegment": "Fin du segment. Changez de segment pour continuer.",
+          "eligible": "Eligibles : {list}",
+          "eligibleEmpty": "Eligibles : aucun"
+        }
       },
       "units": {
         "mPerSeg": "m/seg"

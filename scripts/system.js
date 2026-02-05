@@ -121,6 +121,125 @@ const SKILL_PREREQUISITES = {
   "surgery": ["human_medicine"]
 };
 
+const SEGMENT_MIN = 1;
+const SEGMENT_MAX = 6;
+const SEGMENT_ORDER = {
+  6: [6, 5],
+  5: [6, 5, 4, 3],
+  4: [6, 4, 2],
+  3: [6, 5, 3, 1],
+  2: [6, 5, 4],
+  1: [6, 5, 4, 3, 2]
+};
+
+const clampSegment = (value) => Math.min(SEGMENT_MAX, Math.max(SEGMENT_MIN, Number(value) || SEGMENT_MAX));
+
+const getReactionDegreeFromCombatant = (combatant) => {
+  const actor = combatant?.actor;
+  const system = actor?.system;
+  if (!system) return 0;
+  const skillData = {
+    abilities: CONFIG.MERC?.skills?.reaction?.abilities || [],
+    ...(system.skills?.reaction || {})
+  };
+  return computeSkillDegreeFromSystem(system, "reaction", skillData);
+};
+
+const getSegmentOrderLabel = (segment) => {
+  const order = SEGMENT_ORDER[segment] || [];
+  return order.map((value) => (value === 6 ? "6+" : String(value))).join(" > ");
+};
+
+const buildSegmentEntries = (combat, segment) => {
+  const order = SEGMENT_ORDER[segment] || [];
+  const allowHigh = order.includes(6);
+  const allowedExact = new Set(order.filter((value) => value !== 6));
+  const combatants = Array.from(combat?.combatants ?? []);
+
+  return combatants
+    .map((combatant) => ({
+      combatant,
+      degree: getReactionDegreeFromCombatant(combatant),
+      name: combatant?.name || combatant?.token?.name || ""
+    }))
+    .filter((entry) => {
+      if (allowHigh && entry.degree >= 6) return true;
+      return allowedExact.has(entry.degree);
+    })
+    .sort((a, b) => {
+      if (b.degree !== a.degree) return b.degree - a.degree;
+      return a.name.localeCompare(b.name, "fr");
+    });
+};
+
+const getEligibleIdsForSegment = (combat, segment) => {
+  const entries = buildSegmentEntries(combat, segment);
+  return new Set(entries.map((entry) => entry.combatant.id));
+};
+
+const buildSegmentTurns = (combat, segment) => {
+  const combatants = Array.from(combat?.combatants ?? [])
+    .map((combatant) => ({
+      combatant,
+      degree: getReactionDegreeFromCombatant(combatant),
+      name: combatant?.name || combatant?.token?.name || ""
+    }))
+    .sort((a, b) => {
+      if (b.degree !== a.degree) return b.degree - a.degree;
+      return a.name.localeCompare(b.name, "fr");
+    })
+    .map((entry) => entry.combatant);
+
+  return combatants;
+};
+
+class MercCombat extends Combat {
+  get currentSegment() {
+    return clampSegment(this.flags?.merc?.segment ?? SEGMENT_MAX);
+  }
+
+  getTurns() {
+    return buildSegmentTurns(this, this.currentSegment);
+  }
+
+  get turns() {
+    return this.getTurns();
+  }
+
+  async setSegment(segment) {
+    const clamped = clampSegment(segment);
+    if (clamped === this.currentSegment) return this;
+    const turns = buildSegmentTurns(this, clamped);
+    const eligibleIds = getEligibleIdsForSegment(this, clamped);
+    let firstEligible = turns.findIndex((combatant) => eligibleIds.has(combatant.id));
+    if (firstEligible === -1) firstEligible = 0;
+    return this.update({
+      "flags.merc.segment": clamped,
+      turn: firstEligible
+    }, { mercSegmentUpdate: true });
+  }
+
+  async nextTurn() {
+    const turns = this.turns ?? [];
+    if (!turns.length) return this;
+    const eligibleIds = getEligibleIdsForSegment(this, this.currentSegment);
+    const startIndex = Number.isInteger(this.turn) ? this.turn : 0;
+    let nextIndex = -1;
+    for (let i = startIndex + 1; i < turns.length; i++) {
+      if (eligibleIds.has(turns[i].id)) {
+        nextIndex = i;
+        break;
+      }
+    }
+
+    if (nextIndex !== -1) {
+      return this.update({ turn: nextIndex }, { mercSegmentUpdate: true });
+    }
+    ui.notifications?.info(game.i18n.localize("MERC.UI.combat.segments.endOfSegment"));
+    return this;
+  }
+}
+
 /**
  * Calculates the degree value based on base and dev
  * Uses a lookup table where each base row contains cumulative values
@@ -2763,6 +2882,8 @@ Hooks.once("init", () => {
     }
   };
 
+  CONFIG.Combat.documentClass = MercCombat;
+
   // Register Handlebars helpers
   Handlebars.registerHelper("filterItems", function(items, type) {
     if (!items) return [];
@@ -2792,6 +2913,135 @@ Hooks.once("init", () => {
   // Register Item Sheets
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   foundry.documents.collections.Items.registerSheet("merc", MercWeaponSheet, { types: ["weapon"], makeDefault: true });
+
+  Hooks.on("preCreateCombat", (combat, data) => {
+    data.flags = data.flags || {};
+    data.flags.merc = data.flags.merc || {};
+    if (data.flags.merc.segment === undefined) {
+      data.flags.merc.segment = SEGMENT_MAX;
+    }
+  });
+
+  Hooks.on("updateCombat", async (combat, changes, options) => {
+    if (options?.mercSegmentUpdate) return;
+    if (changes.round !== undefined) {
+      const turns = buildSegmentTurns(combat, SEGMENT_MAX);
+      const eligibleIds = getEligibleIdsForSegment(combat, SEGMENT_MAX);
+      let firstEligible = turns.findIndex((combatant) => eligibleIds.has(combatant.id));
+      if (firstEligible === -1) firstEligible = 0;
+      await combat.update({
+        "flags.merc.segment": SEGMENT_MAX,
+        turn: firstEligible
+      }, { mercSegmentUpdate: true });
+    }
+  });
+
+  Hooks.on("renderCombatTracker", (app, html) => {
+    const combat = game.combat;
+    if (!combat || !(combat instanceof MercCombat)) return;
+
+    const root = html?.[0] ?? html;
+    if (!root) return;
+
+    root.classList.add("merc-combat-tracker");
+
+    const rollControls = root.querySelectorAll(
+      '[data-control="rollAll"], [data-control="rollNPC"], [data-control="rollPC"], [data-control="roll"], .combatant-control.roll'
+    );
+    rollControls.forEach((control) => {
+      control.style.display = "none";
+      control.setAttribute("aria-hidden", "true");
+      control.setAttribute("tabindex", "-1");
+    });
+
+    const existing = root.querySelector(".merc-segment-controls");
+    if (existing) existing.remove();
+
+    const header = root.querySelector(".combat-tracker-header") || root.querySelector("header") || root;
+    if (!header) return;
+
+    const container = document.createElement("div");
+    container.className = "merc-segment-controls";
+
+    const segmentLabel = game.i18n.format("MERC.UI.combat.segments.label", { segment: combat.currentSegment });
+    const orderLabel = getSegmentOrderLabel(combat.currentSegment);
+    const orderText = game.i18n.format("MERC.UI.combat.segments.order", { order: orderLabel });
+    const prevTitle = game.i18n.localize("MERC.UI.combat.segments.previous");
+    const nextTitle = game.i18n.localize("MERC.UI.combat.segments.next");
+    const entries = buildSegmentEntries(combat, combat.currentSegment);
+    const eligibleList = entries
+      .map((entry) => {
+        const degreeLabel = entry.degree >= 6 ? "6+" : String(entry.degree);
+        return `${entry.name} (R${degreeLabel})`;
+      })
+      .join(", ");
+    const eligibleText = entries.length
+      ? game.i18n.format("MERC.UI.combat.segments.eligible", { list: eligibleList })
+      : game.i18n.localize("MERC.UI.combat.segments.eligibleEmpty");
+
+    container.innerHTML = `
+      <button type="button" class="merc-segment-button" data-segment-delta="1" title="${prevTitle}">${prevTitle}</button>
+      <span class="merc-segment-label">${segmentLabel}</span>
+      <button type="button" class="merc-segment-button" data-segment-delta="-1" title="${nextTitle}">${nextTitle}</button>
+      <span class="merc-segment-order">${orderText}</span>
+    `;
+
+    const eligibleSpan = document.createElement("span");
+    eligibleSpan.className = "merc-segment-eligible";
+    eligibleSpan.textContent = eligibleText;
+    container.appendChild(eligibleSpan);
+
+    container.querySelectorAll(".merc-segment-button").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const delta = Number(button.dataset.segmentDelta || 0);
+        await combat.setSegment(combat.currentSegment + delta);
+      });
+    });
+
+    header.appendChild(container);
+
+    const eligibleIds = getEligibleIdsForSegment(combat, combat.currentSegment);
+    const combatantElements = root.querySelectorAll(".combatant");
+    combatantElements.forEach((element) => {
+      const id = element.dataset?.combatantId;
+      const combatant = id ? combat.combatants?.get(id) : null;
+      if (combatant) {
+        const degree = getReactionDegreeFromCombatant(combatant);
+        const degreeLabel = degree >= 6 ? "6+" : String(degree);
+        const reactionTitle = game.i18n.localize("MERC.Skills.reaction");
+        const tokenInitiative = element.querySelector(".token-initiative");
+        if (tokenInitiative) {
+          tokenInitiative.textContent = `R${degreeLabel}`;
+          tokenInitiative.title = reactionTitle;
+          tokenInitiative.classList.add("merc-reaction-initiative");
+          tokenInitiative.setAttribute("aria-label", reactionTitle);
+        } else {
+          const rollControl = element.querySelector(
+            ".combatant-control.roll, .combatant-control[data-control=\"roll\"], .combatant-control[data-control=\"rollInitiative\"], .combatant-initiative"
+          );
+
+          if (rollControl) {
+            rollControl.textContent = `R${degreeLabel}`;
+            rollControl.title = reactionTitle;
+            rollControl.classList.add("merc-reaction-initiative");
+            rollControl.setAttribute("aria-label", reactionTitle);
+          }
+        }
+      }
+      if (id && !eligibleIds.has(id)) {
+        element.classList.add("merc-combatant--ineligible");
+      } else {
+        element.classList.remove("merc-combatant--ineligible");
+      }
+    });
+  });
+
+  Hooks.on("createCombatant", (combatant) => {
+    const combat = combatant?.combat;
+    if (!combat || !(combat instanceof MercCombat)) return;
+    ui.combat?.render(true);
+  });
 });
 
 const DEFAULT_BIOGRAPHY = {

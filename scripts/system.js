@@ -2509,6 +2509,7 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       weightKg: 0,
       magazineCapacity: 0,
       damage: "",
+      weaponSubtype: "",
       range: {
         pointBlank: 0,
         short: 0,
@@ -2563,6 +2564,7 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     inputs.forEach((input) => {
       input.addEventListener("change", async () => {
         if (!itemDoc || !input.name) return;
+        if (input.name === "system.weaponSubtype") return;
         let value;
         if (input.type === "checkbox") {
           value = input.checked;
@@ -2576,6 +2578,32 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
         await itemDoc.update(updateData);
       });
     });
+
+    const subtypeSelect = html.querySelector('select[name="system.weaponSubtype"]');
+    const skillSelect = html.querySelector('select[name="system.weaponSkill"]');
+    if (subtypeSelect) {
+      subtypeSelect.addEventListener("change", async () => {
+        if (!itemDoc) return;
+        const subtype = subtypeSelect.value || "";
+        const subtypeSkillMap = {
+          melee: "melee",
+          throwing: "throwing",
+          powder_projectiles: "powder_projectiles",
+          mechanical_projectiles: "mechanical_projectiles",
+          heavy_weapons: "heavy_weapons",
+          electronic_weapons: "electronic_weapons"
+        };
+        const mappedSkill = subtypeSkillMap[subtype] || "";
+        const updateData = {
+          "system.weaponSubtype": subtype
+        };
+        if (mappedSkill) {
+          updateData["system.weaponSkill"] = mappedSkill;
+          if (skillSelect) skillSelect.value = mappedSkill;
+        }
+        await itemDoc.update(updateData);
+      });
+    }
 
     const rollBtn = html.querySelector(".weapon-damage-roll");
     if (rollBtn) {
@@ -2698,6 +2726,10 @@ Hooks.once("init", () => {
   });
   Handlebars.registerHelper("mod", function(a, b) {
     return a % b;
+  });
+  Handlebars.registerHelper("or", function(...args) {
+    const options = args.pop();
+    return args.some(Boolean);
   });
   Handlebars.registerHelper("concat", function(...args) {
     return args.slice(0, -1).join("");

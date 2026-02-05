@@ -977,6 +977,34 @@
   letter-spacing: 0.3px;
 }
 
+/* Notes Section */
+.notes-section {
+  background-color: #f5f5f5;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 5px;
+}
+
+.notes-textarea {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 6px 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #333;
+}
+
+.notes-textarea:focus {
+  outline: none;
+  background-color: #f9f9f9;
+  border-color: #666;
+  box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
+}
+
 .items-list {
   display: flex;
   flex-direction: column;

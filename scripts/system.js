@@ -584,6 +584,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     }
 
+    // Ensure notes field exists on system data
+    if (actorDoc && actorDoc.system?.notes === undefined) {
+      await actorDoc.update({ "system.notes": "" });
+    }
+
     const defaultAttributes = {
       intelligence: { origin: 0, current: 0 },
       will: { origin: 0, current: 0 },
@@ -716,6 +721,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         year: 0,
         renown: 0
       };
+    }
+    if (data.actor.system.notes === undefined) {
+      data.actor.system.notes = "";
     }
     if (!data.actor.system.attributes) {
       data.actor.system.attributes = defaultAttributes;

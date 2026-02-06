@@ -660,9 +660,9 @@ async function migrateItem(item, actor = null) {
     }
     // Ensure range sub-fields exist
     if (!item.system.range) {
-      updateData["system.range"] = { pointBlank: 0, short: 0, medium: 0, long: 0, extreme: 0 };
+      updateData["system.range"] = { short: 0, medium: 0, long: 0, extreme: 0 };
     } else {
-      for (const key of ["pointBlank", "short", "medium", "long", "extreme"]) {
+      for (const key of ["short", "medium", "long", "extreme"]) {
         if (item.system.range[key] === undefined) {
           updateData[`system.range.${key}`] = 0;
         }
@@ -2353,7 +2353,6 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       damage: "",
       weaponSubtype: "",
       range: {
-        pointBlank: 0,
         short: 0,
         medium: 0,
         long: 0,

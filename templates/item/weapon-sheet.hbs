@@ -47,14 +47,6 @@
         </div>
 
         <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.proficiency"}}</label>
-          <select name="system.proficiency" value="{{item.system.proficiency}}" data-dtype="Number">
-            <option value="0" {{#if (eq item.system.proficiency "0")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyNo"}}</option>
-            <option value="1" {{#if (eq item.system.proficiency "1")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyYes"}}</option>
-          </select>
-        </div>
-
-        <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rarity"}}</label>
           <input type="text" name="system.rarity" value="{{item.system.rarity}}" placeholder="{{localize "MERC.UI.items.weaponSheet.rarityPlaceholder"}}">
         </div>
@@ -63,6 +55,15 @@
           <label>{{localize "MERC.UI.items.weaponSheet.price"}}</label>
           <input type="text" name="system.price" value="{{item.system.price}}" placeholder="{{localize "MERC.UI.items.weaponSheet.pricePlaceholder"}}">
         </div>
+
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.proficiency"}}</label>
+          <select name="system.proficiency" value="{{item.system.proficiency}}" data-dtype="Number">
+            <option value="0" {{#if (eq item.system.proficiency "0")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyNo"}}</option>
+            <option value="1" {{#if (eq item.system.proficiency "1")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyYes"}}</option>
+          </select>
+        </div>
+
       </div>
 
       <div class="weapon-field-group">
@@ -86,38 +87,27 @@
       <div class="weapon-ranges-header">{{localize "MERC.UI.items.weaponSheet.ranges"}}</div>
       <div class="weapon-ranges-grid">
         <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.rangePointBlank"}}</label>
-          <div class="weapon-range-input">
-            <input type="number" name="system.range.pointBlank" value="{{item.system.range.pointBlank}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
-          </div>
-        </div>
-        <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeShort"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.short" value="{{item.system.range.short}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeMedium"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.medium" value="{{item.system.range.medium}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeLong"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.long" value="{{item.system.range.long}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeExtreme"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.extreme" value="{{item.system.range.extreme}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
       </div>

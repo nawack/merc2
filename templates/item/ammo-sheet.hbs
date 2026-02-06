@@ -42,18 +42,59 @@
 
       <div class="ammo-field-group">
         <div class="ammo-field">
-          <label>{{localize "MERC.UI.items.ammoSheet.weightKg"}}</label>
-          <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="0.1">
+          <label>{{localize "MERC.UI.items.ammoSheet.weight"}}</label>
+          <input type="number" name="system.weight" value="{{item.system.weight}}" min="0" step="0.1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.weightAmmo"}}</label>
+          <input type="number" name="system.weightAmmo" value="{{item.system.weightAmmo}}" min="0" step="0.1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.velocity"}}</label>
+          <input type="number" name="system.velocity" value="{{item.system.velocity}}" min="0" step="1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.damage"}}</label>
+          <input type="text" name="system.damage" value="{{item.system.damage}}" readonly>
+        </div>
+      </div>
+
+      <div class="ammo-field-group">
+        <h3 style="grid-column: 1 / -1; margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; font-weight: bold;">{{localize "MERC.UI.items.ammoSheet.penetration"}}</h3>
+        
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.penetrationShort"}}</label>
+          <input type="number" name="system.penetration.short" value="{{item.system.penetration.short}}" min="0" step="1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.penetrationMedium"}}</label>
+          <input type="number" name="system.penetration.medium" value="{{item.system.penetration.medium}}" min="0" step="1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.penetrationLong"}}</label>
+          <input type="number" name="system.penetration.long" value="{{item.system.penetration.long}}" min="0" step="1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.penetrationExtreme"}}</label>
+          <input type="number" name="system.penetration.extreme" value="{{item.system.penetration.extreme}}" min="0" step="1">
+        </div>
+      </div>
+
+      <div class="ammo-field-group">
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.rarity"}}</label>
+          <input type="text" name="system.rarity" value="{{item.system.rarity}}" placeholder="{{localize "MERC.UI.items.ammoSheet.rarityPlaceholder"}}">
         </div>
 
         <div class="ammo-field">
           <label>{{localize "MERC.UI.items.ammoSheet.price"}}</label>
           <input type="number" name="system.price" value="{{item.system.price}}" min="0" step="1">
-        </div>
-
-        <div class="ammo-field">
-          <label>{{localize "MERC.UI.items.ammoSheet.rarity"}}</label>
-          <input type="text" name="system.rarity" value="{{item.system.rarity}}" placeholder="{{localize "MERC.UI.items.ammoSheet.rarityPlaceholder"}}">
         </div>
 
         <div class="ammo-field ammo-field--full">

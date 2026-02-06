@@ -2641,7 +2641,16 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
       caliber: "",
       quantity: 0,
       maxQuantity: 0,
-      weightKg: 0,
+      weight: 0,
+      weightAmmo: 0,
+      velocity: 0,
+      penetration: {
+        short: 0,
+        medium: 0,
+        long: 0,
+        extreme: 0
+      },
+      damage: "",
       price: 0,
       rarity: "common",
       description: "",
@@ -2649,7 +2658,89 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
     };
     if (!data.item) data.item = {};
     data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+    
+    // Calculate damage if we have weight and velocity
+    if (data.item.system.weight && data.item.system.velocity) {
+      data.item.system.damage = this._calculateDamage(data.item.system.weight, data.item.system.velocity);
+    }
+    
     return data;
+  }
+
+  /**
+   * Calculate ammunition damage based on projectile weight and velocity
+   * weight = projectile weight in grams
+   * Formula: muzzle_energy = 0.5 * (weight/1000) * velocity^2
+   *          damage_short = 0.06666 * sqrt(muzzle_energy)
+   */
+  _calculateDamage(weight, velocity) {
+    if (!weight || !velocity) return "";
+    
+    // muzzle_energy = 0.5 * (weight in grams / 1000) * velocity^2
+    const muzzleEnergy = 0.5 * (weight / 1000) * Math.pow(velocity, 2);
+    
+    // damage_short = 0.06666 * sqrt(muzzle_energy)
+    const damageShort = 0.06666 * Math.sqrt(muzzleEnergy);
+    
+    // dés_dégat = floor(damage_short)
+    let damageD6 = Math.floor(damageShort);
+    
+    // bonus_dés = floor((damage_short mod 1) * 10 / 3)
+    let damageBonus = Math.floor((damageShort % 1) * 10 / 3);
+    
+    // if bonus_dés == 3: bonus_dés--, dés_dégat++
+    if (damageBonus === 3) {
+      damageBonus--;
+      damageD6++;
+    }
+    
+    // Return damage formula: damageD6 D6 + damageBonus
+    return damageBonus > 0 ? `${damageD6}D6+${damageBonus}` : `${damageD6}D6`;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;
+    if (!html) return;
+
+    // Add event listeners for weight and velocity inputs to recalculate damage in real-time
+    const weightInput = html.querySelector("input[name='system.weight']");
+    const velocityInput = html.querySelector("input[name='system.velocity']");
+    const damageInput = html.querySelector("input[name='system.damage']");
+
+    if (weightInput && velocityInput && damageInput) {
+      const updateDamage = () => {
+        const weight = parseFloat(weightInput.value) || 0;
+        const velocity = parseFloat(velocityInput.value) || 0;
+
+        if (weight && velocity) {
+          const damage = this._calculateDamage(weight, velocity);
+          damageInput.value = damage;
+        } else {
+          damageInput.value = "";
+        }
+      };
+
+      weightInput.addEventListener("change", updateDamage);
+      weightInput.addEventListener("input", updateDamage);
+      velocityInput.addEventListener("change", updateDamage);
+      velocityInput.addEventListener("input", updateDamage);
+    }
+  }
+
+  async _onSubmitForm(formData, form) {
+    // Calculate damage when form is submitted
+    const weight = formData?.get?.("system.weight") ? parseFloat(formData.get("system.weight")) : 0;
+    const velocity = formData?.get?.("system.velocity") ? parseFloat(formData.get("system.velocity")) : 0;
+
+    if (weight && velocity) {
+      const damage = this._calculateDamage(weight, velocity);
+      if (formData?.set) {
+        formData.set("system.damage", damage);
+      }
+    }
+
+    return super._onSubmitForm?.(formData, form);
   }
 
   _updateFrame(options) {

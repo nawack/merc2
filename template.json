@@ -131,7 +131,16 @@
       "caliber": "",
       "quantity": 0,
       "maxQuantity": 0,
-      "weightKg": 0,
+      "weight": 0,
+      "weightAmmo": 0,
+      "velocity": 0,
+      "penetration": {
+        "short": 0,
+        "medium": 0,
+        "long": 0,
+        "extreme": 0
+      },
+      "damage": "",
       "price": 0,
       "rarity": "common",
       "description": "",

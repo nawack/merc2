@@ -2,9 +2,9 @@
  * Initialize portrait image selection functionality
  * Uses Foundry's native FilePicker API to browse the image library
  */
-function initPortraitSelection(actor) {
-  const browseBtn = document.querySelector('.portrait-browse-btn');
-  const portraitImg = document.querySelector('.character-portrait');
+function initPortraitSelection(actor, html) {
+  const browseBtn = html.querySelector('.portrait-browse-btn');
+  const portraitImg = html.querySelector('.character-portrait');
   
   if (!browseBtn) return;
   
@@ -305,7 +305,7 @@ function buildBaseTooltip(actor, skillData, baseValue, isCustomSpec = false) {
   const abilities = skillData?.abilities || [];
 
   if (!abilities.length) {
-    return `Base: ${baseValue}`;
+    return game.i18n.format("MERC.Labels.tooltipBase", { value: baseValue });
   }
 
   const parts = abilities.map((abilityKey) => {
@@ -316,8 +316,11 @@ function buildBaseTooltip(actor, skillData, baseValue, isCustomSpec = false) {
   });
 
   const attrsText = parts.join(abilities.length === 2 ? " + " : ", ");
-  const suffix = isCustomSpec ? " (spécialisation)" : "";
-  return `Attributs: ${attrsText}\nBase${suffix}: ${baseValue}`;
+  const attrsLine = game.i18n.format("MERC.Labels.tooltipAttributes", { attrs: attrsText });
+  const baseLine = isCustomSpec
+    ? game.i18n.format("MERC.Labels.tooltipBaseSpec", { value: baseValue })
+    : game.i18n.format("MERC.Labels.tooltipBase", { value: baseValue });
+  return `${attrsLine}\n${baseLine}`;
 }
 
 /**
@@ -327,10 +330,10 @@ function buildBaseTooltip(actor, skillData, baseValue, isCustomSpec = false) {
  * @returns {string}
  */
 function buildDevTooltip(base, dev) {
-  if (!DEGREE_TABLE[base]) return "Base hors table";
+  if (!DEGREE_TABLE[base]) return game.i18n.localize("MERC.Labels.tooltipBaseOutOfTable");
   const next = getNextDevThreshold(base, dev);
-  if (next === null) return "Degré maximal";
-  return `Prochain degré à: ${next}`;
+  if (next === null) return game.i18n.localize("MERC.Labels.tooltipMaxDegree");
+  return game.i18n.format("MERC.Labels.tooltipNextDegree", { threshold: next });
 }
 
 // Resolve attribute values from either {origin,current} or plain numbers.
@@ -392,10 +395,10 @@ async function rollD20WithSecond() {
     await secondRoll.evaluate();
     if (firstRoll.total === 20) {
       adjustedTotal += secondRoll.total;
-      secondRollDirection = "ajoutée";
+      secondRollDirection = "added";
     } else {
       adjustedTotal -= secondRoll.total;
-      secondRollDirection = "soustraite";
+      secondRollDirection = "subtracted";
     }
   }
 
@@ -538,7 +541,7 @@ async function migrateWorld() {
     }
   }
   
-  // Migrate items (weapons)
+  // Migrate items (weapons, ammo, etc.)
   for (const actor of game.actors) {
     for (const item of actor.items) {
       try {
@@ -560,61 +563,128 @@ async function migrateWorld() {
 }
 
 /**
- * Migrate item to new data structure
+ * Migrate item to new data structure.
+ * Handles both weapon and ammo item types.
  */
 async function migrateItem(item, actor = null) {
   if (!item.system) return;
   
-  // Only migrate weapons
-  if (item.type !== "weapon") return;
-  
   const updateData = {};
-  
-  // Ensure proficiency field exists (default to 0)
-  if (item.system.proficiency === undefined || item.system.proficiency === null) {
-    updateData["system.proficiency"] = 0;
-  }
-  // Ensure weaponSkill exists
-  if (!item.system.weaponSkill) {
-    updateData["system.weaponSkill"] = "";
+
+  // --- Weapon migration ---
+  if (item.type === "weapon") {
+    // Ensure proficiency field exists (default to 0)
+    if (item.system.proficiency === undefined || item.system.proficiency === null) {
+      updateData["system.proficiency"] = 0;
+    }
+    // Ensure weaponSkill exists
+    if (!item.system.weaponSkill) {
+      updateData["system.weaponSkill"] = "";
+    }
+
+    // Ensure weaponSubtype exists (infer from weaponSkill if possible)
+    if (!item.system.weaponSubtype) {
+      const skillToSubtype = {
+        melee: "melee",
+        bladed_weapons: "bladed_weapons",
+        throwing: "throwing",
+        powder_projectiles: "powder_projectiles",
+        mechanical_projectiles: "mechanical_projectiles",
+        heavy_weapons: "heavy_weapons",
+        electronic_weapons: "electronic_weapons"
+      };
+      let skillKey = item.system.weaponSkill || "";
+      if (skillKey.startsWith("custom_spec_")) {
+        const specName = skillKey.replace("custom_spec_", "");
+        const baseSkill = actor?.system?.customSpecializations?.[specName]?.baseSkill || "";
+        if (baseSkill) skillKey = baseSkill;
+      }
+      const inferredSubtype = skillToSubtype[skillKey];
+      if (inferredSubtype) {
+        updateData["system.weaponSubtype"] = inferredSubtype;
+      }
+    }
+    
+    // Ensure weightKg exists
+    if (item.system.weightKg === undefined || item.system.weightKg === null) {
+      updateData["system.weightKg"] = 0;
+    }
+
+    // Ensure rarity and price exist
+    if (item.system.rarity === undefined || item.system.rarity === null) {
+      updateData["system.rarity"] = "common";
+    }
+    if (item.system.price === undefined || item.system.price === null) {
+      updateData["system.price"] = 0;
+    }
+
+    // Ensure ammoType exists
+    if (item.system.ammoType === undefined || item.system.ammoType === null) {
+      updateData["system.ammoType"] = "";
+    }
+    // Ensure magazineCapacity exists
+    if (item.system.magazineCapacity === undefined || item.system.magazineCapacity === null) {
+      updateData["system.magazineCapacity"] = 0;
+    }
+    // Ensure damage exists
+    if (item.system.damage === undefined || item.system.damage === null) {
+      updateData["system.damage"] = "1d8";
+    }
+    // Ensure range sub-fields exist
+    if (!item.system.range) {
+      updateData["system.range"] = { pointBlank: 0, short: 0, medium: 0, long: 0, extreme: 0 };
+    } else {
+      for (const key of ["pointBlank", "short", "medium", "long", "extreme"]) {
+        if (item.system.range[key] === undefined) {
+          updateData[`system.range.${key}`] = 0;
+        }
+      }
+    }
   }
 
-  // Ensure weaponSubtype exists (infer from weaponSkill if possible)
-  if (!item.system.weaponSubtype) {
-    const skillToSubtype = {
-      melee: "melee",
-      bladed_weapons: "bladed_weapons",
-      throwing: "throwing",
-      powder_projectiles: "powder_projectiles",
-      mechanical_projectiles: "mechanical_projectiles",
-      heavy_weapons: "heavy_weapons",
-      electronic_weapons: "electronic_weapons"
+  // --- Ammo migration ---
+  if (item.type === "ammo") {
+    const ammoDefaults = {
+      ammoType: "",
+      caliber: "",
+      quantity: 0,
+      maxQuantity: 0,
+      weightKg: 0,
+      price: 0,
+      rarity: "common",
+      description: "",
+      parentWeaponId: ""
     };
-    let skillKey = item.system.weaponSkill || "";
-    if (skillKey.startsWith("custom_spec_")) {
-      const specName = skillKey.replace("custom_spec_", "");
-      const baseSkill = actor?.system?.customSpecializations?.[specName]?.baseSkill || "";
-      if (baseSkill) skillKey = baseSkill;
+
+    for (const [key, defaultValue] of Object.entries(ammoDefaults)) {
+      if (item.system[key] === undefined || item.system[key] === null) {
+        updateData[`system.${key}`] = defaultValue;
+      }
     }
-    const inferredSubtype = skillToSubtype[skillKey];
-    if (inferredSubtype) {
-      updateData["system.weaponSubtype"] = inferredSubtype;
+
+    // Try to link orphan ammo (no parentWeaponId) to a matching weapon
+    if (!item.system.parentWeaponId) {
+      const ammoType = item.system.ammoType || updateData["system.ammoType"] || "";
+      if (ammoType) {
+        let matchingWeapons = [];
+        if (actor) {
+          // Embedded ammo — match among actor's weapons
+          matchingWeapons = actor.items.filter(i =>
+            i.type === "weapon" && i.system?.ammoType === ammoType
+          );
+        } else {
+          // World-level ammo — match among world weapons
+          matchingWeapons = game.items?.filter(i =>
+            i.type === "weapon" && i.system?.ammoType === ammoType
+          ) ?? [];
+        }
+        if (matchingWeapons.length === 1) {
+          updateData["system.parentWeaponId"] = matchingWeapons[0].id;
+        }
+      }
     }
-  }
-  
-  // Ensure weightKg exists
-  if (item.system.weightKg === undefined || item.system.weightKg === null) {
-    updateData["system.weightKg"] = 0;
   }
 
-  // Ensure rarity and price exist
-  if (item.system.rarity === undefined || item.system.rarity === null) {
-    updateData["system.rarity"] = "common";
-  }
-  if (item.system.price === undefined || item.system.price === null) {
-    updateData["system.price"] = 0;
-  }
-  
   if (Object.keys(updateData).length > 0) {
     await item.update(updateData, { render: false });
   }
@@ -622,7 +692,7 @@ async function migrateItem(item, actor = null) {
 
 // Define MercCharacterSheet here directly
 class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
     classes: ["merc", "sheet", "actor"],
     width: 570,
     height: 900,
@@ -707,8 +777,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       const currentAttributes = actorDoc.system?.attributes ?? {};
       const normalizedAttributes = normalizeAttributes(currentAttributes);
       const mergedAttributes = foundry.utils.mergeObject(foundry.utils.deepClone(defaultAttributes), normalizedAttributes, { inplace: false, overwrite: true });
-      // Attributes are normalized in-memory for rendering; persistence is handled by migration hooks
-      data._mergedAttributes = mergedAttributes;
     }
 
     data.actor = actorDoc?.toObject ? actorDoc.toObject() : actorDoc;
@@ -1063,7 +1131,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (!html) return;
 
     // Initialize portrait selection with Foundry FilePicker
-    initPortraitSelection(this.actor);
+    initPortraitSelection(this.actor, html);
 
     // Handle tab switching
     const tabItems = html.querySelectorAll(".sheet-tabs .item");
@@ -1254,7 +1322,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const currentPath = originPath.replace(".origin", ".current");
         const value = Number(input.value) || 0;
         
-        await this.actor.update({ [currentPath]: value });
+        await this.actor.update({ [currentPath]: value }, { render: false });
         const statsUpdate = this.buildCombatStatsUpdate();
         if (statsUpdate) {
           await this.actor.update(statsUpdate, { render: false });
@@ -1363,29 +1431,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
               return;
             }
             
-            // Recalculate base damage if melee/bladed or related specializations changed
-            if (skillKey === "melee" || skillKey === "bladed_weapons") {
-              const stats = this.calculateCombatStats();
-              if (stats) {
-                this.actor.update({
-                  "system.combat.baseDamageMelee": stats.baseDamageMelee,
-                  "system.combat.baseDamageBladed": stats.baseDamageBladed,
-                  "system.combat.specializationBaseDamage": stats.specializationBaseDamage
-                }, { render: false });
-              }
-            } else if (skillKey?.startsWith("custom_spec_")) {
-              const specName = skillKey.replace("custom_spec_", "");
-              const specData = this.actor?.system?.customSpecializations?.[specName];
-              const baseSkillKey = specData?.baseSkill || "";
-              if (baseSkillKey === "melee" || baseSkillKey === "bladed_weapons") {
-                const stats = this.calculateCombatStats();
-                if (stats) {
-                  this.actor.update({
-                    "system.combat.specializationBaseDamage": stats.specializationBaseDamage
-                  }, { render: false });
-                }
-              }
-            }
+            // Base damage recalculation for melee/bladed is handled by saveFieldOnChange
           }
         }
       });
@@ -1413,7 +1459,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             dev: 0,
             bonus: 0,
             degree: 0,
-            ability: "intelligence"
+            abilities: ["intelligence", "charisma"]
           }
         };
         
@@ -1578,7 +1624,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const customSpecializations = { ...this.actor.system.customSpecializations };
         if (customSpecializations[newName]) {
           input.value = oldName;
-          ui.notifications.warn("Une spécialisation avec ce nom existe déjà");
+          ui.notifications.warn(game.i18n.localize("MERC.Labels.duplicateSpecialization"));
           return;
         }
         
@@ -1735,33 +1781,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
   }
 
-  async _updateObject(event, formData) {
-    // Only update fields that actually changed and ignore null/undefined values
-    const updateData = {};
-    for (const [path, rawValue] of Object.entries(formData)) {
-      if (rawValue === null || rawValue === undefined) continue;
-
-      const currentValue = foundry.utils.getProperty(this.actor, path);
-      let value = rawValue;
-
-      if (typeof currentValue === "number" && rawValue !== "" && rawValue !== null) {
-        const numberValue = Number(rawValue);
-        if (!Number.isNaN(numberValue)) {
-          value = numberValue;
-        }
-      }
-
-      if (value === currentValue) continue;
-      updateData[path] = value;
-    }
-
-    if (Object.keys(updateData).length === 0) {
-      return;
-    }
-
-    return this.actor.update(updateData);
-  }
-
   /**
    * Build and send a d20 roll chat message.
    * @param {string} label - The display label for the roll
@@ -1773,18 +1792,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
     const total = adjustedTotal + modifier;
     const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
-    const badgeClass = secondRollDirection === "ajoutée"
+    const badgeClass = secondRollDirection === "added"
       ? " merc-roll-badge--bonus"
-      : secondRollDirection === "soustraite"
+      : secondRollDirection === "subtracted"
         ? " merc-roll-badge--penalty"
         : "";
-    const rollTextClass = secondRollDirection === "ajoutée"
+    const rollTextClass = secondRollDirection === "added"
       ? " merc-roll-text--bonus"
-      : secondRollDirection === "soustraite"
+      : secondRollDirection === "subtracted"
         ? " merc-roll-text--penalty"
         : "";
     const rollDice = secondRoll
-      ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}`
+      ? `${firstRoll.total}${secondRollDirection === "added" ? " + " : " - "}${secondRoll.total}`
       : `${firstRoll.total}`;
     
     let breakdownHtml = `<span class="roll-modifier">${modifier > 0 ? ' + ' : ' - '}${Math.abs(modifier)}</span>`;
@@ -1900,7 +1919,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
     
     const label = `${actor.name} - ${skillName}`;
-    const breakdown = `Degré ${degree} / Bonus ${bonus} / Attribut ${combatBonus}`;
+    const breakdown = game.i18n.format("MERC.Labels.breakdownDegree", { degree, bonus, attr: combatBonus });
     await this._sendD20RollMessage(label, total_modifier, breakdown);
   }
 
@@ -1951,7 +1970,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const weaponName = item.name || game.i18n.localize("MERC.UI.items.weapons");
 
     const label = `${actor.name} - ${weaponName} (${skillName})`;
-    const breakdown = `Degré ${degree} / Bonus ${bonus} / Maîtrise ${proficiencyBonus}`;
+    const breakdown = game.i18n.format("MERC.Labels.breakdownProficiency", { degree, bonus, prof: proficiencyBonus });
     await this._sendD20RollMessage(label, total_modifier, breakdown);
   }
 
@@ -2021,19 +2040,19 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     // Display weapon damage formula and base damage bonus info
     if (baseDamageLabel) {
       detailsHtml += `<div style="margin-bottom: 6px;">
-        <strong>Dégâts de l'arme :</strong> ${weaponDamageFormula}<br>
-        <strong>Bonus (${baseDamageLabel}) :</strong> +${baseDamageFormula}
+        <strong>${game.i18n.localize("MERC.Labels.damageWeaponLabel")}</strong> ${weaponDamageFormula}<br>
+        <strong>${game.i18n.format("MERC.Labels.damageBonusLabel", { label: baseDamageLabel })}</strong> +${baseDamageFormula}
       </div>`;
     } else {
       detailsHtml += `<div style="margin-bottom: 6px;">
-        <strong>Formule :</strong> ${weaponDamageFormula}
+        <strong>${game.i18n.localize("MERC.Labels.damageFormulaLabel")}</strong> ${weaponDamageFormula}
       </div>`;
     }
     
     // Extract and display individual dice results from weapon roll
     detailsHtml += `<div style="border-top: 1px solid #ccc; padding-top: 6px;">
-      <strong>Détail des dés lancés :</strong><br>
-      <em>Dégâts de l'arme :</em><br>`;
+      <strong>${game.i18n.localize("MERC.Labels.damageDiceDetail")}</strong><br>
+      <em>${game.i18n.localize("MERC.Labels.damageWeaponLabel")}</em><br>`;
     
     // Iterate through all terms in the weapon roll (dice and modifiers)
     for (const term of weaponRoll.terms) {
@@ -2056,7 +2075,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     
     // Extract and display individual dice results from base damage roll
     if (baseRoll) {
-      detailsHtml += `<em>Bonus (${baseDamageLabel}) :</em><br>`;
+      detailsHtml += `<em>${game.i18n.format("MERC.Labels.damageBonusLabel", { label: baseDamageLabel })}</em><br>`;
       
       // Iterate through all terms in the base damage roll
       for (const term of baseRoll.terms) {
@@ -2080,7 +2099,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     
     // Display the total damage at the bottom
     detailsHtml += `<div style="border-top: 1px solid #999; margin-top: 6px; padding-top: 6px;">
-      <strong style="font-size: 13px;">Total des dégâts : ${totalDamage}</strong>
+      <strong style="font-size: 13px;">${game.i18n.format("MERC.Labels.damageTotalLabel", { total: totalDamage })}</strong>
     </div></div></div>`;
 
     // Prepare the chat message data
@@ -2162,6 +2181,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
   async deleteItem(event) {
     const itemId = event.currentTarget.closest(".item").dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    // Cascade: if deleting a weapon, also delete its linked ammo
+    if (item?.type === "weapon") {
+      const linkedAmmoIds = this.actor.items
+        .filter(i => i.type === "ammo" && i.system?.parentWeaponId === itemId)
+        .map(i => i.id);
+      if (linkedAmmoIds.length > 0) {
+        await this.actor.deleteEmbeddedDocuments("Item", linkedAmmoIds);
+      }
+    }
     await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
   }
 
@@ -2205,15 +2234,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 }
 
 class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
     classes: ["merc", "sheet", "item", "weapon"],
     width: 520,
-    height: 520,
+    height: 620,
     resizable: true,
     parts: ["form"],
-    submitOnChange: true,
-    submitOnClose: true,
-    closeOnSubmit: false
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    }
   });
 
   static PARTS = {
@@ -2261,6 +2291,19 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
           label
         };
       });
+
+    // Gather ammo items linked to this specific weapon via parentWeaponId
+    // Works for both embedded items (on an actor) and world-level items
+    const weaponId = itemDoc?.id || "";
+    let actorAmmo = [];
+    if (actorDoc) {
+      actorAmmo = actorDoc.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === weaponId);
+    } else {
+      actorAmmo = game.items?.filter(i => i.type === "ammo" && i.system?.parentWeaponId === weaponId) ?? [];
+    }
+    data.ammoItems = actorAmmo.map(a => a.toObject());
+    data.hasActor = !!actorDoc;
+
     return data;
   }
 
@@ -2272,43 +2315,18 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     }
   }
 
-  async _updateObject(event, formData) {
-    const itemDoc = this.document ?? this.item;
-    if (!itemDoc) return;
-    const updateData = foundry.utils.expandObject(formData);
-    await itemDoc.update(updateData);
-  }
-
   async _onRender(context, options) {
     await super._onRender(context, options);
     const html = this.element;
     if (!html) return;
     const itemDoc = this.document ?? this.item;
 
-    const form = html.querySelector('form[data-application-part="form"]');
-    const inputs = form?.querySelectorAll("input, select, textarea") ?? [];
-    inputs.forEach((input) => {
-      input.addEventListener("change", async () => {
-        if (!itemDoc || !input.name) return;
-        if (input.name === "system.weaponSubtype") return;
-        let value;
-        if (input.type === "checkbox") {
-          value = input.checked;
-        } else if (input.type === "number") {
-          value = input.value === "" ? null : Number(input.value);
-        } else {
-          value = input.value;
-        }
-
-        const updateData = foundry.utils.expandObject({ [input.name]: value });
-        await itemDoc.update(updateData);
-      });
-    });
-
+    // Subtype → skill auto-mapping (prevents submitOnChange double-fire)
     const subtypeSelect = html.querySelector('select[name="system.weaponSubtype"]');
     const skillSelect = html.querySelector('select[name="system.weaponSkill"]');
     if (subtypeSelect) {
-      subtypeSelect.addEventListener("change", async () => {
+      subtypeSelect.addEventListener("change", async (event) => {
+        event.stopPropagation();
         if (!itemDoc) return;
         const subtype = subtypeSelect.value || "";
         const subtypeSkillMap = {
@@ -2374,20 +2392,79 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
         }
       });
     }
+
+    // Ammo management within weapon sheet
+    // Works for both embedded items (on an actor) and world-level items
+    const actorDoc = itemDoc?.parent;
+    const isEmbedded = !!actorDoc;
+
+    // Add ammo
+    const ammoAddBtn = html.querySelector(".weapon-ammo-add");
+    if (ammoAddBtn) {
+      ammoAddBtn.addEventListener("click", async (event) => {
+        const type = event.currentTarget.dataset.type;
+        const newItem = {
+          name: `New ${type}`,
+          type: type,
+          system: {
+            parentWeaponId: itemDoc?.id || ""
+          }
+        };
+        let item;
+        if (isEmbedded) {
+          item = await Item.create(newItem, { parent: actorDoc });
+        } else {
+          item = await Item.create(newItem);
+        }
+        item.sheet.render(true);
+        this.render();
+      });
+    }
+
+    // Edit ammo
+    html.querySelectorAll(".weapon-ammo-edit").forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        let ammo;
+        if (isEmbedded) {
+          ammo = actorDoc.items.get(itemId);
+        } else {
+          ammo = game.items.get(itemId);
+        }
+        if (ammo) ammo.sheet.render(true);
+      });
+    });
+
+    // Delete ammo
+    html.querySelectorAll(".weapon-ammo-delete").forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        if (itemId) {
+          if (isEmbedded) {
+            await actorDoc.deleteEmbeddedDocuments("Item", [itemId]);
+          } else {
+            const ammo = game.items.get(itemId);
+            if (ammo) await ammo.delete();
+          }
+          this.render();
+        }
+      });
+    });
   }
 }
 
 
 class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
     classes: ["merc", "sheet", "item", "ammo"],
     width: 420,
     height: 400,
     resizable: true,
     parts: ["form"],
-    submitOnChange: true,
-    submitOnClose: true,
-    closeOnSubmit: false
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    }
   });
 
   static PARTS = {
@@ -2411,7 +2488,8 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
       weightKg: 0,
       price: 0,
       rarity: "common",
-      description: ""
+      description: "",
+      parentWeaponId: ""
     };
     if (!data.item) data.item = {};
     data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
@@ -2425,42 +2503,19 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
       this.window.title.textContent = itemDoc.name;
     }
   }
-
-  async _updateObject(event, formData) {
-    const itemDoc = this.document ?? this.item;
-    if (!itemDoc) return;
-    const updateData = foundry.utils.expandObject(formData);
-    await itemDoc.update(updateData);
-  }
-
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-    const html = this.element;
-    if (!html) return;
-    const itemDoc = this.document ?? this.item;
-
-    const form = html.querySelector('form[data-application-part="form"]');
-    const inputs = form?.querySelectorAll("input, select, textarea") ?? [];
-    inputs.forEach((input) => {
-      input.addEventListener("change", async () => {
-        if (!itemDoc || !input.name) return;
-        let value;
-        if (input.type === "checkbox") {
-          value = input.checked;
-        } else if (input.type === "number") {
-          value = input.value === "" ? null : Number(input.value);
-        } else {
-          value = input.value;
-        }
-        const updateData = foundry.utils.expandObject({ [input.name]: value });
-        await itemDoc.update(updateData);
-      });
-    });
-  }
 }
 
 // Initialize the system
 Hooks.once("init", () => {
+  // Register migration version setting
+  game.settings.register("merc", "systemMigrationVersion", {
+    name: "System Migration Version",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
   // Define custom config with i18n keys
   CONFIG.MERC = {
     abilities: {
@@ -2532,10 +2587,7 @@ Hooks.once("init", () => {
       construction_avionics: { label: "MERC.Skills.construction_avionics", abilities: ["intelligence", "dexterity"] },
       construction_vehicle: { label: "MERC.Skills.construction_vehicle", abilities: ["intelligence", "dexterity"] },
       construction_weaponry: { label: "MERC.Skills.construction_weaponry", abilities: ["intelligence", "dexterity"] },
-      construction_tools: { label: "MERC.Skills.construction_tools", abilities: ["intelligence", "dexterity"] },
-      spec_melee_mma: { label: "MERC.Skills.spec_melee_mma", abilities: ["strength", "perception"] },
-      spec_blades_knife: { label: "MERC.Skills.spec_blades_knife", abilities: ["strength", "dexterity"] },
-      spec_powder_ak47: { label: "MERC.Skills.spec_powder_ak47", abilities: ["dexterity", "perception"] }
+      construction_tools: { label: "MERC.Skills.construction_tools", abilities: ["intelligence", "dexterity"] }
     }
   };
 
@@ -2840,6 +2892,31 @@ const getActorMigrationData = (actor) => {
     updateData["system.skills.-=language_serbian"] = null;
   }
 
+  // Ensure notes field exists
+  if (system.notes === undefined || system.notes === null) {
+    updateData["system.notes"] = "";
+  }
+
+  // Ensure customLanguages exists
+  if (system.customLanguages === undefined || system.customLanguages === null) {
+    updateData["system.customLanguages"] = {};
+  }
+
+  // Ensure customSpecializations exists
+  if (system.customSpecializations === undefined || system.customSpecializations === null) {
+    updateData["system.customSpecializations"] = {};
+  }
+
+  // Remove obsolete hardcoded specialization skills (replaced by user-defined customSpecializations)
+  const obsoleteSkills = ["spec_melee_mma", "spec_blades_knife", "spec_powder_ak47"];
+  if (system.skills) {
+    for (const key of obsoleteSkills) {
+      if (system.skills[key] !== undefined) {
+        updateData[`system.skills.-=${key}`] = null;
+      }
+    }
+  }
+
   if (!system.biography) {
     for (const [key, value] of Object.entries(DEFAULT_BIOGRAPHY)) {
       updateData[`system.biography.${key}`] = value;
@@ -2976,7 +3053,16 @@ const getActorMigrationData = (actor) => {
 
 Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
-  await migrateWorld();
+
+  const currentVersion = game.system.version;
+  const lastMigrated = game.settings.get("merc", "systemMigrationVersion");
+
+  if (currentVersion !== lastMigrated) {
+    console.log(`MERC | Migration needed: ${lastMigrated || "none"} → ${currentVersion}`);
+    await migrateWorld();
+    await game.settings.set("merc", "systemMigrationVersion", currentVersion);
+    console.log(`MERC | Migration complete. Version set to ${currentVersion}`);
+  }
 });
 
 // Hook for initializing actor data
@@ -2990,6 +3076,9 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
     attributes: foundry.utils.deepClone(DEFAULT_ATTRIBUTES),
     combat: foundry.utils.deepClone(DEFAULT_COMBAT),
     movement: foundry.utils.deepClone(DEFAULT_MOVEMENT),
+    notes: "",
+    customLanguages: {},
+    customSpecializations: {},
     skills: Object.fromEntries(
       Object.entries(CONFIG.MERC.skills).map(([key, def]) => [
         key,
@@ -3077,6 +3166,49 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
     if (Object.keys(updateData).length > 0) {
       await actor.update(updateData, { render: true, isRecalculatingCombatStats: true });
     }
+  }
+});
+
+// Re-render open weapon sheets when ammo items change
+function rerenderWeaponSheetsForAmmo(ammoItem) {
+  const parentWeaponId = ammoItem?.system?.parentWeaponId;
+  if (!parentWeaponId) return;
+
+  const actor = ammoItem.parent;
+  if (actor) {
+    // Embedded item — find the weapon on the same actor
+    const weapon = actor.items.get(parentWeaponId);
+    if (weapon?.sheet?.rendered) weapon.sheet.render();
+  } else {
+    // World-level item — find the weapon in world items
+    const weapon = game.items?.get(parentWeaponId);
+    if (weapon?.sheet?.rendered) weapon.sheet.render();
+  }
+}
+
+// Also cascade-delete world-level ammo when a world-level weapon is deleted
+Hooks.on("deleteItem", (item, options, userId) => {
+  if (item.type === "ammo") {
+    rerenderWeaponSheetsForAmmo(item);
+  }
+  // Cascade delete: if a world-level weapon is deleted, remove its linked world ammo
+  if (item.type === "weapon" && !item.parent) {
+    const linkedAmmo = game.items?.filter(i => i.type === "ammo" && i.system?.parentWeaponId === item.id) ?? [];
+    for (const ammo of linkedAmmo) {
+      ammo.delete();
+    }
+  }
+});
+
+Hooks.on("updateItem", (item, changes, options, userId) => {
+  if (item.type === "ammo") {
+    rerenderWeaponSheetsForAmmo(item);
+  }
+});
+
+Hooks.on("createItem", (item, options, userId) => {
+  if (item.type === "ammo") {
+    rerenderWeaponSheetsForAmmo(item);
   }
 });
 

@@ -86,10 +86,7 @@
         "construction_avionics": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["intelligence", "dexterity"] },
         "construction_vehicle": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["intelligence", "dexterity"] },
         "construction_weaponry": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["intelligence", "dexterity"] },
-        "construction_tools": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["intelligence", "dexterity"] },
-        "spec_melee_mma": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["strength", "perception"] },
-        "spec_blades_knife": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["strength", "dexterity"] },
-        "spec_powder_ak47": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["dexterity", "perception"] }
+        "construction_tools": { "base": 0, "dev": 0, "bonus": 0, "degree": 0, "abilities": ["intelligence", "dexterity"] }
       },
       "customLanguages": {},
       "customSpecializations": {},
@@ -139,7 +136,8 @@
       "weightKg": 0,
       "price": 0,
       "rarity": "common",
-      "description": ""
+      "description": "",
+      "parentWeaponId": ""
     },
     "armor": {
       "armorClass": 10,

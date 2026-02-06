@@ -70,10 +70,7 @@
       "construction_avionics": "Construction: Avionics",
       "construction_vehicle": "Construction: Vehicles",
       "construction_weaponry": "Construction: Weaponry",
-      "construction_tools": "Construction: Tools",
-      "spec_melee_mma": "Melee: MMA",
-      "spec_blades_knife": "Bladed Weapons: Knife",
-      "spec_powder_ak47": "Powder Projectiles: AK47"
+      "construction_tools": "Construction: Tools"
     },
     "SkillGroups": {
       "combat": "Combat",
@@ -254,7 +251,12 @@
           "rangeUnit": "m",
           "missingDamage": "No damage formula.",
           "invalidDamage": "Invalid damage formula.",
-          "damageRoll": "Damage - {name}"
+          "damageRoll": "Damage - {name}",
+          "ammoSection": "Ammunition",
+          "ammoLoaded": "Loaded",
+          "ammoNone": "No ammunition",
+          "addAmmo": "+ Add Ammo",
+          "ammoQty": "{qty} / {max}"
         }
       }
     },
@@ -268,7 +270,26 @@
       "check": "Check",
       "attributesInitialized": "Attributes initialized. Please try again.",
       "skillNotFound": "Skill not found",
-      "proficiency": "Proficiency"
+      "proficiency": "Proficiency",
+      "notes": "Notes",
+      "notesPlaceholder": "Notes...",
+      "specializationPrefix": "Specialization:",
+      "duplicateSpecialization": "A specialization with this name already exists",
+      "tooltipBaseOutOfTable": "Base out of table",
+      "tooltipMaxDegree": "Maximum degree",
+      "tooltipNextDegree": "Next degree at: {threshold}",
+      "tooltipAttributes": "Attributes: {attrs}",
+      "tooltipBase": "Base: {value}",
+      "tooltipBaseSpec": "Base (specialization): {value}",
+      "rollAdded": "added",
+      "rollSubtracted": "subtracted",
+      "breakdownDegree": "Degree {degree} / Bonus {bonus} / Attribute {attr}",
+      "breakdownProficiency": "Degree {degree} / Bonus {bonus} / Prof. {prof}",
+      "damageWeaponLabel": "Weapon damage:",
+      "damageBonusLabel": "Bonus ({label}):",
+      "damageFormulaLabel": "Formula:",
+      "damageDiceDetail": "Dice detail:",
+      "damageTotalLabel": "Total damage: {total}"
     }
   }
 }

@@ -70,10 +70,7 @@
       "construction_avionics": "Construction : Avionique",
       "construction_vehicle": "Construction : Véhicule",
       "construction_weaponry": "Construction : Armement",
-      "construction_tools": "Construction : Outils",
-      "spec_melee_mma": "Corps à corps : MMA",
-      "spec_blades_knife": "Armes blanches : Couteau",
-      "spec_powder_ak47": "Projectiles à poudre : AK47"
+      "construction_tools": "Construction : Outils"
     },
     "SkillGroups": {
       "combat": "Combat",
@@ -254,7 +251,12 @@
           "rangeUnit": "m",
           "missingDamage": "Aucune formule de dégâts.",
           "invalidDamage": "Formule de dégâts invalide.",
-          "damageRoll": "Dégâts - {name}"
+          "damageRoll": "Dégâts - {name}",
+          "ammoSection": "Munitions",
+          "ammoLoaded": "Chargé",
+          "ammoNone": "Aucune munition",
+          "addAmmo": "+ Ajouter munition",
+          "ammoQty": "{qty} / {max}"
         }
       }
     },
@@ -268,7 +270,26 @@
       "check": "Test de",
       "attributesInitialized": "Attributs initialisés. Veuillez réessayer.",
       "skillNotFound": "Compétence non trouvée",
-      "proficiency": "Maîtrise"
+      "proficiency": "Maîtrise",
+      "notes": "Notes",
+      "notesPlaceholder": "Notes...",
+      "specializationPrefix": "Spécialisation :",
+      "duplicateSpecialization": "Une spécialisation avec ce nom existe déjà",
+      "tooltipBaseOutOfTable": "Base hors table",
+      "tooltipMaxDegree": "Degré maximal",
+      "tooltipNextDegree": "Prochain degré à : {threshold}",
+      "tooltipAttributes": "Attributs : {attrs}",
+      "tooltipBase": "Base : {value}",
+      "tooltipBaseSpec": "Base (spécialisation) : {value}",
+      "rollAdded": "ajoutée",
+      "rollSubtracted": "soustraite",
+      "breakdownDegree": "Degré {degree} / Bonus {bonus} / Attribut {attr}",
+      "breakdownProficiency": "Degré {degree} / Bonus {bonus} / Maîtrise {prof}",
+      "damageWeaponLabel": "Dégâts de l'arme :",
+      "damageBonusLabel": "Bonus ({label}) :",
+      "damageFormulaLabel": "Formule :",
+      "damageDiceDetail": "Détail des dés lancés :",
+      "damageTotalLabel": "Total des dégâts : {total}"
     }
   }
 }

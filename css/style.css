@@ -1833,6 +1833,117 @@
 }
 
 /* ==========================================
+   WEAPON AMMO SECTION (inside weapon sheet)
+   ========================================== */
+
+.weapon-ammo-section {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.weapon-ammo-header {
+  margin: 0 0 6px 0;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 3px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.weapon-ammo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.weapon-ammo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.weapon-ammo-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.weapon-ammo-name {
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weapon-ammo-caliber {
+  color: #666;
+  font-size: 11px;
+}
+
+.weapon-ammo-qty {
+  color: #555;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.weapon-ammo-controls {
+  display: flex;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+.weapon-ammo-controls button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 12px;
+  color: #666;
+  border-radius: 3px;
+}
+
+.weapon-ammo-controls button:hover {
+  background-color: #e8e8e8;
+  color: #333;
+}
+
+.weapon-ammo-empty {
+  color: #999;
+  font-size: 11px;
+  font-style: italic;
+  padding: 4px 0;
+}
+
+.weapon-ammo-add {
+  width: 100%;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  background-color: #e8e8e8;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  color: #555;
+  text-align: center;
+}
+
+.weapon-ammo-add:hover {
+  background-color: #ddd;
+  color: #333;
+}
+
+/* ==========================================
    AMMO SHEET
    ========================================== */
 

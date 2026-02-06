@@ -521,24 +521,24 @@ function checkSkillUnlocked(actor, skillKey) {
 }
 
 /**
- * Migrate actor and item data to new schema versions
- * Ensures backwards compatibility when the system is updated
+ * Migrate actor and item data to new schema versions.
+ * Uses getActorMigrationData for actors to avoid duplication.
  */
 async function migrateWorld() {
-  const schemaVersion = game.system.schemaVersion || "1.0.5";
+  console.log("MERC System Migration: Starting migration");
   
-  console.log(`MERC System Migration: Starting migration from schema version ${schemaVersion}`);
-  
-  // Migrate all actors
   for (const actor of game.actors) {
     try {
-      await migrateActor(actor);
+      const updateData = getActorMigrationData(actor);
+      if (Object.keys(updateData).length > 0) {
+        await actor.update(updateData, { render: false });
+      }
     } catch (err) {
       console.error(`Error migrating actor ${actor.name}:`, err);
     }
   }
   
-  // Migrate all items in actors and world
+  // Migrate items (weapons)
   for (const actor of game.actors) {
     for (const item of actor.items) {
       try {
@@ -548,8 +548,6 @@ async function migrateWorld() {
       }
     }
   }
-  
-  // Migrate world items
   for (const item of game.items) {
     try {
       await migrateItem(item);
@@ -558,63 +556,7 @@ async function migrateWorld() {
     }
   }
   
-  console.log("MERC System Migration: Migration complete");
-}
-
-/**
- * Migrate actor to new data structure
- */
-async function migrateActor(actor) {
-  if (!actor.system) return;
-  
-  const updateData = {};
-  
-  // Ensure biography exists
-  if (!actor.system.biography) {
-    updateData["system.biography"] = {
-      age: "",
-      height: 0,
-      weight: 0,
-      gender: "",
-      origin: "",
-      year: 0,
-      renown: 0
-    };
-  }
-  
-  // Ensure all movement speeds exist
-  if (!actor.system.movement) {
-    updateData["system.movement"] = {
-      walk: 0,
-      run: 0,
-      sprint: 0,
-      charge: 0,
-      reptation: 0,
-      marche: 0,
-      course: 0
-    };
-  }
-  
-  // Migrate reaction skill to include "adaptation" in abilities (was only "speed" before)
-  if (actor.system.skills?.reaction) {
-    const reactionSkill = actor.system.skills.reaction;
-    // Check if abilities is an array with only "speed" or if it's a single string "speed"
-    if (Array.isArray(reactionSkill.abilities)) {
-      if (reactionSkill.abilities.length === 1 && reactionSkill.abilities[0] === "speed") {
-        updateData["system.skills.reaction.abilities"] = ["adaptation", "speed"];
-      } else if (!reactionSkill.abilities.includes("adaptation") && reactionSkill.abilities.includes("speed")) {
-        // If speed is there but adaptation is missing, add adaptation
-        updateData["system.skills.reaction.abilities"] = ["adaptation", ...reactionSkill.abilities];
-      }
-    } else if (reactionSkill.abilities === "speed") {
-      // Handle case where abilities might be a string instead of array
-      updateData["system.skills.reaction.abilities"] = ["adaptation", "speed"];
-    }
-  }
-  
-  if (Object.keys(updateData).length > 0) {
-    await actor.update(updateData, { render: false });
-  }
+  console.log("MERC System Migration: Complete");
 }
 
 /**
@@ -719,46 +661,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const data = await super._prepareContext(options);
     const actorDoc = this.actor ?? this.document;
 
-    // Migrate existing actors without biography data
-    if (actorDoc && !actorDoc.system?.biography) {
-      await actorDoc.update({
-        "system.biography": {
-          age: "",
-          height: 0,
-          weight: 0,
-          gender: "",
-          origin: "",
-          year: 0,
-          renown: 0
-        }
-      });
-    }
-
-    // Ensure notes field exists on system data
-    if (actorDoc && actorDoc.system?.notes === undefined) {
-      await actorDoc.update({ "system.notes": "" });
-    }
-
-    const defaultAttributes = {
-      intelligence: { origin: 0, current: 0 },
-      will: { origin: 0, current: 0 },
-      mental: { origin: 0, current: 0 },
-      charisma: { origin: 0, current: 0 },
-      chance: { origin: 0, current: 0 },
-      adaptation: { origin: 0, current: 0 },
-      strength: { origin: 0, current: 0 },
-      dexterity: { origin: 0, current: 0 },
-      speed: { origin: 0, current: 0 },
-      constitution: { origin: 0, current: 0 },
-      perception: 0,
-      perceptionDetail: {
-        sight: 0,
-        hearing: 0,
-        taste: 0,
-        smell: 0,
-        touch: 0
-      }
-    };
+    const defaultAttributes = DEFAULT_ATTRIBUTES;
 
     const normalizeAttr = (value) => {
       if (value && typeof value === "object" && ("origin" in value || "current" in value)) {
@@ -803,49 +706,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (actorDoc) {
       const currentAttributes = actorDoc.system?.attributes ?? {};
       const normalizedAttributes = normalizeAttributes(currentAttributes);
-      const mergedAttributes = foundry.utils.mergeObject(defaultAttributes, normalizedAttributes, { inplace: false, overwrite: true });
-
-      const hasMissingAttributes =
-        typeof currentAttributes.intelligence !== "object" ||
-        currentAttributes.intelligence?.origin === undefined ||
-        currentAttributes.intelligence?.current === undefined ||
-        typeof currentAttributes.will !== "object" ||
-        currentAttributes.will?.origin === undefined ||
-        currentAttributes.will?.current === undefined ||
-        typeof currentAttributes.mental !== "object" ||
-        currentAttributes.mental?.origin === undefined ||
-        currentAttributes.mental?.current === undefined ||
-        typeof currentAttributes.charisma !== "object" ||
-        currentAttributes.charisma?.origin === undefined ||
-        currentAttributes.charisma?.current === undefined ||
-        typeof currentAttributes.chance !== "object" ||
-        currentAttributes.chance?.origin === undefined ||
-        currentAttributes.chance?.current === undefined ||
-        typeof currentAttributes.adaptation !== "object" ||
-        currentAttributes.adaptation?.origin === undefined ||
-        currentAttributes.adaptation?.current === undefined ||
-        typeof currentAttributes.strength !== "object" ||
-        currentAttributes.strength?.origin === undefined ||
-        currentAttributes.strength?.current === undefined ||
-        typeof currentAttributes.dexterity !== "object" ||
-        currentAttributes.dexterity?.origin === undefined ||
-        currentAttributes.dexterity?.current === undefined ||
-        typeof currentAttributes.speed !== "object" ||
-        currentAttributes.speed?.origin === undefined ||
-        currentAttributes.speed?.current === undefined ||
-        typeof currentAttributes.constitution !== "object" ||
-        currentAttributes.constitution?.origin === undefined ||
-        currentAttributes.constitution?.current === undefined ||
-        currentAttributes.perception === undefined ||
-        currentAttributes.perceptionDetail?.sight === undefined ||
-        currentAttributes.perceptionDetail?.hearing === undefined ||
-        currentAttributes.perceptionDetail?.taste === undefined ||
-        currentAttributes.perceptionDetail?.smell === undefined ||
-        currentAttributes.perceptionDetail?.touch === undefined;
-
-      if (hasMissingAttributes) {
-        await actorDoc.update({ "system.attributes": mergedAttributes });
-      }
+      const mergedAttributes = foundry.utils.mergeObject(foundry.utils.deepClone(defaultAttributes), normalizedAttributes, { inplace: false, overwrite: true });
+      // Attributes are normalized in-memory for rendering; persistence is handled by migration hooks
+      data._mergedAttributes = mergedAttributes;
     }
 
     data.actor = actorDoc?.toObject ? actorDoc.toObject() : actorDoc;
@@ -862,15 +725,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       data.actor.system = data.actor.system ?? {};
     }
     if (!data.actor.system.biography) {
-      data.actor.system.biography = {
-        age: "",
-        height: 0,
-        weight: 0,
-        gender: "",
-        origin: "",
-        year: 0,
-        renown: 0
-      };
+      data.actor.system.biography = foundry.utils.deepClone(DEFAULT_BIOGRAPHY);
     }
     if (data.actor.system.notes === undefined) {
       data.actor.system.notes = "";
@@ -885,111 +740,31 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       const computed = computeCombatStatsFromSystem(data.actor.system);
       data.actor.system.combat.specializationBaseDamage = computed?.specializationBaseDamage || {};
     }
-    const defaultSkills = {
-        reaction: { value: 0, abilities: ["adaptation", "speed"] },
-        melee: { value: 0, abilities: ["strength", "dexterity"] },
-        bladed_weapons: { value: 0, abilities: ["strength", "dexterity"] },
-        mechanical_projectiles: { value: 0, abilities: ["dexterity", "perception"] },
-        powder_projectiles: { value: 0, abilities: ["dexterity", "perception"] },
-        throwing: { value: 0, abilities: ["strength", "perception"] },
-        maneuvers: { value: 0, abilities: ["dexterity", "speed"] },
-        heavy_weapons: { value: 0, abilities: ["strength", "perception"] },
-        electronic_weapons: { value: 0, abilities: ["intelligence", "dexterity"] },
-        running: { value: 0, abilities: ["constitution", "speed"] },
-        climbing: { value: 0, abilities: ["adaptation", "dexterity"] },
-        swimming: { value: 0, abilities: ["constitution", "dexterity"] },
-        sliding: { value: 0, abilities: ["dexterity", "speed"] },
-        air_sliding: { value: 0, abilities: ["dexterity", "speed"] },
-        drive_wheeled: { value: 0, abilities: ["dexterity", "perception"] },
-        drive_motorcycle: { value: 0, abilities: ["dexterity", "perception"] },
-        drive_boats: { value: 0, abilities: ["dexterity", "perception"] },
-        drive_tracked: { value: 0, abilities: ["dexterity", "perception"] },
-        drive_planes: { value: 0, abilities: ["speed", "perception"] },
-        drive_helicopters: { value: 0, abilities: ["speed", "perception"] },
-        riding: { value: 0, abilities: ["charisma", "mental"] },
-        tracking: { value: 0, abilities: ["intelligence", "perception"] },
-        stealth: { value: 0, abilities: ["dexterity", "charisma"] },
-        concealment: { value: 0, abilities: ["adaptation", "perception"] },
-        pickpocket: { value: 0, abilities: ["dexterity", "charisma"] },
-        lockpicking: { value: 0, abilities: ["dexterity", "perception"] },
-        tinkering: { value: 0, abilities: ["adaptation", "dexterity"] },
-        forgery: { value: 0, abilities: ["will", "dexterity"] },
-        survival: { value: 0, abilities: ["adaptation", "speed"] },
-        eloquence: { value: 0, abilities: ["intelligence", "charisma"] },
-        acting: { value: 0, abilities: ["charisma", "adaptation"] },
-        interrogation: { value: 0, abilities: ["intelligence", "adaptation"] },
-        command: { value: 0, abilities: ["will", "charisma"] },
-        instruction: { value: 0, abilities: ["intelligence", "charisma"] },
-        language_native: { value: 0, abilities: ["intelligence", "charisma"] },
-        bureaucracy: { value: 0, abilities: ["intelligence", "charisma"] },
-        illegality: { value: 0, abilities: ["intelligence", "charisma"] },
-        mathematics: { value: 0, abilities: ["intelligence"] },
-        metallurgy: { value: 0, abilities: ["intelligence"] },
-        engineering: { value: 0, abilities: ["intelligence", "perception"] },
-        electricity_electronics: { value: 0, abilities: ["intelligence"] },
-        computer_science: { value: 0, abilities: ["intelligence", "mental"] },
-        geography: { value: 0, abilities: ["intelligence", "perception"] },
-        meteorology: { value: 0, abilities: ["intelligence", "adaptation"] },
-        navigation: { value: 0, abilities: ["intelligence"] },
-        history_politics: { value: 0, abilities: ["intelligence", "charisma"] },
-        chemistry: { value: 0, abilities: ["intelligence", "will"] },
-        geology: { value: 0, abilities: ["intelligence", "perception"] },
-        nature: { value: 0, abilities: ["intelligence", "adaptation"] },
-        biology: { value: 0, abilities: ["intelligence", "adaptation"] },
-        human_medicine: { value: 0, abilities: ["intelligence", "will"] },
-        surgery: { value: 0, abilities: ["will", "mental"] },
-        construction_avionics: { value: 0, abilities: ["intelligence", "dexterity"] },
-        construction_vehicle: { value: 0, abilities: ["intelligence", "dexterity"] },
-        construction_weaponry: { value: 0, abilities: ["intelligence", "dexterity"] },
-        construction_tools: { value: 0, abilities: ["intelligence", "dexterity"] }
-    };
-    const buildDefaultSkillSet = (skillDefs) => {
-      const result = {};
-      for (const [key, def] of Object.entries(skillDefs)) {
-        result[key] = {
-          base: 0,
-          dev: 0,
-          bonus: 0,
-          degree: 0,
-          abilities: def.abilities || []
-        };
-      }
-      return result;
-    };
-
-    const defaultSkillSet = buildDefaultSkillSet(defaultSkills);
+    // Use CONFIG.MERC.skills as single source of truth for skill definitions
+    const skillDefs = CONFIG.MERC.skills;
+    const defaultSkillSet = {};
+    for (const [key, def] of Object.entries(skillDefs)) {
+      defaultSkillSet[key] = {
+        base: 0,
+        dev: 0,
+        bonus: 0,
+        degree: 0,
+        abilities: def.abilities || []
+      };
+    }
     if (!data.actor.system.skills) {
       data.actor.system.skills = foundry.utils.deepClone(defaultSkillSet);
-      // Persist skills to actor if they were just created
-      await actorDoc.update({ "system.skills": data.actor.system.skills });
     } else {
       data.actor.system.skills = foundry.utils.mergeObject(defaultSkillSet, data.actor.system.skills, {
         inplace: false,
         overwrite: true
       });
-      
-      // Migration: Fix old reaction skills that only had "speed" as ability
-      if (actorDoc && data.actor.system.skills.reaction) {
-        const reactionAbilities = data.actor.system.skills.reaction.abilities;
-        if (Array.isArray(reactionAbilities)) {
-          if (reactionAbilities.length === 1 && reactionAbilities[0] === "speed") {
-            // Old reaction skill - update to include both adaptation and speed
-            await actorDoc.update({ "system.skills.reaction.abilities": ["adaptation", "speed"] }, { render: false });
-            data.actor.system.skills.reaction.abilities = ["adaptation", "speed"];
-          } else if (!reactionAbilities.includes("adaptation") && reactionAbilities.includes("speed")) {
-            // Adaptation is missing but speed is there - add adaptation
-            const updatedAbilities = ["adaptation", ...reactionAbilities];
-            await actorDoc.update({ "system.skills.reaction.abilities": updatedAbilities }, { render: false });
-            data.actor.system.skills.reaction.abilities = updatedAbilities;
-          }
-        }
-      }
     }
 
     // Prepare skills list for display
     data.skillList = [];
     if (data.actor.system.skills) {
-      for (const skillKey of Object.keys(defaultSkills)) {
+      for (const skillKey of Object.keys(skillDefs)) {
         const skillData = data.actor.system.skills[skillKey] ?? defaultSkillSet[skillKey];
         const base = this.computeSkillBase(actorDoc, skillKey, skillData);
         const dev = Number(skillData.dev ?? skillData.value ?? 0);
@@ -1231,23 +1006,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     data.skillGroups.push(makeGroup("specializations", game.i18n.localize("MERC.SkillGroups.specializations"), specializationKeys));
 
 
-    // Build list of all skills for specialization base skill selector
-    const allBaseSkills = [];
-    // Combat skills
-    const combatSkills = ["reaction", "melee", "bladed_weapons", "mechanical_projectiles", "powder_projectiles", "throwing", "maneuvers", "heavy_weapons", "electronic_weapons"];
-    // Aptitudes skills
-    const aptitudesSkills = ["running", "climbing", "swimming", "sliding", "air_sliding", "drive_wheeled", "drive_motorcycle", "drive_boats", "drive_tracked", "drive_planes", "drive_helicopters", "riding", "tracking", "stealth", "concealment", "pickpocket", "lockpicking", "tinkering", "forgery", "survival"];
-    // Social skills
-    const socialSkills = ["eloquence", "acting", "interrogation", "command", "instruction"];
-    // Knowledge skills
-    const knowledgeSkills = ["bureaucracy", "illegality", "mathematics", "metallurgy", "engineering", "electricity_electronics", "computer_science", "geography", "meteorology", "navigation", "history_politics", "chemistry", "geology", "nature", "biology", "human_medicine", "surgery"];
-    
-    for (const skillKey of [...combatSkills, ...aptitudesSkills, ...socialSkills, ...knowledgeSkills]) {
-      allBaseSkills.push({
-        key: skillKey,
-        label: game.i18n.localize(`MERC.Skills.${skillKey}`)
-      });
-    }
+    // Build list of all base skills for specialization base skill selector (from CONFIG.MERC.skills)
+    const allBaseSkills = Object.entries(CONFIG.MERC.skills)
+      .filter(([key]) => !key.startsWith("spec_"))
+      .map(([key]) => ({
+        key,
+        label: game.i18n.localize(`MERC.Skills.${key}`)
+      }));
     data.allBaseSkills = allBaseSkills;
     const remaining = data.skillList.filter(skill => !usedKeys.has(skill.key));
     if (remaining.length) {
@@ -1430,30 +1195,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           
           // Special handling for attribute current changes
           if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
-            // Update actor first (this updates this.actor.system)
             await this.actor.update({ [fieldPath]: value });
-            
-            // Now calculate stats with the updated data
-            const stats = this.calculateCombatStats();
-            if (stats) {
-              const updateData = {
-                "system.combat.endurance": stats.endurance,
-                "system.combat.pointCorporence": stats.pointCorporence,
-                "system.combat.capaciteCharge": stats.capaciteCharge,
-                "system.combat.bonusDiscretion": stats.bonusDiscretion,
-                "system.combat.bonusDissimulation": stats.bonusDissimulation,
-                "system.combat.corpulence": stats.corpulence,
-                "system.combat.baseDamageMelee": stats.baseDamageMelee,
-                "system.combat.baseDamageBladed": stats.baseDamageBladed,
-                "system.combat.specializationBaseDamage": stats.specializationBaseDamage,
-                "system.movement.reptation": stats.vitesses.reptation,
-                "system.movement.marche": stats.vitesses.marche,
-                "system.movement.course": stats.vitesses.course
-              };
-              
-              await this.actor.update(updateData, { render: false });
+            const statsUpdate = this.buildCombatStatsUpdate();
+            if (statsUpdate) {
+              await this.actor.update(statsUpdate, { render: false });
             }
-            
             await this.render();
             return;
           }
@@ -1464,30 +1210,17 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             const skillData = { ...this.actor.system.skills[skillKey], dev: value };
             const newDegree = this.computeSkillDegree(this.actor, skillKey, skillData);
             
-            // Update local actor data to match what we're about to persist
             this.actor.system.skills[skillKey].dev = value;
             this.actor.system.skills[skillKey].degree = newDegree;
             
-            // Calculate stats with updated local data
-            const stats = this.calculateCombatStats();
-            
-            // Update combat stats in local data
-            this.actor.system.combat.baseDamageMelee = stats.baseDamageMelee;
-            this.actor.system.combat.baseDamageBladed = stats.baseDamageBladed;
-            this.actor.system.combat.specializationBaseDamage = stats.specializationBaseDamage;
-            // Single update with all changes
+            const statsUpdate = this.buildCombatStatsUpdate();
             const updateData = {
               [fieldPath]: value,
               [fieldPath.replace(".dev", ".degree")]: newDegree,
-              "system.combat.baseDamageMelee": stats.baseDamageMelee,
-              "system.combat.baseDamageBladed": stats.baseDamageBladed,
-              "system.combat.specializationBaseDamage": stats.specializationBaseDamage
+              ...statsUpdate
             };
             
-            // Update without triggering render (we'll do it manually)
             await this.actor.update(updateData, { render: false });
-            
-            // Render immediately with updated data already in memory
             await this.render();
           } else {
             await this.actor.update({ [fieldPath]: value });
@@ -1517,36 +1250,15 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const attributeOriginInputs = html.querySelectorAll('input[name*="system.attributes."][name*=".origin"]');
     attributeOriginInputs.forEach(input => {
       input.addEventListener("change", async (event) => {
-        const originPath = input.name; // e.g., "system.attributes.strength.origin"
+        const originPath = input.name;
         const currentPath = originPath.replace(".origin", ".current");
         const value = Number(input.value) || 0;
         
-        // Update actor first (this updates this.actor.system)
         await this.actor.update({ [currentPath]: value });
-        
-        // Now calculate stats with the updated data
-        const stats = this.calculateCombatStats();
-        
-        // Update all derived combat stats
-        const updateData = {};
-        
-        if (stats) {
-          updateData["system.combat.endurance"] = stats.endurance;
-          updateData["system.combat.pointCorporence"] = stats.pointCorporence;
-          updateData["system.combat.capaciteCharge"] = stats.capaciteCharge;
-          updateData["system.combat.bonusDiscretion"] = stats.bonusDiscretion;
-          updateData["system.combat.bonusDissimulation"] = stats.bonusDissimulation;
-          updateData["system.combat.corpulence"] = stats.corpulence;
-          updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
-          updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
-          updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
-          updateData["system.movement.reptation"] = stats.vitesses.reptation;
-          updateData["system.movement.marche"] = stats.vitesses.marche;
-          updateData["system.movement.course"] = stats.vitesses.course;
-          
-          await this.actor.update(updateData, { render: false });
+        const statsUpdate = this.buildCombatStatsUpdate();
+        if (statsUpdate) {
+          await this.actor.update(statsUpdate, { render: false });
         }
-        
         await this.render();
       });
     });
@@ -1791,30 +1503,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
-    // Handle custom language dev/bonus changes
-    const customLanguageDevs = html.querySelectorAll(".custom-language-dev");
-    const customLanguageBonuses = html.querySelectorAll(".custom-language-bonus");
-    
-    const customLanguageInputs = [...customLanguageDevs, ...customLanguageBonuses];
-    customLanguageInputs.forEach(input => {
-      input.addEventListener("change", async (event) => {
-        const fieldPath = input.name;
-        if (!fieldPath) return;
-
-        let value = input.value;
-        if (input.type === "number") {
-          if (value === "" || value === null) return;
-          const numberValue = Number(value);
-          if (Number.isNaN(numberValue)) return;
-          value = numberValue;
-        }
-
-        const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
-        if (value === currentValue) return;
-
-        await this.actor.update({ [fieldPath]: value });
-      });
-    });
 
 
     // Handle add specialization button
@@ -1904,30 +1592,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
-    // Handle custom specialization dev/bonus changes
-    const customSpecializationDevs = html.querySelectorAll(".custom-specialization-dev");
-    const customSpecializationBonuses = html.querySelectorAll(".custom-specialization-bonus");
-    
-    const customSpecializationInputs = [...customSpecializationDevs, ...customSpecializationBonuses];
-    customSpecializationInputs.forEach(input => {
-      input.addEventListener("change", async (event) => {
-        const fieldPath = input.name;
-        if (!fieldPath) return;
 
-        let value = input.value;
-        if (input.type === "number") {
-          if (value === "" || value === null) return;
-          const numberValue = Number(value);
-          if (Number.isNaN(numberValue)) return;
-          value = numberValue;
-        }
-
-        const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
-        if (value === currentValue) return;
-
-        await this.actor.update({ [fieldPath]: value });
-      });
-    });
 
     // Handle base skill selection for specializations
     const baseSkillSelects = html.querySelectorAll(".specialization-base-skill-select");
@@ -2004,26 +1669,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         }
       });
     });
-
-    // Initialize combat statistics calculations
-    const stats = this.calculateCombatStats();
-    if (stats) {
-      this.actor.update({
-        "system.combat.endurance": stats.endurance,
-        "system.combat.pointCorporence": stats.pointCorporence,
-        "system.combat.capaciteCharge": stats.capaciteCharge,
-        "system.combat.bonusDiscretion": stats.bonusDiscretion,
-        "system.combat.bonusDissimulation": stats.bonusDissimulation,
-        "system.combat.corpulence": stats.corpulence,
-        "system.combat.baseDamageMelee": stats.baseDamageMelee,
-        "system.combat.baseDamageBladed": stats.baseDamageBladed,
-        "system.combat.specializationBaseDamage": stats.specializationBaseDamage,
-        "system.movement.reptation": stats.vitesses.reptation,
-        "system.movement.marche": stats.vitesses.marche,
-        "system.movement.course": stats.vitesses.course
-      }, { render: false });
-      
-    }
 
     // Calculate and display total weight (encombrement) with burden levels
     const totalWeightElement = html.querySelector("#total-weight");
@@ -2117,44 +1762,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     return this.actor.update(updateData);
   }
 
-  async rollAbilityCheck(abilityKey) {
+  /**
+   * Build and send a d20 roll chat message.
+   * @param {string} label - The display label for the roll
+   * @param {number} modifier - The total modifier to add to the roll
+   * @param {string} breakdownText - Optional breakdown details (e.g., "Degré 3 / Bonus 1")
+   */
+  async _sendD20RollMessage(label, modifier, breakdownText = "") {
     const actor = this.actor ?? this.document;
-    const systemData = actor.system || actor._source?.system || {};
-    
-    // If no attributes, initialize them from the actor update
-    if (!systemData.attributes) {
-      await actor.update({
-        "system.attributes": {
-          intelligence: { origin: 0, current: 0 },
-          will: { origin: 0, current: 0 },
-          mental: { origin: 0, current: 0 },
-          charisma: { origin: 0, current: 0 },
-          chance: { origin: 0, current: 0 },
-          adaptation: { origin: 0, current: 0 },
-          strength: { origin: 0, current: 0 },
-          dexterity: { origin: 0, current: 0 },
-          speed: { origin: 0, current: 0 },
-          constitution: { origin: 0, current: 0 },
-          perception: 0,
-          perceptionDetail: {
-            sight: 0,
-            hearing: 0,
-            taste: 0,
-            smell: 0,
-            touch: 0
-          }
-        }
-      });
-      ui.notifications.info(game.i18n.localize("MERC.Labels.attributesInitialized"));
-      return;
-    }
-    
-    const rawAbility = systemData.attributes?.[abilityKey];
-    const abilityScore = Number(typeof rawAbility === "object" ? (rawAbility.current ?? 0) : (rawAbility ?? 0));
-    const abilityName = game.i18n.localize(CONFIG.MERC.abilities[abilityKey]);
-    
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
-    const total = adjustedTotal + abilityScore;
+    const total = adjustedTotal + modifier;
     const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
     const badgeClass = secondRollDirection === "ajoutée"
       ? " merc-roll-badge--bonus"
@@ -2166,24 +1783,48 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       : secondRollDirection === "soustraite"
         ? " merc-roll-text--penalty"
         : "";
+    const rollDice = secondRoll
+      ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}`
+      : `${firstRoll.total}`;
+    
+    let breakdownHtml = `<span class="roll-modifier">${modifier > 0 ? ' + ' : ' - '}${Math.abs(modifier)}</span>`;
+    if (breakdownText) {
+      breakdownHtml += `\n          <span class="roll-modifier">(${breakdownText})</span>`;
+    }
     
     const chatData = {
       user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      speaker: ChatMessage.getSpeaker({ actor }),
       rolls,
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
-          <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${abilityName}</span>
+          <span class="merc-roll-label">${label}</span>
           <span class="merc-roll-badge${badgeClass}">${total}</span>
         </div>
         <div class="merc-roll-breakdown">
-          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
-          <span class="roll-modifier">${abilityScore > 0 ? ' + ' : ' - '}${Math.abs(abilityScore)}</span>
+          <span class="roll-d20${rollTextClass}"><strong>${rollDice}</strong></span>
+          ${breakdownHtml}
         </div>
       </div>`
     };
-    
     await ChatMessage.create(chatData);
+  }
+
+  async rollAbilityCheck(abilityKey) {
+    const actor = this.actor ?? this.document;
+    const systemData = actor.system || actor._source?.system || {};
+    
+    if (!systemData.attributes) {
+      ui.notifications.warn(game.i18n.localize("MERC.Labels.attributesInitialized"));
+      return;
+    }
+    
+    const rawAbility = systemData.attributes?.[abilityKey];
+    const abilityScore = Number(typeof rawAbility === "object" ? (rawAbility.current ?? 0) : (rawAbility ?? 0));
+    const abilityName = game.i18n.localize(CONFIG.MERC.abilities[abilityKey]);
+    const label = `${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${abilityName}`;
+    
+    await this._sendD20RollMessage(label, abilityScore);
   }
 
   async rollSkillCheck(skillKey) {
@@ -2258,38 +1899,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
     }
     
-    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
-    const total = adjustedTotal + total_modifier;
-    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
-    const badgeClass = secondRollDirection === "ajoutée"
-      ? " merc-roll-badge--bonus"
-      : secondRollDirection === "soustraite"
-        ? " merc-roll-badge--penalty"
-        : "";
-    const rollTextClass = secondRollDirection === "ajoutée"
-      ? " merc-roll-text--bonus"
-      : secondRollDirection === "soustraite"
-        ? " merc-roll-text--penalty"
-        : "";
-    
-    const chatData = {
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: actor }),
-      rolls,
-      content: `<div class="merc-roll">
-        <div class="merc-roll-header">
-          <span class="merc-roll-label">${actor.name} - ${skillName}</span>
-          <span class="merc-roll-badge${badgeClass}">${total}</span>
-        </div>
-        <div class="merc-roll-breakdown">
-          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
-          <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
-          <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus} / Attribut ${combatBonus})</span>
-        </div>
-      </div>`
-    };
-    
-    await ChatMessage.create(chatData);
+    const label = `${actor.name} - ${skillName}`;
+    const breakdown = `Degré ${degree} / Bonus ${bonus} / Attribut ${combatBonus}`;
+    await this._sendD20RollMessage(label, total_modifier, breakdown);
   }
 
   async rollWeaponSkillCheck(item) {
@@ -2338,38 +1950,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
     const weaponName = item.name || game.i18n.localize("MERC.UI.items.weapons");
 
-    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
-    const total = adjustedTotal + total_modifier;
-    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
-    const badgeClass = secondRollDirection === "ajoutée"
-      ? " merc-roll-badge--bonus"
-      : secondRollDirection === "soustraite"
-        ? " merc-roll-badge--penalty"
-        : "";
-    const rollTextClass = secondRollDirection === "ajoutée"
-      ? " merc-roll-text--bonus"
-      : secondRollDirection === "soustraite"
-        ? " merc-roll-text--penalty"
-        : "";
-
-    const chatData = {
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: actor }),
-      rolls,
-      content: `<div class="merc-roll">
-        <div class="merc-roll-header">
-          <span class="merc-roll-label">${actor.name} - ${weaponName} (${skillName})</span>
-          <span class="merc-roll-badge${badgeClass}">${total}</span>
-        </div>
-        <div class="merc-roll-breakdown">
-          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
-          <span class="roll-modifier">${total_modifier > 0 ? ' + ' : ' - '}${Math.abs(total_modifier)}</span>
-          <span class="roll-modifier">(Degré ${degree} / Bonus ${bonus} / Maîtrise ${proficiencyBonus})</span>
-        </div>
-      </div>`
-    };
-
-    await ChatMessage.create(chatData);
+    const label = `${actor.name} - ${weaponName} (${skillName})`;
+    const breakdown = `Degré ${degree} / Bonus ${bonus} / Maîtrise ${proficiencyBonus}`;
+    await this._sendD20RollMessage(label, total_modifier, breakdown);
   }
 
   /**
@@ -2560,39 +2143,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const subValue = Number(typeof detailValue === "object" ? (detailValue.current ?? 0) : (detailValue ?? 0));
 
     const perceptionName = game.i18n.localize(CONFIG.MERC.abilities.perception);
-    const label = `${perceptionName} - ${subLabel}`;
+    const label = `${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${perceptionName} - ${subLabel}`;
 
-    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
-    const total = adjustedTotal + subValue;
-    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
-    const badgeClass = secondRollDirection === "ajoutée"
-      ? " merc-roll-badge--bonus"
-      : secondRollDirection === "soustraite"
-        ? " merc-roll-badge--penalty"
-        : "";
-    const rollTextClass = secondRollDirection === "ajoutée"
-      ? " merc-roll-text--bonus"
-      : secondRollDirection === "soustraite"
-        ? " merc-roll-text--penalty"
-        : "";
-
-    const chatData = {
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: actor }),
-      rolls,
-      content: `<div class="merc-roll">
-        <div class="merc-roll-header">
-          <span class="merc-roll-label">${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${label}</span>
-          <span class="merc-roll-badge${badgeClass}">${total}</span>
-        </div>
-        <div class="merc-roll-breakdown">
-          <span class="roll-d20${rollTextClass}"><strong>${secondRoll ? `${firstRoll.total}${secondRollDirection === "ajoutée" ? " + " : " - "}${secondRoll.total}` : `${firstRoll.total}`}</strong></span>
-          <span class="roll-modifier">${subValue > 0 ? ' + ' : ' - '}${Math.abs(subValue)}</span>
-        </div>
-      </div>`
-    };
-
-    await ChatMessage.create(chatData);
+    await this._sendD20RollMessage(label, subValue);
   }
 
   async createItem(event) {
@@ -2625,6 +2178,29 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
    */
   calculateCombatStats() {
     return computeCombatStatsFromSystem(this.actor?.system);
+  }
+
+  /**
+   * Build an update data object for all derived combat/movement stats.
+   * Returns null if no stats could be computed.
+   */
+  buildCombatStatsUpdate() {
+    const stats = this.calculateCombatStats();
+    if (!stats) return null;
+    return {
+      "system.combat.endurance": stats.endurance,
+      "system.combat.pointCorporence": stats.pointCorporence,
+      "system.combat.capaciteCharge": stats.capaciteCharge,
+      "system.combat.bonusDiscretion": stats.bonusDiscretion,
+      "system.combat.bonusDissimulation": stats.bonusDissimulation,
+      "system.combat.corpulence": stats.corpulence,
+      "system.combat.baseDamageMelee": stats.baseDamageMelee,
+      "system.combat.baseDamageBladed": stats.baseDamageBladed,
+      "system.combat.specializationBaseDamage": stats.specializationBaseDamage,
+      "system.movement.reptation": stats.vitesses.reptation,
+      "system.movement.marche": stats.vitesses.marche,
+      "system.movement.course": stats.vitesses.course
+    };
   }
 }
 
@@ -3099,17 +2675,6 @@ Hooks.once("init", () => {
           tokenInitiative.classList.add("merc-reaction-initiative");
           tokenInitiative.setAttribute("aria-label", reactionTitle);
         }
-        // } else {
-        //   const rollControl = element.querySelector(
-        //     ".combatant-control.roll, .combatant-control[data-control=\"roll\"], .combatant-control[data-control=\"rollInitiative\"], .combatant-initiative"
-        //   );
-
-        //   if (rollControl) {
-        //     rollControl.textContent = `R${degreeLabel}`;
-        //     rollControl.title = reactionTitle;
-        //     rollControl.classList.add("merc-reaction-initiative");
-        //     rollControl.setAttribute("aria-label", reactionTitle);
-        //   }
       }
       if (id && !eligibleIds.has(id)) {
         element.classList.add("merc-combatant--ineligible");
@@ -3158,10 +2723,6 @@ const DEFAULT_ATTRIBUTES = {
 };
 
 const DEFAULT_COMBAT = {
-  initiative: 0,
-  defense: 0,
-  health: 0,
-  fatigue: 0,
   endurance: 0,
   pointCorporence: 0,
   capaciteCharge: 0,
@@ -3174,10 +2735,6 @@ const DEFAULT_COMBAT = {
 };
 
 const DEFAULT_MOVEMENT = {
-  walk: 0,
-  run: 0,
-  sprint: 0,
-  charge: 0,
   reptation: 0,
   marche: 0,
   course: 0
@@ -3419,81 +2976,20 @@ const getActorMigrationData = (actor) => {
 
 Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
-
-  // Run world migration to ensure all data is up to date
   await migrateWorld();
-
-  const actors = game.actors?.contents ?? [];
-  for (const actor of actors) {
-    if (!actor || !["character", "npc"].includes(actor.type)) continue;
-    const updateData = getActorMigrationData(actor);
-    if (Object.keys(updateData).length > 0) {
-      await actor.update(updateData, { render: false });
-    }
-  }
 });
 
 // Hook for initializing actor data
 Hooks.on("preCreateActor", (actor, data, options, userId) => {
-  // Initialize system data in the data object
   if (!data.system) {
     data.system = {};
   }
   
   const systemData = {
-    biography: {
-      age: "",
-      height: 0,
-      weight: 0,
-      gender: "",
-      origin: "",
-      year: 0,
-      renown: 0
-    },
-    attributes: {
-      intelligence: { origin: 0, current: 0 },
-      will: { origin: 0, current: 0 },
-      mental: { origin: 0, current: 0 },
-      charisma: { origin: 0, current: 0 },
-      chance: { origin: 0, current: 0 },
-      adaptation: { origin: 0, current: 0 },
-      strength: { origin: 0, current: 0 },
-      dexterity: { origin: 0, current: 0 },
-      speed: { origin: 0, current: 0 },
-      constitution: { origin: 0, current: 0 },
-      perception: 0,
-      perceptionDetail: {
-        sight: 0,
-        hearing: 0,
-        taste: 0,
-        smell: 0,
-        touch: 0
-      }
-    },
-    combat: {
-      initiative: 0,
-      defense: 0,
-      health: 0,
-      fatigue: 0,
-      endurance: 0,
-      pointCorporence: 0,
-      capaciteCharge: 0,
-      bonusDiscretion: 0,
-      bonusDissimulation: 0,
-      corpulence: 0,
-      baseDamageMelee: "1",
-      baseDamageBladed: "1",
-      specializationBaseDamage: {}
-    },
-    movement: {
-      walk: 0,
-      run: 0,
-      sprint: 0,
-      charge: 0,
-      reptation: 0,
-      marche: 0,
-      course: 0
-    },
+    biography: foundry.utils.deepClone(DEFAULT_BIOGRAPHY),
+    attributes: foundry.utils.deepClone(DEFAULT_ATTRIBUTES),
+    combat: foundry.utils.deepClone(DEFAULT_COMBAT),
+    movement: foundry.utils.deepClone(DEFAULT_MOVEMENT),
     skills: Object.fromEntries(
       Object.entries(CONFIG.MERC.skills).map(([key, def]) => [
         key,
@@ -3512,9 +3008,9 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
 });
 
 // Hook to update combat statistics when actor data changes
-Hooks.on("updateActor", (actor, changes, options, userId) => {
-  // Only update for character actors
-  if (actor.type !== "character") return;
+Hooks.on("updateActor", async (actor, changes, options, userId) => {
+  // Only update for character and npc actors
+  if (actor.type !== "character" && actor.type !== "npc") return;
   
   // Prevent recursion when we're the ones updating combat stats
   if (options.isRecalculatingCombatStats) return;
@@ -3544,48 +3040,44 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
   
   if (!needsUpdate && !skillsChanged) return;
   
-  // Use setTimeout to ensure actor data is fully updated
-  setTimeout(async () => {
-    // Recalculate using the current actor data (which now has the updates)
-    const stats = computeCombatStatsFromSystem(actor.system);
+  // Recalculate using the current actor data (which now has the updates)
+  const stats = computeCombatStatsFromSystem(actor.system);
+  
+  if (stats) {
+    const updateData = {};
     
-    if (stats) {
-      const updateData = {};
-      
-      // Always update base damage if skills changed
-      if (skillsChanged) {
-        updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
-        updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
-        updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
-      }
-      
-      // Update combat stats if attributes/biometrics changed
-      if (needsUpdate) {
-        updateData["system.combat.endurance"] = stats.endurance;
-        updateData["system.combat.pointCorporence"] = stats.pointCorporence;
-        updateData["system.combat.capaciteCharge"] = stats.capaciteCharge;
-        updateData["system.combat.bonusDiscretion"] = stats.bonusDiscretion;
-        updateData["system.combat.bonusDissimulation"] = stats.bonusDissimulation;
-        updateData["system.combat.corpulence"] = stats.corpulence;
-        updateData["system.movement.reptation"] = stats.vitesses.reptation;
-        updateData["system.movement.marche"] = stats.vitesses.marche;
-        updateData["system.movement.course"] = stats.vitesses.course;
-        updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
-      }
-      
-      // Update base damage in both cases (needs recalc)
-      if (!skillsChanged && needsUpdate) {
-        updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
-        updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
-        updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
-      }
-      
-      if (Object.keys(updateData).length > 0) {
-        await actor.update(updateData, { render: true, isRecalculatingCombatStats: true });
-      }
+    // Always update base damage if skills changed
+    if (skillsChanged) {
+      updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
+      updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+      updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
     }
-  }, 10);
-
+    
+    // Update combat stats if attributes/biometrics changed
+    if (needsUpdate) {
+      updateData["system.combat.endurance"] = stats.endurance;
+      updateData["system.combat.pointCorporence"] = stats.pointCorporence;
+      updateData["system.combat.capaciteCharge"] = stats.capaciteCharge;
+      updateData["system.combat.bonusDiscretion"] = stats.bonusDiscretion;
+      updateData["system.combat.bonusDissimulation"] = stats.bonusDissimulation;
+      updateData["system.combat.corpulence"] = stats.corpulence;
+      updateData["system.movement.reptation"] = stats.vitesses.reptation;
+      updateData["system.movement.marche"] = stats.vitesses.marche;
+      updateData["system.movement.course"] = stats.vitesses.course;
+      updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
+    }
+    
+    // Update base damage in both cases (needs recalc)
+    if (!skillsChanged && needsUpdate) {
+      updateData["system.combat.baseDamageMelee"] = stats.baseDamageMelee;
+      updateData["system.combat.baseDamageBladed"] = stats.baseDamageBladed;
+      updateData["system.combat.specializationBaseDamage"] = stats.specializationBaseDamage;
+    }
+    
+    if (Object.keys(updateData).length > 0) {
+      await actor.update(updateData, { render: true, isRecalculatingCombatStats: true });
+    }
+  }
 });
 
 

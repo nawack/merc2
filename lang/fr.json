@@ -188,6 +188,33 @@
         "armorClassShort": "CA",
         "rollWeaponSkill": "Jet de compétence",
         "rollWeaponDamage": "Jet de dégâts",
+        "ammo": "Munitions",
+        "addAmmo": "+ Ajouter des munitions",
+        "ammoSheet": {
+          "subtitle": "Fiche de munition",
+          "namePlaceholder": "Nom de la munition",
+          "ammoType": "Type de munition",
+          "ammoTypePlaceholder": "Sélectionner un type",
+          "ammoTypes": {
+            "bullet": "Balle",
+            "shell": "Cartouche",
+            "arrow": "Flèche",
+            "bolt": "Carreau",
+            "energy": "Cellule d'énergie",
+            "explosive": "Explosif",
+            "other": "Autre"
+          },
+          "caliber": "Calibre",
+          "caliberPlaceholder": "9mm, 12G, .308...",
+          "quantity": "Quantité",
+          "maxQuantity": "Quantité max",
+          "weightKg": "Poids (kg)",
+          "price": "Prix",
+          "rarity": "Rareté",
+          "rarityPlaceholder": "commun, rare, épique...",
+          "description": "Description",
+          "descriptionPlaceholder": "Description de la munition..."
+        },
         "weaponSheet": {
           "subtitle": "Fiche d'arme",
           "namePlaceholder": "Nom de l'arme",

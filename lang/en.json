@@ -188,6 +188,33 @@
         "armorClassShort": "AC",
         "rollWeaponSkill": "Skill roll",
         "rollWeaponDamage": "Damage roll",
+        "ammo": "Ammunition",
+        "addAmmo": "+ Add Ammo",
+        "ammoSheet": {
+          "subtitle": "Ammunition Sheet",
+          "namePlaceholder": "Ammunition name",
+          "ammoType": "Ammo Type",
+          "ammoTypePlaceholder": "Select a type",
+          "ammoTypes": {
+            "bullet": "Bullet",
+            "shell": "Shell",
+            "arrow": "Arrow",
+            "bolt": "Bolt",
+            "energy": "Energy Cell",
+            "explosive": "Explosive",
+            "other": "Other"
+          },
+          "caliber": "Caliber",
+          "caliberPlaceholder": "9mm, 12G, .308...",
+          "quantity": "Quantity",
+          "maxQuantity": "Max Quantity",
+          "weightKg": "Weight (kg)",
+          "price": "Price",
+          "rarity": "Rarity",
+          "rarityPlaceholder": "common, rare, epic...",
+          "description": "Description",
+          "descriptionPlaceholder": "Ammo description..."
+        },
         "weaponSheet": {
           "subtitle": "Weapon Sheet",
           "namePlaceholder": "Weapon name",

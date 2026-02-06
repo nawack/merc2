@@ -2802,6 +2802,87 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
 }
 
 
+class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+    classes: ["merc", "sheet", "item", "ammo"],
+    width: 420,
+    height: 400,
+    resizable: true,
+    parts: ["form"],
+    submitOnChange: true,
+    submitOnClose: true,
+    closeOnSubmit: false
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/item/ammo-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const itemDoc = this.document ?? this.item;
+    if (!data.item) {
+      data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
+    }
+    const systemData = data?.item?.system ?? itemDoc?.system ?? {};
+    const defaults = {
+      ammoType: "",
+      caliber: "",
+      quantity: 0,
+      maxQuantity: 0,
+      weightKg: 0,
+      price: 0,
+      rarity: "common",
+      description: ""
+    };
+    if (!data.item) data.item = {};
+    data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+    return data;
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const itemDoc = this.document ?? this.item;
+    if (this.window?.title && itemDoc?.name) {
+      this.window.title.textContent = itemDoc.name;
+    }
+  }
+
+  async _updateObject(event, formData) {
+    const itemDoc = this.document ?? this.item;
+    if (!itemDoc) return;
+    const updateData = foundry.utils.expandObject(formData);
+    await itemDoc.update(updateData);
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;
+    if (!html) return;
+    const itemDoc = this.document ?? this.item;
+
+    const form = html.querySelector('form[data-application-part="form"]');
+    const inputs = form?.querySelectorAll("input, select, textarea") ?? [];
+    inputs.forEach((input) => {
+      input.addEventListener("change", async () => {
+        if (!itemDoc || !input.name) return;
+        let value;
+        if (input.type === "checkbox") {
+          value = input.checked;
+        } else if (input.type === "number") {
+          value = input.value === "" ? null : Number(input.value);
+        } else {
+          value = input.value;
+        }
+        const updateData = foundry.utils.expandObject({ [input.name]: value });
+        await itemDoc.update(updateData);
+      });
+    });
+  }
+}
+
 // Initialize the system
 Hooks.once("init", () => {
   // Define custom config with i18n keys
@@ -2913,6 +2994,7 @@ Hooks.once("init", () => {
   // Register Item Sheets
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   foundry.documents.collections.Items.registerSheet("merc", MercWeaponSheet, { types: ["weapon"], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet("merc", MercAmmoSheet, { types: ["ammo"], makeDefault: true });
 
   Hooks.on("preCreateCombat", (combat, data) => {
     data.flags = data.flags || {};

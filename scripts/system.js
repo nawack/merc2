@@ -43,6 +43,42 @@ function initPortraitSelection(actor, html) {
   });
 }
 
+/**
+ * Check if an ammo item is linked to a given weapon ID.
+ * For embedded items (on actors): parentWeaponId is a single ID string.
+ * For world-level items: parentWeaponId can be a comma-separated list of IDs.
+ */
+function ammoIsLinkedToWeapon(ammoItem, weaponId) {
+  const raw = ammoItem?.system?.parentWeaponId || "";
+  if (!raw || !weaponId) return false;
+  // Fast path: single ID (most common, especially for embedded items)
+  if (raw === weaponId) return true;
+  // Multi-weapon path: comma-separated IDs
+  return raw.split(",").includes(weaponId);
+}
+
+/**
+ * Add a weapon ID to an ammo item's parentWeaponId (comma-separated list).
+ * Returns the new string value. Does not duplicate existing IDs.
+ */
+function addWeaponIdToAmmo(currentParentWeaponId, weaponIdToAdd) {
+  if (!weaponIdToAdd) return currentParentWeaponId || "";
+  const ids = (currentParentWeaponId || "").split(",").filter(id => id);
+  if (ids.includes(weaponIdToAdd)) return ids.join(",");
+  ids.push(weaponIdToAdd);
+  return ids.join(",");
+}
+
+/**
+ * Remove a weapon ID from an ammo item's parentWeaponId (comma-separated list).
+ * Returns the new string value.
+ */
+function removeWeaponIdFromAmmo(currentParentWeaponId, weaponIdToRemove) {
+  if (!currentParentWeaponId || !weaponIdToRemove) return currentParentWeaponId || "";
+  const ids = currentParentWeaponId.split(",").filter(id => id && id !== weaponIdToRemove);
+  return ids.join(",");
+}
+
 // Index to Degree conversion table
 // Index 0 = degree -7, index 1 = degree -6, ..., index 7 = degree 0, ..., index 40 = degree 33
 const INDEX_TO_DEGREE = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33];
@@ -1172,11 +1208,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         linkedAmmo = item.parent.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === oldWeaponId);
       } else {
         // Source weapon is a world-level item
-        linkedAmmo = game.items?.filter(i => i.type === "ammo" && i.system?.parentWeaponId === oldWeaponId) ?? [];
+        linkedAmmo = game.items?.filter(i => i.type === "ammo" && ammoIsLinkedToWeapon(i, oldWeaponId)) ?? [];
       }
       if (linkedAmmo.length) {
         const ammoDataArray = linkedAmmo.map(a => {
           const data = a.toObject();
+          // For embedded copies, use a single weaponId
           data.system.parentWeaponId = newWeaponId;
           return data;
         });
@@ -2375,7 +2412,7 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     if (actorDoc) {
       actorAmmo = actorDoc.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === weaponId);
     } else {
-      actorAmmo = game.items?.filter(i => i.type === "ammo" && i.system?.parentWeaponId === weaponId) ?? [];
+      actorAmmo = game.items?.filter(i => i.type === "ammo" && ammoIsLinkedToWeapon(i, weaponId)) ?? [];
     }
     data.ammoItems = actorAmmo.map(a => a.toObject());
     data.hasActor = !!actorDoc;
@@ -2511,16 +2548,26 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       });
     });
 
-    // Delete ammo
+    // Delete/unlink ammo
     html.querySelectorAll(".weapon-ammo-delete").forEach(btn => {
       btn.addEventListener("click", async (event) => {
-        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
-        if (itemId) {
+        const ammoId = event.currentTarget.closest(".item")?.dataset.itemId;
+        if (ammoId) {
           if (isEmbedded) {
-            await actorDoc.deleteEmbeddedDocuments("Item", [itemId]);
+            // Embedded: delete the ammo item from the actor
+            await actorDoc.deleteEmbeddedDocuments("Item", [ammoId]);
           } else {
-            const ammo = game.items.get(itemId);
-            if (ammo) await ammo.delete();
+            // World-level: unlink this weapon from the ammo instead of deleting
+            const ammo = game.items.get(ammoId);
+            if (ammo) {
+              const newIds = removeWeaponIdFromAmmo(ammo.system?.parentWeaponId, itemDoc?.id || "");
+              if (!newIds) {
+                // No more weapon links — delete the ammo
+                await ammo.delete();
+              } else {
+                await ammo.update({ "system.parentWeaponId": newIds });
+              }
+            }
           }
           this.render();
         }
@@ -2559,20 +2606,32 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     const itemDoc = this.document ?? this.item;
     const actorDoc = itemDoc?.parent;
     const isEmbedded = !!actorDoc;
+    const droppedIsWorldLevel = !droppedItem.parent;
 
-    // Build the new ammo data, linking it to this weapon
-    const ammoData = droppedItem.toObject();
-    ammoData.system.parentWeaponId = itemDoc?.id || "";
-
-    let created;
     if (isEmbedded) {
-      created = await Item.create(ammoData, { parent: actorDoc });
-    } else {
-      created = await Item.create(ammoData);
-    }
-    if (created) {
-      ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
+      // Weapon is on an actor: always create an embedded copy
+      const ammoData = droppedItem.toObject();
+      ammoData.system.parentWeaponId = itemDoc?.id || "";
+      const created = await Item.create(ammoData, { parent: actorDoc });
+      if (created) {
+        ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
+        this.render();
+      }
+    } else if (droppedIsWorldLevel) {
+      // Both weapon and ammo are world-level: add this weapon to the ammo's linked list
+      const newIds = addWeaponIdToAmmo(droppedItem.system?.parentWeaponId, itemDoc?.id || "");
+      await droppedItem.update({ "system.parentWeaponId": newIds });
+      ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: droppedItem.name }));
       this.render();
+    } else {
+      // Weapon is world-level but ammo comes from an actor: create a world copy
+      const ammoData = droppedItem.toObject();
+      ammoData.system.parentWeaponId = itemDoc?.id || "";
+      const created = await Item.create(ammoData);
+      if (created) {
+        ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
+        this.render();
+      }
     }
   }
 }
@@ -3295,18 +3354,21 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
 
 // Re-render open weapon sheets when ammo items change
 function rerenderWeaponSheetsForAmmo(ammoItem) {
-  const parentWeaponId = ammoItem?.system?.parentWeaponId;
-  if (!parentWeaponId) return;
+  const raw = ammoItem?.system?.parentWeaponId;
+  if (!raw) return;
 
   const actor = ammoItem.parent;
   if (actor) {
-    // Embedded item — find the weapon on the same actor
-    const weapon = actor.items.get(parentWeaponId);
+    // Embedded item — single parentWeaponId
+    const weapon = actor.items.get(raw);
     if (weapon?.sheet?.rendered) weapon.sheet.render();
   } else {
-    // World-level item — find the weapon in world items
-    const weapon = game.items?.get(parentWeaponId);
-    if (weapon?.sheet?.rendered) weapon.sheet.render();
+    // World-level item — may have multiple comma-separated weapon IDs
+    const weaponIds = raw.split(",").filter(id => id);
+    for (const wid of weaponIds) {
+      const weapon = game.items?.get(wid);
+      if (weapon?.sheet?.rendered) weapon.sheet.render();
+    }
   }
 }
 
@@ -3315,11 +3377,17 @@ Hooks.on("deleteItem", (item, options, userId) => {
   if (item.type === "ammo") {
     rerenderWeaponSheetsForAmmo(item);
   }
-  // Cascade delete: if a world-level weapon is deleted, remove its linked world ammo
+  // Cascade unlink: if a world-level weapon is deleted, remove its ID from linked world ammo
+  // Delete the ammo only if it has no remaining weapon links
   if (item.type === "weapon" && !item.parent) {
-    const linkedAmmo = game.items?.filter(i => i.type === "ammo" && i.system?.parentWeaponId === item.id) ?? [];
+    const linkedAmmo = game.items?.filter(i => i.type === "ammo" && ammoIsLinkedToWeapon(i, item.id)) ?? [];
     for (const ammo of linkedAmmo) {
-      ammo.delete();
+      const newIds = removeWeaponIdFromAmmo(ammo.system?.parentWeaponId, item.id);
+      if (!newIds) {
+        ammo.delete();
+      } else {
+        ammo.update({ "system.parentWeaponId": newIds });
+      }
     }
   }
 });

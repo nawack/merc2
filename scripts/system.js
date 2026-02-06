@@ -654,14 +654,6 @@ async function migrateItem(item, actor = null) {
       updateData["system.price"] = 0;
     }
 
-    // Ensure ammoType exists
-    if (item.system.ammoType === undefined || item.system.ammoType === null) {
-      updateData["system.ammoType"] = "";
-    }
-    // Ensure magazineCapacity exists
-    if (item.system.magazineCapacity === undefined || item.system.magazineCapacity === null) {
-      updateData["system.magazineCapacity"] = 0;
-    }
     // Ensure damage exists
     if (item.system.damage === undefined || item.system.damage === null) {
       updateData["system.damage"] = "1d8";
@@ -700,24 +692,7 @@ async function migrateItem(item, actor = null) {
 
     // Try to link orphan ammo (no parentWeaponId) to a matching weapon
     if (!item.system.parentWeaponId) {
-      const ammoType = item.system.ammoType || updateData["system.ammoType"] || "";
-      if (ammoType) {
-        let matchingWeapons = [];
-        if (actor) {
-          // Embedded ammo — match among actor's weapons
-          matchingWeapons = actor.items.filter(i =>
-            i.type === "weapon" && i.system?.ammoType === ammoType
-          );
-        } else {
-          // World-level ammo — match among world weapons
-          matchingWeapons = game.items?.filter(i =>
-            i.type === "weapon" && i.system?.ammoType === ammoType
-          ) ?? [];
-        }
-        if (matchingWeapons.length === 1) {
-          updateData["system.parentWeaponId"] = matchingWeapons[0].id;
-        }
-      }
+      // No automatic linking without ammoType on weapons — must be done manually
     }
   }
 
@@ -2374,9 +2349,7 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     }
     const systemData = data?.item?.system ?? itemDoc?.system ?? {};
     const defaults = {
-      ammoType: "",
       weightKg: 0,
-      magazineCapacity: 0,
       damage: "",
       weaponSubtype: "",
       range: {

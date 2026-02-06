@@ -66,17 +66,6 @@
       </div>
 
       <div class="weapon-field-group">
-        {{#if (or (eq item.system.weaponSubtype "powder_projectiles") (eq item.system.weaponSubtype "mechanical_projectiles") (eq item.system.weaponSubtype "heavy_weapons") (eq item.system.weaponSubtype "electronic_weapons"))}}
-        <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.ammoType"}}</label>
-          <input type="text" name="system.ammoType" value="{{item.system.ammoType}}" placeholder="{{localize "MERC.UI.items.weaponSheet.ammoTypePlaceholder"}}">
-        </div>
-        <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.magazineCapacity"}}</label>
-          <input type="number" name="system.magazineCapacity" value="{{item.system.magazineCapacity}}" min="0" step="1">
-        </div>
-        {{/if}}
-
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.weightKg"}}</label>
           <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="1">

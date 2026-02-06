@@ -1124,6 +1124,69 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
   }
 
+  /**
+   * Handle an item dropped on the character sheet.
+   * If ammo is dropped onto a weapon card, link it to that weapon.
+   * Otherwise, delegate to the default handler (which creates embedded items).
+   */
+  async _onDropItem(event, item) {
+    if (!this.actor.isOwner) return null;
+
+    // Check if an ammo item was dropped onto a weapon card
+    if (item?.type === "ammo") {
+      const weaponCard = event.target.closest(".item-card[data-item-id]");
+      if (weaponCard) {
+        const weaponId = weaponCard.dataset.itemId;
+        const weapon = this.actor.items.get(weaponId);
+        if (weapon?.type === "weapon") {
+          // Create an embedded copy of the ammo linked to this weapon
+          const ammoData = item.toObject();
+          ammoData.system.parentWeaponId = weaponId;
+          const created = await Item.create(ammoData, { parent: this.actor });
+          if (created) {
+            ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
+          }
+          return created ?? null;
+        }
+      }
+      // Ammo dropped outside a weapon card: warn and reject
+      ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.dropAmmoOnWeapon"));
+      return null;
+    }
+
+    // For non-ammo items, use default behavior (create embedded item or sort)
+    if (this.actor.uuid === item.parent?.uuid) {
+      return (await this._onSortItem(event, item))?.length ? item : null;
+    }
+    const keepId = !this.actor.items.has(item.id);
+    const result = await Item.implementation.create(item.toObject(), { parent: this.actor, keepId });
+
+    // When a weapon is dropped, also copy its linked ammo items
+    if (result && item.type === "weapon") {
+      const oldWeaponId = item.id;
+      const newWeaponId = result.id;
+      // Find ammo linked to the source weapon (from its parent actor or from world items)
+      let linkedAmmo = [];
+      if (item.parent) {
+        // Source weapon is embedded in an actor
+        linkedAmmo = item.parent.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === oldWeaponId);
+      } else {
+        // Source weapon is a world-level item
+        linkedAmmo = game.items?.filter(i => i.type === "ammo" && i.system?.parentWeaponId === oldWeaponId) ?? [];
+      }
+      if (linkedAmmo.length) {
+        const ammoDataArray = linkedAmmo.map(a => {
+          const data = a.toObject();
+          data.system.parentWeaponId = newWeaponId;
+          return data;
+        });
+        await Item.implementation.create(ammoDataArray, { parent: this.actor });
+      }
+    }
+
+    return result ?? null;
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     
@@ -1132,6 +1195,19 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Initialize portrait selection with Foundry FilePicker
     initPortraitSelection(this.actor, html);
+
+    // Drag & Drop visual feedback: highlight weapon cards when dragging over them
+    html.querySelectorAll(".item-card[data-item-id]").forEach(card => {
+      card.addEventListener("dragenter", (event) => {
+        const weaponId = card.dataset.itemId;
+        const weapon = this.actor.items.get(weaponId);
+        if (weapon?.type === "weapon") card.classList.add("drop-highlight");
+      });
+      card.addEventListener("dragleave", (event) => {
+        if (!card.contains(event.relatedTarget)) card.classList.remove("drop-highlight");
+      });
+      card.addEventListener("drop", () => card.classList.remove("drop-highlight"));
+    });
 
     // Handle tab switching
     const tabItems = html.querySelectorAll(".sheet-tabs .item");
@@ -2450,6 +2526,54 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
         }
       });
     });
+
+    // Drag & Drop: accept ammo items dropped onto the weapon sheet
+    const ammoSection = html.querySelector(".weapon-ammo-section");
+    if (ammoSection) {
+      new foundry.applications.ux.DragDrop.implementation({
+        dropSelector: ".weapon-ammo-section",
+        permissions: { drop: () => true },
+        callbacks: {
+          drop: this._onDropAmmo.bind(this),
+          dragenter: (event) => event.currentTarget.classList?.add("drop-highlight"),
+          dragleave: (event) => event.currentTarget.classList?.remove("drop-highlight")
+        }
+      }).bind(html);
+    }
+  }
+
+  /**
+   * Handle an ammo item dropped onto the weapon sheet.
+   * Creates a copy linked to this weapon via parentWeaponId.
+   */
+  async _onDropAmmo(event) {
+    event.currentTarget?.classList?.remove("drop-highlight");
+    const data = TextEditor.implementation.getDragEventData(event);
+    if (data?.type !== "Item") return;
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== "ammo") {
+      ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.dropOnlyAmmo"));
+      return;
+    }
+
+    const itemDoc = this.document ?? this.item;
+    const actorDoc = itemDoc?.parent;
+    const isEmbedded = !!actorDoc;
+
+    // Build the new ammo data, linking it to this weapon
+    const ammoData = droppedItem.toObject();
+    ammoData.system.parentWeaponId = itemDoc?.id || "";
+
+    let created;
+    if (isEmbedded) {
+      created = await Item.create(ammoData, { parent: actorDoc });
+    } else {
+      created = await Item.create(ammoData);
+    }
+    if (created) {
+      ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
+      this.render();
+    }
   }
 }
 

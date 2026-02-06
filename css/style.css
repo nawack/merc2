@@ -2049,4 +2049,23 @@
   grid-column: 1 / -1;
 }
 
+/* ==========================================
+   DRAG & DROP VISUAL FEEDBACK
+   ========================================== */
+
+/* Weapon ammo section drop highlight */
+.weapon-ammo-section.drop-highlight {
+  outline: 2px dashed #4a90d9;
+  outline-offset: -2px;
+  background-color: #e8f0fe;
+  transition: background-color 0.15s, outline 0.15s;
+}
+
+/* Weapon card on character sheet drop highlight */
+.item-card.drop-highlight {
+  outline: 2px dashed #4a90d9;
+  outline-offset: -2px;
+  background-color: #e8f0fe;
+  transition: background-color 0.15s, outline 0.15s;
+}
 

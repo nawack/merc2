@@ -256,7 +256,10 @@
           "ammoLoaded": "Chargé",
           "ammoNone": "Aucune munition",
           "addAmmo": "+ Ajouter munition",
-          "ammoQty": "{qty} / {max}"
+          "ammoQty": "{qty} / {max}",
+          "dropOnlyAmmo": "Seuls les objets de type munition peuvent être déposés ici.",
+          "dropAmmoOnWeapon": "Déposez les munitions sur une arme pour les lier.",
+          "ammoLinked": "{name} lié(e) à l'arme."
         }
       }
     },

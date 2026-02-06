@@ -256,7 +256,10 @@
           "ammoLoaded": "Loaded",
           "ammoNone": "No ammunition",
           "addAmmo": "+ Add Ammo",
-          "ammoQty": "{qty} / {max}"
+          "ammoQty": "{qty} / {max}",
+          "dropOnlyAmmo": "Only ammunition items can be dropped here.",
+          "dropAmmoOnWeapon": "Drop ammunition onto a weapon to link it.",
+          "ammoLinked": "{name} linked to weapon."
         }
       }
     },

@@ -626,6 +626,21 @@
               <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
               <!--<button type="button" class="item-edit">✎</button>-->
             </div>
+
+            {{!-- Linked ammo for this weapon --}}
+            {{#each (filterItems ../actor.items "ammo") as |ammo|}}
+              {{#if (eq ammo.system.parentWeaponId item._id)}}
+              <div class="ammo-entry" data-item-id="{{ammo._id}}">
+                <div class="ammo-info">
+                  <div class="ammo-name">{{ammo.name}}</div>
+                  <div class="ammo-damage">{{ammo.system.damage}}</div>
+                </div>
+                <div class="ammo-controls">
+                  <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+              </div>
+              {{/if}}
+            {{/each}}
           </div>
           {{/each}}
         </div>

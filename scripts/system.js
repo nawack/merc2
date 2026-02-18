@@ -1881,7 +1881,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     weaponSkillBtns.forEach(btn => {
       btn.addEventListener("click", (event) => {
         event.preventDefault();
-        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        const itemId = event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
         const item = this.actor?.items?.get(itemId);
         if (item) {
           this.rollWeaponSkillCheck(item);
@@ -1893,7 +1893,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     weaponDamageBtns.forEach(btn => {
       btn.addEventListener("click", (event) => {
         event.preventDefault();
-        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        const itemId = event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
         const item = this.actor?.items?.get(itemId);
         if (item) {
           this.rollWeaponDamage(item);
@@ -2287,6 +2287,24 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       <strong style="font-size: 13px;">${game.i18n.format("MERC.Labels.damageTotalLabel", { total: totalDamage })}</strong>
     </div></div></div>`;
 
+    // Build display label: weapon name, or "weapon (ammo)" for ammo items
+    let itemLabel = item.name || game.i18n.localize("MERC.UI.items.weapons");
+    if (item.type === "ammo") {
+      const parentRaw = item.system?.parentWeaponId || "";
+      const parentId = parentRaw.split(",")[0] || "";
+      let weaponItem = null;
+      if (parentId && actor?.items) {
+        weaponItem = actor.items.get(parentId) || null;
+      }
+      if (!weaponItem && parentId && game.items) {
+        weaponItem = game.items.get(parentId) || null;
+      }
+      if (weaponItem?.name) {
+        const ammoName = item.name || game.i18n.localize("MERC.UI.items.ammo");
+        itemLabel = `${weaponItem.name} (${ammoName})`;
+      }
+    }
+
     // Prepare the chat message data
     const chatData = {
       user: game.user.id,
@@ -2296,7 +2314,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       // Build the HTML content for the chat message
       content: `<div class="merc-roll">
         <div class="merc-roll-header">
-          <span class="merc-roll-label">${actor.name} - ${item.name}</span>
+          <span class="merc-roll-label">${actor.name} - ${itemLabel}</span>
           <span class="merc-roll-badge">${totalDamage}</span>
         </div>
         <div class="merc-roll-breakdown">

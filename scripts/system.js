@@ -787,7 +787,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (actorDoc) {
       const currentAttributes = actorDoc.system?.attributes ?? {};
       const normalizedAttributes = normalizeAttributes(currentAttributes);
-      const mergedAttributes = foundry.utils.mergeObject(foundry.utils.deepClone(defaultAttributes), normalizedAttributes, { inplace: false, overwrite: true });
+      // Merge defaults with existing attributes so missing values become 0 instead of undefined
+      var mergedAttributes = foundry.utils.mergeObject(foundry.utils.deepClone(defaultAttributes), normalizedAttributes, { inplace: false, overwrite: true });
     }
 
     data.actor = actorDoc?.toObject ? actorDoc.toObject() : actorDoc;
@@ -810,7 +811,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       data.actor.system.notes = "";
     }
     if (!data.actor.system.attributes) {
-      data.actor.system.attributes = defaultAttributes;
+      data.actor.system.attributes = mergedAttributes || defaultAttributes;
+    } else if (mergedAttributes) {
+      data.actor.system.attributes = mergedAttributes;
     }
     if (!data.actor.system.combat) {
       data.actor.system.combat = {};
@@ -1348,6 +1351,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
           const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
           if (value === currentValue) return;
+
+          // Perception principale gérée par un listener dédié plus bas
+          if (fieldPath === "system.attributes.perception") return;
+
+          // Dev fields are fully handled by the skill-specific listener below
+          if (fieldPath.includes(".dev")) return;
           
           // Special handling for attribute current changes
           if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
@@ -1360,26 +1369,34 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             return;
           }
           
-          // Special handling for melee/bladed_weapons dev changes
-          if (fieldPath === "system.skills.melee.dev" || fieldPath === "system.skills.bladed_weapons.dev") {
-            const skillKey = fieldPath.includes("melee.") ? "melee" : "bladed_weapons";
-            const skillData = { ...this.actor.system.skills[skillKey], dev: value };
-            const newDegree = this.computeSkillDegree(this.actor, skillKey, skillData);
-            
-            this.actor.system.skills[skillKey].dev = value;
-            this.actor.system.skills[skillKey].degree = newDegree;
-            
+          await this.actor.update({ [fieldPath]: value });
+
+          // Additional combat stats recalculation for other relevant changes
+          const shouldRecalcCombat =
+            fieldPath.startsWith("system.biography.") ||
+            fieldPath === "system.skills.melee.bonus" ||
+            fieldPath === "system.skills.bladed_weapons.bonus" ||
+            fieldPath === "system.skills.melee.degree" ||
+            fieldPath === "system.skills.bladed_weapons.degree" ||
+            fieldPath.startsWith("system.customSpecializations.");
+
+          if (shouldRecalcCombat) {
             const statsUpdate = this.buildCombatStatsUpdate();
-            const updateData = {
-              [fieldPath]: value,
-              [fieldPath.replace(".dev", ".degree")]: newDegree,
-              ...statsUpdate
-            };
-            
-            await this.actor.update(updateData, { render: false });
+            if (statsUpdate) {
+              // Mettre à jour immédiatement l'affichage des bonus de discrétion/dissimulation
+              const bonusDiscretionEl = html.querySelector('.headerStat[data-stat="bonusDiscretion"] .stat-value-large');
+              const bonusDissimulationEl = html.querySelector('.headerStat[data-stat="bonusDissimulation"] .stat-value-large');
+
+              if (bonusDiscretionEl && Object.prototype.hasOwnProperty.call(statsUpdate, "system.combat.bonusDiscretion")) {
+                bonusDiscretionEl.textContent = statsUpdate["system.combat.bonusDiscretion"];
+              }
+              if (bonusDissimulationEl && Object.prototype.hasOwnProperty.call(statsUpdate, "system.combat.bonusDissimulation")) {
+                bonusDissimulationEl.textContent = statsUpdate["system.combat.bonusDissimulation"];
+              }
+
+              await this.actor.update(statsUpdate, { render: false });
+            }
             await this.render();
-          } else {
-            await this.actor.update({ [fieldPath]: value });
           }
         };
 
@@ -1410,7 +1427,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const currentPath = originPath.replace(".origin", ".current");
         const value = Number(input.value) || 0;
         
-        await this.actor.update({ [currentPath]: value }, { render: false });
+        // Save both origin and current, then recalc combat stats
+        const updateData = {
+          [originPath]: value,
+          [currentPath]: value
+        };
+        await this.actor.update(updateData, { render: false });
         const statsUpdate = this.buildCombatStatsUpdate();
         if (statsUpdate) {
           await this.actor.update(statsUpdate, { render: false });
@@ -1424,17 +1446,37 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (perceptionMainInput) {
       perceptionMainInput.addEventListener("change", async (event) => {
         const perceptionValue = Number(perceptionMainInput.value) || 0;
-        const perceptionDetail = {
+        const updateData = {
+          "system.attributes.perception": perceptionValue,
           "system.attributes.perceptionDetail.sight": perceptionValue,
           "system.attributes.perceptionDetail.hearing": perceptionValue,
           "system.attributes.perceptionDetail.taste": perceptionValue,
           "system.attributes.perceptionDetail.smell": perceptionValue,
           "system.attributes.perceptionDetail.touch": perceptionValue
         };
-        
-        await this.actor.update(perceptionDetail);
+
+        await this.actor.update(updateData);
       });
     }
+
+    // Ensure height and weight changes are saved and recalc combat stats
+    const heightInput = html.querySelector('input[name="system.biography.height"]');
+    const weightInput = html.querySelector('input[name="system.biography.weight"]');
+    const handleBioPhysicalChange = async (inputEl, path) => {
+      if (!inputEl) return;
+      inputEl.addEventListener("change", async () => {
+        const value = Number(inputEl.value) || 0;
+        await this.actor.update({ [path]: value }, { render: false });
+        const statsUpdate = this.buildCombatStatsUpdate();
+        if (statsUpdate) {
+          await this.actor.update(statsUpdate, { render: false });
+        }
+        await this.render();
+      });
+    };
+
+    await handleBioPhysicalChange(heightInput, "system.biography.height");
+    await handleBioPhysicalChange(weightInput, "system.biography.weight");
 
     // Make skill names clickable to roll
     const skillNames = html.querySelectorAll(".skill-name");
@@ -1482,45 +1524,80 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       
       // Click to roll
       btn.addEventListener("click", (event) => {
-        const skillItem = btn.closest(".skill-item");
-        const skillKey = skillItem.dataset.skill;
+        event.preventDefault();
+        event.stopPropagation();
+        const skillItem = event.currentTarget.closest(".skill-item");
+        const skillKey = skillItem?.dataset?.skill;
+        if (!skillKey) {
+          console.error("MERC | Skill roll button without data-skill");
+          ui.notifications?.error(game.i18n.localize("MERC.Labels.skillNotFound"));
+          return;
+        }
         this.rollSkillCheck(skillKey);
       });
     });
 
-    // Update button colors when degree or bonus inputs change
+    // Update button colors and displayed degree/total when skill inputs change
     const skillInputs = html.querySelectorAll(".skill-item input");
     skillInputs.forEach(input => {
-      input.addEventListener("change", (event) => {
+      input.addEventListener("change", async (event) => {
         const skillItem = input.closest(".skill-item");
-        const btn = skillItem?.querySelector(".skill-roll-btn");
-        if (btn) {
-          updateButtonColor(btn);
+        if (!skillItem) return;
+        const btn = skillItem.querySelector(".skill-roll-btn");
+
+        const isDevField = input.name && input.name.includes(".dev");
+        const skillKey = skillItem.dataset.skill;
+        if (!skillKey) {
+          if (btn) updateButtonColor(btn);
+          return;
         }
-        
-        // If dev input changed, validate prerequisites
-        if (input.name && input.name.includes(".dev")) {
-          const skillKey = skillItem?.dataset.skill;
-          if (skillKey) {
-            const unlockStatus = checkSkillUnlocked(this.actor, skillKey);
-            
-            // If skill is locked, prevent adding dev points
-            if (!unlockStatus.unlocked && Number(input.value) > 0) {
-              ui.notifications.warn(
-                game.i18n.format("MERC.UI.skills.lockedWarning", {
-                  skill: game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey,
-                  prereqs: unlockStatus.missingPrereqs
-                    .map(k => game.i18n.localize(CONFIG.MERC.skills[k]?.label) || k)
-                    .join(", ")
-                })
-              );
-              input.value = 0;
-              event.preventDefault();
-              return;
-            }
-            
-            // Base damage recalculation for melee/bladed is handled by saveFieldOnChange
+
+        // Si ce n'est pas un champ dev, on met juste à jour le style (bonus qui change, par ex.)
+        if (!isDevField) {
+          if (btn) updateButtonColor(btn);
+          return;
+        }
+
+        // Validate prerequisites before applying dev
+        const unlockStatus = checkSkillUnlocked(this.actor, skillKey);
+        if (!unlockStatus.unlocked && Number(input.value) > 0) {
+          ui.notifications.warn(
+            game.i18n.format("MERC.UI.skills.lockedWarning", {
+              skill: game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey,
+              prereqs: unlockStatus.missingPrereqs
+                .map(k => game.i18n.localize(CONFIG.MERC.skills[k]?.label) || k)
+                .join(", ")
+            })
+          );
+          input.value = 0;
+          event.preventDefault();
+          return;
+        }
+
+        // Sauvegarde de dev, puis recalcul + affichage via un rerender complet
+        try {
+          const devValue = Number(input.value) || 0;
+          const updateData = {};
+
+          if (skillKey.startsWith("custom_lang_")) {
+            const langName = skillKey.replace("custom_lang_", "");
+            updateData[`system.customLanguages.${langName}.dev`] = devValue;
+          } else if (skillKey.startsWith("custom_spec_")) {
+            const specName = skillKey.replace("custom_spec_", "");
+            updateData[`system.customSpecializations.${specName}.dev`] = devValue;
+          } else {
+            // Compétence "normale" dans system.skills
+            updateData[input.name] = devValue;
           }
+
+          if (Object.keys(updateData).length > 0) {
+            await this.actor.update(updateData, { render: false });
+          }
+
+          // Laisse _prepareContext et le rendu de la fiche recalculer base/degree/total
+          await this.render();
+        } catch (e) {
+          console.error("MERC | Error updating skill dev", e);
         }
       });
     });

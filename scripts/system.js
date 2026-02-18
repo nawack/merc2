@@ -1329,6 +1329,26 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // Endurance roll on click (value and label)
+    const enduranceContainer = html.querySelector('.headerStat[data-stat="endurance"]');
+    if (enduranceContainer) {
+      const enduranceStat = enduranceContainer.querySelector('.stat-value-large');
+      const enduranceLabel = enduranceContainer.querySelector('.headerStatLabel');
+
+      const attachEnduranceClick = (el) => {
+        if (!el) return;
+        el.style.cursor = "pointer";
+        el.addEventListener("click", (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+          this.rollEnduranceCheck();
+        });
+      };
+
+      attachEnduranceClick(enduranceStat);
+      attachEnduranceClick(enduranceLabel);
+    }
+
     // Persist individual field changes immediately
     const formElement = html.querySelector("form");
     if (formElement) {
@@ -2330,6 +2350,15 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const label = `${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${perceptionName} - ${subLabel}`;
 
     await this._sendD20RollMessage(label, subValue);
+  }
+
+  async rollEnduranceCheck() {
+    const actor = this.actor ?? this.document;
+    const systemData = actor.system || actor._source?.system || {};
+    const endurance = Number(systemData.combat?.endurance ?? 0);
+
+    const label = `${actor.name} - ${game.i18n.localize("MERC.UI.stats.endurance")}`;
+    await this._sendD20RollMessage(label, endurance);
   }
 
   async createItem(event) {

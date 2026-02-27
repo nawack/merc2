@@ -14,7 +14,7 @@
 
 .merc.sheet {
   background: white;
-  min-width: 570px;
+  min-width: 620px;
 }
 
 .merc.actor-sheet {
@@ -24,7 +24,7 @@
 .merc.actor-sheet .window-content {
   background-color: white;
   padding: 15px;
-  min-width: 570px;
+  min-width: 620px;
 }
 
 .merc .sheet-header {
@@ -948,6 +948,13 @@
   margin-top: 5px;
 }
 
+.items-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .items-section h3,
 .weapons-section h3 {
   margin: 0 0 6px 0;
@@ -991,6 +998,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 150px;
+  overflow-y: auto;
 }
 
 .item-card {
@@ -1073,7 +1082,14 @@
 .item-controls {
   display: flex;
   gap: 5px;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.ammo-controls {
+  display: flex;
+  gap: 5px;
+  align-items: flex-end;
   justify-content: flex-end;
 }
 
@@ -1178,7 +1194,7 @@
 }
 
 .item-create {
-  width: 100%;
+  width: 200px;
   padding: 4px 8px;
   font-size: 11px;
   cursor: pointer;
@@ -1187,7 +1203,6 @@
   border-radius: 4px;
   color: #555;
   text-align: center;
-  margin-top: 10px;
 }
 
 .item-create:hover {
@@ -1448,7 +1463,7 @@
 }
 
 .combat-base-damage-value {
-  min-width: 60px;
+  min-width: 50px;
   height: 22px;
   line-height: 22px;
   text-align: center;
@@ -1457,6 +1472,23 @@
   background-color: #e5e5e5;
   font-weight: bold;
   color: #333;
+}
+
+.combat-ammo-damage-value {
+  min-width: 50px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #999;
+  background-color: #e5e5e5;
+  font-weight: bold;
+  color: #333;
+}
+
+.ammo-name {
+  font-size: 10px;
+  color: #666;
 }
 
 .combat-base-damage-roll,

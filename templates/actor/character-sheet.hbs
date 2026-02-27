@@ -622,25 +622,32 @@
             </div>
             <div class="item-controls">
               <button type="button" class="weapon-skill-roll" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">🎯</button>
-              <div class="combat-base-damage-value">{{item.system.damage}}</div>
-              <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
-              <!--<button type="button" class="item-edit">✎</button>-->
             </div>
-
-            {{!-- Linked ammo for this weapon --}}
-            {{#each (filterItems ../actor.items "ammo") as |ammo|}}
+            <div class="item-controls">
+              <div class="ammo-entry">
+                <div class="ammo-info">
+                  <div class="ammo-name">Base</div>
+                </div>
+                <div class="ammo-controls">
+                  <div class="combat-base-damage-value">{{item.system.damage}}</div>
+                  <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+              </div>
+              {{!-- Linked ammo for this weapon --}}
+              {{#each (filterItems ../actor.items "ammo") as |ammo|}}
               {{#if (eq ammo.system.parentWeaponId item._id)}}
               <div class="ammo-entry" data-item-id="{{ammo._id}}">
                 <div class="ammo-info">
                   <div class="ammo-name">{{ammo.name}}</div>
-                  <div class="ammo-damage">{{ammo.system.damage}}</div>
                 </div>
                 <div class="ammo-controls">
+                  <div class="combat-ammo-damage-value">{{ammo.system.damage}}</div>
                   <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
                 </div>
               </div>
               {{/if}}
-            {{/each}}
+              {{/each}}
+            </div>
           </div>
           {{/each}}
         </div>
@@ -653,7 +660,7 @@
       
       <!-- Weapons -->
       <div class="items-section">
-        <h3>{{localize "MERC.UI.items.weapons"}}</h3>
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.weapons"}}</span><button type="button" class="item-create btn" data-type="weapon">{{localize "MERC.UI.items.addWeapon"}}</button></div></h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
@@ -667,13 +674,12 @@
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="weapon">{{localize "MERC.UI.items.addWeapon"}}</button>
         </div>
       </div>
 
       <!-- Armor -->
       <div class="items-section">
-        <h3>{{localize "MERC.UI.items.armor"}}</h3>
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.armor"}}</span><button type="button" class="item-create btn" data-type="armor">{{localize "MERC.UI.items.addArmor"}}</button></div></h3>
         <div class="items-list">
           {{#each (filterItems actor.items "armor") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
@@ -687,13 +693,12 @@
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="armor">{{localize "MERC.UI.items.addArmor"}}</button>
         </div>
       </div>
 
       <!-- Equipment -->
       <div class="items-section">
-        <h3>{{localize "MERC.UI.items.equipment"}}</h3>
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.equipment"}}</span><button type="button" class="item-create btn" data-type="equipment">{{localize "MERC.UI.items.addEquipment"}}</button></div></h3>
         <div class="items-list">
           {{#each (filterItems actor.items "equipment") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
@@ -706,7 +711,7 @@
             </div>
           </div>
           {{/each}}
-          <button type="button" class="item-create btn" data-type="equipment">{{localize "MERC.UI.items.addEquipment"}}</button>
+          
         </div>
       </div>
 

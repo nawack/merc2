@@ -101,3 +101,6 @@ Ajouter un système de combat :
     ✔ ajouter la gestion des segments (ordre, eligible, etc) @done(26-02-06 00:27)
     ✔ gérer le style @done(26-02-06 00:27)
     - check roll d'init encore présents
+
+Gestion des véhicules :
+    - créer la fiche de véhicule pour gestion token véhicule

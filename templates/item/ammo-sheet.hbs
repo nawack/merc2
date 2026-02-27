@@ -1,0 +1,108 @@
+<div class="{{cssClass}}" data-application-part="form">
+  <header class="ammo-sheet-header">
+    <img class="ammo-sheet-img" src="{{item.img}}" data-edit="img" title="{{item.name}}">
+    <div class="ammo-sheet-title">
+      <input type="text" name="name" value="{{item.name}}" placeholder="{{localize "MERC.UI.items.ammoSheet.namePlaceholder"}}">
+      <div class="ammo-sheet-subtitle">{{localize "MERC.UI.items.ammoSheet.subtitle"}}</div>
+    </div>
+  </header>
+
+  <section class="ammo-sheet-body">
+    <div class="ammo-sheet-grid">
+      <div class="ammo-field-group">
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.ammoType"}}</label>
+          <select name="system.ammoType" value="{{item.system.ammoType}}">
+            <option value="">{{localize "MERC.UI.items.ammoSheet.ammoTypePlaceholder"}}</option>
+            <option value="bullet" {{#if (eq item.system.ammoType "bullet")}}selected{{/if}}>{{localize "MERC.UI.items.ammoSheet.ammoTypes.bullet"}}</option>
+            <option value="shell" {{#if (eq item.system.ammoType "shell")}}selected{{/if}}>{{localize "MERC.UI.items.ammoSheet.ammoTypes.shell"}}</option>
+            <option value="arrow" {{#if (eq item.system.ammoType "arrow")}}selected{{/if}}>{{localize "MERC.UI.items.ammoSheet.ammoTypes.arrow"}}</option>
+            <option value="bolt" {{#if (eq item.system.ammoType "bolt")}}selected{{/if}}>{{localize "MERC.UI.items.ammoSheet.ammoTypes.bolt"}}</option>
+            <option value="energy" {{#if (eq item.system.ammoType "energy")}}selected{{/if}}>{{localize "MERC.UI.items.ammoSheet.ammoTypes.energy"}}</option>
+            <option value="explosive" {{#if (eq item.system.ammoType "explosive")}}selected{{/if}}>{{localize "MERC.UI.items.ammoSheet.ammoTypes.explosive"}}</option>
+            <option value="other" {{#if (eq item.system.ammoType "other")}}selected{{/if}}>{{localize "MERC.UI.items.ammoSheet.ammoTypes.other"}}</option>
+          </select>
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.caliber"}}</label>
+          <input type="text" name="system.caliber" value="{{item.system.caliber}}" placeholder="{{localize "MERC.UI.items.ammoSheet.caliberPlaceholder"}}">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.quantity"}}</label>
+          <input type="number" name="system.quantity" value="{{item.system.quantity}}" min="0" step="1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.maxQuantity"}}</label>
+          <input type="number" name="system.maxQuantity" value="{{item.system.maxQuantity}}" min="0" step="1">
+        </div>
+      </div>
+
+      <div class="ammo-field-group">
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.weight"}}</label>
+          <input type="number" name="system.weight" value="{{item.system.weight}}" min="0" step="0.1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.weightAmmo"}}</label>
+          <input type="number" name="system.weightAmmo" value="{{item.system.weightAmmo}}" min="0" step="0.1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.velocity"}}</label>
+          <input type="number" name="system.velocity" value="{{item.system.velocity}}" min="0" step="1">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.damage"}}</label>
+          <input type="text" name="system.damage" value="{{item.system.damage}}" readonly>
+        </div>
+      </div>
+
+      <div class="ammo-field-penetration">
+        <div class="ammo-field-penetration-header">{{localize "MERC.UI.items.ammoSheet.penetration"}}</div>
+        <div class="ammo-field-penetration-grid">
+          <div class="ammo-field">
+            <label>{{localize "MERC.UI.items.ammoSheet.penetrationShort"}}</label>
+            <input type="number" name="system.penetration.short" value="{{item.system.penetration.short}}" min="0" step="1">
+          </div>
+
+          <div class="ammo-field">
+            <label>{{localize "MERC.UI.items.ammoSheet.penetrationMedium"}}</label>
+            <input type="number" name="system.penetration.medium" value="{{item.system.penetration.medium}}" min="0" step="1">
+          </div>
+
+          <div class="ammo-field">
+            <label>{{localize "MERC.UI.items.ammoSheet.penetrationLong"}}</label>
+            <input type="number" name="system.penetration.long" value="{{item.system.penetration.long}}" min="0" step="1">
+          </div>
+
+          <div class="ammo-field">
+            <label>{{localize "MERC.UI.items.ammoSheet.penetrationExtreme"}}</label>
+            <input type="number" name="system.penetration.extreme" value="{{item.system.penetration.extreme}}" min="0" step="1">
+          </div>
+        </div>
+      </div>
+
+      <div class="ammo-field-group">
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.rarity"}}</label>
+          <input type="text" name="system.rarity" value="{{item.system.rarity}}" placeholder="{{localize "MERC.UI.items.ammoSheet.rarityPlaceholder"}}">
+        </div>
+
+        <div class="ammo-field">
+          <label>{{localize "MERC.UI.items.ammoSheet.price"}}</label>
+          <input type="number" name="system.price" value="{{item.system.price}}" min="0" step="1">
+        </div>
+
+        <div class="ammo-field ammo-field--full">
+          <label>{{localize "MERC.UI.items.ammoSheet.description"}}</label>
+          <textarea name="system.description" rows="3" placeholder="{{localize "MERC.UI.items.ammoSheet.descriptionPlaceholder"}}">{{item.system.description}}</textarea>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

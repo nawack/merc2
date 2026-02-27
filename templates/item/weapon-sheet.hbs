@@ -1,4 +1,4 @@
-<form class="{{cssClass}}" autocomplete="off" data-application-part="form">
+<div class="{{cssClass}}" data-application-part="form">
   <header class="weapon-sheet-header">
     <img class="weapon-sheet-img" src="{{item.img}}" data-edit="img" title="{{item.name}}">
     <div class="weapon-sheet-title">
@@ -47,14 +47,6 @@
         </div>
 
         <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.proficiency"}}</label>
-          <select name="system.proficiency" value="{{item.system.proficiency}}" data-dtype="Number">
-            <option value="0" {{#if (eq item.system.proficiency "0")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyNo"}}</option>
-            <option value="1" {{#if (eq item.system.proficiency "1")}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyYes"}}</option>
-          </select>
-        </div>
-
-        <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rarity"}}</label>
           <input type="text" name="system.rarity" value="{{item.system.rarity}}" placeholder="{{localize "MERC.UI.items.weaponSheet.rarityPlaceholder"}}">
         </div>
@@ -63,20 +55,18 @@
           <label>{{localize "MERC.UI.items.weaponSheet.price"}}</label>
           <input type="text" name="system.price" value="{{item.system.price}}" placeholder="{{localize "MERC.UI.items.weaponSheet.pricePlaceholder"}}">
         </div>
+
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.proficiency"}}</label>
+          <select name="system.proficiency" value="{{item.system.proficiency}}" data-dtype="Number">
+            <option value="0" {{#if (eq item.system.proficiency 0)}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyNo"}}</option>
+            <option value="1" {{#if (eq item.system.proficiency 1)}}selected{{/if}}>{{localize "MERC.UI.items.weaponSheet.proficiencyYes"}}</option>
+          </select>
+        </div>
+
       </div>
 
       <div class="weapon-field-group">
-        {{#if (or (eq item.system.weaponSubtype "powder_projectiles") (eq item.system.weaponSubtype "mechanical_projectiles") (eq item.system.weaponSubtype "heavy_weapons") (eq item.system.weaponSubtype "electronic_weapons"))}}
-        <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.ammoType"}}</label>
-          <input type="text" name="system.ammoType" value="{{item.system.ammoType}}" placeholder="{{localize "MERC.UI.items.weaponSheet.ammoTypePlaceholder"}}">
-        </div>
-        <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.magazineCapacity"}}</label>
-          <input type="number" name="system.magazineCapacity" value="{{item.system.magazineCapacity}}" min="0" step="1">
-        </div>
-        {{/if}}
-
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.weightKg"}}</label>
           <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="1">
@@ -97,42 +87,57 @@
       <div class="weapon-ranges-header">{{localize "MERC.UI.items.weaponSheet.ranges"}}</div>
       <div class="weapon-ranges-grid">
         <div class="weapon-field">
-          <label>{{localize "MERC.UI.items.weaponSheet.rangePointBlank"}}</label>
-          <div class="weapon-range-input">
-            <input type="number" name="system.range.pointBlank" value="{{item.system.range.pointBlank}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
-          </div>
-        </div>
-        <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeShort"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.short" value="{{item.system.range.short}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeMedium"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.medium" value="{{item.system.range.medium}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeLong"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.long" value="{{item.system.range.long}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
         <div class="weapon-field">
           <label>{{localize "MERC.UI.items.weaponSheet.rangeExtreme"}}</label>
           <div class="weapon-range-input">
             <input type="number" name="system.range.extreme" value="{{item.system.range.extreme}}" min="0" step="1">
-            <span class="weapon-range-unit">{{localize "MERC.UI.items.weaponSheet.rangeUnit"}}</span>
           </div>
         </div>
       </div>
     </div>
     {{/if}}
+
+    {{#if (or (eq item.system.weaponSubtype "powder_projectiles") (eq item.system.weaponSubtype "mechanical_projectiles") (eq item.system.weaponSubtype "heavy_weapons") (eq item.system.weaponSubtype "electronic_weapons"))}}
+    <div class="weapon-ammo-section">
+      <div class="weapon-ammo-header">{{localize "MERC.UI.items.weaponSheet.ammoSection"}}</div>
+      <div class="weapon-ammo-list">
+        {{#if ammoItems}}
+          {{#each ammoItems as |ammo|}}
+          <div class="weapon-ammo-item item" data-item-id="{{ammo._id}}">
+            <div class="weapon-ammo-info">
+              <span class="weapon-ammo-name">{{ammo.name}}</span>
+              <span class="weapon-ammo-caliber">{{ammo.system.caliber}}</span>
+              <span class="weapon-ammo-qty">{{ammo.system.quantity}} / {{ammo.system.maxQuantity}}</span>
+            </div>
+            <div class="weapon-ammo-controls">
+              <button type="button" class="weapon-ammo-edit" title="Edit">✎</button>
+              <button type="button" class="weapon-ammo-delete" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          {{/each}}
+        {{else}}
+          <div class="weapon-ammo-empty">{{localize "MERC.UI.items.weaponSheet.ammoNone"}}</div>
+        {{/if}}
+      </div>
+      <button type="button" class="weapon-ammo-add btn" data-type="ammo">{{localize "MERC.UI.items.weaponSheet.addAmmo"}}</button>
+    </div>
+    {{/if}}
   </section>
-</form>
+</div>

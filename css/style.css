@@ -1089,8 +1089,9 @@
 .ammo-controls {
   display: flex;
   gap: 5px;
-  align-items: flex-end;
+  align-items: center;
   justify-content: flex-end;
+  max-height: 28px;
 }
 
 .weapon-skill-roll,
@@ -1489,6 +1490,12 @@
 .ammo-name {
   font-size: 10px;
   color: #666;
+  width: 50px;
+  text-align: center;
+  white-space: nowrap;
+}
+.ammo-info {
+  overflow:hidden;
 }
 
 .combat-base-damage-roll,

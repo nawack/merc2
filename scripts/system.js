@@ -656,7 +656,7 @@ async function migrateItem(item, actor = null) {
 
     // Ensure damage exists
     if (item.system.damage === undefined || item.system.damage === null) {
-      updateData["system.damage"] = "1d8";
+      updateData["system.damage"] = "";
     }
     // Ensure range sub-fields exist
     if (!item.system.range) {
@@ -1855,7 +1855,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         await this.render();
       });
     });
-        // Item usage
+    
+    // Item usage
     const createBtns = html.querySelectorAll(".item-create");
     createBtns.forEach(btn => {
       btn.addEventListener("click", (event) => {

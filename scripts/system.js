@@ -677,7 +677,10 @@ async function migrateItem(item, actor = null) {
       caliber: "",
       quantity: 0,
       maxQuantity: 0,
-      weightKg: 0,
+      weight: 0,
+      weightAmmo: 0,
+      velocity: 0,
+      damage: "",
       price: 0,
       rarity: "common",
       description: "",
@@ -687,6 +690,17 @@ async function migrateItem(item, actor = null) {
     for (const [key, defaultValue] of Object.entries(ammoDefaults)) {
       if (item.system[key] === undefined || item.system[key] === null) {
         updateData[`system.${key}`] = defaultValue;
+      }
+    }
+
+    // Ensure penetration sub-fields exist
+    if (!item.system.penetration) {
+      updateData["system.penetration"] = { short: 0, medium: 0, long: 0, extreme: 0 };
+    } else {
+      for (const key of ["short", "medium", "long", "extreme"]) {
+        if (item.system.penetration[key] === undefined) {
+          updateData[`system.penetration.${key}`] = 0;
+        }
       }
     }
 

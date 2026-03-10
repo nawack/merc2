@@ -21,7 +21,8 @@ FoundryVTT-MercenarySystem/
 │
 ├── 📁 templates/
 │   └── 📁 actor/
-│       └── 📄 character-sheet.hbs    # Template Handlebars de la feuille de personnage
+│       ├── 📄 character-sheet.hbs    # Template Handlebars de la feuille de personnage (character, npc)
+│       └── 📄 vehicle-sheet.hbs      # Template Handlebars de la feuille de véhicule
 │
 ├── 📁 css/
 │   └── 📄 style.css                  # Styles CSS du système
@@ -63,25 +64,35 @@ FoundryVTT-MercenarySystem/
 - Modifier la structure des données
 
 ### `scripts/system.js`
-**Rôle** : Code JavaScript du système (~1300 lignes)
-- Classe `MercCharacterSheet` (feuille de personnage)
+**Rôle** : Code JavaScript du système (~4000 lignes)
+- Classe `MercCharacterSheet` (feuille de personnage : character, npc)
+- Classe `MercVehicleSheet` (feuille de véhicule)
+- Classe `MercWeaponSheet` (feuille d'arme)
+- Classe `MercAmmoSheet` (feuille de munition avec calcul physique de dégâts)
 - Tables de degrés et formules
-- Systèmes de jets D20
+- Systèmes de jets D20, jets de dégâts, jets critiques
+- Migration des données (`migrateWorld`, `migrateItem`, `getActorMigrationData`)
 - Gestion des événements UI
 
-**Sections principales** :
-- Lignes 1-190 : Fonctions utilitaires et tables
-- Lignes 191-660 : Classe MercCharacterSheet - initialisation
-- Lignes 661-945 : Méthode `_onRender()` - event listeners
-- Lignes 946-1100 : Méthodes de jets et d'édition d'objets
-- Lignes 1101-1295 : Configuration Foundry et enregistrement
+**Classes principales** :
+- `MercCharacterSheet` : feuille personnage/npc complète
+- `MercVehicleSheet` : feuille véhicule avec armes et jets Fire Control
+- `MercWeaponSheet` : feuille item arme
+- `MercAmmoSheet` : feuille item munition
 
 ### `templates/actor/character-sheet.hbs`
-**Rôle** : Template HTML de la feuille de personnage
+**Rôle** : Template HTML de la feuille de personnage (character, npc)
 - Structure du formulaire
-- Onglets (Stats, Skills, Items)
-- Sections des attributs et compétences
+- Onglets : Attributs, Compétences, Combat, Équipements, Notes
+- Sections des attributs, compétences, armes, munitions
 - Portrait du personnage
+
+### `templates/actor/vehicle-sheet.hbs`
+**Rôle** : Template HTML de la feuille de véhicule
+- En-tête : image, nom, prix, rareté
+- Onglet Détails : caractéristiques générales, capacités, mobilité
+- Onglet Armes : gestion des armes/munitions + jets de combat
+- Onglet Notes : zone de texte libre
 
 **Sections principales** :
 - Lignes 1-75 : En-tête avec portrait et infos du personnage
@@ -176,6 +187,16 @@ Rendu dans Foundry VTT
 - Ajouter traduction dans `lang/*.json`
 - Ajouter logique dans `system.js` (config.MERC.skills)
 
+**Nouveaux Types d'Acteurs** :
+- Déclarer dans `system.json` (documentTypes.Actor)
+- Ajouter données dans `template.json` (Actor.{type})
+- Créer template dans `templates/actor/{type}-sheet.hbs`
+- Créer classe `Merc{Type}Sheet` dans `system.js`
+- Enregistrer avec `Actors.registerSheet()` dans le hook `init`
+- Ajouter migration dans `getActorMigrationData()` (branche sur `actor.type`)
+- Exclure du hook `preCreateActor` si modèle différent du personnage
+- Ajouter styles CSS et traductions
+
 **Nouveaux Types d'Objets** :
 - Ajouter dans `template.json` (documentTypes.Item)
 - Créer nouveau template dans `templates/item/`
@@ -218,5 +239,5 @@ Rendu dans Foundry VTT
 
 ---
 
-**Dernière mise à jour** : 2026-01-30  
-**Version** : 1.0.1
+**Dernière mise à jour** : 2026-03-10  
+**Version** : 1.0.11

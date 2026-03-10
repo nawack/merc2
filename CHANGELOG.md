@@ -2,6 +2,32 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.11] - 2026-03-10
+
+### Added
+- 🚗 **Fiche Véhicule** : Nouveau type d'acteur `vehicle` avec fiche dédiée
+  - Champs : Prix, Rareté, Fire Control Bonus, Type de carburant (7 options), Stabilisation, Chargement (T), PTAC (T), Équipage, Maintenance, Vision de nuit (4 options), NRBC (3 options), TR Mov, Com Mov, Fuel Cap, Fuel Cons
+  - Image de véhicule cliquable (FilePicker Foundry natif)
+  - Zone de notes libre
+  - Gestion complète des armes et munitions (identique à la fiche personnage)
+  - Jets de dégâts avec format "arme (munition)" dans le chat
+  - Jets de compétence arme utilisant le Fire Control Bonus comme modificateur
+  - Drag & drop ammo sur les armes
+  - Suppression en cascade arme → munitions liées
+  - Boutons +/− sur tous les champs numériques avec affichage des unités
+- 🔧 **Migration véhicule** : Tous les champs véhicule migrés automatiquement via `getActorMigrationData()`
+- 🛡️ **preCreateActor** : Le hook ne force plus les données personnage sur les acteurs de type véhicule
+
+### Technical
+- Classe `MercVehicleSheet` dans `scripts/system.js`
+- Template `templates/actor/vehicle-sheet.hbs`
+- Type `vehicle` déclaré dans `system.json` et `template.json`
+- Migration `getActorMigrationData()` étendue avec branche `actor.type === "vehicle"`
+- Traductions FR/EN complètes sous la clé `MERC.Vehicle.*`
+- CSS dédié `.merc.sheet.actor.vehicle` dans `style.css`
+
+---
+
 ## [1.0.9] - 2026-02-06
 
 ### Added

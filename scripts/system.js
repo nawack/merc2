@@ -2890,6 +2890,365 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
   }
 }
 
+// ============================================================
+// MercVehicleSheet — Fiche d'acteur Véhicule
+// ============================================================
+class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    classes: ["merc", "sheet", "actor", "vehicle"],
+    width: 560,
+    height: 780,
+    resizable: true,
+    minWidth: 480,
+    minHeight: 600,
+    parts: ["form"],
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    },
+    tabs: [
+      {
+        navSelector: ".sheet-tabs",
+        contentSelector: ".sheet-body",
+        initial: "details"
+      }
+    ]
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/actor/vehicle-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const actorDoc = this.actor ?? this.document;
+
+    data.actor = actorDoc?.toObject ? actorDoc.toObject() : actorDoc;
+    if (actorDoc?.items) {
+      data.actor.items = actorDoc.items.map(item => item.toObject());
+    }
+
+    // Defaults for vehicle fields
+    const sys = data.actor.system ?? {};
+    data.actor.system = foundry.utils.mergeObject({
+      price: 0,
+      rarity: "common",
+      fireControlBonus: 0,
+      fuelType: "diesel",
+      stabilization: "none",
+      load: 0,
+      ptac: 0,
+      crew: "",
+      maintenance: "",
+      nightVision: "headlights",
+      nrbc: "open",
+      trMov: 0,
+      comMov: 0,
+      fuelCap: 0,
+      fuelCons: 0,
+      notes: ""
+    }, sys, { inplace: false, overwrite: true });
+
+    // Labels for weapon skills (used in the template)
+    const weaponSkillLabels = {};
+    if (CONFIG.MERC?.skills) {
+      for (const [key, cfg] of Object.entries(CONFIG.MERC.skills)) {
+        weaponSkillLabels[key] = game.i18n.localize(cfg.label);
+      }
+    }
+    data.weaponSkillLabels = weaponSkillLabels;
+
+    return data;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;
+    if (!html) return;
+
+    // Portrait selection
+    initPortraitSelection(this.actor, html);
+
+    // Drag & Drop highlight on weapon cards
+    html.querySelectorAll(".item-card[data-item-id]").forEach(card => {
+      card.addEventListener("dragenter", () => {
+        const weapon = this.actor.items.get(card.dataset.itemId);
+        if (weapon?.type === "weapon") card.classList.add("drop-highlight");
+      });
+      card.addEventListener("dragleave", (e) => {
+        if (!card.contains(e.relatedTarget)) card.classList.remove("drop-highlight");
+      });
+      card.addEventListener("drop", () => card.classList.remove("drop-highlight"));
+    });
+
+    // ── Tab handling (same pattern as MercCharacterSheet) ──
+    const tabItems = html.querySelectorAll(".sheet-tabs .item");
+
+    // Restore last active tab after re-render
+    if (this._currentTab) {
+      html.querySelectorAll(".sheet-tabs .item").forEach(t => t.classList.remove("active"));
+      html.querySelectorAll(".sheet-body .tab-content").forEach(c => c.classList.remove("active"));
+      const tab = html.querySelector(`.sheet-tabs .item[data-tab="${this._currentTab}"]`);
+      const tabContent = html.querySelector(`.sheet-body .tab-content[data-tab="${this._currentTab}"]`);
+      if (tab && tabContent) {
+        tab.classList.add("active");
+        tabContent.classList.add("active");
+      }
+    }
+
+    tabItems.forEach(tab => {
+      tab.addEventListener("click", (event) => {
+        event.preventDefault();
+        const tabName = tab.dataset.tab;
+        html.querySelectorAll(".sheet-tabs .item").forEach(t => t.classList.remove("active"));
+        html.querySelectorAll(".sheet-body .tab-content").forEach(c => c.classList.remove("active"));
+        tab.classList.add("active");
+        const tabContent = html.querySelector(`.sheet-body .tab-content[data-tab="${tabName}"]`);
+        if (tabContent) tabContent.classList.add("active");
+        this._currentTab = tabName;
+      });
+    });
+
+    // +/− buttons for numeric vehicle fields
+    html.querySelectorAll(".vehicle-btn-minus, .vehicle-btn-plus").forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const field = event.currentTarget.dataset.field;
+        if (!field) return;
+        const input = html.querySelector(`input[name="${field}"]`);
+        if (!input) return;
+        const step = parseFloat(input.step) || 1;
+        let val = parseFloat(input.value) || 0;
+        if (event.currentTarget.classList.contains("vehicle-btn-minus")) val -= step;
+        else val += step;
+        val = Math.round(val * 1000) / 1000;
+        input.value = val;
+        await this.actor.update({ [field]: val });
+      });
+    });
+
+    // Item create
+    html.querySelectorAll(".item-create").forEach(btn => {
+      btn.addEventListener("click", e => this.createItem(e));
+    });
+
+    // Item delete
+    html.querySelectorAll(".item-delete").forEach(btn => {
+      btn.addEventListener("click", e => this.deleteItem(e));
+    });
+
+    // Item edit
+    html.querySelectorAll(".item-edit").forEach(btn => {
+      btn.addEventListener("click", e => this.editItem(e));
+    });
+
+    // Weapon skill roll — uses fireControlBonus as modifier
+    html.querySelectorAll(".weapon-skill-roll").forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (item) await this.rollVehicleWeaponSkill(item);
+      });
+    });
+
+    // Weapon damage roll
+    html.querySelectorAll(".weapon-damage-roll").forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (item) await this.rollWeaponDamage(item);
+      });
+    });
+  }
+
+  async _onDropItem(event, item) {
+    if (!this.actor.isOwner) return null;
+
+    if (item?.type === "ammo") {
+      const weaponCard = event.target.closest(".item-card[data-item-id]");
+      if (weaponCard) {
+        const weaponId = weaponCard.dataset.itemId;
+        const weapon = this.actor.items.get(weaponId);
+        if (weapon?.type === "weapon") {
+          const ammoData = item.toObject();
+          ammoData.system.parentWeaponId = weaponId;
+          const created = await Item.create(ammoData, { parent: this.actor });
+          if (created) {
+            ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
+          }
+          return created ?? null;
+        }
+      }
+      ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.dropAmmoOnWeapon"));
+      return null;
+    }
+
+    if (this.actor.uuid === item.parent?.uuid) {
+      return (await this._onSortItem(event, item))?.length ? item : null;
+    }
+    const keepId = !this.actor.items.has(item.id);
+    const result = await Item.implementation.create(item.toObject(), { parent: this.actor, keepId });
+
+    if (result && item.type === "weapon") {
+      const oldWeaponId = item.id;
+      const newWeaponId = result.id;
+      let linkedAmmo = [];
+      if (item.parent) {
+        linkedAmmo = item.parent.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === oldWeaponId);
+      }
+      if (linkedAmmo.length) {
+        const ammoDataArray = linkedAmmo.map(a => {
+          const data = a.toObject();
+          data.system.parentWeaponId = newWeaponId;
+          return data;
+        });
+        await Item.implementation.create(ammoDataArray, { parent: this.actor });
+      }
+    }
+    return result ?? null;
+  }
+
+  async rollVehicleWeaponSkill(item) {
+    const actor = this.actor ?? this.document;
+    const fireControlBonus = Number(actor.system?.fireControlBonus ?? 0);
+    const proficiencyBonus = item.system?.proficiency ? 3 : 0;
+    const modifier = fireControlBonus + proficiencyBonus;
+    const label = `${actor.name} - ${item.name || game.i18n.localize("MERC.UI.items.weapons")}`;
+    await this._sendD20RollMessage(label, modifier, `Fire Control +${fireControlBonus}`);
+  }
+
+  async rollWeaponDamage(item) {
+    const actor = this.actor ?? this.document;
+    if (!actor || !item) return;
+
+    const weaponDamageFormula = item.system?.damage;
+    if (!weaponDamageFormula) {
+      ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
+      return;
+    }
+
+    const weaponRoll = new Roll(weaponDamageFormula);
+    await weaponRoll.evaluate();
+    const totalDamage = weaponRoll.total;
+
+    // Build dice detail
+    let detailsHtml = `<div style="font-size: 12px; margin-top: 8px;">`;
+    detailsHtml += `<div style="margin-bottom: 6px;"><strong>${game.i18n.localize("MERC.Labels.damageFormulaLabel")}</strong> ${weaponDamageFormula}</div>`;
+    detailsHtml += `<div style="border-top: 1px solid #ccc; padding-top: 6px;"><strong>${game.i18n.localize("MERC.Labels.damageDiceDetail")}</strong><br>`;
+    for (const term of weaponRoll.terms) {
+      if (term?.results?.length > 0) {
+        const results = term.results.map(r => typeof r === "number" ? r : r?.result).filter(r => r != null);
+        if (results.length > 0) {
+          detailsHtml += `&nbsp;&nbsp;${term.formula}: [${results.join(", ")}] = <strong>${results.reduce((a, b) => a + b, 0)}</strong><br>`;
+        }
+      }
+    }
+    detailsHtml += `<div style="border-top: 1px solid #999; margin-top: 6px; padding-top: 6px;">
+      <strong style="font-size: 13px;">${game.i18n.format("MERC.Labels.damageTotalLabel", { total: totalDamage })}</strong>
+    </div></div></div>`;
+
+    // Label: "vehicle (ammo)" if ammo item
+    let itemLabel = item.name || game.i18n.localize("MERC.UI.items.weapons");
+    if (item.type === "ammo") {
+      const parentId = (item.system?.parentWeaponId || "").split(",")[0] || "";
+      const weaponItem = parentId ? (this.actor.items.get(parentId) || null) : null;
+      if (weaponItem?.name) itemLabel = `${weaponItem.name} (${item.name})`;
+    }
+
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      rolls: [weaponRoll],
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} - ${itemLabel}</span>
+          <span class="merc-roll-badge">${totalDamage}</span>
+        </div>
+        <div class="merc-roll-breakdown">${detailsHtml}</div>
+      </div>`
+    };
+    await ChatMessage.create(chatData);
+  }
+
+  async _sendD20RollMessage(label, modifier, breakdownText = "") {
+    const actor = this.actor ?? this.document;
+    const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
+    const total = adjustedTotal + modifier;
+    const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
+    const badgeClass = secondRollDirection === "added"
+      ? " merc-roll-badge--bonus"
+      : secondRollDirection === "subtracted"
+        ? " merc-roll-badge--penalty"
+        : "";
+    const rollTextClass = secondRollDirection === "added"
+      ? " roll-bonus"
+      : secondRollDirection === "subtracted"
+        ? " roll-penalty"
+        : "";
+    const rollsText = rolls.map(r => `<span class="roll-d20${rollTextClass}">${r.total}</span>`).join(" + ");
+    const directionLabel = secondRollDirection
+      ? ` (${game.i18n.localize(`MERC.Labels.roll${secondRollDirection.charAt(0).toUpperCase() + secondRollDirection.slice(1)}`)})`
+      : "";
+
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      rolls,
+      content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${label}</span>
+          <span class="merc-roll-badge${badgeClass}">${total}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          ${rollsText}${directionLabel}
+          ${modifier !== 0 ? `<span class="roll-modifier"> + ${modifier}</span>` : ""}
+          ${breakdownText ? `<br><span class="roll-detail">${breakdownText}</span>` : ""}
+        </div>
+      </div>`
+    };
+    await ChatMessage.create(chatData);
+  }
+
+  async createItem(event) {
+    const type = event.currentTarget.dataset.type;
+    const newItem = { name: `New ${type}`, type, system: {} };
+    const item = await Item.create(newItem, { parent: this.actor });
+    item.sheet.render(true);
+  }
+
+  async deleteItem(event) {
+    const itemId = event.currentTarget.closest(".item").dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    if (item?.type === "weapon") {
+      const linkedAmmoIds = this.actor.items
+        .filter(i => i.type === "ammo" && i.system?.parentWeaponId === itemId)
+        .map(i => i.id);
+      if (linkedAmmoIds.length > 0) {
+        await this.actor.deleteEmbeddedDocuments("Item", linkedAmmoIds);
+      }
+    }
+    await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+  }
+
+  async editItem(event) {
+    const itemId = event.currentTarget.closest(".item").dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    item.sheet.render(true);
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const actorDoc = this.document ?? this.actor;
+    if (this.window?.title && actorDoc?.name) {
+      this.window.title.textContent = actorDoc.name;
+    }
+  }
+}
+
 // Initialize the system
 Hooks.once("init", () => {
   // Register migration version setting
@@ -2986,7 +3345,12 @@ Hooks.once("init", () => {
   Handlebars.registerHelper("gt", function(a, b) {
     return a > b;
   });
-  Handlebars.registerHelper("eq", function(a, b) {
+  Handlebars.registerHelper("eq", function(a, b, options) {
+    // Block helper usage: {{#eq a b}}content{{/eq}}
+    if (options && typeof options.fn === "function") {
+      return (a === b) ? options.fn(this) : (options.inverse ? options.inverse(this) : "");
+    }
+    // Inline usage: {{eq a b}} or inside {{#if (eq a b)}}
     return a === b;
   });
   Handlebars.registerHelper("mod", function(a, b) {
@@ -3003,6 +3367,7 @@ Hooks.once("init", () => {
   // Register Actor Sheets
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("merc", MercCharacterSheet, { types: ["character", "npc"], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet("merc", MercVehicleSheet, { types: ["vehicle"], makeDefault: true });
 
   // Register Item Sheets
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
@@ -3272,6 +3637,36 @@ const getActorMigrationData = (actor) => {
   const updateData = {};
   const system = actor.system || {};
 
+  // --- Vehicle migration (separate data model) ---
+  if (actor.type === "vehicle") {
+    const vehicleDefaults = {
+      price: 0,
+      rarity: "common",
+      fireControlBonus: 0,
+      fuelType: "diesel",
+      stabilization: "none",
+      load: 0,
+      ptac: 0,
+      crew: "",
+      maintenance: "",
+      nightVision: "headlights",
+      nrbc: "open",
+      trMov: 0,
+      comMov: 0,
+      fuelCap: 0,
+      fuelCons: 0,
+      notes: ""
+    };
+    for (const [key, defaultValue] of Object.entries(vehicleDefaults)) {
+      if (system[key] === undefined || system[key] === null) {
+        updateData[`system.${key}`] = defaultValue;
+      }
+    }
+    return updateData;
+  }
+
+  // --- Character / NPC migration below ---
+
   if (system.skills?.language_serbian && !system.skills?.language_native) {
     updateData["system.skills.language_native"] = foundry.utils.duplicate(system.skills.language_serbian);
     updateData["system.skills.-=language_serbian"] = null;
@@ -3452,6 +3847,9 @@ Hooks.once("ready", async () => {
 
 // Hook for initializing actor data
 Hooks.on("preCreateActor", (actor, data, options, userId) => {
+  // Vehicles use their own data model — skip character defaults
+  if (data.type === "vehicle") return;
+
   if (!data.system) {
     data.system = {};
   }

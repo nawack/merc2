@@ -273,6 +273,69 @@
       "inventory": "Inventaire",
       "spells": "Sorts"
     },
+    "Vehicle": {
+      "imageTitle": "Cliquez pour choisir une image",
+      "chooseImage": "Choisir une image",
+      "namePlaceholder": "Nom du véhicule",
+      "price": "Prix",
+      "rarity": "Rareté",
+      "fireControlBonus": "Fire Control Bonus",
+      "stabilization": "Stabilisation",
+      "stabilizationTypes": {
+        "none": "Aucune",
+        "basic": "Basique",
+        "good": "Bonne"
+      },
+      "fuelType": "Type de carburant",
+      "fuelTypes": {
+        "diesel": "Diesel",
+        "gasoline": "Essence",
+        "avgas": "Avgas",
+        "ethanol": "Ethanol",
+        "methanol": "Methanol",
+        "wood": "Bois",
+        "coal": "Charbon"
+      },
+      "nightVision": "Vision de nuit",
+      "nightVisionTypes": {
+        "headlights": "Feux de route",
+        "nv_goggles": "Jumelles de Vision de nuit",
+        "searchlight": "Lampe de recherche",
+        "ir": "IR"
+      },
+      "nrbc": "NRBC",
+      "nrbcTypes": {
+        "open": "Ouvert",
+        "enclosed": "Enfermé",
+        "protected": "Protégé"
+      },
+      "load": "Chargement (T)",
+      "ptac": "PTAC (T)",
+      "crew": "Equipage",
+      "crewPlaceholder": "ex : 2 + 8 passagers",
+      "maintenance": "Maintenance",
+      "maintenancePlaceholder": "ex : mensuelle",
+      "trMov": "TR Mov (km/4h)",
+      "comMov": "Com Mov (m/tour)",
+      "fuelCap": "Fuel Cap (L)",
+      "fuelCons": "Fuel Cons (L/4h)",
+      "unitTonnes": "T",
+      "unitKm4h": "km / 4h",
+      "unitMPerTurn": "m / tour",
+      "unitLitres": "L",
+      "unitLitres4h": "L / 4h",
+      "tabs": {
+        "details": "Détails",
+        "weapons": "Armes",
+        "notes": "Notes"
+      },
+      "sections": {
+        "general": "Caractéristiques générales",
+        "capacity": "Capacités",
+        "mobility": "Mobilité"
+      },
+      "weaponsEquipped": "Armes équipées"
+    },
     "Labels": {
       "check": "Test de",
       "attributesInitialized": "Attributs initialisés. Veuillez réessayer.",

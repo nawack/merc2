@@ -273,6 +273,69 @@
       "inventory": "Inventory",
       "spells": "Spells"
     },
+    "Vehicle": {
+      "imageTitle": "Click to choose an image",
+      "chooseImage": "Choose an image",
+      "namePlaceholder": "Vehicle name",
+      "price": "Price",
+      "rarity": "Rarity",
+      "fireControlBonus": "Fire Control Bonus",
+      "stabilization": "Stabilization",
+      "stabilizationTypes": {
+        "none": "None",
+        "basic": "Basic",
+        "good": "Good"
+      },
+      "fuelType": "Fuel Type",
+      "fuelTypes": {
+        "diesel": "Diesel",
+        "gasoline": "Gasoline",
+        "avgas": "Avgas",
+        "ethanol": "Ethanol",
+        "methanol": "Methanol",
+        "wood": "Wood",
+        "coal": "Coal"
+      },
+      "nightVision": "Night Vision",
+      "nightVisionTypes": {
+        "headlights": "Headlights",
+        "nv_goggles": "NV Goggles",
+        "searchlight": "Searchlight",
+        "ir": "IR"
+      },
+      "nrbc": "CBRN",
+      "nrbcTypes": {
+        "open": "Open",
+        "enclosed": "Enclosed",
+        "protected": "Protected"
+      },
+      "load": "Load (T)",
+      "ptac": "GVW (T)",
+      "crew": "Crew",
+      "crewPlaceholder": "e.g. 2 + 8 passengers",
+      "maintenance": "Maintenance",
+      "maintenancePlaceholder": "e.g. monthly",
+      "trMov": "TR Mov (km/4h)",
+      "comMov": "Com Mov (m/tour)",
+      "fuelCap": "Fuel Cap (L)",
+      "fuelCons": "Fuel Cons (L/4h)",
+      "unitTonnes": "T",
+      "unitKm4h": "km / 4h",
+      "unitMPerTurn": "m / turn",
+      "unitLitres": "L",
+      "unitLitres4h": "L / 4h",
+      "tabs": {
+        "details": "Details",
+        "weapons": "Weapons",
+        "notes": "Notes"
+      },
+      "sections": {
+        "general": "General Characteristics",
+        "capacity": "Capacity",
+        "mobility": "Mobility"
+      },
+      "weaponsEquipped": "Equipped Weapons"
+    },
     "Labels": {
       "check": "Check",
       "attributesInitialized": "Attributes initialized. Please try again.",

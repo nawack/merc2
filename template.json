@@ -1,5 +1,23 @@
 {
   "Actor": {
+    "vehicle": {
+      "price": 0,
+      "rarity": "common",
+      "fireControlBonus": 0,
+      "fuelType": "diesel",
+      "stabilization": "none",
+      "load": 0,
+      "ptac": 0,
+      "crew": "",
+      "maintenance": "",
+      "nightVision": "headlights",
+      "nrbc": "open",
+      "trMov": 0,
+      "comMov": 0,
+      "fuelCap": 0,
+      "fuelCons": 0,
+      "notes": ""
+    },
     "base": {
       "biography": {
         "age": "",

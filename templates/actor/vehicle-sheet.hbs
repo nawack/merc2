@@ -1,0 +1,288 @@
+<div class="{{cssClass}}">
+  <!-- HEADER -->
+  <div class="sheet-header">
+    <div class="header-columns">
+      <!-- Left Column: Vehicle Image -->
+      <div class="header-image-column">
+        <div class="portrait-container">
+          <img class="character-portrait" src="{{actor.img}}" alt="{{actor.name}}" title="{{localize "MERC.Vehicle.imageTitle"}}">
+          <div class="portrait-overlay">
+            <button type="button" class="portrait-browse-btn" title="{{localize "MERC.Vehicle.chooseImage"}}">
+              <i class="fas fa-folder-open"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Name + Tabs -->
+      <div class="header-info-column">
+        <div class="header-info-and-tabs">
+          <div class="header-info-block">
+            <div class="header-info-row header-row-1">
+              <div class="field-name-large">
+                <input type="text" name="name" value="{{actor.name}}" placeholder="{{localize "MERC.Vehicle.namePlaceholder"}}">
+              </div>
+            </div>
+            <div class="header-info-row header-row-2">
+              <div class="field-inline">
+                <label>{{localize "MERC.Vehicle.price"}}</label>
+                <input type="number" name="system.price" value="{{actor.system.price}}" min="0">
+              </div>
+              <div class="field-inline">
+                <label>{{localize "MERC.Vehicle.rarity"}}</label>
+                <input type="text" name="system.rarity" value="{{actor.system.rarity}}">
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Tabs -->
+          <nav class="sheet-tabs tabs" data-group="primary">
+            <a class="item active" data-tab="details">{{localize "MERC.Vehicle.tabs.details"}}</a>
+            <a class="item" data-tab="weapons">{{localize "MERC.Vehicle.tabs.weapons"}}</a>
+            <a class="item" data-tab="notes">{{localize "MERC.Vehicle.tabs.notes"}}</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT -->
+  <section class="sheet-body">
+
+    <!-- DETAILS TAB -->
+    <div class="tab-content active" data-tab="details">
+      <div class="vehicle-details-grid">
+
+        <!-- Section: Caractéristiques générales -->
+        <div class="vehicle-section">
+          <h3>{{localize "MERC.Vehicle.sections.general"}}</h3>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.fireControlBonus"}}</label>
+            <div class="vehicle-number-control">
+              <button type="button" class="vehicle-btn-minus" data-field="system.fireControlBonus">−</button>
+              <input type="number" name="system.fireControlBonus" value="{{actor.system.fireControlBonus}}">
+              <button type="button" class="vehicle-btn-plus" data-field="system.fireControlBonus">+</button>
+            </div>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.stabilization"}}</label>
+            <select name="system.stabilization">
+              <option value="none" {{#eq actor.system.stabilization "none"}}selected{{/eq}}>{{localize "MERC.Vehicle.stabilizationTypes.none"}}</option>
+              <option value="basic" {{#eq actor.system.stabilization "basic"}}selected{{/eq}}>{{localize "MERC.Vehicle.stabilizationTypes.basic"}}</option>
+              <option value="good" {{#eq actor.system.stabilization "good"}}selected{{/eq}}>{{localize "MERC.Vehicle.stabilizationTypes.good"}}</option>
+            </select>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.fuelType"}}</label>
+            <select name="system.fuelType">
+              <option value="diesel" {{#eq actor.system.fuelType "diesel"}}selected{{/eq}}>{{localize "MERC.Vehicle.fuelTypes.diesel"}}</option>
+              <option value="gasoline" {{#eq actor.system.fuelType "gasoline"}}selected{{/eq}}>{{localize "MERC.Vehicle.fuelTypes.gasoline"}}</option>
+              <option value="avgas" {{#eq actor.system.fuelType "avgas"}}selected{{/eq}}>{{localize "MERC.Vehicle.fuelTypes.avgas"}}</option>
+              <option value="ethanol" {{#eq actor.system.fuelType "ethanol"}}selected{{/eq}}>{{localize "MERC.Vehicle.fuelTypes.ethanol"}}</option>
+              <option value="methanol" {{#eq actor.system.fuelType "methanol"}}selected{{/eq}}>{{localize "MERC.Vehicle.fuelTypes.methanol"}}</option>
+              <option value="wood" {{#eq actor.system.fuelType "wood"}}selected{{/eq}}>{{localize "MERC.Vehicle.fuelTypes.wood"}}</option>
+              <option value="coal" {{#eq actor.system.fuelType "coal"}}selected{{/eq}}>{{localize "MERC.Vehicle.fuelTypes.coal"}}</option>
+            </select>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.nightVision"}}</label>
+            <select name="system.nightVision">
+              <option value="headlights" {{#eq actor.system.nightVision "headlights"}}selected{{/eq}}>{{localize "MERC.Vehicle.nightVisionTypes.headlights"}}</option>
+              <option value="nv_goggles" {{#eq actor.system.nightVision "nv_goggles"}}selected{{/eq}}>{{localize "MERC.Vehicle.nightVisionTypes.nv_goggles"}}</option>
+              <option value="searchlight" {{#eq actor.system.nightVision "searchlight"}}selected{{/eq}}>{{localize "MERC.Vehicle.nightVisionTypes.searchlight"}}</option>
+              <option value="ir" {{#eq actor.system.nightVision "ir"}}selected{{/eq}}>{{localize "MERC.Vehicle.nightVisionTypes.ir"}}</option>
+            </select>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.nrbc"}}</label>
+            <select name="system.nrbc">
+              <option value="open" {{#eq actor.system.nrbc "open"}}selected{{/eq}}>{{localize "MERC.Vehicle.nrbcTypes.open"}}</option>
+              <option value="enclosed" {{#eq actor.system.nrbc "enclosed"}}selected{{/eq}}>{{localize "MERC.Vehicle.nrbcTypes.enclosed"}}</option>
+              <option value="protected" {{#eq actor.system.nrbc "protected"}}selected{{/eq}}>{{localize "MERC.Vehicle.nrbcTypes.protected"}}</option>
+            </select>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.crew"}}</label>
+            <input type="text" name="system.crew" value="{{actor.system.crew}}" placeholder="{{localize "MERC.Vehicle.crewPlaceholder"}}">
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.maintenance"}}</label>
+            <input type="text" name="system.maintenance" value="{{actor.system.maintenance}}" placeholder="{{localize "MERC.Vehicle.maintenancePlaceholder"}}">
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.load"}}</label>
+            <div class="vehicle-number-control">
+              <button type="button" class="vehicle-btn-minus" data-field="system.load">−</button>
+              <input type="number" name="system.load" value="{{actor.system.load}}" min="0" step="0.1">
+              <button type="button" class="vehicle-btn-plus" data-field="system.load">+</button>
+            </div>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.ptac"}}</label>
+            <div class="vehicle-number-control">
+              <button type="button" class="vehicle-btn-minus" data-field="system.ptac">−</button>
+              <input type="number" name="system.ptac" value="{{actor.system.ptac}}" min="0" step="0.1">
+              <button type="button" class="vehicle-btn-plus" data-field="system.ptac">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Mobilité -->
+        <div class="vehicle-section">
+          <h3>{{localize "MERC.Vehicle.sections.mobility"}}</h3>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.trMov"}}</label>
+            <div class="vehicle-number-control">
+              <button type="button" class="vehicle-btn-minus" data-field="system.trMov">−</button>
+              <input type="number" name="system.trMov" value="{{actor.system.trMov}}" min="0">
+              <button type="button" class="vehicle-btn-plus" data-field="system.trMov">+</button>
+            </div>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.comMov"}}</label>
+            <div class="vehicle-number-control">
+              <button type="button" class="vehicle-btn-minus" data-field="system.comMov">−</button>
+              <input type="number" name="system.comMov" value="{{actor.system.comMov}}" min="0">
+              <button type="button" class="vehicle-btn-plus" data-field="system.comMov">+</button>
+            </div>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.fuelCap"}}</label>
+            <div class="vehicle-number-control">
+              <button type="button" class="vehicle-btn-minus" data-field="system.fuelCap">−</button>
+              <input type="number" name="system.fuelCap" value="{{actor.system.fuelCap}}" min="0">
+              <button type="button" class="vehicle-btn-plus" data-field="system.fuelCap">+</button>
+            </div>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.fuelCons"}}</label>
+            <div class="vehicle-number-control">
+              <button type="button" class="vehicle-btn-minus" data-field="system.fuelCons">−</button>
+              <input type="number" name="system.fuelCons" value="{{actor.system.fuelCons}}" min="0">
+              <button type="button" class="vehicle-btn-plus" data-field="system.fuelCons">+</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- WEAPONS TAB -->
+    <div class="tab-content" data-tab="weapons">
+
+      <!-- Weapons Quick Access (Combat View) -->
+      <div class="weapons-section">
+        <h3>{{localize "MERC.Vehicle.weaponsEquipped"}}</h3>
+        <div class="items-list">
+          {{#each (filterItems actor.items "weapon") as |item|}}
+          <div class="item-card item" data-item-id="{{item._id}}">
+            <div class="item-info">
+              <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
+            </div>
+            <div class="item-controls">
+              <button type="button" class="weapon-skill-roll" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">🎯</button>
+            </div>
+            <div class="item-controls">
+              <div class="ammo-entry">
+                <div class="ammo-info">
+                  <div class="ammo-name">Base</div>
+                </div>
+                <div class="ammo-controls">
+                  <div class="combat-base-damage-value">{{item.system.damage}}</div>
+                  <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+              </div>
+              {{!-- Linked ammo for this weapon --}}
+              {{#each (filterItems ../actor.items "ammo") as |ammo|}}
+              {{#if (eq ammo.system.parentWeaponId item._id)}}
+              <div class="ammo-entry" data-item-id="{{ammo._id}}">
+                <div class="ammo-info">
+                  <div class="ammo-name">{{ammo.name}}</div>
+                </div>
+                <div class="ammo-controls">
+                  <div class="combat-ammo-damage-value">{{ammo.system.damage}}</div>
+                  <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+              </div>
+              {{/if}}
+              {{/each}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- Weapons Management List -->
+      <div class="items-section">
+        <h3>
+          <div class="items-header">
+            <span>{{localize "MERC.UI.items.weapons"}}</span>
+            <button type="button" class="item-create btn" data-type="weapon">{{localize "MERC.UI.items.addWeapon"}}</button>
+          </div>
+        </h3>
+        <div class="items-list">
+          {{#each (filterItems actor.items "weapon") as |item|}}
+          <div class="item-card item" data-item-id="{{item._id}}">
+            <div class="item-info">
+              <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</div>
+              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
+            </div>
+            <div class="item-controls">
+              <button type="button" class="item-edit">✎</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- Ammo Management List -->
+      <!--
+      <div class="items-section">
+        <h3>
+          <div class="items-header">
+            <span>{{localize "MERC.UI.items.ammo"}}</span>
+            <button type="button" class="item-create btn" data-type="ammo">{{localize "MERC.UI.items.addAmmo"}}</button>
+          </div>
+        </h3>
+        <div class="items-list">
+          {{#each (filterItems actor.items "ammo") as |item|}}
+          <div class="item-card item" data-item-id="{{item._id}}">
+            <div class="item-info">
+              <div class="item-name">{{item.name}}</div>
+              <div class="item-damage-skill">{{item.system.caliber}} · {{item.system.quantity}} / {{item.system.maxQuantity}}</div>
+            </div>
+            <div class="item-controls">
+              <button type="button" class="item-edit">✎</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      -->
+    </div>
+
+    <!-- NOTES TAB -->
+    <div class="tab-content" data-tab="notes">
+      <div class="notes-section">
+        <textarea class="notes-textarea" name="system.notes" rows="16" placeholder="{{localize "MERC.Labels.notesPlaceholder"}}">{{actor.system.notes}}</textarea>
+      </div>
+    </div>
+
+  </section>
+</div>

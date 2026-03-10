@@ -4,6 +4,15 @@ npm-debug.log
 package-lock.json
 yarn.lock
 
+# Build tools – binaries and generated files (run .\build-compendium.ps1 to regenerate)
+_tools/node.exe
+_tools/npm
+_tools/npm.cmd
+_tools/npx
+_tools/npx.cmd
+_tools/_weapons.json
+_tools/_ammos.json
+
 # IDE & Editor
 .vscode/
 .idea/

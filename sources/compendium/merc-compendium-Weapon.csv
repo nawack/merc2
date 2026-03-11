@@ -1,0 +1,376 @@
+Folder;Nom;Sous-type d'arme;Compétence associée;Munition;Calibre;Poids à vide;dégat;Range Med;Range Long;Range Extrem
+Armes à feu\Pistolet auto;Tula Arms Plant - MSS Vul;powder_projectiles;powder_projectiles;7,62 SP 4;7,62x42;0,7;1D6+0;8;25;50
+Armes à feu\Fusil Sniper;Accuracy international - AW50F;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;15;10D6+0;300;900;1800
+Armes à feu\Fusil;Accuracy internationnal - AT308;powder_projectiles;powder_projectiles;.308 Winchester Sub;7,62x51;6,3;1D6+2;100;300;600
+Armes à feu\Mitrailleuse;ARES - LMG-1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;5,7;2D6+2;0;0;0
+Armes à feu\Pistolet auto;Ares Inc - FMG;powder_projectiles;powder_projectiles;9 P;9x19;1,8;1D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Armalite - AR 18;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,9;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Armurier Breton - FSA Commando;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,96;4D6+1;100;300;600
+Armes à feu\Fusil Sniper;Armurier Breton - FSA Précision;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,96;4D6+1;266;800;1600
+Armes à feu\Fusil Sniper;Armurier Breton - FSA Précision S;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,1;4D6+1;166;500;1000
+Armes à feu\Fusil pompe;Atchisson - AA-12;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;5,2;4D6+1;0;0;0
+Armes à feu\Pistolet auto;Auto mag corporation - .44 Automag;powder_projectiles;powder_projectiles;.44 AMP;10,74x33;1,8;3D6+0;16;50;100
+Armes à feu\Pistolet Mitrailleur;Auto-Ordonnance Cie - Thompson Mle 1928;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;4,9;1D6+2;16;50;100
+Armes à feu\Fusil Sniper;Barrett - M82A1 Light-Fifty;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;14,1;10D6+0;300;900;1800
+Armes à feu\Fusil Sniper;Barrett - M82A2 Light-Fifty;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;12,9;10D6+0;300;900;1800
+Armes à feu\Fusil Sniper;Barrett - M95;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;10;10D6+0;250;750;1500
+Armes à feu\Fusil pompe;Benelli - Benelli Supernova;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,58;4D6+1;0;0;0
+Armes à feu\Fusil;Benelli - M2;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,26;4D6+1;0;0;0
+Armes à feu\Fusil pompe;Benelli - M3;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,24;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;Beretta - AR 70;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,545;2D6+2;133;400;800
+Armes à feu\Pistolet auto;beretta - Beretta 92FS;powder_projectiles;powder_projectiles;9 P;9x19;0,975;1D6+2;16;50;100
+Armes à feu\Pistolet Mitrailleur;Beretta - Beretta 93 R;powder_projectiles;powder_projectiles;9 P;9x19;1,17;1D6+2;10;30;60
+Armes à feu\Pistolet Mitrailleur;Beretta - Beretta 93 R stock;powder_projectiles;powder_projectiles;9 P;9x19;1,43;1D6+2;16;50;100
+Armes à feu\Pistolet auto;beretta - Beretta 96 CP;powder_projectiles;powder_projectiles;.40 S&W;10,17x29;1,135;1D6+2;16;50;100
+Armes à feu\Fusil d'assaut;Beretta - Beretta ARX-100;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,08;2D6+2;100;300;600
+Armes à feu\Mitrailleuse;Beretta - Beretta AS 70/90;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;5,34;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Beretta - Beretta BM59;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,6;4D6+1;100;300;600
+Armes à feu\Pistolet Mitrailleur;beretta - Beretta CX-4 Storm;powder_projectiles;powder_projectiles;9 P;9x19;2,57;1D6+2;33;100;200
+Armes à feu\Pistolet Mitrailleur;Beretta - Beretta M12;powder_projectiles;powder_projectiles;9 P;9x19;3,24;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Beretta - Beretta M1918;powder_projectiles;powder_projectiles;9 P;9x19;3,3;1D6+2;16;50;100
+Armes à feu\Pistolet auto;Beretta - Beretta M34;powder_projectiles;powder_projectiles;.380 ACP;9x17;0,668;1D6+0;10;30;60
+Armes à feu\Pistolet auto;Beretta - Beretta Model 1951;powder_projectiles;powder_projectiles;9 P;9x19;0,87;1D6+2;16;50;100
+Armes à feu\Pistolet auto;Beretta - Beretta Model 70S;powder_projectiles;powder_projectiles;.380 ACP;9x17;0,675;1D6+0;13;40;80
+Armes à feu\Pistolet auto;Beretta - Beretta Model 84;powder_projectiles;powder_projectiles;.380 ACP;9x17;0,66;1D6+0;13;40;80
+Armes à feu\Pistolet Mitrailleur;Beretta - Beretta Model12S;powder_projectiles;powder_projectiles;9 P;9x19;3,4;1D6+2;16;50;100
+Armes à feu\Pistolet Mitrailleur;Bergmann - MP35;powder_projectiles;powder_projectiles;9 P;9x19;4,24;1D6+2;25;75;150
+Armes à feu\Mitrailleuse;Browning - .50 M2HB;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;38,1;10D6+0;500;1500;3000
+Armes à feu\Pistolet auto;Browning - BDA-380;powder_projectiles;powder_projectiles;.380 ACP;.380ACP;0,64;1D6+0;11;35;70
+Armes à feu\Pistolet auto;Browning - Buck Mk22;powder_projectiles;powder_projectiles;.22 LR;5,56x15;0,95;0D6+2;6;20;40
+Armes à feu\Pistolet auto;Browning - HP 35;powder_projectiles;powder_projectiles;9 P;9x19 P;0,81;1D6+2;11;35;70
+Armes à feu\Pistolet auto;BSAC - Welrod .32;powder_projectiles;powder_projectiles;.32 ACP;7,65x17;0,8;1D6+0;4;12;24
+Armes à feu\Pistolet;BSAC - Welrod 9;powder_projectiles;powder_projectiles;9 P;9x19;1,5;1D6+2;5;15;30
+Armes à feu\Pistolet Mitrailleur;Bushmaster internationnal - BAP;powder_projectiles;powder_projectiles;5,56 M193;5.56N;1,93;2D6+1;30;90;180
+Armes à feu\fusil;Ceská zbrojovka - VZ-24;powder_projectiles;powder_projectiles;8mm Mauser;7,92x57;4,2;4D6+2;100;300;600
+Armes à feu\fusil;Ceská zbrojovka - Vz-52;powder_projectiles;powder_projectiles;7,62 R;7,62x39;4,5;3D6+0;100;300;600
+Armes à feu\fusil;Ceská zbrojovka - Vz-54;powder_projectiles;powder_projectiles;7,62x54 R;7,62x54;5,2;4D6+1;150;450;900
+Armes à feu\Mitrailleuse;Ceská zbrojovka - VZ-59;powder_projectiles;powder_projectiles;7,62x54 R;7,62x54;8,6;4D6+1;200;600;1200
+Armes à feu\Pistolet Mitrailleur;Ceská zbrojovka - Vz-61/62 Skorpion;powder_projectiles;powder_projectiles;.32 ACP;7,65x17;1,28;1D6+0;16;50;100
+Armes à feu\Fusil d'assaut;CETME - CETME C;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,4;4D6+1;100;300;600
+Armes à feu\Fusil d'assaut;CETME - CETME L;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,4;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;CETME - CETME LC;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,4;2D6+2;83;250;500
+Armes à feu\Mitrailleuse;CETME - CETMI Ameli;powder_projectiles;powder_projectiles;7,62 N;7,62x51;6,151;4D6+1;200;600;1200
+Armes à feu\Fusil;Chauchat - RSC Mle1918;powder_projectiles;powder_projectiles;8mm Lebel;8x51;4,7;4D6+1;166;500;1000
+Armes à feu\Fusil Sniper;CKIB - VKS - Vychlop;powder_projectiles;powder_projectiles;STS-130 TP;12,7x55;7;3D6+2;200;600;1200
+Armes à feu\revolver;Colt - Special police;powder_projectiles;powder_projectiles;.38 Special;9x29;0,95;1D6+0;5;15;30
+Armes à feu\revolver;Colt - .44 anaconda 8';powder_projectiles;powder_projectiles;.44 Magnum;10,9x41;1,67;2D6+3;0;0;0
+Armes à feu\Fusil d'assaut;Colt - AR 15 A2;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,5;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Colt - CAR 15 (M177);powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,78;2D6+2;0;0;0
+Armes à feu\revolver;"Colt - Colt Police 12""";powder_projectiles;powder_projectiles;.38 special;9x29;1,1;1D6+0;10;30;60
+Armes à feu\revolver;"Colt - Colt Python 15""";powder_projectiles;powder_projectiles;.357 Magnum;9x33;1,3;1D6+2;11;35;70
+Armes à feu\revolver;"Colt - Colt Python 6""";powder_projectiles;powder_projectiles;.357 Magnum;9x33;0,935;1D6+2;4;12;24
+Armes à feu\Pistolet auto;Colt - combat commander;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;0,75;1D6+2;13;40;80
+Armes à feu\revolver;Colt - détective special;powder_projectiles;powder_projectiles;.38 special;9x29;0,58;1D6+0;4;12;24
+Armes à feu\Pistolet auto;Colt - Government M380;powder_projectiles;powder_projectiles;.380 ACP;.380ACP;0,61;1D6+0;0;0;0
+Armes à feu\Fusil d'assaut;Colt - M16 A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,1;2D6+2;83;250;500
+Armes à feu\Fusil d'assaut;Colt - M16 A1 carbine;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,631;2D6+2;83;250;500
+Armes à feu\Mitrailleuse;Colt - M16 A1 HBAR;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,583;2D6+2;116;350;700
+Armes à feu\Fusil d'assaut;Colt - M16 A2;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,9;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Colt - M16 A2 Carbine;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,676;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Colt - M16 A4;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,7;2D6+2;100;300;600
+Armes à feu\Pistolet auto;Colt - M1911A1;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;1,08;1D6+2;11;35;70
+Armes à feu\Pistolet Mitrailleur;Colt - M3 A1;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;3,47;1D6+2;16;50;100
+Armes à feu\Fusil d'assaut;Colt - M4A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,94;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Colt - M4A4;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,608;2D6+2;100;300;600
+Armes à feu\Pistolet Mitrailleur;Colt - SR 635 KAC;powder_projectiles;powder_projectiles;9 S;9x19;3,062;1D6+0;20;60;120
+Armes à feu\Pistolet Mitrailleur;Colt - SR 635 SMG;powder_projectiles;powder_projectiles;9 P;9x19;2,608;1D6+2;33;100;200
+Armes à feu\Pistolet auto;CZ - CZ 75;powder_projectiles;powder_projectiles;9 P;9x19;1,18;1D6+2;16;50;100
+Armes à feu\Mitrailleuse;Degtiarev - DShK;powder_projectiles;powder_projectiles;12,7R;12,7x108;46,7;10D6+2;666;2000;4000
+Armes à feu\Mitrailleuse;Degtiarev - DShK sur trepied;powder_projectiles;powder_projectiles;12,7R;12,7x108;46,7;10D6+2;666;2000;4000
+Armes à feu\fusil;Delisle - Carbine;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;3,74;1D6+2;66;200;400
+Armes à feu\Pistolet auto;Detonic - DA 9;powder_projectiles;powder_projectiles;9 P;9x19;0,616;1D6+2;16;50;100
+Armes à feu\Pistolet auto;Detonic - Scoremaster;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;1,15;1D6+2;0;0;0
+Armes à feu\Fusil Sniper;Diemaco - C 3A1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;7,2;4D6+1;200;600;1200
+Armes à feu\Fusil d'assaut;Diemaco - C7A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,3;2D6+2;100;300;600
+Armes à feu\Fusil sniper;Einfield - Mk I Boys Antitank Rifle monopod;powder_projectiles;powder_projectiles;.55 Boys;13,9x99;16,33;10D6+1;76;230;460
+Armes à feu\Fusil sniper;Einfield - Mk II Boys Antitank Rifle;powder_projectiles;powder_projectiles;.55 Boys;13,9x99;16,33;10D6+1;40;120;240
+Armes à feu\Pistolet Mitrailleur;Enfield - Sten;powder_projectiles;powder_projectiles;9 P;9x19;3,2;1D6+2;15;45;90
+Armes à feu\Pistolet Mitrailleur;Enfield - Sten Mk II S;powder_projectiles;powder_projectiles;9 P;9x19;3,2;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;Erma - EMP 36;powder_projectiles;powder_projectiles;9 P;9x19;4;2D6+0;50;150;300
+Armes à feu\Pistolet Mitrailleur;Erma - EMP 36 S;powder_projectiles;powder_projectiles;9 S;9x19;4;1D6+1;33;100;200
+Armes à feu\Fusil d'assaut;FEG - AMD-65;powder_projectiles;powder_projectiles;7,62 R;7,62x39;2,92;3D6+1;40;120;240
+Armes à feu\Fusil d'assaut;FN HERSTAL - FN P2000;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,6;2D6+2;66;200;400
+Armes à feu\Pistolet Mitrailleur;FN HERSTAL - FN P90;powder_projectiles;powder_projectiles;SS190;5,7x28;2,84;1D6+1;16;50;100
+Armes à feu\Fusil d'assaut;FN HERSTAL - FNC M2;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,8;2D6+2;83;250;500
+Armes à feu\Fusil d'assaut;FN HERSTAL - FNC M3 Para;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,7;2D6+2;76;230;460
+Armes à feu\Fusil d'assaut;FN HERSTAL - FNFAL;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,31;4D6+1;133;400;800
+Armes à feu\Mitrailleuse;FN HERSTAL - M249 Minimi;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;7,5;2D6+2;116;350;700
+Armes à feu\Mitrailleuse;FN HERSTAL - Minimi Para;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;6,75;2D6+2;100;300;600
+Armes à feu\Fusil;FN HERSTAL - SAFN49;powder_projectiles;powder_projectiles;.30-06;7,62x63;4,31;3D6+1;100;300;600
+Armes à feu\Fusil pompe;Franchi - PA3;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;2,7;4D6+1;0;0;0
+Armes à feu\Fusil pompe;Franchi - SPAS 12;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;4,12;4D6+1;0;0;0
+Armes à feu\Fusil pompe;Franchi - SPAS-15;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,8;4D6+1;0;0;0
+Armes à feu\Fusil pompe;Franchi - SPAS-15 Close with buckshot;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,8;4D6+1;0;0;0
+Armes à feu\Fusil pompe;Franchi - SPAS-15 Medium with buckshot (p200);powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,8;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;G8 A1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;9,148;4D6+1;0;0;0
+Armes à feu\Fusil Sniper;Galil - 99SR;powder_projectiles;powder_projectiles;7,62 N;7,62x51;5,1;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;Galil - ACE;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,95;2D6+2;100;300;600
+Armes à feu\Mitrailleuse;Galil - ARM;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4;4D6+1;150;450;900
+Armes à feu\Fusil Sniper;Galil - Galatz SR;powder_projectiles;powder_projectiles;7,62 N;7,62x51;6,4;4D6+1;200;600;1200
+Armes à feu\Fusil d'assaut;Galil - MAR;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,95;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Galil - SAR;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,75;2D6+2;100;300;600
+Armes à feu\Mitrailleuse;General Electric - M214 sans trepied;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;12,3;2D6+2;0;0;0
+Armes à feu\Mitrailleuse;General Electric - M214 sur trepied;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;38,6;2D6+2;0;0;0
+Armes à feu\Pistolet auto;Glock - G17;powder_projectiles;powder_projectiles;9 P;9x19;0,625;1D6+2;16;50;100
+Armes à feu\Pistolet auto;Glock - G21;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;0,745;1D6+2;16;50;100
+Armes à feu\Pistolet auto;Glock - G22;powder_projectiles;powder_projectiles;.40 S&W;10,17x29;0,65;1D6+2;20;60;120
+Armes à feu\Pistolet Mitrailleur;GM - M3A1;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;3,7;1D6+2;30;90;180
+Armes à feu\Pistolet auto;GP35;powder_projectiles;powder_projectiles;9 P;9x19;0,927;1D6+2;0;0;0
+Armes à feu\Fusil pompe;Hawk SA;powder_projectiles;powder_projectiles;Cal. 16 G;16,8x70;3,2;3D6+2;0;0;0
+Armes à feu\Mitrailleuse;Heckler&Koch - HK 21 A1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;8,3;4D6+1;200;600;1200
+Armes à feu\Mitrailleuse;Heckler&Koch - HK 23E;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;7,3;2D6+2;133;400;800
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK 33 A2;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,651;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK 33 A3;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,969;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK 33 K A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,969;2D6+2;100;300;600
+Armes à feu\Fusil Sniper;Heckler&Koch - HK 33 SG/1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,445;2D6+2;116;350;700
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK 416;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,5;2D6+2;83;250;500
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK 417 D20;powder_projectiles;powder_projectiles;7,62 N;7,62 x 51;4,23;4D6+1;150;450;900
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK 53;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,048;2D6+2;100;300;600
+Armes à feu\Fusil Sniper;Heckler&Koch - HK 94 SG1;powder_projectiles;powder_projectiles;9 P;9x19;3,257;2D6+0;40;120;240
+Armes à feu\Fusil;Heckler&Koch - HK CAWS;powder_projectiles;powder_projectiles;Cal. 12 B;18,5x70;3,7;5D6+0;40;120;240
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK D10RS;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,02;2D6+2;83;250;500
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G3 A3;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,4;4D6+1;100;300;600
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G3 A4;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,717;4D6+1;100;300;600
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G3 K;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,4;4D6+1;100;300;600
+Armes à feu\Fusil Sniper;Heckler&Koch - HK G3 SG/1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;5,488;4D6+1;133;400;800
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G36;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,63;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G36 K;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,34;2D6+2;83;250;500
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G41 A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,1;2D6+2;83;250;500
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G41 A2;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,4;2D6+2;83;250;500
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK G41 K;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,9;2D6+2;40;120;240
+Armes à feu\Pistolet auto;Heckler&Koch - HK Mk23 Mod 0 S;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;1,21;1D6+2;11;35;70
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP 2000;powder_projectiles;powder_projectiles;9 P;9x19;2,781;1D6+2;16;50;100
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5 A2;powder_projectiles;powder_projectiles;9 P;9x19;2,54;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5 A3;powder_projectiles;powder_projectiles;9 P;9x19;2,88;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5 A4;powder_projectiles;powder_projectiles;9 P;9x19;2,54;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5 A5;powder_projectiles;powder_projectiles;9 P;9x19;2,88;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5 K;powder_projectiles;powder_projectiles;9 P;9x19;2;1D6+2;11;35;70
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5 SD5;powder_projectiles;powder_projectiles;9 P;9x19;3,1;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5 SD6;powder_projectiles;powder_projectiles;9 P;9x19;3,4;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP5/40;powder_projectiles;powder_projectiles;.40 S&W;10,17x29;2,88;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Heckler&Koch - HK MP7;powder_projectiles;powder_projectiles;4,6x30;4,6x30;2,86;1D6+1;30;90;180
+Armes à feu\Pistolet auto;Heckler&Koch - HK P2000;powder_projectiles;powder_projectiles;9 P;9x19;0,72;1D6+2;11;35;70
+Armes à feu\Pistolet auto;Heckler&Koch - HK P7M9-13;powder_projectiles;powder_projectiles;.380 ACP;9x17;0,52;1D6+0;11;35;70
+Armes à feu\Pistolet auto;Heckler&Koch - HK P9S;powder_projectiles;powder_projectiles;9 P;9x19;0,88;1D6+2;11;35;70
+Armes à feu\Fusil Sniper;Heckler&Koch - HK PSG1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;8,1;4D6+1;116;350;700
+Armes à feu\Pistolet auto;Heckler&Koch - HK USP;powder_projectiles;powder_projectiles;9 P;9x19;0,645;1D6+2;11;35;70
+Armes à feu\Fusil d'assaut;Heckler&Koch - HK XM 8;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,659;2D6+2;100;300;600
+Armes à feu\Pistolet auto;Heckler&Koch - HK-4;powder_projectiles;powder_projectiles;.25 ACP;6,35x16;0,48;0D6+2;8;25;50
+Armes à feu\Pistolet;High Standart - HDM;powder_projectiles;powder_projectiles;.22 LR;;1,3;0D6+2;6;20;40
+Armes à feu\Pistolet auto;Hight Standart - Sharp Derringer;powder_projectiles;powder_projectiles;.22 Magnum;5,56x15;0,31;0D6+2;4;12;24
+Armes à feu\Pistolet Mitrailleur;Mendoza - HM-3;powder_projectiles;powder_projectiles;9 P;9x19;2,7;1D6+2;30;90;180
+Armes à feu\mitrailleuse;Hotchkiss - Mle 1914;powder_projectiles;powder_projectiles;8mm lebel;8x51;25,3;4D6+1;200;600;1200
+Armes à feu\Pistolet auto;IMBEL - 45 UC;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;0,94;1D6+2;13;40;80
+Armes à feu\Pistolet auto;IMBEL - 9 GC;powder_projectiles;powder_projectiles;9 P;9x19;0,94;1D6+2;15;45;90
+Armes à feu\Fusil d'assaut;IMBEL - MD2;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,4;2D6+2;100;300;600
+Armes à feu\Pistolet Mitrailleur;IMBEL - MD97LC;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,3;2D6+1;100;300;600
+Armes à feu\Pistolet Mitrailleur;IMI - M91 UZI;powder_projectiles;powder_projectiles;9 P;9x19;1;1D6+2;33;100;200
+Armes à feu\Pistolet Mitrailleur;IMI - Micro UZI;powder_projectiles;powder_projectiles;9 P;9x19;1,95;1D6+2;8;25;50
+Armes à feu\Pistolet Mitrailleur;IMI - Mini UZI;powder_projectiles;powder_projectiles;9 P;9x19;2,7;1D6+2;16;50;100
+Armes à feu\Pistolet Mitrailleur;IMI - MTAR-21 Micro Tavor;powder_projectiles;powder_projectiles;9 P;9x19;2,95;2D6+0;0;0;0
+Armes à feu\Fusil d'assaut;IMI - TAR-21 Tavor;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,27;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;IMI - X-95 Tavor;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,4;2D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;Ingram - M 11;powder_projectiles;powder_projectiles;.380 ACP;.380ACP;1,59;1D6+0;20;60;120
+Armes à feu\Pistolet Mitrailleur;Ingram - M10;powder_projectiles;powder_projectiles;9 P;9x19;2,84;1D6+2;20;60;120
+Armes à feu\Pistolet Mitrailleur;Ingram - M10 .45;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;2,84;1D6+2;20;60;120
+Armes à feu\Pistolet Mitrailleur;Ingram - M10 SD;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;3,385;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;Ingram - M10 SD;powder_projectiles;powder_projectiles;9 P;9x19;3,385;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;Ingram - M11/9 SD;powder_projectiles;powder_projectiles;9 P;9x19;2,033;1D6+2;0;0;0
+Armes à feu\Pistolet auto;IWI - 941FS JERICHO;powder_projectiles;powder_projectiles;.40 S&W;10,17x29;0,946;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;Izhmash - SR-3M VIKHR;powder_projectiles;powder_projectiles;9 SP 5;9x39;2;1D6+2;30;90;180
+Armes à feu\Fusil Sniper;Izhmash - SV-98;powder_projectiles;powder_projectiles;7,62x54 R;7,62x54;6,2;4D6+1;200;600;1200
+Armes à feu\Fusil Sniper;Izhmash - SVD;powder_projectiles;powder_projectiles;7,62x54 R;7,62x54;4,3;4D6+1;216;650;1300
+Armes à feu\Fusil Sniper;Izhmash - SVU-A;powder_projectiles;powder_projectiles;7,62x54 R;7,62x54;4,2;4D6+1;200;600;1200
+Armes à feu\Pistolet Mitrailleur;Jati-Matic;powder_projectiles;powder_projectiles;9 P;9x19 P;1,65;1D6+2;0;0;0
+Armes à feu\Fusil d'assaut;K11;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;6,1;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-104;powder_projectiles;powder_projectiles;7,62 R;7,62x39;2,9;3D6+1;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-105;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;3;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-107;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;3,8;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-108;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,45;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-12;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;2,9;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-15;powder_projectiles;powder_projectiles;7,62 R;7,62x39;3,3;3D6+1;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-47;powder_projectiles;powder_projectiles;7,62 R;7,62x39;4,3;3D6+1;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-74;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;3,6;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - AK-9;powder_projectiles;powder_projectiles;9 SP 5;9x39;3,1;1D6+3;0;0;0
+Armes à feu\Fusil d'assaut;Kalashnikov - AKM;powder_projectiles;powder_projectiles;7,62 R;7,62x39;3,15;3D6+1;0;0;0
+Armes à feu\Fusil d'assaut;Kalashnikov - AKMS;powder_projectiles;powder_projectiles;7,62 R;7,62x39;3,46;3D6+1;0;0;0
+Armes à feu\Pistolet Mitrailleur;Kalashnikov - AKR;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;2,5;2D6+1;33;100;200
+Armes à feu\Fusil d'assaut;Kalashnikov - AKS-74U;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;2,68;2D6+2;90;270;540
+Armes à feu\Pistolet Mitrailleur;Kalashnikov - KR-9SBR;powder_projectiles;powder_projectiles;9 P;9x19;;1D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Kalashnikov - KS-12T;powder_projectiles;powder_projectiles;cal. 12 g;12 gauge;;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;KPV;powder_projectiles;powder_projectiles;14,5 BS;14,5x114;50;13D6+2;0;0;0
+Armes à feu\Fusil Sniper;Lee Einfield - L42 A1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,43;4D6+1;0;0;0
+Armes à feu\Fusil Sniper;Lee Einfield - L42 A1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,42;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;Lee Einfield - L85 A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,6;2D6+2;0;0;0
+Armes à feu\Mitrailleuse;Lee Einfield - L86 A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;6,4;2D6+2;0;0;0
+Armes à feu\Mitrailleuse;Lee Einfield - L96 A1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;6;4D6+1;0;0;0
+Armes à feu\fusil;Lebel-Berthier - mousqueton 1916;powder_projectiles;powder_projectiles;8mm lebel;8x51;3;4D6+1;100;300;600
+Armes à feu\fusil;Lee Einfield - Lee Einfield Mk4;powder_projectiles;powder_projectiles;.303 british;.303;4,12;4D6+0;133;400;800
+Armes à feu\Mitrailleuse;Lewis - Mk1;powder_projectiles;powder_projectiles;.303 british;.303;12,7;0D6+0;66;200;400
+Armes à feu\Pistolet Mitrailleur;Lithgow - SMG F1A1;powder_projectiles;powder_projectiles;9 P;9x19;4,3;1D6+2;30;90;180
+Armes à feu\Pistolet auto;Llama - Large Frame Auto;powder_projectiles;powder_projectiles;9 P;9x19;1,12;1D6+2;0;0;0
+Armes à feu\Pistolet auto;Luger - Luger P08;powder_projectiles;powder_projectiles;9 P;9x19;0,87;1D6+2;11;35;70
+Armes à feu\Pistolet Mitrailleur;M 45B;powder_projectiles;powder_projectiles;9 P;9x19;3,9;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;M 45B SD;powder_projectiles;powder_projectiles;9 P;9x19;4,564;1D6+2;0;0;0
+Armes à feu\Mitrailleuse;M134 Minigun;powder_projectiles;powder_projectiles;7,62 N;7,62 x 51;16,3;4D6+1;0;0;0
+Armes à feu\fusil;M14;powder_projectiles;powder_projectiles;7,62 N;7,62 x 51;4,17;4D6+1;0;0;0
+Armes à feu\Fusil Sniper;M40 A1;powder_projectiles;powder_projectiles;7,62 N;7,62x51;6,57;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;M60;powder_projectiles;powder_projectiles;7,62 N;7,62x51;10,51;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;M60 E3 L;powder_projectiles;powder_projectiles;7,62 N;7,62x51;8,505;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;M60 E3 S;powder_projectiles;powder_projectiles;7,62 N;7,62x51;8,392;4D6+1;0;0;0
+Armes à feu\Pistolet Mitrailleur;M7A4;powder_projectiles;powder_projectiles;9 P;9x19;2,2;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;M7A8;powder_projectiles;powder_projectiles;9 P;9x19;2,3;1D6+2;0;0;0
+Armes à feu\Pistolet auto;MAB - Baby Browning;powder_projectiles;powder_projectiles;.25 ACP;6,35x16;0,275;0D6+2;4;12;24
+Armes à feu\Pistolet auto;MAB - Micro Unique;powder_projectiles;powder_projectiles;.32 ACP;7,65x17;0,31;1D6+0;0;0;0
+Armes à feu\Mitrailleuse;MAC - AA-52;powder_projectiles;powder_projectiles;7,62 N;7,62x51;10;4D6+1;200;600;1200
+Armes à feu\Pistolet auto;MAC - PAMAC 50;powder_projectiles;powder_projectiles;9 P;9x19;0,86;1D6+2;0;0;0
+Armes à feu\Pistolet auto;Magnum Research - Desert Eagle .50AE;powder_projectiles;powder_projectiles;.50 AE;12,7 x 32,6;1,78;2D6+3;33;100;200
+Armes à feu\Pistolet auto;Magnum Research - Desert eagle 357;powder_projectiles;powder_projectiles;.357 Magnum;9x33;1,64;1D6+2;25;75;150
+Armes à feu\Pistolet auto;Magnum Research - Desert eagle 44;powder_projectiles;powder_projectiles;.44 Magnum;11,2x32,8;1,78;2D6+3;33;100;200
+Armes à feu\Pistolet auto;Makarov - PM Makarov;powder_projectiles;powder_projectiles;9M;9x18;0,73;1D6+0;10;30;60
+Armes à feu\Pistolet auto;Mamba;powder_projectiles;powder_projectiles;9 P;9x19;0;1D6+2;11;35;70
+Armes à feu\Pistolet auto;Manufacture d'armes de Bayonne - PA-15;powder_projectiles;powder_projectiles;9 P;9x19;1,07;1D6+2;11;35;70
+Armes à feu\revolver;Manurhin - MR 88;powder_projectiles;powder_projectiles;.357 Magnum;9x33;0,94;1D6+2;16;50;100
+Armes à feu\revolver;Manurhin - MR73;powder_projectiles;powder_projectiles;.357 Magnum;9x33;0,91;1D6+2;16;50;100
+Armes à feu\Pistolet auto;Manurhin - Walther PPK;powder_projectiles;powder_projectiles;.32 ACP;7,65x17;0,68;1D6+0;10;30;60
+Armes à feu\Pistolet auto;Manurhin - Walther PPK/S;powder_projectiles;powder_projectiles;.32 ACP;7,65x17;0,56;1D6+0;0;0;0
+Armes à feu\Mitrailleuse;MAS - Darne;powder_projectiles;powder_projectiles;8mm lebel;8x51;12,3;4D6+1;166;500;1000
+Armes à feu\Fusil d'assaut;MAS - FA-MAS F1;powder_projectiles;powder_projectiles;5,56 M855;5,56x45;3,78;3D6+0;100;300;600
+Armes à feu\Fusil d'assaut;MAS - FAMAS Commando;powder_projectiles;powder_projectiles;5,56 M855;5,56x45;3,12;2D6+2;50;150;300
+Armes à feu\Fusil d'assaut;MAS - Famas Felin;powder_projectiles;powder_projectiles;5,56 M855;5,56x45;3,5;3D6+0;100;300;600
+Armes à feu\Fusil d'assaut;MAS - FAMAS G2;powder_projectiles;powder_projectiles;5,56 M855;5,56x45;3,8;3D6+0;100;300;600
+Armes à feu\Mitrailleuse;MAS - FM 24/29;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x54;9,1;4D6+2;166;500;1000
+Armes à feu\Fusil Sniper;MAS - FR F1;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x54;5,2;4D6+2;233;700;1400
+Armes à feu\Fusil Sniper;MAS - FR F2;powder_projectiles;powder_projectiles;7,62 N;7,62x51;5,34;4D6+1;200;600;1200
+Armes à feu\fusil;MAS - MAS 36;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x54;3,72;4D6+2;100;300;600
+Armes à feu\fusil;MAS - MAS 36 CR;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x54;3,74;4D6+2;83;250;500
+Armes à feu\Pistolet Mitrailleur;MAS - MAS 38;powder_projectiles;powder_projectiles;7,5 L;7,65x20;2,9;4D6+2;20;60;120
+Armes à feu\fusil;MAS - MAS-40;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x54;4,15;4D6+2;133;400;800
+Armes à feu\Fusil d'assaut;MAS - MAS49-56 FSA;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x54;3,9;4D6+2;233;700;1400
+Armes à feu\Fusil sniper;MAS - MAS49/56 MSE;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x54;4,2;4D6+2;233;700;1400
+Armes à feu\Revolver;MAS - Model 1892;powder_projectiles;powder_projectiles;8 court;8x27;0,91;1D6+1;8;25;50
+Armes à feu\Pistolet Mitrailleur;MAT - MAT 49;powder_projectiles;powder_projectiles;9 P;9x19;3,64;1D6+2;30;90;180
+Armes à feu\Pistolet auto;Mauser - C96;powder_projectiles;powder_projectiles;7,62 TT;7,62x25;1,22;1D6+2;25;75;150
+Armes à feu\Pistolet auto;"Mauser - C96 Mle 1916 ""red nine""";powder_projectiles;powder_projectiles;9 P;9x19;1,22;1D6+2;20;60;120
+Armes à feu\Pistolet Mitrailleur;Mauser - C96 Schnellfeuer;powder_projectiles;powder_projectiles;7,62 TT;7,62x25;1,3;1D6+2;25;75;150
+Armes à feu\fusil;Mauser - K98;powder_projectiles;powder_projectiles;8mm mauser;7,92x57;3,9;4D6+2;133;400;800
+Armes à feu\Mitrailleuse;Mauser - MG3 (MG 42/59);powder_projectiles;powder_projectiles;7,62 N;7,62x51;12;4D6+1;200;600;1200
+Armes à feu\fusil;Mauser - SP66;powder_projectiles;powder_projectiles;7,62 N;7,62x51;6,123;4D6+1;200;600;1200
+Armes à feu\Pistolet auto;Mod 76;powder_projectiles;powder_projectiles;9 P;9x19;3,289;1D6+2;0;0;0
+Armes à feu\Fusil pompe;Mosberg - 500 Special;powder_projectiles;powder_projectiles;Cal. 20 G;15,7x67;3;3D6+2;0;0;0
+Armes à feu\fusil;Mosberg - 930;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,48;4D6+1;11;35;70
+Armes à feu\Fusil pompe;Mosberg - Maverick;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3;4D6+1;0;0;0
+Armes à feu\Pistolet auto;MP-444;powder_projectiles;powder_projectiles;9 P;9x19P;0,76;1D6+2;0;0;0
+Armes à feu\Pistolet auto;MP-445;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;0,76;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;MPi 81;powder_projectiles;powder_projectiles;9 P;9x19;2,93;1D6+2;0;0;0
+Armes à feu\Mitrailleuse;Neguev lmg;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;7,6;2D6+2;0;0;0
+Armes à feu\Fusil pompe;Neostad Shotgun;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,9;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;Nikonov - AN-94;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;3,83;2D6+2;0;0;0
+Armes à feu\Mitrailleuse;Norinco - QBB-95;powder_projectiles;powder_projectiles;5,8 DBP87;5,8x42;4,1;3D6+1;150;450;900
+Armes à feu\Fusil Sniper;Norinco - QBU-88;powder_projectiles;powder_projectiles;5,8 DBP87;5,8x42;4,1;3D6+1;166;500;1000
+Armes à feu\Fusil d'assaut;Norinco - QBZ-95;powder_projectiles;powder_projectiles;5,8 DBP87;5,8x42;3,5;3D6+1;100;300;600
+Armes à feu\Fusil d'assaut;Norinco - QBZ-97;powder_projectiles;powder_projectiles;5,56 M193;5,56X45;3,6;2D6+2;100;300;600
+Armes à feu\Pistolet auto;Norinco - Type 64;powder_projectiles;powder_projectiles;.32 ACP;7,65x17;1,08;1D6+0;6;20;40
+Armes à feu\Pistolet auto;Norinco - Type 67;powder_projectiles;powder_projectiles;.32 ACP;7,65x17;1,08;1D6+0;6;20;40
+Armes à feu\Pistolet Mitrailleur;Norinco - Type 85;powder_projectiles;powder_projectiles;7,62 TT;7,62x25;1,9;1D6+3;16;50;100
+Armes à feu\Mitrailleuse;NSVS tu;powder_projectiles;powder_projectiles;12,7R;12,7x108;25;10D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Ots-14-1A Groza-1;powder_projectiles;powder_projectiles;7,62 R;7,62x39;3,2;3D6+1;0;0;0
+Armes à feu\Fusil d'assaut;OTs-14-4A Groza-4;powder_projectiles;powder_projectiles;9 SP 5;9x39;3,2;1D6+3;0;0;0
+Armes à feu\Pistolet Mitrailleur;Ots-22;powder_projectiles;powder_projectiles;9 P;9x19;1,2;1D6+2;0;0;0
+Armes à feu\Pistolet auto;P64;powder_projectiles;powder_projectiles;9M;9x18;0,62;1D6+0;10;30;60
+Armes à feu\Fusil Sniper;PGM UR Commando;powder_projectiles;powder_projectiles;7,62 N;7,62x51;5;4D6+1;0;0;0
+Armes à feu\Fusil Sniper;PGM UR Hecate 2;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;15,8;10D6+0;0;0;0
+Armes à feu\Fusil Sniper;PGM UR Intervention;powder_projectiles;powder_projectiles;7,62 N;7,62x51;5,2;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;PKM;powder_projectiles;powder_projectiles;7,62x54 R;7,62x54;6,5;4D6+1;0;0;0
+Armes à feu\Pistolet Mitrailleur;PP-19 Bizon II;powder_projectiles;powder_projectiles;9 P;9x19;3,63;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;PPsH-41;powder_projectiles;powder_projectiles;7,62 TT;7,62x25;4,13;1D6+2;50;150;300
+Armes à feu\Fusil d'assaut;RAI model 300;powder_projectiles;powder_projectiles;7,62 N;7,62x51;5,7;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;RAI model 300;powder_projectiles;powder_projectiles;8,58x71;8,58x71;6,442;6D6+1;0;0;0
+Armes à feu\Fusil d'assaut;RAI model 500;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;15,153;10D6+0;0;0;0
+Armes à feu\Fusil d'assaut;RAI model 500;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;15,153;10D6+0;0;0;0
+Armes à feu\Fusil pompe;Remington - 870;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,58;4D6+1;0;0;0
+Armes à feu\Fusil Sniper;Remington - M24A3;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,95;4D6+1;233;700;1400
+Armes à feu\Mitrailleuse;RPK-74;powder_projectiles;powder_projectiles;5,45 M74;5,45x39;4,6;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Ruger - AC 556;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,892;2D6+2;66;200;400
+Armes à feu\Fusil d'assaut;Ruger - AC 556 F;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,147;2D6+2;50;150;300
+Armes à feu\Fusil d'assaut;Ruger - Mini 14;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;2,9;2D6+2;0;0;0
+Armes à feu\revolver;Ruger - Ruger Blackhawk;powder_projectiles;powder_projectiles;.44 Magnum;.44 Mag;1,54;2D6+3;13;40;80
+Armes à feu\Pistolet auto;Ruger - Ruger P-85;powder_projectiles;powder_projectiles;9 P;9x19;0,91;1D6+2;16;50;100
+Armes à feu\Pistolet Mitrailleur;Saab-Bofors - CBJ MS;powder_projectiles;powder_projectiles;.32 ACP;6,5x25;2,8;1D6+0;50;150;300
+Armes à feu\Pistolet;SACM - PA35A;powder_projectiles;powder_projectiles;7,65 L;7,65x20;0,67;1D6+0;11;35;70
+Armes à feu\Fusil pompe;Saiga 12K;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,6;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;SAR 80;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,4;2D6+2;0;0;0
+Armes à feu\Pistolet auto;Sauer&Sohn - Sig P230;powder_projectiles;powder_projectiles;.380 ACP;9x17;0,44;1D6+0;10;30;60
+Armes à feu\Pistolet auto;Sauer&Sohn - SIG P230;powder_projectiles;powder_projectiles;9 P;9x19;0,46;1D6+2;11;35;70
+Armes à feu\Pistolet auto;Sauer&Sohn - SIG P239;powder_projectiles;powder_projectiles;.40 S&W;10,17x29;0,79;1D6+2;15;45;90
+Armes à feu\Fusil pompe;Savage 311-R;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,4;4D6+1;0;0;0
+Armes à feu\Fusil pompe;Savage 311-R Close with buckshot;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,4;4D6+1;0;0;0
+Armes à feu\Fusil pompe;Savage 311-R Medium with buckshot (p200);powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;3,4;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;SC 70;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,595;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;SC 70 short;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,445;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;SC 70/90;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,99;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;SCAR H CQC;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,49;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;SCAR H Standart;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,58;4D6+1;0;0;0
+Armes à feu\Fusil Sniper;SCAR H SV;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,72;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;SCAR L CQC;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,04;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;SCAR L standart;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,29;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;SCS 70/90;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,79;2D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Sig-Manurhin - SIG 540;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,54;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Sig-Manurhin - SIG 542;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,55;4D6+1;100;300;600
+Armes à feu\Fusil d'assaut;Sig-Manurhin - SIG 543;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3;2D6+2;100;300;600
+Armes à feu\Fusil Sniper;Sigsauer - SIG 2000 300;powder_projectiles;powder_projectiles;.300 BLK;7,8x34;6,622;3D6+0;300;900;1800
+Armes à feu\Fusil Sniper;Sigsauer - SIG 2000 7;powder_projectiles;powder_projectiles;7,62 N;7,62x51;6,522;4D6+1;300;900;1800
+Armes à feu\Fusil Sniper;Sigsauer - SIG 2000 7,5;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x55;6,522;4D6+2;300;900;1800
+Armes à feu\Fusil d'assaut;Sigsauer - SIG 510;powder_projectiles;powder_projectiles;7,5 MAS Mle 29C;7,5x55;5,95;4D6+2;200;600;1200
+Armes à feu\fusil;SKS Simonov;powder_projectiles;powder_projectiles;7,62 R;7,62x39;3,85;3D6+1;0;0;0
+Armes à feu\Pistolet auto;Smith&Wesson - MP45;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;;1D6+2;0;0;0
+Armes à feu\Pistolet auto;Smith&Wesson - MP9;powder_projectiles;powder_projectiles;9 P;9x19;;1D6+2;0;0;0
+Armes à feu\revolver;Smith&Wesson - S&W model 29/16.5;powder_projectiles;powder_projectiles;.44 Magnum;.44 Mag;;2D6+3;11;35;70
+Armes à feu\revolver;Smith&Wesson - S&W model 29/21;powder_projectiles;powder_projectiles;.357 Magnum;9x33;;1D6+2;13;40;80
+Armes à feu\revolver;Smith&Wesson - S&W model 36;powder_projectiles;powder_projectiles;.38 special;9x29;;1D6+0;4;12;24
+Armes à feu\Pistolet auto;Smith&Wesson - S&W model 439;powder_projectiles;powder_projectiles;9 P;9x19;;1D6+2;11;35;70
+Armes à feu\Pistolet auto;Smith&Wesson - S&W model 459;powder_projectiles;powder_projectiles;9 P;9x19;;1D6+2;11;35;70
+Armes à feu\Fusil d'assaut;Spectre M4;powder_projectiles;powder_projectiles;9 P;9x19;2,903;2D6+0;0;0;0
+Armes à feu\fusil;Springfield - Garand M1;powder_projectiles;powder_projectiles;.30-06;7,62x63;4,7;3D6+3;133;400;800
+Armes à feu\Fusil Sniper;Springfield Armory - M21;powder_projectiles;powder_projectiles;7,62 N;7,62x51;5,27;4D6+1;183;550;1100
+Armes à feu\Pistolet Mitrailleur;Sterling - L2A3;powder_projectiles;powder_projectiles;9 P;9x19;2,72;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Sterling - L34A1;powder_projectiles;powder_projectiles;9 P;9x19;3,6;1D6+2;30;90;180
+Armes à feu\Fusil d'assaut;Steyr - AUG A1;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,266;2D6+2;100;300;600
+Armes à feu\Mitrailleuse;Steyr - AUG HBar;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;5,443;2D6+2;100;300;600
+Armes à feu\Mitrailleuse;Steyr - AUG LMG;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,03;2D6+2;50;150;300
+Armes à feu\Fusil d'assaut;Steyr - AUG Para;powder_projectiles;powder_projectiles;9 P;9x19;3,3;2D6+0;33;100;200
+Armes à feu\Pistolet auto;Steyr - GB80;powder_projectiles;powder_projectiles;9 P;9x19;;1D6+2;11;35;70
+Armes à feu\Pistolet Mitrailleur;Steyr - MP-40;powder_projectiles;powder_projectiles;9 P;9x19;4,03;1D6+2;30;90;180
+Armes à feu\Pistolet Mitrailleur;Steyr - MPi 69;powder_projectiles;powder_projectiles;9 P;9x19;3,13;1D6+2;30;90;180
+Armes à feu\Fusil Sniper;Steyr - SSG 69;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4;4D6+1;266;800;1600
+Armes à feu\Fusil d'assaut;Swiss Arms - SIG 550;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,1;2D6+2;133;400;800
+Armes à feu\Fusil d'assaut;Swiss Arms - SIG 551;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,3;2D6+2;100;300;600
+Armes à feu\Fusil d'assaut;Swiss Arms - SIG 552;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3;2D6+2;83;250;500
+Armes à feu\Pistolet auto;Swiss Arms - Sig P210;powder_projectiles;powder_projectiles;9 P;9x19;0,97;1D6+2;11;35;70
+Armes à feu\Pistolet auto;Swiss Arms - Sig P226;powder_projectiles;powder_projectiles;9 P;9x19;0,75;1D6+2;13;40;80
+Armes à feu\fusil;Tokarev - SVT40;powder_projectiles;powder_projectiles;7,62x54 R;7,62x54;3,85;4D6+1;100;300;600
+Armes à feu\Pistolet auto;Tokarev - Tokarev TT-33;powder_projectiles;powder_projectiles;7,62 TT;7.62x25;0,5;1D6+2;11;35;70
+Armes à feu\Fusil d'assaut;TsNIItochMash - AS VAL;powder_projectiles;powder_projectiles;9 SP 5;9x39;2,5;1D6+3;83;250;500
+Armes à feu\Fusil Sniper;TsNIITochMash - VSS Vintorez;powder_projectiles;powder_projectiles;9 SP 5;9x39;2,6;1D6+3;100;300;600
+Armes à feu\Fusil pompe;Tula Arms Plant - TOZ 194;powder_projectiles;powder_projectiles;Cal. 12 G;18,5x70;2,9;4D6+1;11;35;70
+Armes à feu\Mitrailleuse;Type 62;powder_projectiles;powder_projectiles;7,62 N;7,62x51;10,7;4D6+1;0;0;0
+Armes à feu\Fusil d'assaut;Type 89;powder_projectiles;powder_projectiles;7,62 N;7,62x51;3,5;4D6+1;0;0;0
+Armes à feu\Mitrailleuse;Ultimax 100 M3;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;4,42;2D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;UZI;powder_projectiles;powder_projectiles;.45 ACP;11,43x23;3,5;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;UZI;powder_projectiles;powder_projectiles;9 P;9x19;3,5;1D6+2;0;0;0
+Armes à feu\Fusil Sniper;V-94;powder_projectiles;powder_projectiles;12,7R;12,7x108;10,2;10D6+2;0;0;0
+Armes à feu\Fusil d'assaut;Valmet - RK71 / M71S;powder_projectiles;powder_projectiles;5,56 M193;5,56x45;3,5;2D6+2;0;0;0
+Armes à feu\Mitrailleuse;Vickers - Mk I Tripod;powder_projectiles;powder_projectiles;.303 british;.303;49;4D6+0;250;750;1500
+Armes à feu\Pistolet Mitrailleur;Viking systems Inc - SMG;powder_projectiles;powder_projectiles;9 P;9x19;2,95;1D6+2;33;100;200
+Armes à feu\Pistolet Mitrailleur;Voere - 180 M-2;powder_projectiles;powder_projectiles;.22 LR;5,56x15;2,6;0D6+3;20;60;120
+Armes à feu\Fusil Sniper;VSK94;powder_projectiles;powder_projectiles;9 SP 5;9x39;2,7;1D6+3;0;0;0
+Armes à feu\fusil;Walther - G41W;powder_projectiles;powder_projectiles;8mm mauser;7,92x57;4,98;4D6+2;66;200;400
+Armes à feu\Fusil Sniper;Walther - WA 2000;powder_projectiles;powder_projectiles;.300 WM;7,62x66;6,95;5D6+0;166;500;1000
+Armes à feu\Pistolet Mitrailleur;Walther - Walter MP K;powder_projectiles;powder_projectiles;9 P;9x19;2,8;1D6+2;25;75;150
+Armes à feu\Pistolet Mitrailleur;Walther - Walter MP L;powder_projectiles;powder_projectiles;9 P;9x19;3;1D6+2;50;150;300
+Armes à feu\Pistolet auto;Walther - Walther P-38;powder_projectiles;powder_projectiles;9 P;9x19;0,88;1D6+2;11;35;70
+Armes à feu\Pistolet Mitrailleur;Z 62/70B;powder_projectiles;powder_projectiles;9 P;9x19;2,87;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;Z 84 long;powder_projectiles;powder_projectiles;9 P;9x19;3,15;1D6+2;0;0;0
+Armes à feu\Pistolet Mitrailleur;Z 84 short;powder_projectiles;powder_projectiles;9 P;9x19;3,1;1D6+2;0;0;0
+Armes à feu\Fusil Sniper;ZVI - Falcon OP99;powder_projectiles;powder_projectiles;.50 BMG;12,7x99;12,9;10D6+0;333;1000;2000
+Armes à feu\Fusil Sniper;Knight Armement Company - M110A2;powder_projectiles;powder_projectiles;7,62 N;7,62x51;4,76;3D6+2;400;800;1600

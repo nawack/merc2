@@ -79,6 +79,22 @@ function removeWeaponIdFromAmmo(currentParentWeaponId, weaponIdToRemove) {
   return ids.join(",");
 }
 
+/**
+ * Calculate ammunition damage from projectile weight (grams) and velocity (m/s).
+ * muzzle_energy = 0.5 * (weight/1000) * velocity^2
+ * damage_short  = 0.06666 * sqrt(muzzle_energy)
+ * Returns a dice formula string like "3D6+1" or "2D6".
+ */
+function calculateAmmoDamage(weight, velocity) {
+  if (!weight || !velocity) return "";
+  const muzzleEnergy = 0.5 * (weight / 1000) * Math.pow(velocity, 2);
+  const damageShort = 0.06666 * Math.sqrt(muzzleEnergy);
+  let damageD6 = Math.floor(damageShort);
+  let damageBonus = Math.floor((damageShort % 1) * 10 / 3);
+  if (damageBonus === 3) { damageBonus--; damageD6++; }
+  return damageBonus > 0 ? `${damageD6}D6+${damageBonus}` : `${damageD6}D6`;
+}
+
 // Index to Degree conversion table
 // Index 0 = degree -7, index 1 = degree -6, ..., index 7 = degree 0, ..., index 40 = degree 33
 const INDEX_TO_DEGREE = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33];
@@ -708,6 +724,14 @@ async function migrateItem(item, actor = null) {
     if (!item.system.parentWeaponId) {
       // No automatic linking without ammoType on weapons — must be done manually
     }
+
+    // Compute damage from weight and velocity if not already stored
+    const currentDamage = updateData["system.damage"] ?? item.system.damage ?? "";
+    if (!currentDamage) {
+      const w = updateData["system.weight"] ?? item.system.weight ?? 0;
+      const v = updateData["system.velocity"] ?? item.system.velocity ?? 0;
+      if (w && v) updateData["system.damage"] = calculateAmmoDamage(w, v);
+    }
   }
 
   if (Object.keys(updateData).length > 0) {
@@ -1170,6 +1194,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           // Create an embedded copy of the ammo linked to this weapon
           const ammoData = item.toObject();
           ammoData.system.parentWeaponId = weaponId;
+          // Ensure damage is computed (may be empty on compendium items)
+          if (!ammoData.system.damage) {
+            ammoData.system.damage = calculateAmmoDamage(ammoData.system.weight, ammoData.system.velocity);
+          }
           const created = await Item.create(ammoData, { parent: this.actor });
           if (created) {
             ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
@@ -1389,8 +1417,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           // Perception principale gérée par un listener dédié plus bas
           if (fieldPath === "system.attributes.perception") return;
 
-          // Dev fields are fully handled by the skill-specific listener below
-          if (fieldPath.includes(".dev")) return;
+          // Dev and bonus fields are fully handled by the skill-specific listener below
+          if (fieldPath.includes(".dev") || fieldPath.includes(".bonus")) return;
           
           // Special handling for attribute current changes
           if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
@@ -1408,10 +1436,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           // Additional combat stats recalculation for other relevant changes
           const shouldRecalcCombat =
             fieldPath.startsWith("system.biography.") ||
-            fieldPath === "system.skills.melee.bonus" ||
-            fieldPath === "system.skills.bladed_weapons.bonus" ||
-            fieldPath === "system.skills.melee.degree" ||
-            fieldPath === "system.skills.bladed_weapons.degree" ||
+            fieldPath.startsWith("system.skills.") ||
             fieldPath.startsWith("system.customSpecializations.");
 
           if (shouldRecalcCombat) {
@@ -1586,9 +1611,28 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           return;
         }
 
-        // Si ce n'est pas un champ dev, on met juste à jour le style (bonus qui change, par ex.)
+        // Si ce n'est pas un champ dev, c'est un champ bonus : on met à jour le style ET on sauvegarde
         if (!isDevField) {
           if (btn) updateButtonColor(btn);
+          if (input.name) {
+            try {
+              const bonusValue = Number(input.value) || 0;
+              const bonusUpdateData = {};
+              if (skillKey.startsWith("custom_lang_")) {
+                const langName = skillKey.replace("custom_lang_", "");
+                bonusUpdateData[`system.customLanguages.${langName}.bonus`] = bonusValue;
+              } else if (skillKey.startsWith("custom_spec_")) {
+                const specName = skillKey.replace("custom_spec_", "");
+                bonusUpdateData[`system.customSpecializations.${specName}.bonus`] = bonusValue;
+              } else {
+                bonusUpdateData[input.name] = bonusValue;
+              }
+              await this.actor.update(bonusUpdateData, { render: false });
+              await this.render();
+            } catch (e) {
+              console.error("MERC | Error saving skill bonus", e);
+            }
+          }
           return;
         }
 
@@ -2528,6 +2572,31 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     data.ammoItems = actorAmmo.map(a => a.toObject());
     data.hasActor = !!actorDoc;
 
+    // Look up the default ammo (from compendium) so the sheet can display it
+    const defaultAmmoId = systemData?.defaultAmmoId || "";
+    let defaultAmmo = null;
+    if (defaultAmmoId) {
+      const onActor = actorDoc?.items?.get(defaultAmmoId);
+      if (onActor) {
+        defaultAmmo = onActor.toObject();
+      } else {
+        const worldItem = game.items?.get(defaultAmmoId);
+        if (worldItem) {
+          defaultAmmo = worldItem.toObject();
+        } else {
+          const ammoPack = game.packs?.get("merc.ammos");
+          if (ammoPack) {
+            try {
+              const ammoDoc = await ammoPack.getDocument(defaultAmmoId);
+              if (ammoDoc) defaultAmmo = ammoDoc.toObject();
+            } catch (_e) { /* not found in pack */ }
+          }
+        }
+      }
+    }
+    data.defaultAmmo = defaultAmmo;
+    data.defaultAmmoName = systemData?.defaultAmmoName || "";
+
     return data;
   }
 
@@ -2723,6 +2792,9 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       // Weapon is on an actor: always create an embedded copy
       const ammoData = droppedItem.toObject();
       ammoData.system.parentWeaponId = itemDoc?.id || "";
+      if (!ammoData.system.damage) {
+        ammoData.system.damage = calculateAmmoDamage(ammoData.system.weight, ammoData.system.velocity);
+      }
       const created = await Item.create(ammoData, { parent: actorDoc });
       if (created) {
         ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
@@ -2731,13 +2803,21 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     } else if (droppedIsWorldLevel) {
       // Both weapon and ammo are world-level: add this weapon to the ammo's linked list
       const newIds = addWeaponIdToAmmo(droppedItem.system?.parentWeaponId, itemDoc?.id || "");
-      await droppedItem.update({ "system.parentWeaponId": newIds });
+      const worldUpdate = { "system.parentWeaponId": newIds };
+      if (!droppedItem.system.damage) {
+        const d = calculateAmmoDamage(droppedItem.system.weight, droppedItem.system.velocity);
+        if (d) worldUpdate["system.damage"] = d;
+      }
+      await droppedItem.update(worldUpdate);
       ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: droppedItem.name }));
       this.render();
     } else {
       // Weapon is world-level but ammo comes from an actor: create a world copy
       const ammoData = droppedItem.toObject();
       ammoData.system.parentWeaponId = itemDoc?.id || "";
+      if (!ammoData.system.damage) {
+        ammoData.system.damage = calculateAmmoDamage(ammoData.system.weight, ammoData.system.velocity);
+      }
       const created = await Item.create(ammoData);
       if (created) {
         ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
@@ -2806,34 +2886,11 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Calculate ammunition damage based on projectile weight and velocity
-   * weight = projectile weight in grams
-   * Formula: muzzle_energy = 0.5 * (weight/1000) * velocity^2
-   *          damage_short = 0.06666 * sqrt(muzzle_energy)
+   * Calculate ammunition damage based on projectile weight and velocity.
+   * Delegates to the module-level calculateAmmoDamage() function.
    */
   _calculateDamage(weight, velocity) {
-    if (!weight || !velocity) return "";
-    
-    // muzzle_energy = 0.5 * (weight in grams / 1000) * velocity^2
-    const muzzleEnergy = 0.5 * (weight / 1000) * Math.pow(velocity, 2);
-    
-    // damage_short = 0.06666 * sqrt(muzzle_energy)
-    const damageShort = 0.06666 * Math.sqrt(muzzleEnergy);
-    
-    // dés_dégat = floor(damage_short)
-    let damageD6 = Math.floor(damageShort);
-    
-    // bonus_dés = floor((damage_short mod 1) * 10 / 3)
-    let damageBonus = Math.floor((damageShort % 1) * 10 / 3);
-    
-    // if bonus_dés == 3: bonus_dés--, dés_dégat++
-    if (damageBonus === 3) {
-      damageBonus--;
-      damageD6++;
-    }
-    
-    // Return damage formula: damageD6 D6 + damageBonus
-    return damageBonus > 0 ? `${damageD6}D6+${damageBonus}` : `${damageD6}D6`;
+    return calculateAmmoDamage(weight, velocity);
   }
 
   async _onRender(context, options) {

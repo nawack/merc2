@@ -117,6 +117,20 @@
     {{#if (or (eq item.system.weaponSubtype "powder_projectiles") (eq item.system.weaponSubtype "mechanical_projectiles") (eq item.system.weaponSubtype "heavy_weapons") (eq item.system.weaponSubtype "electronic_weapons"))}}
     <div class="weapon-ammo-section">
       <div class="weapon-ammo-header">{{localize "MERC.UI.items.weaponSheet.ammoSection"}}</div>
+
+      {{#if (or defaultAmmo defaultAmmoName)}}
+      <div class="weapon-default-ammo">
+        <span class="weapon-default-ammo-label">{{localize "MERC.UI.items.weaponSheet.defaultAmmo"}}</span>
+        <div class="weapon-ammo-item">
+          {{#if defaultAmmo}}<img class="weapon-ammo-img" src="{{defaultAmmo.img}}" title="{{defaultAmmo.name}}" width="20" height="20">{{/if}}
+          <div class="weapon-ammo-info">
+            <span class="weapon-ammo-name">{{#if defaultAmmo}}{{defaultAmmo.name}}{{else}}{{defaultAmmoName}}{{/if}}</span>
+            {{#if defaultAmmo}}<span class="weapon-ammo-caliber">{{defaultAmmo.system.caliber}}</span>{{/if}}
+          </div>
+        </div>
+      </div>
+      {{/if}}
+
       <div class="weapon-ammo-list">
         {{#if ammoItems}}
           {{#each ammoItems as |ammo|}}

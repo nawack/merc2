@@ -1417,8 +1417,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           // Perception principale gérée par un listener dédié plus bas
           if (fieldPath === "system.attributes.perception") return;
 
-          // Dev fields are fully handled by the skill-specific listener below
-          if (fieldPath.includes(".dev")) return;
+          // Dev and bonus fields are fully handled by the skill-specific listener below
+          if (fieldPath.includes(".dev") || fieldPath.includes(".bonus")) return;
           
           // Special handling for attribute current changes
           if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
@@ -1436,10 +1436,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           // Additional combat stats recalculation for other relevant changes
           const shouldRecalcCombat =
             fieldPath.startsWith("system.biography.") ||
-            fieldPath === "system.skills.melee.bonus" ||
-            fieldPath === "system.skills.bladed_weapons.bonus" ||
-            fieldPath === "system.skills.melee.degree" ||
-            fieldPath === "system.skills.bladed_weapons.degree" ||
+            fieldPath.startsWith("system.skills.") ||
             fieldPath.startsWith("system.customSpecializations.");
 
           if (shouldRecalcCombat) {
@@ -1614,9 +1611,28 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           return;
         }
 
-        // Si ce n'est pas un champ dev, on met juste à jour le style (bonus qui change, par ex.)
+        // Si ce n'est pas un champ dev, c'est un champ bonus : on met à jour le style ET on sauvegarde
         if (!isDevField) {
           if (btn) updateButtonColor(btn);
+          if (input.name) {
+            try {
+              const bonusValue = Number(input.value) || 0;
+              const bonusUpdateData = {};
+              if (skillKey.startsWith("custom_lang_")) {
+                const langName = skillKey.replace("custom_lang_", "");
+                bonusUpdateData[`system.customLanguages.${langName}.bonus`] = bonusValue;
+              } else if (skillKey.startsWith("custom_spec_")) {
+                const specName = skillKey.replace("custom_spec_", "");
+                bonusUpdateData[`system.customSpecializations.${specName}.bonus`] = bonusValue;
+              } else {
+                bonusUpdateData[input.name] = bonusValue;
+              }
+              await this.actor.update(bonusUpdateData, { render: false });
+              await this.render();
+            } catch (e) {
+              console.error("MERC | Error saving skill bonus", e);
+            }
+          }
           return;
         }
 

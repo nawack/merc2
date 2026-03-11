@@ -1,124 +1,124 @@
-Folder;Munition;Type de munition;Calibre - type;Calibre;type;poids du projectile;vitesse (m/s);Penétration Courte;Pénétration Moyenne;Pénétration Longue;Pénétration Extreme;poids munition
-Munition\5,45x39\BO;5,45 M74;bullet;5,45x39 - BO;5,45x39;BO;3,43;900;1;1;0;0;10,5
-Munition\5,45x39\AP;5,45 7N22;bullet;5,45x39 - AP;5,45x39;AP;4,1;880;0+2;0+2;1+1;0;11,2
-Munition\5,56x45\BO;5,56 M193;bullet;5,56x45 - BO;5,56x45;BO;3,56;878;1+2;1+2;0;0;11,2
-Munition\5,56x45\BO;5,56 M855;bullet;5,56x45 - BO;5,56x45;BO;4;922;1;1;1+2;2;12
-Munition\5,56x45\AP;5,56 M995 AP45;bullet;5,56x45 - AP;5,56x45;AP;4,5;1050;0+2;0+2;1;1+2;13
-Munition\5,56x45\Sniper;5,56 M855A1 EPR;bullet;5,56x45 - Sniper;5,56x45;Sniper;4;960;0+2;0+2;1;2;12
-Munition\5,56x45\BO;5,56 Mk262;bullet;5,56x45 - BO;5,56x45;BO;5;892;1;1;1+2;0;13
-Munition\5,56x15\BO;.22 LR;bullet;5,56x15 - BO;5,56x15;BO;2,59;345;0;0;0;0;7
-Munition\5,56x15\Expansion;.22 LR Creuse;bullet;5,56x15 - Expansion;5,56x15;Expansion;2,07;330;0;0;0;0;6,5
-Munition\5,56x15\Sniper;.22 LR High Velocity;bullet;5,56x15 - Sniper;5,56x15;Sniper;2,46;405;1;1;0;0;7
-Munition\5,56x15\Sniper;.22 LR Stinger;bullet;5,56x15 - Sniper;5,56x15;Sniper;2,07;500;0;0;0;0;6,5
-Munition\5,56x15\Expansion;.22 Magnum;bullet;5,56x15 - Expansion;5,56x15;Expansion;2,58;360;0;0;0;0;7
-Munition\5,56x15\Subsonique;.22 LR Sub;bullet;5,56x15 - Subsonique;5,56x15;Subsonique;3,9;330;0;0;0;0;8,5
-Munition\6,35x16\BO;.25 ACP;bullet;6,35x16 - BO;6,35x16;BO;3,23;250;0;0;0;0;7
-Munition\7,5x54\BO;7,5 MAS Mle 29C;bullet;7,5x54 - BO;7,5x54;BO;10;850;1+2;1+2;2+2;0;23,5
-Munition\7,5x54\BO;7,5 MAS Lourde Mle33;bullet;7,5x54 - BO;7,5x54;BO;12,4;830;1;1;2;0;27
-Munition\7,5x54\AP;7,5 MAS perfo Mle29D;bullet;7,5x54 - AP;7,5x54;AP;10,4;894;1;1;1+2;0;24
-Munition\7,62x25\BO;7,62 TT;bullet;7,62x25 - BO;7,62x25;BO;5,5;488;1;1;0;0;9
-Munition\7,62x25\Expansion;7.62 TTP;bullet;7,62x25 - Expansion;7,62x25;Expansion;5,5;525;0;0;0;0;9
-Munition\7,62x25\BO;7.62 TT M48;bullet;7,62x25 - BO;7,62x25;BO;5,5;500;0;0;0;0;9
-Munition\7,62x25\BO;7,62 T Sub;bullet;7,62x25 - BO;7,62x25;BO;5,5;300;0;0;0;0;9
-Munition\7,62x39\BO;7,62 R;bullet;7,62x39 - BO;7,62x39;BO;7,9;725;2;2;0;0;16,3
-Munition\7,62x39\AP;7,62 R AP;bullet;7,62x39 - AP;7,62x39;AP;8;740;1;1;2;0;16,2
-Munition\7,62x33\BO;.30 Carbine;bullet;7,62x33 - BO;7,62x33;BO;7,1;670;0;0;0;0;16
-Munition\7,8x52\BO;.30-30;bullet;7,8x52 - BO;7,8x52;BO;10;730;2;2;0;0;18
-Munition\7,8x34\BO;.300 BLK;bullet;7,8x34 - BO;7,8x34;BO;8;675;1;1;1+2;0;15
-Munition\7,8x34\AP;.300 AAC;bullet;7,8x34 - AP;7,8x34;AP;5;900;0;0;0;0;12
-Munition\7,8x34\Sub;.300 Whisper;bullet;7,8x34 - Sub;7,8x34;Sub;14;310;2;2;0;0;24
-Munition\.303\BO;.303 british;bullet;.303 - BO;.303;BO;11,3;735;0;0;0;0;21
-Munition\7,62x51\BO;7,62 N;bullet;7,62x51 - BO;7,62x51;BO;9,45;832;1+1;1+1;2+1;0;25,4
-Munition\7,62x51\Sniper;7,62 M993;bullet;7,62x51 - Sniper;7,62x51;Sniper;9;860;1;1;2+1;0;25
-Munition\7,62x51\Sniper AP;7,62 M118LR;bullet;7,62x51 - Sniper AP;7,62x51;Sniper AP;11,3;960;1;1;1+2;2+2;27
-Munition\7,62x51\AP;7,62 M948SABOT;bullet;7,62x51 - AP;7,62x51;AP;10,9;960;0+2;0+2;1+1;2;26
-Munition\7,62x63\BO;.30-06;bullet;7,62x63 - BO;7,62x63;BO;8;810;2;2;3;0;15
-Munition\7,62x63\AP;.30-06 plus;bullet;7,62x63 - AP;7,62x63;AP;11;855;1+1;1+1;2+1;0;18
-Munition\7,62x54\AP;7,62x54 RAP;bullet;7,62x54 - AP;7,62x54;AP;9,75;870;0+2;0+2;1+2;2+1;18
-Munition\7,62x54\BO;7,62x54 R;bullet;7,62x54 - BO;7,62x54;BO;11;786;1+1;1+1;2+1;0;20
-Munition\7,62x54\AP;7,62x54 RSP;bullet;7,62x54 - AP;7,62x54;AP;11,79;800;1;1;2;0;21
-Munition\7,65x17\BO;.32 ACP;bullet;7,65x17 - BO;7,65x17;BO;4,7;318;0;0;0;0;8
-Munition\7,92x33\BO;8 Kurz;bullet;7,92x33 - BO;7,92x33;BO;8;685;0;0;0;0;15
-Munition\7,92x57\BO;8mm Mauser;bullet;7,92x57 - BO;7,92x57;BO;13,4;740;2;2;3;0;23
-Munition\8x51\BO;8mm Lebel;bullet;8x51 - BO;8x51;BO;12,5;735;2;2;3;0;21
-Munition\8x22\BO;8 Nambu;bullet;8x22 - BO;8x22;BO;7;315;0;0;0;0;10,2
-Munition\9x17\BO;.380 ACP;bullet;9x17 - BO;9x17;BO;5,68;297;0;0;0;0;9
-Munition\9x18\BO;9M;bullet;9x18 - BO;9x18;BO;6,1;314;0;0;0;0;10
-Munition\9x18\AP;9M PBM;bullet;9x18 - AP;9x18;AP;3,7;519;0;0;0;0;7,4
-Munition\9x18\Expansion;9M SP 7;bullet;9x18 - Expansion;9x18;Expansion;6,1;325;0;0;0;0;8
-Munition\9x19\BO;9 P;bullet;9x19 - BO;9x19;BO;6,75;450;0;0;0;0;11
-Munition\9x19\AP;9 PAP;bullet;9x19 - AP;9x19;AP;6,75;460;0;0;0;0;11
-Munition\9x19\Expansion;9 PF;bullet;9x19 - Expansion;9x19;Expansion;6,5;410;0;0;0;0;11
-Munition\9x19\Subsonique;9 S;bullet;9x19 - Subsonique;9x19;Subsonique;8;300;0;0;0;0;13
-Munition\9x29\BO;.38 Special;bullet;9x29 - BO;9x29;BO;10,6;260;0;0;0;0;20
-Munition\9x29;.38 Spe Blindé;bullet;9x29;9x29;;10,2;230;0;0;0;0;20
-Munition\9x29;.38 Spe Tête creuse;bullet;9x29;9x29;;7,1;390;0;0;0;0;
-Munition\9x29;.38 Spe SJHP;bullet;9x29;9x29;;8,06;308;0;0;0;0;
-Munition\9x29;.38 Spe JHP;bullet;9x29;9x29;;10,19;370;0;0;0;0;
-Munition\9X29\JHP+P;.38 Spe Grizzly;bullet;9X29 - JHP+P;9X29;JHP+P;10,24;297;0;0;0;0;15,8
-Munition\9x29;.38 Spe +P+;bullet;9x29;9x29;;7,1;340;0;0;0;0;11
-Munition\9x29;.38 Spe Super Police;bullet;9x29;9x29;;13;205;0;0;0;0;20
-Munition\9x29;.38 Cor-Bon FMJ;bullet;9x29;9x29;;9,53;270;0;0;0;0;14,7
-Munition\9x33\BO;.357 Magnum;bullet;9x33 - BO;9x33;BO;10,2;395;1;1;0;0;17
-Munition\9x33\AP;.357 Mag SB;bullet;9x33 - AP;9x33;AP;8,1;395;0;0;0;0;13,5
-Munition\9x33;.357 Mag Blindé;bullet;9x33;9x33;;10,2;344;0;0;0;0;
-Munition\9x33;.357 Mag TT creuse;bullet;9x33;9x33;;7,1;368;0;0;0;0;
-Munition\9x33;.357 Mag JHP 1;bullet;9x33;9x33;;8,06;435;0;0;0;0;
-Munition\9x33;.357 Mag JHP 2;bullet;9x33;9x33;;7,1;465;0;0;0;0;
-Munition\11,43x23\BO;.44-40;bullet;11,43x23 - BO;11,43x23;BO;13;460;0;0;0;0;23
-Munition\11,43x23\BO;.44 Magnum;bullet;11,43x23 - BO;11,43x23;BO;19;450;2;2;0;0;31
-Munition\10,74x33\BO;.44 AMP;bullet;10,74x33 - BO;10,74x33;BO;19;500;0;0;0;0;32
-Munition\10x22\BO;.40 S&W;bullet;10x22 - BO;10x22;BO;11,7;340;1;1;0;0;21
-Munition\11,43x23\BO;.45 ACP;bullet;11,43x23 - BO;11,43x23;BO;14,84;285;1;1;0;0;28
-Munition\11,43x23\AP;.45 ACP Blindé;bullet;11,43x23 - AP;11,43x23;AP;14,5;245;0;0;0;0;
-Munition\11,43x23\Expansion;.45 ACP TT creuse;bullet;11,43x23 - Expansion;11,43x23;Expansion;12;266;0;0;0;0;
-Munition\9x39\AP;9 SP 6;bullet;9x39 - AP;9x39;AP;16;310;0+2;0+2;0;0;23
-Munition\9x39\BO;9 SP 5;bullet;9x39 - BO;9x39;BO;16,8;280;1;1;0;0;23
-Munition\9x39\AP;9 BP;bullet;9x39 - AP;9x39;AP;17,3;327;0+2;0+2;1+1;0;23
-Munition\7.62x41\Subsonique;7,62 SP 4;bullet;7.62x41 - Subsonique;7.62x41;Subsonique;9,3;265;0;0;0;0;14
-Munition\9x19\AP;9 PBP;bullet;9x19 - AP;9x19;AP;4,1;600;0;0;0;0;8,2
-Munition\9x19\AP;7N21;bullet;9x19 - AP;9x19;AP;5,3;460;0;0;0;0;
-Munition\9x19\AP;7N31;bullet;9x19 - AP;9x19;AP;4,2;600;0;0;0;0;
-Munition\9x21\BO;7N28 / SP-11;bullet;9x21 - BO;9x21;BO;7,9;390;0;0;0;0;
-Munition\9x21\AP;7N29 / SP-10;bullet;9x21 - AP;9x21;AP;6,7;430;0;0;0;0;
-Munition\5,45x39;5,45 MPT;bullet;5,45x39;5,45x39;;2,5;315;0;0;0;0;5
-Munition\5,7x28\BO;SS190;bullet;5,7x28 - BO;5,7x28;BO;2,1;715;1;1;0;0;5
-Munition\5,7x28\Subsonique;SB193;bullet;5,7x28 - Subsonique;5,7x28;Subsonique;3,6;320;0;0;0;0;7
-Munition\5,7x28\Expansion;SS192;bullet;5,7x28 - Expansion;5,7x28;Expansion;1,8;705;0;0;0;0;6
-Munition\5,8x42\BO;5,8 DBP87;bullet;5,8x42 - BO;5,8x42;BO;4,15;970;1;1;0;0;8
-Munition\5,8x42\AP;5,8 DBP88;bullet;5,8x42 - AP;5,8x42;AP;4,8;890;1;1;1+2;0;8,5
-Munition\12,7x99\BO;.50 BMG;bullet;12,7x99 - BO;12,7x99;BO;42;903;2;2;2;3;75
-Munition\12,7x99\Sniper;.50 BMG HP;bullet;12,7x99 - Sniper;12,7x99;Sniper;46;903;2;2;2;3;76
-Munition\12,7x99\AP;.50 BMG API-S;bullet;12,7x99 - AP;12,7x99;AP;47;893;1;1;1;2;80
-Munition\14,5x114\Expansion;14,5 MDZ;bullet;14,5x114 - Expansion;14,5x114;Expansion;59,68;1000;3;3;3;4;100
-Munition\14,5x114\AP;14,5 BS;bullet;14,5x114 - AP;14,5x114;AP;65,5;1000;2;2;2;3;110
-Munition\14,5x114\AP;14,5 BZT;bullet;14,5x114 - AP;14,5x114;AP;59,56;1000;2;2;2;3;100
-Munition\7,92x57\AP;8x57 JR;bullet;7,92x57 - AP;7,92x57;AP;12,7;710;0;0;0;0;20
-Munition\7,92x94\AP;7,92x94;bullet;7,92x94 - AP;7,92x94;AP;14,3;1209;0;0;0;0;21
-Munition\7,92x107\AP;7,92DS;bullet;7,92x107 - AP;7,92x107;AP;14,2;1275;0;0;0;0;21
-Munition\12,7x108\BO;12,7R;bullet;12,7x108 - BO;12,7x108;BO;52;859;0;0;0;0;100
-Munition\12,7x108\AP;12,7 BZT;bullet;12,7x108 - AP;12,7x108;AP;45,6;859;0;0;0;0;100
-Munition\13x92\AP;13x92SR;bullet;13x92 - AP;13x92;AP;51,5;785;0;0;0;0;100
-Munition\13,9x99\AP;.55 Boys;bullet;13,9x99 - AP;13,9x99;AP;47,6;884;2;2;3;5;95
-Munition\15,2x114\AP;15,2x114;bullet;15,2x114 - AP;15,2x114;AP;76,5;1100;0;0;0;0;125
-Munition\7,62x51\BO;.308 Winchester D46;bullet;7,62x51 - BO;7,62x51;BO;12;760;1+1;1+1;2+1;0;21
-Munition\7,62x51\AP;.308 Winchester AP;bullet;7,62x51 - AP;7,62x51;AP;10,7;870;1;1;2;3;19
-Munition\7,62x51\Subsonique;.308 Winchester Sub;bullet;7,62x51 - Subsonique;7,62x51;Subsonique;13;325;2;2;0;0;22
-Munition\4,6x30\BO;4,6x30;bullet;4,6x30 - BO;4,6x30;BO;1,6;725;1;1;0;0;3,8
-Munition\18,5x70\Grenaille;Cal. 12 G;bullet;18,5x70 - Grenaille;18,5x70;Grenaille;38;408;0;0;0;0;50
-Munition\18,5x70\Grenaille;Cal. 12 Mag;bullet;18,5x70 - Grenaille;18,5x70;Grenaille;42;420;0;0;0;0;54
-Munition\18,5x70\Brenneke;Cal. 12 B;bullet;18,5x70 - Brenneke;18,5x70;Brenneke;24;600;2;2;0;0;36
-Munition\18,5x70\Expansion;Cal. 12 E;bullet;18,5x70 - Expansion;18,5x70;Expansion;19,5;450;0;0;0;0;31
-Munition\16,8x70\Grenaille;Cal. 16 G;bullet;16,8x70 - Grenaille;16,8x70;Grenaille;32;380;0;0;0;0;44
-Munition\16,8x70\Brenneke;Cal. 16 B;bullet;16,8x70 - Brenneke;16,8x70;Brenneke;23;440;2;2;0;0;35
-Munition\15,6x67\Grenaille;Cal. 20 G;bullet;15,6x67 - Grenaille;15,6x67;Grenaille;30;390;0;0;0;0;42
-Munition\15,6x67\Expansion;Cal. 20 E;bullet;15,6x67 - Expansion;15,6x67;Expansion;19,5;450;0;0;0;0;31
-Munition\15,6x67\Brenneke;Cal. 20 B;bullet;15,6x67 - Brenneke;15,6x67;Brenneke;24;445;2;2;0;0;36
-Munition\7,62x66\BO;.300 WM;bullet;7,62x66 - BO;7,62x66;BO;10,69;900;2;2;3;0;18
-Munition\8,58x71\BO;8,58x71;bullet;8,58x71 - BO;8,58x71;BO;16,2;914;2;2;3;0;28
-Munition\7,62x42\BO;7,62 SP 4;bullet;7,62x42 - BO;7,62x42;BO;9,3;205;0;0;0;0;18
-Munition\12,7 x 32,6\BO;.50 AE;bullet;12,7 x 32,6 - BO;12,7 x 32,6;BO;21;425;0;0;0;0;39
-Munition\12,7x55\BO;STS-130 TP;bullet;12,7x55 - BO;12,7x55;BO;59;295;2;2;3;0;100
-Munition\12,7x55\AP;STS-130 BP;bullet;12,7x55 - AP;12,7x55;AP;18;300;1;1;2;3;70
-Munition\7,65x20\BO;7,65 L;bullet;7,65x20 - BO;7,65x20;BO;5,7;340;0;0;0;0;9
-Munition\8x27\BO;8 court;bullet;8x27 - BO;8x27;BO;7,8;350;0;0;0;0;12
+Folder;Munition;Type de munition;Calibre - type;Calibre;type;poids du projectile;vitesse (m/s);Penétration Courte;Pénétration Moyenne;Pénétration Longue;Pénétration Extreme;poids munition;
+Munition\5,45x39\BO;5,45 M74;bullet;5,45x39 - BO;5,45x39;BO;3,43;900;1;1;0;0;10,5;
+Munition\5,45x39\AP;5,45 7N22;bullet;5,45x39 - AP;5,45x39;AP;4,1;880;0+2;0+2;1+1;0;11,2;
+Munition\5,56x45\BO;5,56 M193;bullet;5,56x45 - BO;5,56x45;BO;3,56;878;1+2;1+2;0;0;11,2;
+Munition\5,56x45\BO;5,56 M855;bullet;5,56x45 - BO;5,56x45;BO;4;922;1;1;1+2;2;12;
+Munition\5,56x45\AP;5,56 M995 AP45;bullet;5,56x45 - AP;5,56x45;AP;4,5;1050;0+2;0+2;1;1+2;13;
+Munition\5,56x45\Sniper;5,56 M855A1 EPR;bullet;5,56x45 - Sniper;5,56x45;Sniper;4;960;0+2;0+2;1;2;12;
+Munition\5,56x45\BO;5,56 Mk262;bullet;5,56x45 - BO;5,56x45;BO;5;892;1;1;1+2;0;13;
+Munition\5,56x15\BO;.22 LR;bullet;5,56x15 - BO;5,56x15;BO;2,59;345;0;0;0;0;7;
+Munition\5,56x15\Expansion;.22 LR Creuse;bullet;5,56x15 - Expansion;5,56x15;Expansion;2,07;330;0;0;0;0;6,5;
+Munition\5,56x15\Sniper;.22 LR High Velocity;bullet;5,56x15 - Sniper;5,56x15;Sniper;2,46;405;1;1;0;0;7;
+Munition\5,56x15\Sniper;.22 LR Stinger;bullet;5,56x15 - Sniper;5,56x15;Sniper;2,07;500;0;0;0;0;6,5;
+Munition\5,56x15\Expansion;.22 Magnum;bullet;5,56x15 - Expansion;5,56x15;Expansion;2,58;360;0;0;0;0;7;
+Munition\5,56x15\Subsonique;.22 LR Sub;bullet;5,56x15 - Subsonique;5,56x15;Subsonique;3,9;330;0;0;0;0;8,5;
+Munition\6,35x16\BO;.25 ACP;bullet;6,35x16 - BO;6,35x16;BO;3,23;250;0;0;0;0;7;
+Munition\7,5x54\BO;7,5 MAS Mle 29C;bullet;7,5x54 - BO;7,5x54;BO;10;850;1+2;1+2;2+2;0;23,5;
+Munition\7,5x54\BO;7,5 MAS Lourde Mle33;bullet;7,5x54 - BO;7,5x54;BO;12,4;830;1;1;2;0;27;
+Munition\7,5x54\AP;7,5 MAS perfo Mle29D;bullet;7,5x54 - AP;7,5x54;AP;10,4;894;1;1;1+2;0;24;
+Munition\7,62x25\BO;7,62 TT;bullet;7,62x25 - BO;7,62x25;BO;5,5;488;1;1;0;0;9;
+Munition\7,62x25\Expansion;7.62 TTP;bullet;7,62x25 - Expansion;7,62x25;Expansion;5,5;525;0;0;0;0;9;
+Munition\7,62x25\BO;7.62 TT M48;bullet;7,62x25 - BO;7,62x25;BO;5,5;500;0;0;0;0;9;
+Munition\7,62x25\BO;7,62 T Sub;bullet;7,62x25 - BO;7,62x25;BO;5,5;300;0;0;0;0;9;
+Munition\7,62x39\BO;7,62 R;bullet;7,62x39 - BO;7,62x39;BO;7,9;725;2;2;0;0;16,3;
+Munition\7,62x39\AP;7,62 R AP;bullet;7,62x39 - AP;7,62x39;AP;8;740;1;1;2;0;16,2;
+Munition\7,62x33\BO;.30 Carbine;bullet;7,62x33 - BO;7,62x33;BO;7,1;670;0;0;0;0;16;
+Munition\7,8x52\BO;.30-30;bullet;7,8x52 - BO;7,8x52;BO;10;730;2;2;0;0;18;
+Munition\7,8x34\BO;.300 BLK;bullet;7,8x34 - BO;7,8x34;BO;8;675;2;2;2+2;0;15;
+Munition\7,8x34\AP;.300 AAC;bullet;7,8x34 - AP;7,8x34;AP;5;900;1;1;1+2;0;12;
+Munition\7,8x34\Sub;.300 Whisper;bullet;7,8x34 - Sub;7,8x34;Sub;14;310;2;2;0;0;24;
+Munition\.303\BO;.303 british;bullet;.303 - BO;.303;BO;11,3;735;0;0;0;0;21;
+Munition\7,62x51\BO;7,62 N;bullet;7,62x51 - BO;7,62x51;BO;9,45;832;1+1;1+1;2+1;0;25,4;
+Munition\7,62x51\Sniper;7,62 M993;bullet;7,62x51 - Sniper;7,62x51;Sniper;9;860;1;1;2+1;0;25;
+Munition\7,62x51\Sniper AP;7,62 M118LR;bullet;7,62x51 - Sniper AP;7,62x51;Sniper AP;11,3;960;1;1;1+2;2+2;27;
+Munition\7,62x51\AP;7,62 M948SABOT;bullet;7,62x51 - AP;7,62x51;AP;10,9;960;0+2;0+2;1+1;2;26;
+Munition\7,62x63\BO;.30-06;bullet;7,62x63 - BO;7,62x63;BO;8;810;2;2;3;0;15;
+Munition\7,62x63\AP;.30-06 plus;bullet;7,62x63 - AP;7,62x63;AP;11;855;1+1;1+1;2+1;0;18;
+Munition\7,62x54\AP;7,62x54 RAP;bullet;7,62x54 - AP;7,62x54;AP;9,75;870;0+2;0+2;1+2;2+1;18;
+Munition\7,62x54\BO;7,62x54 R;bullet;7,62x54 - BO;7,62x54;BO;11;786;1+1;1+1;2+1;0;20;
+Munition\7,62x54\AP;7,62x54 RSP;bullet;7,62x54 - AP;7,62x54;AP;11,79;800;1;1;2;0;21;
+Munition\7,65x17\BO;.32 ACP;bullet;7,65x17 - BO;7,65x17;BO;4,7;318;0;0;0;0;8;
+Munition\7,92x33\BO;8 Kurz;bullet;7,92x33 - BO;7,92x33;BO;8;685;0;0;0;0;15;
+Munition\7,92x57\BO;8mm Mauser;bullet;7,92x57 - BO;7,92x57;BO;13,4;740;2;2;3;0;23;
+Munition\8x51\BO;8mm Lebel;bullet;8x51 - BO;8x51;BO;12,5;735;2;2;3;0;21;
+Munition\8x22\BO;8 Nambu;bullet;8x22 - BO;8x22;BO;7;315;0;0;0;0;10,2;
+Munition\9x17\BO;.380 ACP;bullet;9x17 - BO;9x17;BO;5,68;297;0;0;0;0;9;
+Munition\9x18\BO;9M;bullet;9x18 - BO;9x18;BO;6,1;314;0;0;0;0;10;
+Munition\9x18\AP;9M PBM;bullet;9x18 - AP;9x18;AP;3,7;519;1;0;0;0;7,4;
+Munition\9x18\Expansion;9M SP 7;bullet;9x18 - Expansion;9x18;Expansion;6,1;325;0;0;0;0;8;
+Munition\9x19\BO;9 P;bullet;9x19 - BO;9x19;BO;6,75;450;0;0;0;0;11;
+Munition\9x19\AP;9 PAP;bullet;9x19 - AP;9x19;AP;6,75;460;1;0;0;0;11;
+Munition\9x19\Expansion;9 PF;bullet;9x19 - Expansion;9x19;Expansion;6,5;410;0;0;0;0;11;
+Munition\9x19\Subsonique;9 S;bullet;9x19 - Subsonique;9x19;Subsonique;8;300;0;0;0;0;13;
+Munition\9x29\BO;.38 Special;bullet;9x29 - BO;9x29;BO;10,6;260;0;0;0;0;20;
+Munition\9x29;.38 Spe Blindé;bullet;9x29 - AP;9x29;AP;10,2;230;0;0;0;0;20;
+Munition\9x29;.38 Spe Tête creuse;bullet;9x29 - Expansion;9x29;Expansion;7,1;390;0;0;0;0;;
+Munition\9x29;.38 Spe SJHP;bullet;9x29;9x29;;8,06;308;0;0;0;0;;
+Munition\9x29;.38 Spe JHP;bullet;9x29;9x29;;10,19;370;0;0;0;0;;
+Munition\9X29\JHP+P;.38 Spe Grizzly;bullet;9X29 - JHP+P;9X29;JHP+P;10,24;297;0;0;0;0;15,8;
+Munition\9x29;.38 Spe +P+;bullet;9x29;9x29;;7,1;340;0;0;0;0;11;
+Munition\9x29;.38 Spe Super Police;bullet;9x29;9x29;;13;205;0;0;0;0;20;
+Munition\9x29;.38 Cor-Bon FMJ;bullet;9x29;9x29;;9,53;270;0;0;0;0;14,7;
+Munition\9x33\BO;.357 Magnum;bullet;9x33 - BO;9x33;BO;10,2;395;0;0;0;0;17;
+Munition\9x33\AP;.357 Mag SB;bullet;9x33 - AP;9x33;AP;8,1;395;1;1;0;0;13,5;
+Munition\9x33;.357 Mag Blindé;bullet;9x33 - AP;9x33;AP;10,2;344;1;1;0;0;;
+Munition\9x33;.357 Mag TT creuse;bullet;9x33 - Expansion;9x33;Expansion;7,1;368;0;0;0;0;;
+Munition\9x33;.357 Mag JHP 1;bullet;9x33;9x33;;8,06;435;0;0;0;0;;
+Munition\9x33;.357 Mag JHP 2;bullet;9x33;9x33;;7,1;465;0;0;0;0;;
+Munition\11,43x23\BO;.44-40;bullet;11,43x23 - BO;11,43x23;BO;13;460;0;0;0;0;23;
+Munition\11,43x23\BO;.44 Magnum;bullet;11,43x23 - BO;11,43x23;BO;19;450;2;2;0;0;31;
+Munition\10,74x33\BO;.44 AMP;bullet;10,74x33 - BO;10,74x33;BO;19;500;0;0;0;0;32;
+Munition\10x22\BO;.40 S&W;bullet;10x22 - BO;10x22;BO;11,7;340;1;1;0;0;21;
+Munition\11,43x23\BO;.45 ACP;bullet;11,43x23 - BO;11,43x23;BO;14,84;285;1;1;0;0;28;
+Munition\11,43x23\AP;.45 ACP Blindé;bullet;11,43x23 - AP;11,43x23;AP;14,5;245;0+2;0+2;1+2;0;;
+Munition\11,43x23\Expansion;.45 ACP TT creuse;bullet;11,43x23 - Expansion;11,43x23;Expansion;12;266;0;0;0;0;;
+Munition\9x39\AP;9 SP 6;bullet;9x39 - AP;9x39;AP;16;310;0+2;0+2;1+2;0;23;
+Munition\9x39\BO;9 SP 5;bullet;9x39 - BO;9x39;BO;16,8;280;1;1;0;0;23;
+Munition\9x39\AP;9 BP;bullet;9x39 - AP;9x39;AP;17,3;327;0+2;0+2;1+1;0;23;
+Munition\7.62x41\Subsonique;7,62 SP 4;bullet;7.62x41 - Subsonique;7.62x41;Subsonique;9,3;265;0;0;0;0;14;
+Munition\9x19\AP;9 PBP;bullet;9x19 - AP;9x19;AP;4,1;600;1;1;0;0;8,2;
+Munition\9x19\AP;7N21;bullet;9x19 - AP;9x19;AP;5,3;460;1;1;0;0;;
+Munition\9x19\AP;7N31;bullet;9x19 - AP;9x19;AP;4,2;600;1;1;0;0;;
+Munition\9x21\BO;7N28 / SP-11;bullet;9x21 - BO;9x21;BO;7,9;390;0;0;0;0;;
+Munition\9x21\AP;7N29 / SP-10;bullet;9x21 - AP;9x21;AP;6,7;430;1;1;0;0;;
+Munition\5,45x39;5,45 MPT;bullet;5,45x39;5,45x39;;2,5;315;0;0;0;0;5;
+Munition\5,7x28\BO;SS190;bullet;5,7x28 - BO;5,7x28;BO;2,1;715;1;1;0;0;5;
+Munition\5,7x28\Subsonique;SB193;bullet;5,7x28 - Subsonique;5,7x28;Subsonique;3,6;320;0;0;0;0;7;
+Munition\5,7x28\Expansion;SS192;bullet;5,7x28 - Expansion;5,7x28;Expansion;1,8;705;0;0;0;0;6;
+Munition\5,8x42\BO;5,8 DBP87;bullet;5,8x42 - BO;5,8x42;BO;4,15;970;1;1;0;0;8;
+Munition\5,8x42\AP;5,8 DBP88;bullet;5,8x42 - AP;5,8x42;AP;4,8;890;1;1;1+2;0;8,5;
+Munition\12,7x99\BO;.50 BMG;bullet;12,7x99 - BO;12,7x99;BO;42;903;2;2;2;3;75;
+Munition\12,7x99\Sniper;.50 BMG HP;bullet;12,7x99 - Sniper;12,7x99;Sniper;46;903;2;2;2;3;76;
+Munition\12,7x99\AP;.50 BMG API-S;bullet;12,7x99 - AP;12,7x99;AP;47;893;1;1;1;2;80;
+Munition\14,5x114\Expansion;14,5 MDZ;bullet;14,5x114 - Expansion;14,5x114;Expansion;59,68;1000;3;3;3;4;100;
+Munition\14,5x114\AP;14,5 BS;bullet;14,5x114 - AP;14,5x114;AP;65,5;1000;2;2;2;3;110;
+Munition\14,5x114\AP;14,5 BZT;bullet;14,5x114 - AP;14,5x114;AP;59,56;1000;2;2;2;3;100;
+Munition\7,92x57\AP;8x57 JR;bullet;7,92x57 - AP;7,92x57;AP;12,7;710;1;1;2;3;20;
+Munition\7,92x94\AP;7,92x94;bullet;7,92x94 - AP;7,92x94;AP;14,3;1209;1;1;2;3;21;
+Munition\7,92x107\AP;7,92DS;bullet;7,92x107 - AP;7,92x107;AP;14,2;1275;0;0;0;0;21;
+Munition\12,7x108\BO;12,7R;bullet;12,7x108 - BO;12,7x108;BO;52;859;0;0;0;0;100;
+Munition\12,7x108\AP;12,7 BZT;bullet;12,7x108 - AP;12,7x108;AP;45,6;859;1;1;1;2;100;
+Munition\13x92\AP;13x92SR;bullet;13x92 - AP;13x92;AP;51,5;785;1;1+2;2;3;100;
+Munition\13,9x99\AP;.55 Boys;bullet;13,9x99 - AP;13,9x99;AP;47,6;884;2;2;3;5;95;
+Munition\15,2x114\AP;15,2x114;bullet;15,2x114 - AP;15,2x114;AP;76,5;1100;0;0;0;0;125;
+Munition\7,62x51\BO;.308 Winchester D46;bullet;7,62x51 - BO;7,62x51;BO;12;760;1+1;1+1;2+1;0;21;
+Munition\7,62x51\AP;.308 Winchester AP;bullet;7,62x51 - AP;7,62x51;AP;10,7;870;1;1;2;3;19;
+Munition\7,62x51\Subsonique;.308 Winchester Sub;bullet;7,62x51 - Subsonique;7,62x51;Subsonique;13;325;2;2;0;0;22;
+Munition\4,6x30\BO;4,6x30;bullet;4,6x30 - BO;4,6x30;BO;1,6;725;1;1;0;0;3,8;
+Munition\18,5x70\Grenaille;Cal. 12 G;bullet;18,5x70 - Grenaille;18,5x70;Grenaille;38;408;0;0;0;0;50;
+Munition\18,5x70\Grenaille;Cal. 12 Mag;bullet;18,5x70 - Grenaille;18,5x70;Grenaille;42;420;0;0;0;0;54;
+Munition\18,5x70\Brenneke;Cal. 12 B;bullet;18,5x70 - Brenneke;18,5x70;Brenneke;24;600;2;2;0;0;36;
+Munition\18,5x70\Expansion;Cal. 12 E;bullet;18,5x70 - Expansion;18,5x70;Expansion;19,5;450;0;0;0;0;31;
+Munition\16,8x70\Grenaille;Cal. 16 G;bullet;16,8x70 - Grenaille;16,8x70;Grenaille;32;380;0;0;0;0;44;
+Munition\16,8x70\Brenneke;Cal. 16 B;bullet;16,8x70 - Brenneke;16,8x70;Brenneke;23;440;2;2;0;0;35;
+Munition\15,6x67\Grenaille;Cal. 20 G;bullet;15,6x67 - Grenaille;15,6x67;Grenaille;30;390;0;0;0;0;42;
+Munition\15,6x67\Expansion;Cal. 20 E;bullet;15,6x67 - Expansion;15,6x67;Expansion;19,5;450;0;0;0;0;31;
+Munition\15,6x67\Brenneke;Cal. 20 B;bullet;15,6x67 - Brenneke;15,6x67;Brenneke;24;445;2;2;0;0;36;
+Munition\7,62x66\BO;.300 WM;bullet;7,62x66 - BO;7,62x66;BO;10,69;900;2;2;3;0;18;
+Munition\8,58x71\BO;8,58x71;bullet;8,58x71 - BO;8,58x71;BO;16,2;914;2;2;3;0;28;
+Munition\7,62x42\BO;7,62 SP 4;bullet;7,62x42 - BO;7,62x42;BO;9,3;205;0;0;0;0;18;
+Munition\12,7 x 32,6\BO;.50 AE;bullet;12,7 x 32,6 - BO;12,7 x 32,6;BO;21;425;0;0;0;0;39;
+Munition\12,7x55\BO;STS-130 TP;bullet;12,7x55 - BO;12,7x55;BO;59;295;2;2;3;0;100;
+Munition\12,7x55\AP;STS-130 BP;bullet;12,7x55 - AP;12,7x55;AP;18;300;1;1;2;3;70;
+Munition\7,65x20\BO;7,65 L;bullet;7,65x20 - BO;7,65x20;BO;5,7;340;0;0;0;0;9;
+Munition\8x27\BO;8 court;bullet;8x27 - BO;8x27;BO;7,8;350;0;0;0;0;12;

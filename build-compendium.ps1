@@ -105,7 +105,7 @@ function Build-FolderMap([string[]]$rawPaths) {
 
 function Get-WeaponImage([string]$subtype) {
   switch -Wildcard ($subtype.ToLower()) {
-    "*pistolet mitrailleur*"  { return "systems/merc/assets/items/weapons/pisto_mitrailleur.png" }
+    "*pistolet mitrailleur*"  { return "systems/merc/assets/items/weapons/mitraillette.png" }
     "*pistolet auto*"         { return "systems/merc/assets/items/weapons/gun.png" }
     "*pistolet*"              { return "systems/merc/assets/items/weapons/gun.png" }
     "*revolver*"              { return "systems/merc/assets/items/weapons/revolver.png" }
@@ -113,8 +113,8 @@ function Get-WeaponImage([string]$subtype) {
     "*sniper*"                { return "systems/merc/assets/items/weapons/sniper.png" }
     "*pompe*"                 { return "systems/merc/assets/items/weapons/pompe.png" }
     "*mitrailleuse*"          { return "systems/merc/assets/items/weapons/mitrailleuse.png" }
-    "*fusil*"                 { return "systems/merc/assets/items/weapons/mitrailleuse.png" }
-    "*fusil d'assaut*"        { return "systems/merc/assets/items/weapons/mitrailleuse.png" }
+    "*fusil*"                 { return "systems/merc/assets/items/weapons/fusil.png" }
+    "*fusil d'assaut*"        { return "systems/merc/assets/items/weapons/fusil.png" }
     default                   { return "systems/merc/assets/items/weapons/gun.png" }
   }
 }

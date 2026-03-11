@@ -257,6 +257,7 @@
           "invalidDamage": "Formule de dégâts invalide.",
           "damageRoll": "Dégâts - {name}",
           "ammoSection": "Munitions",
+          "defaultAmmo": "Munition par défaut",
           "ammoLoaded": "Chargé",
           "ammoNone": "Aucune munition",
           "addAmmo": "+ Ajouter munition",

@@ -32,16 +32,14 @@ function New-FoundryId {
 }
 
 function Parse-PenValue([string]$v) {
-  $v = $v.Trim()
-  if ($v -match '^(-?\d+)\+(-?\d+)$') { return [int]$Matches[1] + [int]$Matches[2] }
-  $n = 0
-  if ([int]::TryParse($v, [ref]$n)) { return $n }
-  return 0
+  # Return the raw text value (e.g. "1+2", "0+2", "0") — it is a game notation, not a math expression
+  return $v.Trim()
 }
 
 function TryParseDouble([string]$s) {
+  # Replace European decimal comma with dot before parsing
   $d = 0.0
-  [double]::TryParse($s.Trim(), [System.Globalization.NumberStyles]::Any,
+  [double]::TryParse($s.Trim().Replace(',', '.'), [System.Globalization.NumberStyles]::Any,
       [System.Globalization.CultureInfo]::InvariantCulture, [ref]$d) | Out-Null
   return $d
 }
@@ -185,79 +183,7 @@ if (-not (Test-Path $classicLevelDir)) {
 }
 
 # =============================================================================
-# Étape 3 – Parsing du CSV Weapons
-# =============================================================================
-Write-Host "> Lecture des armes..." -ForegroundColor Cyan
-$wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapon.csv") -Delimiter ";" -Encoding Default
-$wcols = $wcsv[0].PSObject.Properties.Name
-# Index: 0=Folder 1=Nom 2=Sous-type 3=Compétence 4=Munition 5=Calibre
-#        6=Poids à vide 7=dégat 8=Range Med 9=Range Long 10=Range Extrem
-
-# Build weapon folder hierarchy from all Folder paths in the CSV
-$allWFolderPaths = $wcsv | ForEach-Object { $_.($wcols[0]).Trim() } | Where-Object { $_ }
-$weaponFolderMap = Build-FolderMap $allWFolderPaths
-
-$weaponItems = [System.Collections.Generic.List[hashtable]]::new()
-$sort = 0
-foreach ($row in $wcsv) {
-  $name = $row.($wcols[1]).Trim()
-  if (-not $name) { continue }
-
-  $folderPath    = $row.($wcols[0]).Trim()
-  # Folder last segment used for icon selection only
-  $fpParts       = $folderPath -split '\\'
-  $folderSubtype = if ($fpParts.Count -gt 1) { $fpParts[-1] } else { $folderPath }
-  # "Sous-type d'arme" column (index 2) used for the weaponSubtype field
-  $subtype       = $row.($wcols[2]).Trim()
-  $weightKg = TryParseDouble $row.($wcols[6])
-  $damage   = $row.($wcols[7]).Trim()
-  $rangeMed = TryParseInt $row.($wcols[8])
-  $rangeLng = TryParseInt $row.($wcols[9])
-  $rangeExt = TryParseInt $row.($wcols[10])
-
-  # Resolve folder _id (case-insensitive lookup)
-  $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
-  $itemFolderId  = if ($weaponFolderMap.ContainsKey($normFolderKey)) { $weaponFolderMap[$normFolderKey]['_id'] } else { $null }
-  $sort++
-
-  $weaponItems.Add([ordered]@{
-    "_id"    = New-FoundryId
-    "name"   = $name
-    "type"   = "weapon"
-    "img"    = Get-WeaponImage $folderSubtype
-    "system" = [ordered]@{
-      "damage"        = $damage
-      "rarity"        = "common"
-      "price"         = 0
-      "weightKg"      = $weightKg
-      "weaponSubtype" = $subtype
-      "weaponSkill"   = "powder_projectiles"
-      "proficiency"   = 0
-      "range"         = [ordered]@{
-        "short"   = 0
-        "medium"  = $rangeMed
-        "long"    = $rangeLng
-        "extreme" = $rangeExt
-      }
-    }
-    "effects" = @()
-    "folder"  = $itemFolderId
-    "sort"    = $sort
-    "flags"   = [ordered]@{}
-    "_stats"  = [ordered]@{
-      "systemId"       = "merc"
-      "systemVersion"  = "1.0.11"
-      "coreVersion"    = "13.351"
-      "createdTime"    = $null
-      "modifiedTime"   = $null
-      "lastModifiedBy" = $null
-    }
-  })
-}
-Write-Host "  OK $($weaponItems.Count) armes, $($weaponFolderMap.Count) dossiers" -ForegroundColor Green
-
-# =============================================================================
-# Étape 4 – Parsing du CSV Ammo
+# Étape 3 – Parsing du CSV Ammo  (must run before weapons so we can link IDs)
 # =============================================================================
 Write-Host "> Lecture des munitions..." -ForegroundColor Cyan
 $acsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Ammo.csv") -Delimiter ";" -Encoding Default
@@ -333,6 +259,92 @@ foreach ($row in $acsv) {
   })
 }
 Write-Host "  OK $($ammoItems.Count) munitions, $($ammoFolderMap.Count) dossiers" -ForegroundColor Green
+
+# Build case-insensitive ammo name → _id lookup for weapon linkage
+$ammoNameToId = @{}
+foreach ($item in $ammoItems) {
+  $ammoNameToId[$item.name.ToLower()] = $item._id
+}
+
+# =============================================================================
+# Étape 4 – Parsing du CSV Weapons
+# =============================================================================
+Write-Host "> Lecture des armes..." -ForegroundColor Cyan
+$wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapon.csv") -Delimiter ";" -Encoding Default
+$wcols = $wcsv[0].PSObject.Properties.Name
+# Index: 0=Folder 1=Nom 2=Sous-type 3=Compétence 4=Munition 5=Calibre
+#        6=Poids à vide 7=dégat 8=Range Med 9=Range Long 10=Range Extrem
+
+# Build weapon folder hierarchy from all Folder paths in the CSV
+$allWFolderPaths = $wcsv | ForEach-Object { $_.($wcols[0]).Trim() } | Where-Object { $_ }
+$weaponFolderMap = Build-FolderMap $allWFolderPaths
+
+$weaponItems = [System.Collections.Generic.List[hashtable]]::new()
+$sort = 0
+foreach ($row in $wcsv) {
+  $name = $row.($wcols[1]).Trim()
+  if (-not $name) { continue }
+
+  $folderPath    = $row.($wcols[0]).Trim()
+  # Folder last segment used for icon selection only
+  $fpParts       = $folderPath -split '\\'
+  $folderSubtype = if ($fpParts.Count -gt 1) { $fpParts[-1] } else { $folderPath }
+  # "Sous-type d'arme" column (index 2) used for the weaponSubtype field
+  $subtype       = $row.($wcols[2]).Trim()
+  $weightKg = TryParseDouble $row.($wcols[6])
+  $damage   = $row.($wcols[7]).Trim()
+  $rangeMed = TryParseInt $row.($wcols[8])
+  $rangeLng = TryParseInt $row.($wcols[9])
+  $rangeExt = TryParseInt $row.($wcols[10])
+
+  # Resolve default ammo by name (Munition col) — case-insensitive
+  $munitionName  = $row.($wcols[4]).Trim()
+  $caliber       = $row.($wcols[5]).Trim()
+  $defaultAmmoId = if ($ammoNameToId.ContainsKey($munitionName.ToLower())) { $ammoNameToId[$munitionName.ToLower()] } else { "" }
+
+  # Resolve folder _id (case-insensitive lookup)
+  $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
+  $itemFolderId  = if ($weaponFolderMap.ContainsKey($normFolderKey)) { $weaponFolderMap[$normFolderKey]['_id'] } else { $null }
+  $sort++
+
+  $weaponItems.Add([ordered]@{
+    "_id"    = New-FoundryId
+    "name"   = $name
+    "type"   = "weapon"
+    "img"    = Get-WeaponImage $folderSubtype
+    "system" = [ordered]@{
+      "damage"          = $damage
+      "rarity"          = "common"
+      "price"           = 0
+      "weightKg"        = $weightKg
+      "weaponSubtype"   = $subtype
+      "weaponSkill"     = "powder_projectiles"
+      "proficiency"     = 0
+      "range"           = [ordered]@{
+        "short"   = 0
+        "medium"  = $rangeMed
+        "long"    = $rangeLng
+        "extreme" = $rangeExt
+      }
+      "caliber"         = $caliber
+      "defaultAmmoName" = $munitionName
+      "defaultAmmoId"   = $defaultAmmoId
+    }
+    "effects" = @()
+    "folder"  = $itemFolderId
+    "sort"    = $sort
+    "flags"   = [ordered]@{}
+    "_stats"  = [ordered]@{
+      "systemId"       = "merc"
+      "systemVersion"  = "1.0.11"
+      "coreVersion"    = "13.351"
+      "createdTime"    = $null
+      "modifiedTime"   = $null
+      "lastModifiedBy" = $null
+    }
+  })
+}
+Write-Host "  OK $($weaponItems.Count) armes, $($weaponFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
 # Étape 5 – Sérialisation JSON

@@ -257,6 +257,7 @@
           "invalidDamage": "Invalid damage formula.",
           "damageRoll": "Damage - {name}",
           "ammoSection": "Ammunition",
+          "defaultAmmo": "Default ammunition",
           "ammoLoaded": "Loaded",
           "ammoNone": "No ammunition",
           "addAmmo": "+ Add Ammo",

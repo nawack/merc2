@@ -141,7 +141,10 @@
         "medium": 0,
         "long": 0,
         "extreme": 0
-      }
+      },
+      "caliber": "",
+      "defaultAmmoName": "",
+      "defaultAmmoId": ""
     },
     "ammo": {
       "ammoType": "",
@@ -152,10 +155,10 @@
       "weightAmmo": 0,
       "velocity": 0,
       "penetration": {
-        "short": 0,
-        "medium": 0,
-        "long": 0,
-        "extreme": 0
+        "short": "",
+        "medium": "",
+        "long": "",
+        "extreme": ""
       },
       "damage": "",
       "price": 0,

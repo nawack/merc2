@@ -23,6 +23,8 @@ ITEMS_TO_ZIP=(
     "templates"
     "css"
     "lang"
+    "packs"
+    "assets"
 )
 
 # Create a temporary directory for staging

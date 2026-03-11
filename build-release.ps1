@@ -31,7 +31,9 @@ $itemsToZip = @(
     "scripts",
     "templates",
     "css",
-    "lang"
+    "lang",
+    "packs",
+    "assets"
 )
 
 # Create a temporary directory for staging

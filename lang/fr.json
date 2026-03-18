@@ -211,6 +211,7 @@
           "weight": "Poids du projectile (g)",
           "weightAmmo": "Poids munition (g)",
           "velocity": "Vitesse (m/s)",
+          "stockSection": "Stock & Prix",
           "penetration": "Pénétration",
           "penetrationShort": "Courte",
           "penetrationMedium": "Moyenne",

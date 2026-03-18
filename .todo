@@ -62,7 +62,7 @@ Gestion des armes:
     ✔ gérer les sous-types d'armes (armes à feu, armes blanches, armes lourdes, armes électroniques, etc) @done(26-02-06 00:27)
     ✔ créer la fiche de munition @done(26-02-06 13:07)
     ✔ ajouter munition dans la fiche d'arme @done(26-02-06 13:08)
-    - afficher les caractéristiques de la munition dans la partie combat au niveau de l'arme
+    ✔ afficher les caractéristiques de la munition dans la partie combat au niveau de l'arme @done(26-03-11 22:55)
     - appliqué les modificateurs de dégats sur une munition en fonction de l'arme
     - gestion des modificateurs d'armes (précision, puissance, cadence, portée)
     - gestion du nombre munitions (nombre restant dans chargeur, capacité chargeur, quantité total)
@@ -95,7 +95,7 @@ Controle de la réaction (https://github.com/nawack/merc2/issues/9):
 
 Revoir la mise en forme de la fiche (probléme hauteur de page):
     ✔ réorganisation du header et des onglets pour prendre moins de place @done(26-02-05 13:16)
-    - prévoir un assenceur au niveau du body (contenu des onglets) pour éviter que la fiche soit trop longue
+    ✔ prévoir un assenceur au niveau du body (contenu des onglets) pour éviter que la fiche soit trop longue @done(26-03-11 22:55)
     - Prevoir les differentes visions de la fiche (auncun, limité, observateur, propriétaire)
 
 Ajouter un système de combat :
@@ -104,4 +104,4 @@ Ajouter un système de combat :
     - check roll d'init encore présents
 
 Gestion des véhicules :
-    - créer la fiche de véhicule pour gestion token véhicule
+    ✔ créer la fiche de véhicule pour gestion token véhicule @done(26-03-11 22:54)

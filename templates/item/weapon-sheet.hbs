@@ -115,6 +115,38 @@
     {{/if}}
 
     {{#if (or (eq item.system.weaponSubtype "powder_projectiles") (eq item.system.weaponSubtype "mechanical_projectiles") (eq item.system.weaponSubtype "heavy_weapons") (eq item.system.weaponSubtype "electronic_weapons"))}}
+    <div class="weapon-tactical">
+      <div class="weapon-tactical-header">{{localize "MERC.UI.items.weaponSheet.tacticalSection"}}</div>
+      <div class="weapon-tactical-grid">
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.caliber"}}</label>
+          <input type="text" name="system.caliber" value="{{item.system.caliber}}" placeholder="9x19">
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.magazine"}}</label>
+          <input type="number" name="system.magazine" value="{{item.system.magazine}}" min="0" step="1">
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.rofMode"}}</label>
+          <input type="text" name="system.rofMode" value="{{item.system.rofMode}}" placeholder="SA, FA, BA...">
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.rofLimited"}}</label>
+          <input type="number" name="system.rofLimited" value="{{item.system.rofLimited}}" min="0" step="1">
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.recoilSingleShot"}}</label>
+          <input type="text" name="system.recoil.singleShot" value="{{item.system.recoil.singleShot}}" placeholder="3">
+        </div>
+        <div class="weapon-field">
+          <label>{{localize "MERC.UI.items.weaponSheet.recoilBurst"}}</label>
+          <input type="text" name="system.recoil.burst" value="{{item.system.recoil.burst}}" placeholder="5">
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if (or (eq item.system.weaponSubtype "powder_projectiles") (eq item.system.weaponSubtype "mechanical_projectiles") (eq item.system.weaponSubtype "heavy_weapons") (eq item.system.weaponSubtype "electronic_weapons"))}}
     <div class="weapon-ammo-section">
       <div class="weapon-ammo-header">{{localize "MERC.UI.items.weaponSheet.ammoSection"}}</div>
 

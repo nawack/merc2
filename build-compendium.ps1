@@ -17,6 +17,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+# Lire la version du système depuis system.json
+$_sysJson = Get-Content (Join-Path $PSScriptRoot "system.json") -Raw | ConvertFrom-Json
+$SystemVersion = $_sysJson.version
+
 $NodeExe    = Join-Path $ToolsDir "node.exe"
 $PackerScript = Join-Path $ToolsDir "pack-leveldb.cjs"
 
@@ -81,7 +85,7 @@ function Build-FolderMap([string[]]$rawPaths) {
           'flags'          = [ordered]@{}
           '_stats'         = [ordered]@{
             'systemId'       = 'merc'
-            'systemVersion'  = '1.0.11'
+            'systemVersion'  = $SystemVersion
             'coreVersion'    = '13.351'
             'createdTime'    = $null
             'modifiedTime'   = $null
@@ -250,7 +254,7 @@ foreach ($row in $acsv) {
     "flags"   = [ordered]@{}
     "_stats"  = [ordered]@{
       "systemId"       = "merc"
-      "systemVersion"  = "1.0.11"
+      "systemVersion"  = $SystemVersion
       "coreVersion"    = "13.351"
       "createdTime"    = $null
       "modifiedTime"   = $null
@@ -352,7 +356,7 @@ foreach ($row in $wcsv) {
     "flags"   = [ordered]@{}
     "_stats"  = [ordered]@{
       "systemId"       = "merc"
-      "systemVersion"  = "1.0.11"
+      "systemVersion"  = $SystemVersion
       "coreVersion"    = "13.351"
       "createdTime"    = $null
       "modifiedTime"   = $null

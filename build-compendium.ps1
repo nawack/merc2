@@ -270,10 +270,12 @@ foreach ($item in $ammoItems) {
 # Étape 4 – Parsing du CSV Weapons
 # =============================================================================
 Write-Host "> Lecture des armes..." -ForegroundColor Cyan
-$wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapon.csv") -Delimiter ";" -Encoding Default
+$wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapons.csv") -Delimiter ";" -Encoding Default
 $wcols = $wcsv[0].PSObject.Properties.Name
-# Index: 0=Folder 1=Nom 2=Sous-type 3=Compétence 4=Munition 5=Calibre
-#        6=Poids à vide 7=dégat 8=Range Med 9=Range Long 10=Range Extrem
+# Index: 0=Folder  1=Nom  2=Sous-type d'arme  3=Compétence associée  4=Munition
+#        5=Calibre  6=Poids à vide  7=dégat
+#        8=Range Short  9=Range Med  10=Range Long  11=Range Extrem
+#        12=Recul C/C  13=Recul Burst  14=Chargeur  15=ROF mode  16=ROF limited  17=Nom photo
 
 # Build weapon folder hierarchy from all Folder paths in the CSV
 $allWFolderPaths = $wcsv | ForEach-Object { $_.($wcols[0]).Trim() } | Where-Object { $_ }
@@ -290,12 +292,19 @@ foreach ($row in $wcsv) {
   $fpParts       = $folderPath -split '\\'
   $folderSubtype = if ($fpParts.Count -gt 1) { $fpParts[-1] } else { $folderPath }
   # "Sous-type d'arme" column (index 2) used for the weaponSubtype field
-  $subtype       = $row.($wcols[2]).Trim()
-  $weightKg = TryParseDouble $row.($wcols[6])
-  $damage   = $row.($wcols[7]).Trim()
-  $rangeMed = TryParseInt $row.($wcols[8])
-  $rangeLng = TryParseInt $row.($wcols[9])
-  $rangeExt = TryParseInt $row.($wcols[10])
+  $subtype      = $row.($wcols[2]).Trim()
+  $skill        = $row.($wcols[3]).Trim()
+  $weightKg     = TryParseDouble $row.($wcols[6])
+  $damage       = $row.($wcols[7]).Trim()
+  $rangeShort   = TryParseInt $row.($wcols[8])
+  $rangeMed     = TryParseInt $row.($wcols[9])
+  $rangeLng     = TryParseInt $row.($wcols[10])
+  $rangeExt     = TryParseInt $row.($wcols[11])
+  $recoilCC     = $row.($wcols[12]).Trim()
+  $recoilBurst  = $row.($wcols[13]).Trim()
+  $magazine     = TryParseInt $row.($wcols[14])
+  $rofMode      = $row.($wcols[15]).Trim()
+  $rofLimited   = TryParseInt $row.($wcols[16])
 
   # Resolve default ammo by name (Munition col) — case-insensitive
   $munitionName  = $row.($wcols[4]).Trim()
@@ -318,14 +327,21 @@ foreach ($row in $wcsv) {
       "price"           = 0
       "weightKg"        = $weightKg
       "weaponSubtype"   = $subtype
-      "weaponSkill"     = "powder_projectiles"
+      "weaponSkill"     = if ($skill) { $skill } else { "powder_projectiles" }
       "proficiency"     = 0
       "range"           = [ordered]@{
-        "short"   = 0
+        "short"   = $rangeShort
         "medium"  = $rangeMed
         "long"    = $rangeLng
         "extreme" = $rangeExt
       }
+      "recoil"          = [ordered]@{
+        "singleShot" = $recoilCC
+        "burst"      = $recoilBurst
+      }
+      "magazine"        = $magazine
+      "rofMode"         = $rofMode
+      "rofLimited"      = $rofLimited
       "caliber"         = $caliber
       "defaultAmmoName" = $munitionName
       "defaultAmmoId"   = $defaultAmmoId

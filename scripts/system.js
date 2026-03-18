@@ -1327,6 +1327,33 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // Handle combat sub-tab switching
+    const combatSubTabItems = html.querySelectorAll(".combat-subtabs .item");
+
+    // Restore last active combat sub-tab
+    if (this._currentCombatSubTab) {
+      html.querySelectorAll(".combat-subtabs .item").forEach(t => t.classList.remove("active"));
+      html.querySelectorAll(".combat-subtabs-body .combat-subtab-content").forEach(c => c.classList.remove("active"));
+      const combatTab = html.querySelector(`.combat-subtabs .item[data-tab="${this._currentCombatSubTab}"]`);
+      const combatContent = html.querySelector(`.combat-subtabs-body .combat-subtab-content[data-tab="${this._currentCombatSubTab}"]`);
+      if (combatTab && combatContent) {
+        combatTab.classList.add("active");
+        combatContent.classList.add("active");
+      }
+    }
+    combatSubTabItems.forEach(tab => {
+      tab.addEventListener("click", (event) => {
+        event.preventDefault();
+        const tabName = tab.dataset.tab;
+        html.querySelectorAll(".combat-subtabs .item").forEach(t => t.classList.remove("active"));
+        html.querySelectorAll(".combat-subtabs-body .combat-subtab-content").forEach(c => c.classList.remove("active"));
+        tab.classList.add("active");
+        const tabContent = html.querySelector(`.combat-subtabs-body .combat-subtab-content[data-tab="${tabName}"]`);
+        if (tabContent) tabContent.classList.add("active");
+        this._currentCombatSubTab = tabName;
+      });
+    });
+
     // Handle attribute label clicks only
     const attribLabels = html.querySelectorAll(".headerActorAttribLabel");
 
@@ -1948,6 +1975,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    const weaponSkillAimedBtns = html.querySelectorAll(".weapon-skill-roll-aimed");
+    weaponSkillAimedBtns.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          this.rollWeaponSkillCheck(item, 3);
+        }
+      });
+    });
+
     const weaponDamageBtns = html.querySelectorAll(".weapon-damage-roll");
     weaponDamageBtns.forEach(btn => {
       btn.addEventListener("click", (event) => {
@@ -2167,7 +2206,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     await this._sendD20RollMessage(label, total_modifier, breakdown);
   }
 
-  async rollWeaponSkillCheck(item) {
+  async rollWeaponSkillCheck(item, aimBonus = 0) {
     const actor = this.actor ?? this.document;
     if (!actor || !item) return;
 
@@ -2207,14 +2246,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const bonus = Number(skillData.bonus ?? 0);
     const proficiencyBonus = item.system?.proficiency ? 3 : 0;
 
-    const total_modifier = degree + bonus + proficiencyBonus;
+    const total_modifier = degree + bonus + proficiencyBonus + aimBonus;
     if (!skillName) {
       skillName = game.i18n.localize(CONFIG.MERC.skills[skillKey]?.label) || skillKey;
     }
     const weaponName = item.name || game.i18n.localize("MERC.UI.items.weapons");
 
-    const label = `${actor.name} - ${weaponName} (${skillName})`;
-    const breakdown = game.i18n.format("MERC.Labels.breakdownProficiency", { degree, bonus, prof: proficiencyBonus });
+    const aimLabel = aimBonus > 0 ? ` — ${game.i18n.localize("MERC.UI.items.rollWeaponSkillAimed")}` : "";
+    const label = `${actor.name} - ${weaponName} (${skillName})${aimLabel}`;
+    let breakdown = game.i18n.format("MERC.Labels.breakdownProficiency", { degree, bonus, prof: proficiencyBonus });
+    if (aimBonus > 0) {
+      breakdown += ` / ${game.i18n.localize("MERC.UI.items.rollWeaponSkillAimed")} +${aimBonus}`;
+    }
     await this._sendD20RollMessage(label, total_modifier, breakdown);
   }
 

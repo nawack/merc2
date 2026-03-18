@@ -143,6 +143,13 @@
         "extreme": 0
       },
       "caliber": "",
+      "recoil": {
+        "singleShot": "",
+        "burst": ""
+      },
+      "magazine": 0,
+      "rofMode": "",
+      "rofLimited": 0,
       "defaultAmmoName": "",
       "defaultAmmoId": ""
     },

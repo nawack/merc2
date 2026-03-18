@@ -566,92 +566,130 @@
 
     <!-- COMBAT TAB -->
     <div class="tab-content" data-tab="combat">
-      
-      <!-- Base Damage -->
-      <div class="combat-base-damage-section">
-        <h3>{{localize "MERC.UI.combat.baseDamageHeader"}}</h3>
-        <div class="combat-base-damage-grid">
-          <div class="combat-base-damage-row">
-            <div class="combat-base-damage-label">
-              <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageMelee"}}</span>
-              <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.melee"}}</span>
-            </div>
-            <div class="combat-base-damage-value">{{actor.system.combat.baseDamageMelee}}</div>
-            <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageMelee}}" data-roll-label="{{localize "MERC.Skills.melee"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
-          </div>
-          <div class="combat-base-damage-row">
-            <div class="combat-base-damage-label">
-              <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageBladed"}}</span>
-              <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.bladed_weapons"}}</span>
-            </div>
-            <div class="combat-base-damage-value">{{actor.system.combat.baseDamageBladed}}</div>
-            <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageBladed}}" data-roll-label="{{localize "MERC.Skills.bladed_weapons"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
-          </div>
-          {{#each actor.system.customSpecializations as |specData specName|}}
-            {{#if (or (eq specData.baseSkill "melee") (eq specData.baseSkill "bladed_weapons"))}}
-            <div class="combat-base-damage-row">
-              <div class="combat-base-damage-label">
-                <span class="combat-base-damage-title">{{#if (eq specData.baseSkill "melee")}}{{localize "MERC.UI.combat.baseDamageMelee"}}{{else}}{{localize "MERC.UI.combat.baseDamageBladed"}}{{/if}}</span>
-                <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if (eq specData.baseSkill "melee")}}{{localize "MERC.Skills.melee"}}{{else}}{{localize "MERC.Skills.bladed_weapons"}}{{/if}} : {{specName}}</span>
-              </div>
-              {{#with (concat "custom_spec_" specName) as |specKey|}}
-                <div class="combat-base-damage-value">
-                  {{#if (lookup @root.actor.system.combat.specializationBaseDamage specKey)}}
-                    {{lookup @root.actor.system.combat.specializationBaseDamage specKey}}
-                  {{else}}
-                    -
-                  {{/if}}
-                </div>
-                <button type="button" class="combat-base-damage-roll" data-roll-formula="{{lookup @root.actor.system.combat.specializationBaseDamage specKey}}" data-roll-label="{{specName}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
-              {{/with}}
-            </div>
-            {{/if}}
-          {{/each}}
-        </div>
-      </div>
 
-      <!-- Weapons Quick Access -->
-      <div class="weapons-section">
-        <h3>{{localize "MERC.UI.items.equippedWeapons"}}</h3>
-        <div class="items-list">
-          {{#each (filterItems actor.items "weapon") as |item|}}
-          <div class="item-card item" data-item-id="{{item._id}}">
-            <div class="item-info">
-              <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</div>
-              <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
-            </div>
-            <div class="item-controls">
-              <button type="button" class="weapon-skill-roll" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">🎯</button>
-            </div>
-            <div class="item-controls">
-              <div class="ammo-entry">
-                <div class="ammo-info">
-                  <div class="ammo-name">Base</div>
+      <!-- Combat Sub-tab Navigation -->
+      <nav class="combat-subtabs">
+        <a class="item active" data-tab="combat-base">{{localize "MERC.UI.combat.baseDamageHeader"}}</a>
+        {{#each (filterItems actor.items "weapon") as |item|}}
+        <a class="item" data-tab="combat-weapon-{{item._id}}">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</a>
+        {{/each}}
+      </nav>
+
+      <!-- Combat Sub-tab Body -->
+      <section class="combat-subtabs-body">
+
+        <!-- Base Combat Tab -->
+        <div class="combat-subtab-content active" data-tab="combat-base">
+          <!-- Base Damage -->
+          <div class="combat-base-damage-section">
+            <div class="combat-base-damage-grid">
+              <div class="combat-base-damage-row">
+                <div class="combat-base-damage-label">
+                  <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageMelee"}}</span>
+                  <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.melee"}}</span>
                 </div>
-                <div class="ammo-controls">
-                  <div class="combat-base-damage-value">{{item.system.damage}}</div>
-                  <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
-                </div>
+                <div class="combat-base-damage-value">{{actor.system.combat.baseDamageMelee}}</div>
+                <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageMelee}}" data-roll-label="{{localize "MERC.Skills.melee"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
               </div>
-              {{!-- Linked ammo for this weapon --}}
-              {{#each (filterItems ../actor.items "ammo") as |ammo|}}
-              {{#if (eq ammo.system.parentWeaponId item._id)}}
-              <div class="ammo-entry" data-item-id="{{ammo._id}}">
-                <div class="ammo-info">
-                  <div class="ammo-name">{{ammo.name}}</div>
+              <div class="combat-base-damage-row">
+                <div class="combat-base-damage-label">
+                  <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageBladed"}}</span>
+                  <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.bladed_weapons"}}</span>
                 </div>
-                <div class="ammo-controls">
-                  <div class="combat-ammo-damage-value">{{ammo.system.damage}}</div>
-                  <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
-                </div>
+                <div class="combat-base-damage-value">{{actor.system.combat.baseDamageBladed}}</div>
+                <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageBladed}}" data-roll-label="{{localize "MERC.Skills.bladed_weapons"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
               </div>
-              {{/if}}
+              {{#each actor.system.customSpecializations as |specData specName|}}
+                {{#if (or (eq specData.baseSkill "melee") (eq specData.baseSkill "bladed_weapons"))}}
+                <div class="combat-base-damage-row">
+                  <div class="combat-base-damage-label">
+                    <span class="combat-base-damage-title">{{#if (eq specData.baseSkill "melee")}}{{localize "MERC.UI.combat.baseDamageMelee"}}{{else}}{{localize "MERC.UI.combat.baseDamageBladed"}}{{/if}}</span>
+                    <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if (eq specData.baseSkill "melee")}}{{localize "MERC.Skills.melee"}}{{else}}{{localize "MERC.Skills.bladed_weapons"}}{{/if}} : {{specName}}</span>
+                  </div>
+                  {{#with (concat "custom_spec_" specName) as |specKey|}}
+                    <div class="combat-base-damage-value">
+                      {{#if (lookup @root.actor.system.combat.specializationBaseDamage specKey)}}
+                        {{lookup @root.actor.system.combat.specializationBaseDamage specKey}}
+                      {{else}}
+                        -
+                      {{/if}}
+                    </div>
+                    <button type="button" class="combat-base-damage-roll" data-roll-formula="{{lookup @root.actor.system.combat.specializationBaseDamage specKey}}" data-roll-label="{{specName}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
+                  {{/with}}
+                </div>
+                {{/if}}
               {{/each}}
             </div>
           </div>
-          {{/each}}
         </div>
-      </div>
+
+        <!-- One sub-tab per weapon -->
+        {{#each (filterItems actor.items "weapon") as |item|}}
+        <div class="combat-subtab-content" data-tab="combat-weapon-{{item._id}}">
+          <div class="item-card item combat-weapon-card" data-item-id="{{item._id}}">
+
+            <!-- Zone 1: titre — compétence + gestion -->
+            <div class="combat-weapon-topbar">
+              <div class="combat-weapon-skill-info">
+                <span class="combat-weapon-skill-tag">{{localize "MERC.UI.combat.linkedSkill"}}</span>
+                <span class="combat-weapon-skill-name">{{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}—{{/if}}</span>
+              </div>
+              <div class="combat-weapon-mgmt">
+                <button type="button" class="item-edit" title="{{localize "MERC.UI.items.edit"}}">✎</button>
+                <button type="button" class="item-delete" title="{{localize "MERC.UI.items.delete"}}"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+
+            <!-- Zones 2 + 3 côte à côte -->
+            <div class="combat-weapon-body">
+
+              <!-- Zone 2: jets de compétence -->
+              <div class="combat-weapon-rolls">
+                <button type="button" class="weapon-skill-roll combat-roll-btn" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">
+                  <span class="combat-roll-icon">🎯</span>
+                  <span class="combat-roll-label">{{localize "MERC.UI.items.rollWeaponSkill"}}</span>
+                </button>
+                <button type="button" class="weapon-skill-roll combat-roll-btn" title="{{localize "MERC.UI.items.rollWeaponSkillAimed"}}">
+                  <span class="combat-roll-icon">🎯</span>
+                  <span class="combat-roll-label">{{localize "MERC.UI.items.rollWeaponSkillAimed"}}</span>
+                  <span class="combat-roll-bonus">+3</span>
+                </button>
+              </div>
+
+              <!-- Zone 3: tableau munitions -->
+              <div class="combat-ammo-table">
+                <div class="combat-ammo-table-header">
+                  <span class="cam-col-name">{{localize "MERC.UI.items.ammo"}}</span>
+                  <span class="cam-col-qty">{{localize "MERC.UI.items.ammoSheet.quantity"}}</span>
+                  <span class="cam-col-dmg">{{localize "MERC.UI.items.ammoSheet.damage"}}</span>
+                  <span class="cam-col-roll"></span>
+                </div>
+                <div class="combat-ammo-table-row" data-item-id="{{item._id}}">
+                  <span class="cam-col-name">Base</span>
+                  <span class="cam-col-qty">—</span>
+                  <span class="cam-col-dmg">{{item.system.damage}}</span>
+                  <button type="button" class="weapon-damage-roll cam-col-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+                {{!-- Linked ammo for this weapon --}}
+                {{#each (filterItems ../actor.items "ammo") as |ammo|}}
+                {{#if (eq ammo.system.parentWeaponId item._id)}}
+                <div class="combat-ammo-table-row" data-item-id="{{ammo._id}}">
+                  <span class="cam-col-name">{{ammo.name}}</span>
+                  <span class="cam-col-qty">{{ammo.system.quantity}}/{{ammo.system.maxQuantity}}</span>
+                  <span class="cam-col-dmg">{{ammo.system.damage}}</span>
+                  <button type="button" class="weapon-damage-roll cam-col-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+                {{/if}}
+                {{/each}}
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        {{/each}}
+
+      </section>
 
     </div>
 

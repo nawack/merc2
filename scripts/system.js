@@ -80,19 +80,138 @@ function removeWeaponIdFromAmmo(currentParentWeaponId, weaponIdToRemove) {
 }
 
 /**
+ * Calculate weapon damage string from kinetic energy (Joules).
+ * Dégats = SI(ENT(SQRT(E)/12)=0; MOD(ENT(SQRT(E)/4);3); ENT(SQRT(E)/12)&"D6"&bonus_str)
+ * Returns a dice formula string like "3D6+1", "2D6", or a plain number.
+ */
+function calcDamageFromEnergy(energy) {
+  if (!energy || energy <= 0) return "";
+  const sqrtE = Math.sqrt(energy);
+  const d6 = Math.floor(sqrtE / 12);
+  const bonus = Math.floor(sqrtE / 4) % 3;
+  if (d6 === 0) {
+    return String(bonus);
+  }
+  if (bonus === 0) {
+    return `${d6}D6`;
+  }
+  return `${d6}D6+${bonus}`;
+}
+
+/**
+ * Calculate blindage malus formula string for a given energy and penetration value.
+ * Returns "-" if penetration >= 7 (no penalty), otherwise returns a dice formula string.
+ */
+function calcBlindageMalus(energy, pen) {
+  if (!energy || !pen || pen <= 0) return "-";
+  const sqrtE = Math.sqrt(energy);
+  const effective = sqrtE * (7 / pen);
+  if (effective >= sqrtE) return "-";
+  const d6 = Math.floor(effective / 12);
+  const bonus = Math.floor(effective / 4) % 3;
+  if (d6 === 0) {
+    return String(bonus);
+  }
+  if (bonus === 0) {
+    return `${d6}D6`;
+  }
+  return `${d6}D6+${bonus}`;
+}
+
+/**
+ * Calculate all ballistic values for a weapon given its barrel length and ammo data.
+ * @param {number} barrelLength - weapon barrel length in inches
+ * @param {Object} ammoSystem  - ammo item's system data
+ * @param {Object} ranges      - weapon ranges {short, medium, long, extreme}
+ * @returns {Object} ballistics data object
+ */
+function calcWeaponBallistics(barrelLength, ammoSystem, ranges) {
+  const mass        = Number(ammoSystem?.mass ?? 0);
+  const velocity    = Number(ammoSystem?.velocity ?? 0);
+  const barrelStd   = Number(ammoSystem?.barrel_length_std ?? 0);
+  const brakingIdx  = Number(ammoSystem?.braking_index ?? 0);
+  const sectDens    = Number(ammoSystem?.sectional_density ?? 0);
+  const perfIdx     = Number(ammoSystem?.perforation_index ?? 1);
+
+  if (!mass || !velocity || !barrelStd) return null;
+
+  const mass_kg = mass / 1000;
+  const canon   = Number(barrelLength) || barrelStd;
+
+  // Vitesse initiale arme
+  const v0 = velocity * Math.pow(canon / barrelStd, 0.25);
+
+  // Energie arme (J)
+  const energy = 0.5 * mass_kg * v0 * v0;
+
+  // Pénétrations
+  const penMuzzle = 0.0000001 * sectDens * (2 * energy / mass_kg) * perfIdx;
+
+  const expFactor = (range) => {
+    if (!brakingIdx) return 1;
+    return Math.exp(-(2 * brakingIdx / mass_kg) * range);
+  };
+
+  const penAtRange = (range) =>
+    0.0000001 * sectDens * (2 * energy * expFactor(range) / mass_kg) * perfIdx;
+
+  const rs = Number(ranges?.short ?? 0);
+  const rm = Number(ranges?.medium ?? 0);
+  const rl = Number(ranges?.long ?? 0);
+  const re = Number(ranges?.extreme ?? 0);
+
+  const penShort   = penAtRange(rs);
+  const penMedium  = penAtRange(rm);
+  const penLong    = penAtRange(rl);
+  const penExtreme = penAtRange(re);
+
+  const round2 = (v) => Math.round(v * 100) / 100;
+
+  return {
+    hasData:       true,
+    initialVelocity: Math.round(v0),
+    energy:        Math.round(energy),
+    damage:        calcDamageFromEnergy(energy),
+    pen: {
+      muzzle:  round2(penMuzzle),
+      short:   round2(penShort),
+      medium:  round2(penMedium),
+      long:    round2(penLong),
+      extreme: round2(penExtreme)
+    },
+    blindage: {
+      short:   calcBlindageMalus(energy, penMuzzle),
+      medium:  calcBlindageMalus(energy, penMedium),
+      long:    calcBlindageMalus(energy, penLong),
+      extreme: calcBlindageMalus(energy, penExtreme)
+    }
+  };
+}
+
+/**
+ * Compute ammo derived values: braking_index and sectional_density.
+ */
+function calcAmmoDerived(mass, diameter, coeff_trainee, rho) {
+  if (!diameter) return { braking_index: 0, sectional_density: 0 };
+  const surface          = Math.PI * diameter * diameter / 4e6;
+  const braking_index    = 0.5 * surface * (coeff_trainee || 0) * (rho || 1.225);
+  const mass_kg          = (mass || 0) / 1000;
+  const diam_m           = diameter / 1000;
+  const area_m2          = Math.PI * diam_m * diam_m / 4;
+  const sectional_density = area_m2 > 0 ? mass_kg / area_m2 : 0;
+  return { braking_index, sectional_density };
+}
+
+/**
+ * @deprecated Use calcDamageFromEnergy() for new formula.
  * Calculate ammunition damage from projectile weight (grams) and velocity (m/s).
  * muzzle_energy = 0.5 * (weight/1000) * velocity^2
- * damage_short  = 0.06666 * sqrt(muzzle_energy)
  * Returns a dice formula string like "3D6+1" or "2D6".
  */
 function calculateAmmoDamage(weight, velocity) {
   if (!weight || !velocity) return "";
   const muzzleEnergy = 0.5 * (weight / 1000) * Math.pow(velocity, 2);
-  const damageShort = 0.06666 * Math.sqrt(muzzleEnergy);
-  let damageD6 = Math.floor(damageShort);
-  let damageBonus = Math.floor((damageShort % 1) * 10 / 3);
-  if (damageBonus === 3) { damageBonus--; damageD6++; }
-  return damageBonus > 0 ? `${damageD6}D6+${damageBonus}` : `${damageD6}D6`;
+  return calcDamageFromEnergy(muzzleEnergy);
 }
 
 // Index to Degree conversion table
@@ -684,6 +803,37 @@ async function migrateItem(item, actor = null) {
         }
       }
     }
+
+    // Ensure barrelLength exists
+    if (item.system.barrelLength === undefined || item.system.barrelLength === null) {
+      updateData["system.barrelLength"] = 0;
+    }
+
+    // Ensure defaultAmmo fields exist
+    if (item.system.defaultAmmoName === undefined) updateData["system.defaultAmmoName"] = "";
+    if (item.system.defaultAmmoId   === undefined) updateData["system.defaultAmmoId"]   = "";
+
+    // New default ammo stock fields (added when magazine was moved out of tactical)
+    const weaponStockDefaults = {
+      defaultAmmoMagCapacity: 0,
+      defaultAmmoInMag:       0,
+      defaultAmmoMagFull:     0,
+      defaultAmmoMagTotal:    0,
+      defaultAmmoStock:       0
+    };
+    for (const [key, val] of Object.entries(weaponStockDefaults)) {
+      if (item.system[key] === undefined || item.system[key] === null) {
+        updateData[`system.${key}`] = val;
+      }
+    }
+
+    // Remove obsolete weapon fields
+    const obsoleteWeapon = ["magazine"];
+    for (const key of obsoleteWeapon) {
+      if (item.system[key] !== undefined) {
+        updateData[`system.-=${key}`] = null;
+      }
+    }
   }
 
   // --- Ammo migration ---
@@ -691,12 +841,21 @@ async function migrateItem(item, actor = null) {
     const ammoDefaults = {
       ammoType: "",
       caliber: "",
-      quantity: 0,
-      maxQuantity: 0,
-      weight: 0,
-      weightAmmo: 0,
+      magCapacity: 0,
+      inMag:       0,
+      magFull:     0,
+      magTotal:    0,
+      stock:       0,
+      mass: 0,
+      diameter: 0,
+      coeff_trainee: 0,
+      rho: 1.225,
+      perforation_index: 1,
+      barrel_length_std: 0,
       velocity: 0,
-      damage: "",
+      weight: 0,
+      braking_index: 0,
+      sectional_density: 0,
       price: 0,
       rarity: "common",
       description: "",
@@ -709,28 +868,32 @@ async function migrateItem(item, actor = null) {
       }
     }
 
-    // Ensure penetration sub-fields exist
-    if (!item.system.penetration) {
-      updateData["system.penetration"] = { short: 0, medium: 0, long: 0, extreme: 0 };
-    } else {
-      for (const key of ["short", "medium", "long", "extreme"]) {
-        if (item.system.penetration[key] === undefined) {
-          updateData[`system.penetration.${key}`] = 0;
-        }
+    // Migrate legacy stock fields: quantity → inMag, maxQuantity → magCapacity
+    if (item.system.quantity !== undefined && !item.system.inMag) {
+      updateData["system.inMag"] = item.system.quantity ?? 0;
+    }
+    if (item.system.maxQuantity !== undefined && !item.system.magCapacity) {
+      updateData["system.magCapacity"] = item.system.maxQuantity ?? 0;
+    }
+    // Migrate old magazines field → magTotal
+    if (item.system.magazines !== undefined && !item.system.magTotal) {
+      updateData["system.magTotal"] = item.system.magazines ?? 0;
+    }
+
+    // Migrate legacy fields: old `weight` (projectile g) → `mass`, old `weightAmmo` → `weight`
+    if (item.system.weightAmmo !== undefined && !item.system.weight) {
+      updateData["system.weight"] = item.system.weightAmmo ?? 0;
+    }
+    if (item.system.weight !== undefined && !item.system.mass && item.system.weightAmmo !== undefined) {
+      updateData["system.mass"] = item.system.weight ?? 0;
+    }
+
+    // Remove obsolete fields
+    const obsolete = ["weightAmmo", "damage", "penetration", "quantity", "maxQuantity", "magazines", "magEmpty"];
+    for (const key of obsolete) {
+      if (item.system[key] !== undefined) {
+        updateData[`system.-=${key}`] = null;
       }
-    }
-
-    // Try to link orphan ammo (no parentWeaponId) to a matching weapon
-    if (!item.system.parentWeaponId) {
-      // No automatic linking without ammoType on weapons — must be done manually
-    }
-
-    // Compute damage from weight and velocity if not already stored
-    const currentDamage = updateData["system.damage"] ?? item.system.damage ?? "";
-    if (!currentDamage) {
-      const w = updateData["system.weight"] ?? item.system.weight ?? 0;
-      const v = updateData["system.velocity"] ?? item.system.velocity ?? 0;
-      if (w && v) updateData["system.damage"] = calculateAmmoDamage(w, v);
     }
   }
 
@@ -1163,6 +1326,69 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
     data.weaponSkillLabels = weaponSkillLabels;
 
+    // Compute per-weapon ballistics for the combat card display
+    const weaponBallisticsMap = {};
+    for (const weaponItem of actorDoc.items.filter(i => i.type === "weapon")) {
+      const weaponSys = weaponItem.system;
+      const ranges = weaponSys.range ?? {};
+      const barrelLength = Number(weaponSys.barrelLength) || 0;
+
+      // Default ammo: search actor items, then world items, then compendium
+      let defaultBallistics = null;
+      let defaultAmmoName = weaponSys.defaultAmmoName || "";
+      const defaultAmmoId = weaponSys.defaultAmmoId || "";
+      if (defaultAmmoId) {
+        let defaultAmmoDoc = actorDoc.items.get(defaultAmmoId) ?? game.items?.get(defaultAmmoId);
+        if (!defaultAmmoDoc) {
+          const ammoPack = game.packs?.get("merc.ammos");
+          if (ammoPack) {
+            try { defaultAmmoDoc = await ammoPack.getDocument(defaultAmmoId); } catch (_e) {}
+          }
+        }
+        if (defaultAmmoDoc) {
+          defaultBallistics = calcWeaponBallistics(barrelLength, defaultAmmoDoc.system, ranges);
+          defaultAmmoName = defaultAmmoDoc.name;
+        }
+      }
+
+      // Linked ammo on this actor
+      const ammoRows = [];
+      for (const ammoItem of actorDoc.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === weaponItem.id)) {
+        const b = calcWeaponBallistics(barrelLength, ammoItem.system, ranges);
+        ammoRows.push({
+          id: ammoItem.id,
+          name: ammoItem.name,
+          magCapacity: ammoItem.system.magCapacity ?? 0,
+          inMag:    ammoItem.system.inMag    ?? 0,
+          magFull:  ammoItem.system.magFull  ?? 0,
+          magTotal: ammoItem.system.magTotal ?? 0,
+          stock:    ammoItem.system.stock    ?? 0,
+          ballistics: b
+        });
+      }
+
+      weaponBallisticsMap[weaponItem.id] = {
+        defaultAmmoName,
+        default: defaultBallistics,
+        magazineSize: Number(weaponSys.magazine) || 0,
+        defaultStock: {
+          magCapacity: Number(weaponSys.defaultAmmoMagCapacity) || Number(weaponSys.magazine) || 0,
+          inMag:    weaponSys.defaultAmmoInMag    ?? 0,
+          magFull:  weaponSys.defaultAmmoMagFull  ?? 0,
+          magTotal: weaponSys.defaultAmmoMagTotal ?? 0,
+          stock:    weaponSys.defaultAmmoStock    ?? 0
+        },
+        ranges: {
+          short:   weaponSys.range?.short   ?? "",
+          medium:  weaponSys.range?.medium  ?? "",
+          long:    weaponSys.range?.long    ?? "",
+          extreme: weaponSys.range?.extreme ?? ""
+        },
+        ammo: ammoRows
+      };
+    }
+    data.weaponBallisticsMap = weaponBallisticsMap;
+
     return data;
   }
 
@@ -1191,13 +1417,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const weaponId = weaponCard.dataset.itemId;
         const weapon = this.actor.items.get(weaponId);
         if (weapon?.type === "weapon") {
+          // Caliber check: reject ammo of wrong caliber
+          const ammoCaliber   = item.system?.caliber || "";
+          const weaponCaliber = weapon.system?.caliber || "";
+          if (weaponCaliber && ammoCaliber && weaponCaliber !== ammoCaliber) {
+            ui.notifications?.warn(
+              game.i18n.format("MERC.UI.items.weaponSheet.wrongCaliber", { ammoCaliber, weaponCaliber })
+            );
+            return null;
+          }
           // Create an embedded copy of the ammo linked to this weapon
           const ammoData = item.toObject();
           ammoData.system.parentWeaponId = weaponId;
-          // Ensure damage is computed (may be empty on compendium items)
-          if (!ammoData.system.damage) {
-            ammoData.system.damage = calculateAmmoDamage(ammoData.system.weight, ammoData.system.velocity);
-          }
           const created = await Item.create(ammoData, { parent: this.actor });
           if (created) {
             ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
@@ -1381,6 +1612,17 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         if (subKey) {
           this.rollSubAttributeCheck(subKey, subLabel);
         }
+      });
+    });
+
+    // Handle base skill roll buttons (combat tab)
+    const baseSkillButtons = html.querySelectorAll(".combat-base-skill-roll");
+    baseSkillButtons.forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const skillKey = btn.dataset.skill;
+        if (skillKey) this.rollSkillCheck(skillKey);
       });
     });
 
@@ -2640,6 +2882,20 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     data.defaultAmmo = defaultAmmo;
     data.defaultAmmoName = systemData?.defaultAmmoName || "";
 
+    // Compute ballistics from default ammo; fallback to first linked ammo if no default is set
+    const ammoSys = defaultAmmo?.system ?? actorAmmo[0]?.system ?? null;
+    const ranges = systemData?.range ?? {};
+    const barrelLength = Number(systemData?.barrelLength) || 0;
+    const ballisticsResult = ammoSys ? calcWeaponBallistics(barrelLength, ammoSys, ranges) : null;
+    data.ballistics = ballisticsResult ?? {
+      hasData: false,
+      damage: systemData?.damage || "",
+      initialVelocity: 0,
+      energy: 0,
+      pen: { muzzle: 0, short: 0, medium: 0, long: 0, extreme: 0 },
+      blindage: { short: "-", medium: "-", long: "-", extreme: "-" }
+    };
+
     return data;
   }
 
@@ -2708,8 +2964,9 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     if (rollBtn) {
       rollBtn.addEventListener("click", async (event) => {
         event.preventDefault();
-        const damageInput = html.querySelector('input[name="system.damage"]');
-        const formula = damageInput?.value?.trim() || event.currentTarget.dataset.rollFormula || itemDoc?.system?.damage;
+        const formula = event.currentTarget.dataset.rollFormula?.trim()
+          || html.querySelector('input[name="system.damage"]')?.value?.trim()
+          || itemDoc?.system?.damage;
         if (!formula) {
           ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
           return;
@@ -2756,6 +3013,19 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
         this.render();
       });
     }
+
+    // Inline editing of ammo stock fields (magazines, stock)
+    html.querySelectorAll(".weapon-ammo-item.item").forEach(el => {
+      const ammoId = el.dataset.itemId;
+      el.querySelectorAll("input.ammo-field-inline").forEach(input => {
+        input.addEventListener("change", async () => {
+          const ammoDoc = isEmbedded ? actorDoc.items.get(ammoId) : game.items.get(ammoId);
+          if (!ammoDoc) return;
+          const field = input.dataset.field;
+          await ammoDoc.update({ [`system.${field}`]: Number(input.value) || 0 });
+        });
+      });
+    });
 
     // Edit ammo
     html.querySelectorAll(".weapon-ammo-edit").forEach(btn => {
@@ -2810,6 +3080,30 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
         }
       }).bind(html);
     }
+
+    // Watch linked ammo for updates so ballistics refresh automatically.
+    // (e.g. user fills in ammo properties after "Add Ammo", or edits an existing ammo)
+    if (this._ammoUpdateHookId !== undefined) {
+      Hooks.off("updateItem", this._ammoUpdateHookId);
+    }
+    const weaponId = itemDoc?.id || "";
+    if (weaponId) {
+      this._ammoUpdateHookId = Hooks.on("updateItem", (updatedItem) => {
+        if (updatedItem.type !== "ammo") return;
+        const parentId = updatedItem.system?.parentWeaponId || "";
+        if (parentId === weaponId || parentId.split(",").includes(weaponId)) {
+          this.render();
+        }
+      });
+    }
+  }
+
+  async close(options) {
+    if (this._ammoUpdateHookId !== undefined) {
+      Hooks.off("updateItem", this._ammoUpdateHookId);
+      delete this._ammoUpdateHookId;
+    }
+    return super.close(options);
   }
 
   /**
@@ -2826,7 +3120,20 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       return;
     }
 
+    // Caliber check: reject ammo that doesn't match the weapon's caliber
     const itemDoc = this.document ?? this.item;
+    const weaponCaliber = itemDoc?.system?.caliber || "";
+    const ammoCaliber   = droppedItem.system?.caliber || "";
+    if (weaponCaliber && ammoCaliber && weaponCaliber !== ammoCaliber) {
+      ui.notifications?.warn(
+        game.i18n.format("MERC.UI.items.weaponSheet.wrongCaliber", {
+          ammoCaliber,
+          weaponCaliber
+        })
+      );
+      return;
+    }
+
     const actorDoc = itemDoc?.parent;
     const isEmbedded = !!actorDoc;
     const droppedIsWorldLevel = !droppedItem.parent;
@@ -2835,9 +3142,6 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       // Weapon is on an actor: always create an embedded copy
       const ammoData = droppedItem.toObject();
       ammoData.system.parentWeaponId = itemDoc?.id || "";
-      if (!ammoData.system.damage) {
-        ammoData.system.damage = calculateAmmoDamage(ammoData.system.weight, ammoData.system.velocity);
-      }
       const created = await Item.create(ammoData, { parent: actorDoc });
       if (created) {
         ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
@@ -2847,10 +3151,6 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       // Both weapon and ammo are world-level: add this weapon to the ammo's linked list
       const newIds = addWeaponIdToAmmo(droppedItem.system?.parentWeaponId, itemDoc?.id || "");
       const worldUpdate = { "system.parentWeaponId": newIds };
-      if (!droppedItem.system.damage) {
-        const d = calculateAmmoDamage(droppedItem.system.weight, droppedItem.system.velocity);
-        if (d) worldUpdate["system.damage"] = d;
-      }
       await droppedItem.update(worldUpdate);
       ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: droppedItem.name }));
       this.render();
@@ -2858,9 +3158,6 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       // Weapon is world-level but ammo comes from an actor: create a world copy
       const ammoData = droppedItem.toObject();
       ammoData.system.parentWeaponId = itemDoc?.id || "";
-      if (!ammoData.system.damage) {
-        ammoData.system.damage = calculateAmmoDamage(ammoData.system.weight, ammoData.system.velocity);
-      }
       const created = await Item.create(ammoData);
       if (created) {
         ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.ammoLinked", { name: created.name }));
@@ -2900,18 +3197,21 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
     const defaults = {
       ammoType: "",
       caliber: "",
-      quantity: 0,
-      maxQuantity: 0,
-      weight: 0,
-      weightAmmo: 0,
+      magCapacity: 0,
+      inMag: 0,
+      magFull: 0,
+      magTotal: 0,
+      stock: 0,
+      mass: 0,
+      diameter: 0,
+      coeff_trainee: 0,
+      rho: 1.225,
+      perforation_index: 1,
+      barrel_length_std: 0,
       velocity: 0,
-      penetration: {
-        short: 0,
-        medium: 0,
-        long: 0,
-        extreme: 0
-      },
-      damage: "",
+      weight: 0,
+      braking_index: 0,
+      sectional_density: 0,
       price: 0,
       rarity: "common",
       description: "",
@@ -2919,66 +3219,24 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
     };
     if (!data.item) data.item = {};
     data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
-    
-    // Calculate damage if we have weight and velocity
-    if (data.item.system.weight && data.item.system.velocity) {
-      data.item.system.damage = this._calculateDamage(data.item.system.weight, data.item.system.velocity);
-    }
-    
-    return data;
-  }
 
-  /**
-   * Calculate ammunition damage based on projectile weight and velocity.
-   * Delegates to the module-level calculateAmmoDamage() function.
-   */
-  _calculateDamage(weight, velocity) {
-    return calculateAmmoDamage(weight, velocity);
+    // Compute derived ballistic properties for display
+    const sys = data.item.system;
+    const derived = calcAmmoDerived(sys.mass, sys.diameter, sys.coeff_trainee, sys.rho);
+    data.computed = {
+      brakingIndex:    derived.braking_index.toFixed(6),
+      sectionalDensity: derived.sectional_density.toFixed(2)
+    };
+
+    return data;
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
     const html = this.element;
     if (!html) return;
-
-    // Add event listeners for weight and velocity inputs to recalculate damage in real-time
-    const weightInput = html.querySelector("input[name='system.weight']");
-    const velocityInput = html.querySelector("input[name='system.velocity']");
-    const damageInput = html.querySelector("input[name='system.damage']");
-
-    if (weightInput && velocityInput && damageInput) {
-      const updateDamage = () => {
-        const weight = parseFloat(weightInput.value) || 0;
-        const velocity = parseFloat(velocityInput.value) || 0;
-
-        if (weight && velocity) {
-          const damage = this._calculateDamage(weight, velocity);
-          damageInput.value = damage;
-        } else {
-          damageInput.value = "";
-        }
-      };
-
-      weightInput.addEventListener("change", updateDamage);
-      weightInput.addEventListener("input", updateDamage);
-      velocityInput.addEventListener("change", updateDamage);
-      velocityInput.addEventListener("input", updateDamage);
-    }
-  }
-
-  async _onSubmitForm(formData, form) {
-    // Calculate damage when form is submitted
-    const weight = formData?.get?.("system.weight") ? parseFloat(formData.get("system.weight")) : 0;
-    const velocity = formData?.get?.("system.velocity") ? parseFloat(formData.get("system.velocity")) : 0;
-
-    if (weight && velocity) {
-      const damage = this._calculateDamage(weight, velocity);
-      if (formData?.set) {
-        formData.set("system.damage", damage);
-      }
-    }
-
-    return super._onSubmitForm?.(formData, form);
+    // Derived fields (brakingIndex, sectionalDensity) are read-only and computed in _prepareContext.
+    // No live-update listeners needed.
   }
 
   _updateFrame(options) {

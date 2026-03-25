@@ -22,8 +22,10 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 - **Système de Jets** : D20 pour attributs et compétences avec modificateurs dynamiques
 - **Interface Moderne** : Design épuré avec onglets, colonnes multiples et indicateurs visuels
 - **Gestion des Objets** : Armes, Armures, Équipement, Munitions et Traits
+- **Véhicules** : Type d'acteur dédié avec armes, équipage, carburant et boutons +/−
 - **Prérequis de compétences** : Certaines compétences avancées nécessitent l'apprentissage préalable
-- **Système de dégâts** : Table de référence combinant Force et Degré de compétence
+- **Système de dégâts mêlée** : Table de référence combinant Force et Degré de compétence
+- **Moteur balistique physique** : Dégâts et pénétration des armes à feu calculés par énergie cinétique (v1.0.12+)
 - **Statistiques de combat** : Calcul automatique des mouvements et bonus tactiques
 
 ## 🎮 Comment Utiliser
@@ -268,8 +270,7 @@ Le système inclut une documentation détaillée couvrant tous les aspects:
 - [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - Architecture du système
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Guide de contribution
 - [INSTALLATION.md](INSTALLATION.md) - Installation détaillée
-- [SETUP_COMBAT.md](SETUP_COMBAT.md) - Configuration du système de combat
-- [IMPLEMENTATION_COMBAT.md](IMPLEMENTATION_COMBAT.md) - Implémentation technique
+- [CHANGELOG.md](CHANGELOG.md) - Historique des versions
 
 ### Fichiers de Référence
 - [system.json](system.json) - Configuration et métadonnées

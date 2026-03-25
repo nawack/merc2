@@ -63,7 +63,7 @@ Gestion des armes:
     ✔ créer la fiche de munition @done(26-02-06 13:07)
     ✔ ajouter munition dans la fiche d'arme @done(26-02-06 13:08)
     ✔ afficher les caractéristiques de la munition dans la partie combat au niveau de l'arme @done(26-03-11 22:55)
-    - appliqué les modificateurs de dégats sur une munition en fonction de l'arme
+    ✔ appliqué les modificateurs de dégats sur une munition en fonction de l'arme @done(26-03-25 21:42)
     - gestion des modificateurs d'armes (précision, puissance, cadence, portée)
     - gestion du nombre munitions (nombre restant dans chargeur, capacité chargeur, quantité total)
     ✔ ajouter les champs commun a tous les items (rareté, prix, etc ) @done(26-02-18 19:47)

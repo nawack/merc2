@@ -35,11 +35,6 @@ function New-FoundryId {
   -join ($bytes | ForEach-Object { $chars[$_ % $chars.Length] })
 }
 
-function Parse-PenValue([string]$v) {
-  # Return the raw text value (e.g. "1+2", "0+2", "0") — it is a game notation, not a math expression
-  return $v.Trim()
-}
-
 function TryParseDouble([string]$s) {
   # Replace European decimal comma with dot before parsing
   $d = 0.0
@@ -192,9 +187,10 @@ if (-not (Test-Path $classicLevelDir)) {
 Write-Host "> Lecture des munitions..." -ForegroundColor Cyan
 $acsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Ammo.csv") -Delimiter ";" -Encoding Default
 $acols = $acsv[0].PSObject.Properties.Name
-# Index: 0=Folder 1=Munition 2=Type 3=Calibre-type 4=Calibre 5=type
-#        6=poids projectile 7=vitesse 8=PenCourte 9=PenMoy 10=PenLong
-#        11=PenExtreme 12=poids munition
+# Column indices (0-based):
+#  0=Folder  1=Munition  2=Type de munition  3=Calibre  4=type(subtype)
+#  5=Masse(g)  6=Diamètre(mm)  7=Coeff_traînée  8=Rho(kg/m³)
+#  9=indice_perforation  10=Longueur_Canon_std(pouces)  11=vitesse(m/s)  12=poids_munition(g)
 
 # Build ammo folder hierarchy from all Folder paths in the CSV
 $allAFolderPaths = $acsv | ForEach-Object { $_.($acols[0]).Trim() } | Where-Object { $_ }
@@ -206,17 +202,24 @@ foreach ($row in $acsv) {
   $name = $row.($acols[1]).Trim()
   if (-not $name) { continue }
 
-  $folderPath  = $row.($acols[0]).Trim()
-  $caliber     = $row.($acols[4]).Trim()
-  $ammoType    = $row.($acols[2]).Trim()   # "Type de munition" (ex: "Balle")
-  $subType     = $row.($acols[5]).Trim()   # "type" (ex: BO, AP, Expansion)
-  $weight      = TryParseDouble $row.($acols[6])
-  $weightAmmo  = TryParseDouble $row.($acols[12])
-  $velocity    = TryParseInt    $row.($acols[7])
-  $penShort    = Parse-PenValue $row.($acols[8])
-  $penMedium   = Parse-PenValue $row.($acols[9])
-  $penLong     = Parse-PenValue $row.($acols[10])
-  $penExtreme  = Parse-PenValue $row.($acols[11])
+  $folderPath        = $row.($acols[0]).Trim()
+  $ammoType          = $row.($acols[2]).Trim()
+  $caliber           = $row.($acols[3]).Trim()
+  $subType           = $row.($acols[4]).Trim()
+  $mass              = TryParseDouble $row.($acols[5])
+  $diameter          = TryParseDouble $row.($acols[6])
+  $coeff_trainee     = TryParseDouble $row.($acols[7])
+  $rho               = TryParseDouble $row.($acols[8])
+  $perforation_index = TryParseDouble $row.($acols[9])
+  $barrel_length_std = TryParseDouble $row.($acols[10])
+  $velocity          = TryParseInt    $row.($acols[11])
+  $weight            = TryParseDouble $row.($acols[12])
+
+  # Compute derived ballistic properties
+  $surface           = [Math]::PI * $diameter * $diameter / 4e6
+  $braking_index     = 0.5 * $surface * $coeff_trainee * $rho
+  $area_m2           = [Math]::PI * ($diameter / 1000) * ($diameter / 1000) / 4
+  $sectional_density = if ($area_m2 -gt 0) { ($mass / 1000) / $area_m2 } else { 0 }
 
   # Resolve folder _id (case-insensitive lookup)
   $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
@@ -229,24 +232,24 @@ foreach ($row in $acsv) {
     "type"   = "ammo"
     "img"    = "systems/merc/assets/items/ammo/ammo.png"
     "system" = [ordered]@{
-      "ammoType"       = $ammoType
-      "caliber"        = $caliber
-      "quantity"       = 0
-      "maxQuantity"    = 0
-      "weight"         = $weight
-      "weightAmmo"     = $weightAmmo
-      "velocity"       = $velocity
-      "penetration"    = [ordered]@{
-        "short"   = $penShort
-        "medium"  = $penMedium
-        "long"    = $penLong
-        "extreme" = $penExtreme
-      }
-      "damage"         = ""
-      "price"          = 0
-      "rarity"         = "common"
-      "description"    = $subType
-      "parentWeaponId" = ""
+      "ammoType"          = $ammoType
+      "caliber"           = $caliber
+      "quantity"          = 0
+      "maxQuantity"       = 0
+      "mass"              = $mass
+      "diameter"          = $diameter
+      "coeff_trainee"     = $coeff_trainee
+      "rho"               = $rho
+      "perforation_index" = $perforation_index
+      "barrel_length_std" = $barrel_length_std
+      "velocity"          = $velocity
+      "weight"            = $weight
+      "braking_index"     = $braking_index
+      "sectional_density" = $sectional_density
+      "price"             = 0
+      "rarity"            = "common"
+      "description"       = $subType
+      "parentWeaponId"    = ""
     }
     "effects" = @()
     "folder"  = $itemFolderId
@@ -264,10 +267,12 @@ foreach ($row in $acsv) {
 }
 Write-Host "  OK $($ammoItems.Count) munitions, $($ammoFolderMap.Count) dossiers" -ForegroundColor Green
 
-# Build case-insensitive ammo name → _id lookup for weapon linkage
-$ammoNameToId = @{}
+# Build case-insensitive ammo name → _id and ammo system data lookups for weapon linkage
+$ammoNameToId     = @{}
+$ammoNameToSystem = @{}
 foreach ($item in $ammoItems) {
-  $ammoNameToId[$item.name.ToLower()] = $item._id
+  $ammoNameToId[$item.name.ToLower()]     = $item._id
+  $ammoNameToSystem[$item.name.ToLower()] = $item.system
 }
 
 # =============================================================================
@@ -276,10 +281,11 @@ foreach ($item in $ammoItems) {
 Write-Host "> Lecture des armes..." -ForegroundColor Cyan
 $wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapons.csv") -Delimiter ";" -Encoding Default
 $wcols = $wcsv[0].PSObject.Properties.Name
-# Index: 0=Folder  1=Nom  2=Sous-type d'arme  3=Compétence associée  4=Munition
-#        5=Calibre  6=Poids à vide  7=dégat
-#        8=Range Short  9=Range Med  10=Range Long  11=Range Extrem
-#        12=Recul C/C  13=Recul Burst  14=Chargeur  15=ROF mode  16=ROF limited  17=Nom photo
+# Column indices (0-based):
+#  0=Folder  1=Nom  2=Sous-type  3=Compétence  4=Illustration  5=Munition
+#  6=Calibre  7=Poids_à_vide  8=Canon(pouces)  9=Range_Short  10=Range_Med
+#  11=Range_Long  12=Range_Extrem  13=Recul_C/C  14=Recul_Burst  15=Chargeur
+#  16=ROF_mode  17=ROF_limited
 
 # Build weapon folder hierarchy from all Folder paths in the CSV
 $allWFolderPaths = $wcsv | ForEach-Object { $_.($wcols[0]).Trim() } | Where-Object { $_ }
@@ -292,28 +298,34 @@ foreach ($row in $wcsv) {
   if (-not $name) { continue }
 
   $folderPath    = $row.($wcols[0]).Trim()
-  # Folder last segment used for icon selection only
   $fpParts       = $folderPath -split '\\'
   $folderSubtype = if ($fpParts.Count -gt 1) { $fpParts[-1] } else { $folderPath }
-  # "Sous-type d'arme" column (index 2) used for the weaponSubtype field
   $subtype      = $row.($wcols[2]).Trim()
   $skill        = $row.($wcols[3]).Trim()
-  $weightKg     = TryParseDouble $row.($wcols[6])
-  $damage       = $row.($wcols[7]).Trim()
-  $rangeShort   = TryParseInt $row.($wcols[8])
-  $rangeMed     = TryParseInt $row.($wcols[9])
-  $rangeLng     = TryParseInt $row.($wcols[10])
-  $rangeExt     = TryParseInt $row.($wcols[11])
-  $recoilCC     = $row.($wcols[12]).Trim()
-  $recoilBurst  = $row.($wcols[13]).Trim()
-  $magazine     = TryParseInt $row.($wcols[14])
-  $rofMode      = $row.($wcols[15]).Trim()
-  $rofLimited   = TryParseInt $row.($wcols[16])
+  $illustration = $row.($wcols[4]).Trim()
+  $munitionName = $row.($wcols[5]).Trim()
+  $caliber      = $row.($wcols[6]).Trim()
+  $weightKg     = TryParseDouble $row.($wcols[7])
+  $barrelLength = TryParseDouble $row.($wcols[8])
+  $rangeShort   = TryParseInt $row.($wcols[9])
+  $rangeMed     = TryParseInt $row.($wcols[10])
+  $rangeLng     = TryParseInt $row.($wcols[11])
+  $rangeExt     = TryParseInt $row.($wcols[12])
+  $recoilCC     = $row.($wcols[13]).Trim()
+  $recoilBurst  = $row.($wcols[14]).Trim()
+  $magazine     = TryParseInt $row.($wcols[15])
+  $rofMode      = $row.($wcols[16]).Trim()
+  $rofLimited   = TryParseInt $row.($wcols[17])
 
-  # Resolve default ammo by name (Munition col) — case-insensitive
-  $munitionName  = $row.($wcols[4]).Trim()
-  $caliber       = $row.($wcols[5]).Trim()
+  # Resolve default ammo by name — case-insensitive
   $defaultAmmoId = if ($ammoNameToId.ContainsKey($munitionName.ToLower())) { $ammoNameToId[$munitionName.ToLower()] } else { "" }
+
+  # Select weapon icon: prefer Illustration column, fall back to folder-based lookup
+  $imgPath = if ($illustration) {
+    "systems/merc/assets/items/weapons/$illustration.jpg"
+  } else {
+    Get-WeaponImage $folderSubtype
+  }
 
   # Resolve folder _id (case-insensitive lookup)
   $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
@@ -324,9 +336,9 @@ foreach ($row in $wcsv) {
     "_id"    = New-FoundryId
     "name"   = $name
     "type"   = "weapon"
-    "img"    = Get-WeaponImage $folderSubtype
+    "img"    = $imgPath
     "system" = [ordered]@{
-      "damage"          = $damage
+      "damage"          = ""          # computed at runtime from ammo data
       "rarity"          = "common"
       "price"           = 0
       "weightKg"        = $weightKg
@@ -347,6 +359,7 @@ foreach ($row in $wcsv) {
       "rofMode"         = $rofMode
       "rofLimited"      = $rofLimited
       "caliber"         = $caliber
+      "barrelLength"    = $barrelLength
       "defaultAmmoName" = $munitionName
       "defaultAmmoId"   = $defaultAmmoId
     }

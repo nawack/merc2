@@ -2,6 +2,61 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.15] - 2026-03-25
+
+### Added
+- 🎯 **Jet de compétence depuis l'onglet Combat** : Bouton `🎯` sur chaque ligne de dégâts de base (Mêlée, Armes de taille, spécialisations corps-à-corps) pour lancer directement le jet de compétence liée (d20 + Degré + Bonus) dans le chat
+
+### Fixed
+- 🐛 **Erreur de syntaxe `migrateItem`** : Accolade fermante parasite qui fermait prématurément le bloc `if (item.type === "weapon")`, repoussant les checks `barrelLength`, `defaultAmmo*` et `obsoleteWeapon` hors du guard
+
+### Changed
+- 🗂️ **Documentation** : Suppression de 7 fichiers de suivi interne, mise à jour des schémas, index et changelog
+
+---
+
+## [1.0.14] - 2026-03-25
+
+### Changed
+- 🗂️ **Documentation** : Simplification et refactoring — suppression de 7 fichiers de suivi interne, mise à jour des schémas et du changelog
+
+---
+
+## [1.0.13] - 2026-03-25
+
+### Changed
+- 🔄 **Gestion des munitions en combat** : Onglet Combat de la fiche personnage — tableau de munitions avec affichage `inMag/magCapacity - magFull/magTotal - stock` pour les munitions par défaut et liées
+- 🔄 **Malus de portée** : Sous-ligne de malus par portée (C/M/L/X) avec distance et pénalité de pénétration affinée
+- 🔄 **Arme sans munition par défaut** : La fiche d'arme se replie maintenant sur la première munition liée si aucune munition par défaut n'est définie
+- 🔄 **Rafraîchissement automatique** : La fiche d'arme se met à jour automatiquement lorsqu'une munition liée est modifiée (hook `updateItem`)
+
+### Fixed
+- 🐛 **Ligne munition par défaut** : Masquée si aucune munition par défaut n'est définie (`{{#if wb.default}}`)
+
+---
+
+## [1.0.12] - 2026-03-25
+
+### Added
+- 🔫 **Moteur balistique physique** : Calcul des dégâts et de la pénétration par physique réelle (énergie cinétique, frein d'air)
+  - `calcWeaponBallistics(barrelLength, ammoSystem, ranges)` → dégâts, vitesse initiale, énergie, pénétration et malus par portée
+  - `calcAmmoDerived(mass, diameter, coeff_trainee, rho)` → `braking_index` et `sectional_density` calculés automatiquement
+  - `calcDamageFromEnergy(energy)` et `calcBlindageMalus(energy, pen)` pour conversion en jeu
+- 📦 **Nouveau schéma munitions** : Remplacement de `quantity`/`maxQuantity` par 5 champs sémantiques : `magCapacity`, `inMag`, `magFull`, `magTotal`, `stock`
+- 🔧 **Champs munitions par défaut sur arme** : `defaultAmmoMagCapacity`, `defaultAmmoInMag`, `defaultAmmoMagFull`, `defaultAmmoMagTotal`, `defaultAmmoStock`
+- 🗂️ **Fiche munition redessinée** : Grille balistique unifiée (4 colonnes, 8 propriétés physiques + 2 valeurs déduites en lecture seule), section Stock simplifiée (Rareté + Prix uniquement)
+- 🗂️ **Fiche arme — section munitions inline** : 5 champs de stock par munition liée, affichage des malus de pénétration par portée
+
+### Changed
+- 🔄 **`system.damage`** : N'est plus calculé ni stocké — remplacé par le calcul balistique temps-réel
+- 🔄 **Onglet Tactique arme** : Champ `magazine` (capacité chargeur standard) supprimé de l'affichage (redondant avec les champs munitions)
+
+### Migration
+- ⬆️ **`migrateItem` arme** : Initialise les 5 nouveaux champs `defaultAmmoXxx`, supprime `magazine`
+- ⬆️ **`migrateItem` munition** : `quantity` → `inMag`, `maxQuantity` → `magCapacity`, `magazines` → `magTotal` ; champs obsolètes supprimés (`quantity`, `maxQuantity`, `magazines`, `magEmpty`, `weightAmmo`, `damage`, `penetration`)
+
+---
+
 ## [1.0.11] - 2026-03-10
 
 ### Added

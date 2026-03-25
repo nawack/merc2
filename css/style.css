@@ -704,6 +704,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  width: 100%;
 }
 
 /* Zone 2: skill roll buttons — vertical stack on the left */
@@ -765,6 +766,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  width: 100%;
 }
 
 .combat-ammo-table-header,
@@ -792,6 +794,50 @@
 
 .combat-ammo-table-row:nth-child(even) {
   background: #f4f4f4;
+}
+
+/* Malus blindage sub-row (shown under each ammo row) */
+.combat-ammo-malus-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 2px 4px 4px;
+  margin-bottom: 2px;
+  border-bottom: 1px dotted #e0e0e0;
+}
+
+.cam-malus-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-size: 10px;
+  text-align: center;
+  color: #8b1a1a;
+  font-weight: 600;
+}
+
+.cam-range-dist {
+  font-size: 9px;
+  font-weight: 400;
+  color: #888;
+  white-space: nowrap;
+}
+
+.cam-malus-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.cam-malus-none {
+  color: #bbb;
+  font-weight: 400;
+}
+
+/* Default ammo row: italic name */
+.cam-ammo-name-default {
+  font-style: italic;
+  color: #555;
 }
 
 .cam-col-name {
@@ -1721,8 +1767,8 @@
 
 .combat-base-damage-row {
   display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 10px;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 6px;
   align-items: center;
   background-color: #fff;
   border: 1px solid #999;
@@ -1784,6 +1830,7 @@
 }
 
 .combat-base-damage-roll,
+.combat-base-skill-roll,
 .weapon-skill-roll,
 .weapon-damage-roll {
   width: 32px;
@@ -1801,6 +1848,7 @@
 }
 
 .combat-base-damage-roll:hover,
+.combat-base-skill-roll:hover,
 .weapon-skill-roll:hover,
 .weapon-damage-roll:hover {
   /*
@@ -2034,6 +2082,27 @@
   gap: 6px;
 }
 
+/* Blindage malus badge shown below each range input */
+.weapon-range-malus {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b1a1a;
+  text-align: center;
+  margin-top: 2px;
+  min-height: 14px;
+}
+
+.weapon-range-malus-label {
+  font-weight: 400;
+  color: #666;
+}
+
+.weapon-range-malus-none {
+  font-weight: 400;
+  font-style: italic;
+  color: #888;
+}
+
 .weapon-range-input {
   display: flex;
   align-items: center;
@@ -2243,13 +2312,18 @@
 
 .weapon-ammo-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 12px;
+}
+
+.weapon-ammo-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .weapon-ammo-info {
@@ -2258,6 +2332,43 @@
   gap: 8px;
   flex: 1;
   min-width: 0;
+}
+
+.weapon-ammo-stock-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dotted #e8e8e8;
+}
+
+.weapon-ammo-stock-field {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.weapon-ammo-stock-field label {
+  font-size: 9px;
+  font-weight: bold;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.weapon-ammo-stock-field input {
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  color: #333;
+}
+
+.weapon-ammo-stock-field input[readonly] {
+  background-color: #ececec;
+  color: #888;
+  cursor: default;
 }
 
 .weapon-ammo-name {
@@ -2384,6 +2495,36 @@
 
 .af-span2 { grid-column: span 2; }
 .af-span4 { grid-column: 1 / -1; }
+
+/* Section balistique */
+.ammo-ballistics {
+  background-color: #f5f5f5;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.ammo-ballistics-header {
+  margin: 0 0 6px 0;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 3px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ammo-ballistics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+/* Computed (read-only) fields — slightly tinted to signal non-editable */
+.ammo-ballistics-grid .ammo-field input[readonly] {
+  background-color: #ececec;
+  color: #666;
+  cursor: default;
+}
 
 /* Section pénétration compacte */
 .ammo-penetration {

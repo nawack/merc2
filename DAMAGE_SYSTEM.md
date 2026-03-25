@@ -127,16 +127,7 @@ function getBaseDamageFromTable(forceValue, degreeValue) {
 
 ### Affichage dans la feuille
 
-**Localisation :** [templates/actor/character-sheet.hbs](templates/actor/character-sheet.hbs) - Onglet "Combat"
-
-```handlebars
-{{!-- Affiche les dégâts basés sur Force et Degré de compétence --}}
-<div class="damage-info">
-  Force: {{system.attributes.strength.current}}
-  Degré Combat: {{system.combat_degree}}
-  Dégâts: {{getDamageFormula}}
-</div>
-```
+Les dégâts de mêlée (`baseDamageMelee`, `baseDamageBladed`) sont pré-calculés dans `_prepareContext` à partir de la Force et du Degré de la compétence correspondante, puis exposés au template.
 
 ---
 
@@ -197,6 +188,77 @@ Progression dans les dégâts:
 
 ---
 
-**Dernière mise à jour :** 2026-02-05  
-**Version du système :** 1.0.9  
-**Statut :** Documenté complètement
+## Moteur balistique physique (armes à feu)
+
+Depuis la v1.0.12, les dégâts des armes à feu sont calculés en temps réel par simulation physique. Aucune valeur de dégât n'est stockée sur l'arme ou la munition.
+
+### Fonctions principales (`scripts/system.js`)
+
+#### `calcAmmoDerived(mass, diameter, coeff_trainee, rho)`
+
+Calcule les propriétés déduites de la munition :
+
+```
+braking_index     = (Cd × ρ × π × (d/2000)²) / (2 × m/1000)
+sectional_density = (m/1000) / (π × (d/2000)²)
+```
+
+Où : `m` = masse (g), `d` = diamètre (mm), `Cd` = coefficient de traînée, `ρ` = densité air (kg/m³)
+
+#### `calcWeaponBallistics(barrelLength, ammoSystem, ranges)`
+
+Calcule les dégâts et la pénétration pour chaque portée :
+
+```javascript
+// Pour chaque portée (short, medium, long, extreme) :
+v(x) = v0 × exp(-braking_index × x)   // vitesse à distance x (m/s)
+E(x) = 0.5 × (mass/1000) × v(x)²      // énergie cinétique (J)
+
+damage(x)  = calcDamageFromEnergy(E)   // formule de dégâts
+malus(x)   = calcBlindageMalus(E, pen) // malus pénétration blindage
+```
+
+Retourne :
+```javascript
+{
+  hasData: boolean,
+  damage: string,        // Dégâts à portée courte
+  initialVelocity: number,
+  energy: number,
+  pen: number,
+  blindage: {
+    short:   { damage, malus },
+    medium:  { damage, malus },
+    long:    { damage, malus },
+    extreme: { damage, malus }
+  }
+}
+```
+
+#### `calcDamageFromEnergy(energy)`
+
+Convertit l'énergie cinétique (J) en formule de dégâts de jeu :
+
+| Énergie (J) | Dégâts |
+|-------------|--------|
+| < 100 | `"1"` |
+| < 300 | `"1d6"` |
+| < 700 | `"2d6"` |
+| < 1500 | `"3d6"` |
+| < 3000 | `"4d6"` |
+| ≥ 3000 | `"5d6"` |
+
+#### `calcBlindageMalus(energy, pen)`
+
+Calcule le malus appliqué contre un blindage en fonction de l'énergie résiduelle et de l'indice de perforation de la munition.
+
+### Affichage
+
+- **Fiche arme** : Résultats balistiques en lecture seule dans l'onglet Balistique, et malus par portée dans l'onglet Munitions
+- **Onglet Combat personnage** : `weaponBallisticsMap` par arme — affiche les dégâts + stock pour chaque munition par portée
+- **Onglet Combat véhicule** : Même logique que le personnage
+
+---
+
+**Dernière mise à jour :** 2026-04-xx
+**Version du système :** 1.0.14

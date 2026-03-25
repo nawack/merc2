@@ -588,6 +588,7 @@
                   <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageMelee"}}</span>
                   <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.melee"}}</span>
                 </div>
+                <button type="button" class="combat-base-skill-roll" data-skill="melee" title="{{localize "MERC.UI.combat.rollSkillCheck"}}">🎯</button>
                 <div class="combat-base-damage-value">{{actor.system.combat.baseDamageMelee}}</div>
                 <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageMelee}}" data-roll-label="{{localize "MERC.Skills.melee"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
               </div>
@@ -596,6 +597,7 @@
                   <span class="combat-base-damage-title">{{localize "MERC.UI.combat.baseDamageBladed"}}</span>
                   <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{localize "MERC.Skills.bladed_weapons"}}</span>
                 </div>
+                <button type="button" class="combat-base-skill-roll" data-skill="bladed_weapons" title="{{localize "MERC.UI.combat.rollSkillCheck"}}">🎯</button>
                 <div class="combat-base-damage-value">{{actor.system.combat.baseDamageBladed}}</div>
                 <button type="button" class="combat-base-damage-roll" data-roll-formula="{{actor.system.combat.baseDamageBladed}}" data-roll-label="{{localize "MERC.Skills.bladed_weapons"}}" title="{{localize "MERC.UI.combat.rollBaseDamage"}}">🎲</button>
               </div>
@@ -607,6 +609,7 @@
                     <span class="combat-base-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if (eq specData.baseSkill "melee")}}{{localize "MERC.Skills.melee"}}{{else}}{{localize "MERC.Skills.bladed_weapons"}}{{/if}} : {{specName}}</span>
                   </div>
                   {{#with (concat "custom_spec_" specName) as |specKey|}}
+                    <button type="button" class="combat-base-skill-roll" data-skill="{{specKey}}" title="{{localize "MERC.UI.combat.rollSkillCheck"}}">🎯</button>
                     <div class="combat-base-damage-value">
                       {{#if (lookup @root.actor.system.combat.specializationBaseDamage specKey)}}
                         {{lookup @root.actor.system.combat.specializationBaseDamage specKey}}
@@ -661,26 +664,67 @@
                 <div class="combat-ammo-table-header">
                   <span class="cam-col-name">{{localize "MERC.UI.items.ammo"}}</span>
                   <span class="cam-col-qty">{{localize "MERC.UI.items.ammoSheet.quantity"}}</span>
-                  <span class="cam-col-dmg">{{localize "MERC.UI.items.ammoSheet.damage"}}</span>
+                  <span class="cam-col-dmg">{{localize "MERC.UI.items.weaponSheet.damage"}}</span>
                   <span class="cam-col-roll"></span>
                 </div>
-                <div class="combat-ammo-table-row" data-item-id="{{item._id}}">
-                  <span class="cam-col-name">Base</span>
-                  <span class="cam-col-qty">—</span>
-                  <span class="cam-col-dmg">{{item.system.damage}}</span>
-                  <button type="button" class="weapon-damage-roll cam-col-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
-                </div>
-                {{!-- Linked ammo for this weapon --}}
-                {{#each (filterItems ../actor.items "ammo") as |ammo|}}
-                {{#if (eq ammo.system.parentWeaponId item._id)}}
-                <div class="combat-ammo-table-row" data-item-id="{{ammo._id}}">
-                  <span class="cam-col-name">{{ammo.name}}</span>
-                  <span class="cam-col-qty">{{ammo.system.quantity}}/{{ammo.system.maxQuantity}}</span>
-                  <span class="cam-col-dmg">{{ammo.system.damage}}</span>
-                  <button type="button" class="weapon-damage-roll cam-col-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
-                </div>
-                {{/if}}
-                {{/each}}
+                {{#with (lookup ../weaponBallisticsMap item._id) as |wb|}}
+                  {{!-- Munition standard : affichée seulement si définie --}}
+                  {{#if wb.default}}
+                  <div class="combat-ammo-table-row cam-row-default" data-item-id="{{item._id}}">
+                    <span class="cam-col-name cam-ammo-name-default">{{#if wb.defaultAmmoName}}{{wb.defaultAmmoName}}{{else}}Standard{{/if}}</span>
+                    <span class="cam-col-qty">{{wb.defaultStock.inMag}}/{{#if wb.defaultStock.magCapacity}}{{wb.defaultStock.magCapacity}}{{else}}?{{/if}} - {{wb.defaultStock.magFull}}/{{wb.defaultStock.magTotal}} - {{wb.defaultStock.stock}}</span>
+                    <span class="cam-col-dmg">{{wb.default.damage}}</span>
+                    <button type="button" class="weapon-damage-roll cam-col-roll" data-roll-formula="{{wb.default.damage}}" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                  </div>
+                  <div class="combat-ammo-malus-row">
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">C</span>{{#if wb.ranges.short}} {{wb.ranges.short}}m{{/if}}</span>
+                      {{#if (eq wb.default.blindage.short "-")}}<span class="cam-malus-none">—</span>{{else}}{{wb.default.blindage.short}}{{/if}}
+                    </span>
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">M</span>{{#if wb.ranges.medium}} {{wb.ranges.medium}}m{{/if}}</span>
+                      {{#if (eq wb.default.blindage.medium "-")}}<span class="cam-malus-none">—</span>{{else}}{{wb.default.blindage.medium}}{{/if}}
+                    </span>
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">L</span>{{#if wb.ranges.long}} {{wb.ranges.long}}m{{/if}}</span>
+                      {{#if (eq wb.default.blindage.long "-")}}<span class="cam-malus-none">—</span>{{else}}{{wb.default.blindage.long}}{{/if}}
+                    </span>
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">X</span>{{#if wb.ranges.extreme}} {{wb.ranges.extreme}}m{{/if}}</span>
+                      {{#if (eq wb.default.blindage.extreme "-")}}<span class="cam-malus-none">—</span>{{else}}{{wb.default.blindage.extreme}}{{/if}}
+                    </span>
+                  </div>
+                  {{/if}}
+                  {{!-- Munitions liées (ajoutées à l'acteur) --}}
+                  {{#each wb.ammo as |ammoRow|}}
+                  <div class="combat-ammo-table-row" data-item-id="{{ammoRow.id}}">
+                    <span class="cam-col-name">{{ammoRow.name}}</span>
+                    <span class="cam-col-qty">{{ammoRow.inMag}}/{{#if ammoRow.magCapacity}}{{ammoRow.magCapacity}}{{else}}?{{/if}} - {{ammoRow.magFull}}/{{ammoRow.magTotal}} - {{ammoRow.stock}}</span>
+                    <span class="cam-col-dmg">{{#if ammoRow.ballistics}}{{ammoRow.ballistics.damage}}{{else}}—{{/if}}</span>
+                    <button type="button" class="weapon-damage-roll cam-col-roll" data-roll-formula="{{#if ammoRow.ballistics}}{{ammoRow.ballistics.damage}}{{/if}}" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                  </div>
+                  {{#if ammoRow.ballistics}}
+                  <div class="combat-ammo-malus-row">
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">C</span>{{#if wb.ranges.short}} {{wb.ranges.short}}m{{/if}}</span>
+                      {{#if (eq ammoRow.ballistics.blindage.short "-")}}<span class="cam-malus-none">—</span>{{else}}{{ammoRow.ballistics.blindage.short}}{{/if}}
+                    </span>
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">M</span>{{#if wb.ranges.medium}} {{wb.ranges.medium}}m{{/if}}</span>
+                      {{#if (eq ammoRow.ballistics.blindage.medium "-")}}<span class="cam-malus-none">—</span>{{else}}{{ammoRow.ballistics.blindage.medium}}{{/if}}
+                    </span>
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">L</span>{{#if wb.ranges.long}} {{wb.ranges.long}}m{{/if}}</span>
+                      {{#if (eq ammoRow.ballistics.blindage.long "-")}}<span class="cam-malus-none">—</span>{{else}}{{ammoRow.ballistics.blindage.long}}{{/if}}
+                    </span>
+                    <span class="cam-malus-cell">
+                      <span class="cam-range-dist"><span class="cam-malus-label">X</span>{{#if wb.ranges.extreme}} {{wb.ranges.extreme}}m{{/if}}</span>
+                      {{#if (eq ammoRow.ballistics.blindage.extreme "-")}}<span class="cam-malus-none">—</span>{{else}}{{ammoRow.ballistics.blindage.extreme}}{{/if}}
+                    </span>
+                  </div>
+                  {{/if}}
+                  {{/each}}
+                {{/with}}
               </div>
 
             </div>

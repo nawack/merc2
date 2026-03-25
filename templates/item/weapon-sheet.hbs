@@ -67,8 +67,8 @@
       <div class="weapon-field wf-span4">
         <label>{{localize "MERC.UI.items.weaponSheet.damage"}}</label>
         <div class="weapon-damage-row">
-          <input type="text" name="system.damage" value="{{item.system.damage}}" placeholder="{{localize "MERC.UI.items.weaponSheet.damagePlaceholder"}}">
-          <button type="button" class="weapon-damage-roll" data-roll-formula="{{item.system.damage}}" data-roll-label="{{item.name}}" title="{{localize "MERC.UI.items.weaponSheet.rollDamage"}}">🎲</button>
+          <input type="text" value="{{ballistics.damage}}" placeholder="—" readonly tabindex="-1">
+          <button type="button" class="weapon-damage-roll" data-roll-formula="{{ballistics.damage}}" data-roll-label="{{item.name}}" title="{{localize "MERC.UI.items.weaponSheet.rollDamage"}}">🎲</button>
         </div>
       </div>
     </div>
@@ -82,18 +82,22 @@
           <div class="weapon-field">
             <label>{{localize "MERC.UI.items.weaponSheet.rangeShort"}}</label>
             <input type="number" name="system.range.short" value="{{item.system.range.short}}" min="0" step="1">
+            {{#if ballistics.hasData}}<div class="weapon-range-malus">{{#if (eq ballistics.blindage.short "-")}}<span class="weapon-range-malus-none">pas de pénétration</span>{{else}}<span class="weapon-range-malus-label">Malus Pénét.</span> {{ballistics.blindage.short}}{{/if}}</div>{{/if}}
           </div>
           <div class="weapon-field">
             <label>{{localize "MERC.UI.items.weaponSheet.rangeMedium"}}</label>
             <input type="number" name="system.range.medium" value="{{item.system.range.medium}}" min="0" step="1">
+            {{#if ballistics.hasData}}<div class="weapon-range-malus">{{#if (eq ballistics.blindage.medium "-")}}<span class="weapon-range-malus-none">pas de pénétration</span>{{else}}<span class="weapon-range-malus-label">Malus Pénét.</span> {{ballistics.blindage.medium}}{{/if}}</div>{{/if}}
           </div>
           <div class="weapon-field">
             <label>{{localize "MERC.UI.items.weaponSheet.rangeLong"}}</label>
             <input type="number" name="system.range.long" value="{{item.system.range.long}}" min="0" step="1">
+            {{#if ballistics.hasData}}<div class="weapon-range-malus">{{#if (eq ballistics.blindage.long "-")}}<span class="weapon-range-malus-none">pas de pénétration</span>{{else}}<span class="weapon-range-malus-label">Malus Pénét.</span> {{ballistics.blindage.long}}{{/if}}</div>{{/if}}
           </div>
           <div class="weapon-field">
             <label>{{localize "MERC.UI.items.weaponSheet.rangeExtreme"}}</label>
             <input type="number" name="system.range.extreme" value="{{item.system.range.extreme}}" min="0" step="1">
+            {{#if ballistics.hasData}}<div class="weapon-range-malus">{{#if (eq ballistics.blindage.extreme "-")}}<span class="weapon-range-malus-none">pas de pénétration</span>{{else}}<span class="weapon-range-malus-label">Malus Pénét.</span> {{ballistics.blindage.extreme}}{{/if}}</div>{{/if}}
           </div>
         </div>
       </div>
@@ -105,8 +109,8 @@
             <input type="text" name="system.caliber" value="{{item.system.caliber}}" placeholder="9x19">
           </div>
           <div class="weapon-field">
-            <label>{{localize "MERC.UI.items.weaponSheet.magazine"}}</label>
-            <input type="number" name="system.magazine" value="{{item.system.magazine}}" min="0" step="1">
+            <label>{{localize "MERC.UI.items.weaponSheet.barrelLength"}}</label>
+            <input type="number" name="system.barrelLength" value="{{item.system.barrelLength}}" min="0" step="0.1">
           </div>
           <div class="weapon-field">
             <label>{{localize "MERC.UI.items.weaponSheet.rofMode"}}</label>
@@ -143,6 +147,28 @@
             {{#if defaultAmmo}}<span class="weapon-ammo-caliber">{{defaultAmmo.system.caliber}}</span>{{/if}}
           </div>
         </div>
+        <div class="weapon-ammo-stock-row">
+          <div class="weapon-ammo-stock-field">
+            <label>{{localize "MERC.UI.items.weaponSheet.ammoMagCapacity"}}</label>
+            <input type="number" name="system.defaultAmmoMagCapacity" value="{{item.system.defaultAmmoMagCapacity}}" placeholder="{{item.system.magazine}}" min="0" step="1">
+          </div>
+          <div class="weapon-ammo-stock-field">
+            <label>{{localize "MERC.UI.items.weaponSheet.ammoInMag"}}</label>
+            <input type="number" name="system.defaultAmmoInMag" value="{{item.system.defaultAmmoInMag}}" min="0" step="1">
+          </div>
+          <div class="weapon-ammo-stock-field">
+            <label>{{localize "MERC.UI.items.weaponSheet.ammoMagFull"}}</label>
+            <input type="number" name="system.defaultAmmoMagFull" value="{{item.system.defaultAmmoMagFull}}" min="0" step="1">
+          </div>
+          <div class="weapon-ammo-stock-field">
+            <label>{{localize "MERC.UI.items.weaponSheet.ammoMagEmpty"}}</label>
+            <input type="number" name="system.defaultAmmoMagTotal" value="{{item.system.defaultAmmoMagTotal}}" min="0" step="1">
+          </div>
+          <div class="weapon-ammo-stock-field">
+            <label>{{localize "MERC.UI.items.weaponSheet.ammoStock"}}</label>
+            <input type="number" name="system.defaultAmmoStock" value="{{item.system.defaultAmmoStock}}" min="0" step="1">
+          </div>
+        </div>
       </div>
       {{/if}}
 
@@ -150,14 +176,37 @@
         {{#if ammoItems}}
           {{#each ammoItems as |ammo|}}
           <div class="weapon-ammo-item item" data-item-id="{{ammo._id}}">
-            <div class="weapon-ammo-info">
-              <span class="weapon-ammo-name">{{ammo.name}}</span>
-              <span class="weapon-ammo-caliber">{{ammo.system.caliber}}</span>
-              <span class="weapon-ammo-qty">{{ammo.system.quantity}} / {{ammo.system.maxQuantity}}</span>
+            <div class="weapon-ammo-header-row">
+              <div class="weapon-ammo-info">
+                <span class="weapon-ammo-name">{{ammo.name}}</span>
+                <span class="weapon-ammo-caliber">{{ammo.system.caliber}}</span>
+              </div>
+              <div class="weapon-ammo-controls">
+                <button type="button" class="weapon-ammo-edit" title="Edit">✎</button>
+                <button type="button" class="weapon-ammo-delete" title="Delete"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
-            <div class="weapon-ammo-controls">
-              <button type="button" class="weapon-ammo-edit" title="Edit">✎</button>
-              <button type="button" class="weapon-ammo-delete" title="Delete"><i class="fas fa-trash"></i></button>
+            <div class="weapon-ammo-stock-row">
+              <div class="weapon-ammo-stock-field">
+                <label>{{localize "MERC.UI.items.weaponSheet.ammoMagCapacity"}}</label>
+                <input type="number" class="ammo-field-inline" data-field="magCapacity" value="{{ammo.system.magCapacity}}" placeholder="{{item.system.magazine}}" min="0" step="1">
+              </div>
+              <div class="weapon-ammo-stock-field">
+                <label>{{localize "MERC.UI.items.weaponSheet.ammoInMag"}}</label>
+                <input type="number" class="ammo-field-inline" data-field="inMag" value="{{ammo.system.inMag}}" min="0" step="1">
+              </div>
+              <div class="weapon-ammo-stock-field">
+                <label>{{localize "MERC.UI.items.weaponSheet.ammoMagFull"}}</label>
+                <input type="number" class="ammo-field-inline" data-field="magFull" value="{{ammo.system.magFull}}" min="0" step="1">
+              </div>
+              <div class="weapon-ammo-stock-field">
+                <label>{{localize "MERC.UI.items.weaponSheet.ammoMagEmpty"}}</label>
+                <input type="number" class="ammo-field-inline" data-field="magTotal" value="{{ammo.system.magTotal}}" min="0" step="1">
+              </div>
+              <div class="weapon-ammo-stock-field">
+                <label>{{localize "MERC.UI.items.weaponSheet.ammoStock"}}</label>
+                <input type="number" class="ammo-field-inline" data-field="stock" value="{{ammo.system.stock}}" min="0" step="1">
+              </div>
             </div>
           </div>
           {{/each}}
@@ -168,5 +217,6 @@
       <button type="button" class="weapon-ammo-add btn" data-type="ammo">{{localize "MERC.UI.items.weaponSheet.addAmmo"}}</button>
     </div>
     {{/if}}
+
   </section>
 </div>

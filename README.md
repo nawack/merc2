@@ -29,6 +29,9 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 - **Statistiques de combat** : Calcul automatique des mouvements et bonus tactiques
 - **Fiches Armure, Équipement, Trait** : Items dédiés avec rareté, prix, poids et description (v1.0.16+)
 - **Schéma de corps SVG** : Fiche armure — 20 zones de localisation sur un diagramme interactif vue de face (v1.0.16+)
+- **Onglet Combat mêlée** : Les armes de mêlée/taille/lancer affichent dégâts + formule de base compétence à la place du tableau munitions (v1.0.16+)
+- **Traqueur de combat amélioré** : Tri automatique, navigation segment/tour/round regroupée, boutons désactivés aux limites (v1.0.16+)
+- **Encombrement complet** : Poids des armures et équipements inclus dans le calcul d'encombrement (v1.0.16+)
 
 ## 🎮 Comment Utiliser
 

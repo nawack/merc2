@@ -8,10 +8,20 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 - 🛡️ **Fiches Armure, Équipement, Trait** : Nouveaux types d'items avec fiches dédiées — champs communs : `rarity`, `price`, `weightKg`, `description`
 - 🎨 **Schéma de corps SVG — Fiche armure** : Diagramme interactif de 20 zones de localisation (bonhomme vue de face) avec columns d'inputs GCH (gauche) et DR (droite) positionnées autour du SVG
 - 🔢 **Numéros de zone dans les labels** : Chaque input de localisation affiche son numéro (ex : `Crâne (20)`, `Poitrine G (16)`, `Pied D (2)`…)
+- ⚔️ **Onglet Combat — affichage dégâts mêlée** : Les armes de mêlée/taille/lancer affichent un bloc dégâts dédié à la place du tableau munitions : dégâts de l'arme + formule de base liée à la compétence + bouton de lancer de dés
+- ✏️ **Dégâts mêlée éditables** : Le champ `system.damage` est éditable directement sur la fiche d'arme pour les sous-types `melee`, `bladed_weapons` et `throwing`
+- 🔄 **Tri des combattants en temps réel** : Tri automatique par degré de réaction dès l'ajout d'un combattant au combat — l'index de tour actif se recalcule pour pointer le même combattant
+- 🔢 **Navigation segment/tour/round dans le traqueur** : Les 3 contrôles de navigation (segment, tour, round) sont regroupés dans la zone du traqueur ; les boutons de pied de page natifs Foundry sont masqués pour éviter les doublons
+- 🚫 **Boutons segment désactivés aux limites** : Bouton "Précédent" grisé au segment 6 (max), bouton "Suivant" grisé au segment 1 (min)
 
 ### Changed
 - 🎨 **Style des inputs de localisation** : Harmonisé avec les inputs des champs généraux (bordure `#dcdcdc`, padding `3px 6px`, focus identique, labels en `text-transform: uppercase`)
 - 📐 **Positionnement des lignes d'input** : Pas uniforme de **32 px** (5, 37, 69, 101 … 357 px) — suppression des chevauchements et des écarts irréguliers
+- ⚖️ **Encombrement** : Le calcul inclut désormais le poids des armures et des équipements (les traits et munitions sont volontairement exclus)
+- 🗑️ **Bouton tir visé supprimé** : Le bouton "Tir visé" (+3) a été retiré de l'onglet Combat (simplifie l'interface ; le malus/bonus se gère au jet)
+
+### Fixed
+- 🐛 **Ordre d'affichage du traqueur de combat** : `setupTurns()` remplace l'ancienne tentative de getters `turns` — Foundry v13 déclare `turns` en champ de classe (own-property), ce qui rendait le getter prototype silencieusement inopérant
 
 ---
 

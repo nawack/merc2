@@ -67,7 +67,11 @@
       <div class="weapon-field wf-span4">
         <label>{{localize "MERC.UI.items.weaponSheet.damage"}}</label>
         <div class="weapon-damage-row">
+          {{#if (or (eq item.system.weaponSubtype "melee") (eq item.system.weaponSubtype "bladed_weapons") (eq item.system.weaponSubtype "throwing"))}}
+          <input type="text" name="system.damage" value="{{item.system.damage}}" placeholder="{{localize "MERC.UI.items.weaponSheet.damagePlaceholder"}}">
+          {{else}}
           <input type="text" value="{{ballistics.damage}}" placeholder="—" readonly tabindex="-1">
+          {{/if}}
           <button type="button" class="weapon-damage-roll" data-roll-formula="{{ballistics.damage}}" data-roll-label="{{item.name}}" title="{{localize "MERC.UI.items.weaponSheet.rollDamage"}}">🎲</button>
         </div>
       </div>

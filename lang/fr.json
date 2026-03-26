@@ -152,6 +152,18 @@
           "endOfSegment": "Fin du segment. Changez de segment pour continuer.",
           "eligible": "Eligibles : {list}",
           "eligibleEmpty": "Eligibles : aucun"
+        },
+        "rounds": {
+          "label": "Round {round}",
+          "notStarted": "Round -",
+          "previous": "Round préc.",
+          "next": "Round suiv."
+        },
+        "turns": {
+          "label": "Tour {turn}/{total}",
+          "notStarted": "Tour -",
+          "previous": "Tour préc.",
+          "next": "Tour suiv."
         }
       },
       "units": {

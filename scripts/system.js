@@ -369,12 +369,24 @@ class MercCombat extends Combat {
     return clampSegment(this.flags?.merc?.segment ?? SEGMENT_MAX);
   }
 
-  getTurns() {
-    return buildSegmentTurns(this, this.currentSegment);
-  }
-
-  get turns() {
-    return this.getTurns();
+  // Override setupTurns() rather than the `turns` getter.
+  // The base class declares `turns` as a class field (own property), which
+  // silently shadows any prototype getter — overriding setupTurns() is the
+  // correct way to control turn order in Foundry v13.
+  setupTurns() {
+    this.turns ||= [];
+    const turns = buildSegmentTurns(this, this.currentSegment);
+    if (this.turn !== null) {
+      if (this.turn < 0) this.turn = 0;
+      else if (this.turn >= turns.length) {
+        this.turn = 0;
+        this.round++;
+      }
+    }
+    const c = turns[this.turn];
+    this.current = this._getCurrentState(c);
+    if (!this.previous) this.previous = this.current;
+    return this.turns = turns;
   }
 
   async setSegment(segment) {
@@ -897,6 +909,39 @@ async function migrateItem(item, actor = null) {
     }
   }
 
+  // --- Armor migration ---
+  if (item.type === "armor") {
+    if (item.system.weightKg === undefined || item.system.weightKg === null) {
+      updateData["system.weightKg"] = 0;
+    }
+    if (item.system.rarity === undefined || item.system.rarity === null) {
+      updateData["system.rarity"] = "common";
+    }
+    if (item.system.price === undefined || item.system.price === null) {
+      updateData["system.price"] = 0;
+    }
+  }
+
+  // --- Equipment migration ---
+  if (item.type === "equipment") {
+    if (item.system.weightKg === undefined || item.system.weightKg === null) {
+      updateData["system.weightKg"] = 0;
+    }
+    if (item.system.rarity === undefined || item.system.rarity === null) {
+      updateData["system.rarity"] = "common";
+    }
+    if (item.system.price === undefined || item.system.price === null) {
+      updateData["system.price"] = 0;
+    }
+  }
+
+  // --- Feature migration ---
+  if (item.type === "feature") {
+    if (item.system.weightKg === undefined || item.system.weightKg === null) {
+      updateData["system.weightKg"] = 0;
+    }
+  }
+
   if (Object.keys(updateData).length > 0) {
     await item.update(updateData, { render: false });
   }
@@ -1367,7 +1412,31 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         });
       }
 
+      const MELEE_SUBTYPES = ["melee", "bladed_weapons", "throwing"];
+      const isMeleeType = MELEE_SUBTYPES.includes(weaponSys.weaponSubtype);
+      let baseDamageFormula = "";
+      let baseDamageLabel = "";
+      if (isMeleeType) {
+        const weaponSkill = weaponSys.weaponSkill || "";
+        const actorCombat = actorDoc.system?.combat ?? {};
+        if (weaponSkill === "melee") {
+          baseDamageFormula = actorCombat.baseDamageMelee || "";
+          baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageMelee");
+        } else if (weaponSkill === "bladed_weapons") {
+          baseDamageFormula = actorCombat.baseDamageBladed || "";
+          baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageBladed");
+        } else if (weaponSkill.startsWith("custom_spec_")) {
+          baseDamageFormula = actorCombat.specializationBaseDamage?.[weaponSkill] || "";
+          const specName = weaponSkill.replace("custom_spec_", "");
+          baseDamageLabel = specName;
+        }
+      }
+
       weaponBallisticsMap[weaponItem.id] = {
+        isMeleeType,
+        weaponDamage: isMeleeType ? (weaponSys.damage || "") : "",
+        baseDamageFormula,
+        baseDamageLabel,
         defaultAmmoName,
         default: defaultBallistics,
         magazineSize: Number(weaponSys.magazine) || 0,
@@ -2242,11 +2311,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     });
 
     // Calculate and display total weight (encombrement) with burden levels
+    // Includes: weapons, armors, equipment. Excludes: ammo (tracked per weapon), feature (no physical weight).
     const totalWeightElement = html.querySelector("#total-weight");
     if (totalWeightElement) {
       let totalWeight = 0;
       if (this.actor?.items) {
         this.actor.items.forEach(item => {
+          if (![ "weapon", "armor", "equipment" ].includes(item.type)) return;
           const weight = Number(item.system?.weightKg ?? 0);
           if (!Number.isNaN(weight)) {
             totalWeight += weight;
@@ -3945,11 +4016,12 @@ Hooks.once("init", () => {
     const container = document.createElement("div");
     container.className = "merc-segment-controls";
 
+    // --- Segment row ---
     const segmentLabel = game.i18n.format("MERC.UI.combat.segments.label", { segment: combat.currentSegment });
     const orderLabel = getSegmentOrderLabel(combat.currentSegment);
     const orderText = game.i18n.format("MERC.UI.combat.segments.order", { order: orderLabel });
-    const prevTitle = game.i18n.localize("MERC.UI.combat.segments.previous");
-    const nextTitle = game.i18n.localize("MERC.UI.combat.segments.next");
+    const prevSegTitle = game.i18n.localize("MERC.UI.combat.segments.previous");
+    const nextSegTitle = game.i18n.localize("MERC.UI.combat.segments.next");
     const entries = buildSegmentEntries(combat, combat.currentSegment);
     const eligibleList = entries
       .map((entry) => {
@@ -3961,10 +4033,54 @@ Hooks.once("init", () => {
       ? game.i18n.format("MERC.UI.combat.segments.eligible", { list: eligibleList })
       : game.i18n.localize("MERC.UI.combat.segments.eligibleEmpty");
 
+    const atMax = combat.currentSegment >= SEGMENT_MAX;
+    const atMin = combat.currentSegment <= SEGMENT_MIN;
+
+    // --- Turn / Round rows ---
+    const started = (combat.round ?? 0) > 0;
+    const currentTurnIdx = combat.turn ?? 0;
+    const totalTurns = combat.turns?.length ?? 0;
+    const roundNum = combat.round ?? 0;
+    const isGM = game.user?.isGM ?? false;
+
+    const roundLabel = started
+      ? game.i18n.format("MERC.UI.combat.rounds.label", { round: roundNum })
+      : game.i18n.localize("MERC.UI.combat.rounds.notStarted");
+    const turnLabel = started
+      ? game.i18n.format("MERC.UI.combat.turns.label", { turn: currentTurnIdx + 1, total: totalTurns })
+      : game.i18n.localize("MERC.UI.combat.turns.notStarted");
+
+    const prevRoundTitle = game.i18n.localize("MERC.UI.combat.rounds.previous");
+    const nextRoundTitle = game.i18n.localize("MERC.UI.combat.rounds.next");
+    const prevTurnTitle  = game.i18n.localize("MERC.UI.combat.turns.previous");
+    const nextTurnTitle  = game.i18n.localize("MERC.UI.combat.turns.next");
+
+    const prevRoundDis = !isGM || !started || roundNum <= 1;
+    const nextRoundDis = !isGM || !started;
+    const prevTurnDis  = !isGM || !started || currentTurnIdx <= 0;
+    const nextTurnDis  = !isGM || !started;
+
+    const btn = (disabled) => disabled
+      ? `class="merc-segment-button merc-segment-button--disabled" disabled aria-disabled="true"`
+      : `class="merc-segment-button"`;
+
     container.innerHTML = `
-      <button type="button" class="merc-segment-button" data-segment-delta="1" title="${prevTitle}">${prevTitle}</button>
-      <span class="merc-segment-label">${segmentLabel}</span>
-      <button type="button" class="merc-segment-button" data-segment-delta="-1" title="${nextTitle}">${nextTitle}</button>
+      <div class="merc-nav-row">
+        <button type="button" ${btn(prevRoundDis)} data-nav-action="prevRound" data-nav-dir="prev" title="${prevRoundTitle}">${prevRoundTitle}</button>
+        <span class="merc-segment-label">${roundLabel}</span>
+        <button type="button" ${btn(nextRoundDis)} data-nav-action="nextRound" data-nav-dir="next" title="${nextRoundTitle}">${nextRoundTitle}</button>
+      </div>
+      <div class="merc-nav-separator"></div>
+      <div class="merc-nav-row">
+        <button type="button" ${btn(atMax)} data-segment-delta="1" title="${prevSegTitle}">${prevSegTitle}</button>
+        <span class="merc-segment-label">${segmentLabel}</span>
+        <button type="button" ${btn(atMin)} data-segment-delta="-1" title="${nextSegTitle}">${nextSegTitle}</button>
+      </div>
+      <div class="merc-nav-row">
+        <button type="button" ${btn(prevTurnDis)} data-nav-action="prevTurn" data-nav-dir="prev" title="${prevTurnTitle}">${prevTurnTitle}</button>
+        <span class="merc-segment-label">${turnLabel}</span>
+        <button type="button" ${btn(nextTurnDis)} data-nav-action="nextTurn" data-nav-dir="next" title="${nextTurnTitle}">${nextTurnTitle}</button>
+      </div>
       <span class="merc-segment-order">${orderText}</span>
     `;
 
@@ -3973,12 +4089,37 @@ Hooks.once("init", () => {
     eligibleSpan.textContent = eligibleText;
     container.appendChild(eligibleSpan);
 
-    container.querySelectorAll(".merc-segment-button").forEach((button) => {
+    // Segment buttons
+    container.querySelectorAll("[data-segment-delta]").forEach((button) => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
+        if (button.disabled) return;
         const delta = Number(button.dataset.segmentDelta || 0);
         await combat.setSegment(combat.currentSegment + delta);
       });
+    });
+
+    // Turn / Round buttons
+    container.querySelectorAll("[data-nav-action]").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (button.disabled) return;
+        switch (button.dataset.navAction) {
+          case "prevTurn":  await combat.previousTurn(); break;
+          case "nextTurn":  await combat.nextTurn();     break;
+          case "prevRound": await combat.previousRound(); break;
+          case "nextRound": await combat.nextRound();    break;
+        }
+      });
+    });
+
+    // Hide Foundry's native footer round/turn arrows (now grouped in merc-segment-controls)
+    root.querySelectorAll(
+      "footer .inline-control[data-action='previousRound'], footer .inline-control[data-action='nextRound'], " +
+      "footer .inline-control[data-action='previousTurn'],  footer .inline-control[data-action='nextTurn']"
+    ).forEach((el) => {
+      el.style.display = "none";
+      el.setAttribute("aria-hidden", "true");
     });
 
     header.appendChild(container);
@@ -4011,6 +4152,29 @@ Hooks.once("init", () => {
   Hooks.on("createCombatant", (combatant) => {
     const combat = combatant?.combat;
     if (!combat || !(combat instanceof MercCombat)) return;
+
+    const currentTurnIndex = combat.turn ?? 0;
+
+    // Reconstruct the sorted turn order as it was BEFORE the new combatant was added,
+    // so we can find which combatant was active at the current index and preserve it.
+    const oldTurns = Array.from(combat.combatants)
+      .filter((c) => c.id !== combatant.id)
+      .map((c) => ({ c, degree: getReactionDegreeFromCombatant(c), name: c?.name || c?.token?.name || "" }))
+      .sort((a, b) => b.degree !== a.degree ? b.degree - a.degree : a.name.localeCompare(b.name, "fr"))
+      .map((e) => e.c);
+
+    const activeCombatant = oldTurns[currentTurnIndex];
+    const newTurns = combat.turns; // includes the new combatant, already sorted
+
+    if (activeCombatant) {
+      const newIndex = newTurns.findIndex((c) => c.id === activeCombatant.id);
+      if (newIndex !== -1 && newIndex !== currentTurnIndex) {
+        // The active combatant shifted positions; update the index (re-render is implicit)
+        combat.update({ turn: newIndex }, { mercSegmentUpdate: true });
+        return;
+      }
+    }
+
     ui.combat?.render(true);
   });
 });

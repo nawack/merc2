@@ -64,13 +64,17 @@ Gestion des armes:
     ✔ ajouter munition dans la fiche d'arme @done(26-02-06 13:08)
     ✔ afficher les caractéristiques de la munition dans la partie combat au niveau de l'arme @done(26-03-11 22:55)
     ✔ appliqué les modificateurs de dégats sur une munition en fonction de l'arme @done(26-03-25 21:42)
-    - gestion des modificateurs d'armes (précision, puissance, cadence, portée)
-    - gestion du nombre munitions (nombre restant dans chargeur, capacité chargeur, quantité total)
+    ✔ gestion des modificateurs d'armes (précision, puissance, cadence, portée) @done(26-03-26 20:54)
+    ✔ gestion du nombre munitions (nombre restant dans chargeur, capacité chargeur, quantité total) @done(26-03-26 20:54)
+    - automatisation de la mise a jour du nombre de munitions (diminution en cas de tir, rechargement, etc)
+    - prise en compte du poids des munitions dans la charge totale
     ✔ ajouter les champs commun a tous les items (rareté, prix, etc ) @done(26-02-18 19:47)
+    - gestion des armes autres que armes a feu
 
 Gestion des équipements & armures:
-    - creer la fiche d'équipement ==> (poids, prix, rareté, etc)
-    - creer la fiche d'armures ==> besoin liste de types d'armures et ce qui les caractérise (localisation de protection, valeur de protection, etc)
+    ✔ creer la fiche d'équipement ==> (poids, prix, rareté, etc) @done(26-03-26 20:32)
+    ✔ creer la fiche d'armures ==> besoin liste de types d'armures et ce qui les caractérise (localisation de protection, valeur de protection, etc) @done(26-03-26 20:32)
+    - gestion du poids de l'équipement et de l'armure dans la charge totale
 
 Gestion des features:
     - creer fiche features
@@ -80,7 +84,7 @@ Gestion des features:
 Gerer un styeme de blessures:
     - lister les degrés de blessures
     - lister les localisations
-    - réaliser un svg pour les localisations
+    ✔ réaliser un svg pour les localisations @done(26-03-26 20:44)
     - afficher les degrés de blessures par localisation sur svg
 
 Issues:
@@ -101,7 +105,9 @@ Revoir la mise en forme de la fiche (probléme hauteur de page):
 Ajouter un système de combat :
     ✔ ajouter la gestion des segments (ordre, eligible, etc) @done(26-02-06 00:27)
     ✔ gérer le style @done(26-02-06 00:27)
-    - check roll d'init encore présents
+    - check roll d'init encore présents (sur click droit)
+    ✔ revoir la gestion des ordres de combat (affichage) @done(26-03-26 20:45)
+    ✔ ajouter des boutons de gestion de tour et round @done(26-03-26 20:45)
 
 Gestion des véhicules :
     ✔ créer la fiche de véhicule pour gestion token véhicule @done(26-03-11 22:54)

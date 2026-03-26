@@ -652,14 +652,28 @@
                   <span class="combat-roll-icon">🎯</span>
                   <span class="combat-roll-label">{{localize "MERC.UI.items.rollWeaponSkill"}}</span>
                 </button>
-                <button type="button" class="weapon-skill-roll-aimed combat-roll-btn" title="{{localize "MERC.UI.items.rollWeaponSkillAimed"}}">
-                  <span class="combat-roll-icon">🎯</span>
-                  <span class="combat-roll-label">{{localize "MERC.UI.items.rollWeaponSkillAimed"}}</span>
-                  <span class="combat-roll-bonus">+3</span>
-                </button>
+
               </div>
 
-              <!-- Zone 3: tableau munitions -->
+              <!-- Zone 3: dégâts (mélee) ou tableau munitions (armes à distance) -->
+              {{#with (lookup ../weaponBallisticsMap item._id) as |wb|}}
+              {{#if wb.isMeleeType}}
+              <div class="combat-melee-damage">
+                <div class="combat-melee-damage-header">
+                  <span>{{localize "MERC.UI.items.weaponSheet.damage"}}</span>
+                  <span>{{localize "MERC.UI.combat.baseDamageHeader"}}</span>
+                  <span></span>
+                </div>
+                <div class="combat-melee-damage-row">
+                  <span class="cam-col-dmg">{{#if wb.weaponDamage}}{{wb.weaponDamage}}{{else}}—{{/if}}</span>
+                  <span class="cam-col-dmg">{{#if wb.baseDamageFormula}}+ {{wb.baseDamageFormula}}{{else}}—{{/if}}</span>
+                  <button type="button" class="weapon-damage-roll cam-col-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+                {{#if wb.baseDamageLabel}}
+                <div class="combat-melee-base-hint">{{localize "MERC.UI.combat.linkedSkill"}} {{wb.baseDamageLabel}}</div>
+                {{/if}}
+              </div>
+              {{else}}
               <div class="combat-ammo-table">
                 <div class="combat-ammo-table-header">
                   <span class="cam-col-name">{{localize "MERC.UI.items.ammo"}}</span>
@@ -667,7 +681,7 @@
                   <span class="cam-col-dmg">{{localize "MERC.UI.items.weaponSheet.damage"}}</span>
                   <span class="cam-col-roll"></span>
                 </div>
-                {{#with (lookup ../weaponBallisticsMap item._id) as |wb|}}
+                {{#with this as |wb|}}
                   {{!-- Munition standard : affichée seulement si définie --}}
                   {{#if wb.default}}
                   <div class="combat-ammo-table-row cam-row-default" data-item-id="{{item._id}}">
@@ -726,6 +740,8 @@
                   {{/each}}
                 {{/with}}
               </div>
+              {{/if}}
+              {{/with}}
 
             </div>
 

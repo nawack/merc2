@@ -196,31 +196,46 @@
             <div class="item-controls">
               <button type="button" class="weapon-skill-roll" title="{{localize "MERC.UI.items.rollWeaponSkill"}}">🎯</button>
             </div>
+            {{#with (lookup ../weaponBallisticsMap item._id) as |wb|}}
             <div class="item-controls">
+              {{#if wb.isMeleeType}}
+              {{!-- Melee: weapon damage + base formula --}}
               <div class="ammo-entry">
                 <div class="ammo-info">
-                  <div class="ammo-name">Base</div>
+                  <div class="ammo-name">{{localize "MERC.UI.items.weaponSheet.damage"}}</div>
                 </div>
                 <div class="ammo-controls">
-                  <div class="combat-base-damage-value">{{item.system.damage}}</div>
+                  <div class="combat-base-damage-value">{{#if wb.weaponDamage}}{{wb.weaponDamage}}{{else}}—{{/if}}{{#if wb.baseDamageFormula}} +{{wb.baseDamageFormula}}{{/if}}</div>
                   <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
                 </div>
               </div>
-              {{!-- Linked ammo for this weapon --}}
-              {{#each (filterItems ../actor.items "ammo") as |ammo|}}
-              {{#if (eq ammo.system.parentWeaponId item._id)}}
-              <div class="ammo-entry" data-item-id="{{ammo._id}}">
+              {{else}}
+              {{!-- Ranged: default ammo + linked ammo rows --}}
+              {{#if wb.default}}
+              <div class="ammo-entry">
                 <div class="ammo-info">
-                  <div class="ammo-name">{{ammo.name}}</div>
+                  <div class="ammo-name">{{#if wb.defaultAmmoName}}{{wb.defaultAmmoName}}{{else}}Standard{{/if}}</div>
                 </div>
                 <div class="ammo-controls">
-                  <div class="combat-ammo-damage-value">{{ammo.system.damage}}</div>
-                  <button type="button" class="weapon-damage-roll" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                  <div class="combat-base-damage-value">{{wb.default.damage}}</div>
+                  <button type="button" class="weapon-damage-roll" data-roll-formula="{{wb.default.damage}}" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
                 </div>
               </div>
               {{/if}}
+              {{#each wb.ammo as |ammoRow|}}
+              <div class="ammo-entry" data-item-id="{{ammoRow.id}}">
+                <div class="ammo-info">
+                  <div class="ammo-name">{{ammoRow.name}}</div>
+                </div>
+                <div class="ammo-controls">
+                  <div class="combat-ammo-damage-value">{{#if ammoRow.ballistics}}{{ammoRow.ballistics.damage}}{{else}}—{{/if}}</div>
+                  <button type="button" class="weapon-damage-roll" data-roll-formula="{{#if ammoRow.ballistics}}{{ammoRow.ballistics.damage}}{{/if}}" title="{{localize "MERC.UI.items.rollWeaponDamage"}}">🎲</button>
+                </div>
+              </div>
               {{/each}}
+              {{/if}}
             </div>
+            {{/with}}
           </div>
           {{/each}}
         </div>

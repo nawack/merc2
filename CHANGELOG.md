@@ -22,6 +22,9 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 
 ### Fixed
 - 🐛 **Ordre d'affichage du traqueur de combat** : `setupTurns()` remplace l'ancienne tentative de getters `turns` — Foundry v13 déclare `turns` en champ de classe (own-property), ce qui rendait le getter prototype silencieusement inopérant
+- 🐛 **Jet de dégâts munition liée** : Le bouton 🎲 sur une ligne de munition retournait "Aucune formule" car `rollWeaponDamage` cherchait `system.damage` sur l'item munition (champ supprimé en v1.0.12). Corrigé : le bouton passe `data-roll-formula` avec la valeur balistique calculée, utilisée en priorité
+- 🐛 **Balistique fiche véhicule** : La fiche véhicule n'avait pas de `weaponBallisticsMap` — les dégâts affichés pointaient vers `item.system.damage` (vide) et `ammo.system.damage` (supprimé). Corrigé : `buildWeaponBallisticsMap()` extrait en helper partagé et appelé dans les deux fiches
+- 🐛 **Malus de pénétration toujours "-"** : `braking_index` et `sectional_density` étaient calculés uniquement pour l'affichage mais jamais sauvegardés dans l'item munition. `calcWeaponBallistics` lisait donc toujours `0` → pénétration nulle. Corrigé via hooks `preUpdateItem`/`preCreateItem` qui injectent les valeurs dérivées à chaque sauvegarde, et migration `migrateItem` pour les munitions existantes
 
 ---
 

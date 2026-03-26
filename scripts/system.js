@@ -907,6 +907,17 @@ async function migrateItem(item, actor = null) {
         updateData[`system.-=${key}`] = null;
       }
     }
+
+    // Recalculate derived ballistic values if mass/diameter are set but braking_index is still 0
+    const mass = updateData["system.mass"] ?? item.system.mass ?? 0;
+    const diameter = item.system.diameter ?? 0;
+    if (mass > 0 && diameter > 0) {
+      const coeffT = item.system.coeff_trainee ?? 0;
+      const rho    = item.system.rho ?? 1.225;
+      const derived = calcAmmoDerived(mass, diameter, coeffT, rho);
+      updateData["system.braking_index"]    = derived.braking_index;
+      updateData["system.sectional_density"] = derived.sectional_density;
+    }
   }
 
   // --- Armor migration ---
@@ -1372,91 +1383,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     data.weaponSkillLabels = weaponSkillLabels;
 
     // Compute per-weapon ballistics for the combat card display
-    const weaponBallisticsMap = {};
-    for (const weaponItem of actorDoc.items.filter(i => i.type === "weapon")) {
-      const weaponSys = weaponItem.system;
-      const ranges = weaponSys.range ?? {};
-      const barrelLength = Number(weaponSys.barrelLength) || 0;
-
-      // Default ammo: search actor items, then world items, then compendium
-      let defaultBallistics = null;
-      let defaultAmmoName = weaponSys.defaultAmmoName || "";
-      const defaultAmmoId = weaponSys.defaultAmmoId || "";
-      if (defaultAmmoId) {
-        let defaultAmmoDoc = actorDoc.items.get(defaultAmmoId) ?? game.items?.get(defaultAmmoId);
-        if (!defaultAmmoDoc) {
-          const ammoPack = game.packs?.get("merc.ammos");
-          if (ammoPack) {
-            try { defaultAmmoDoc = await ammoPack.getDocument(defaultAmmoId); } catch (_e) {}
-          }
-        }
-        if (defaultAmmoDoc) {
-          defaultBallistics = calcWeaponBallistics(barrelLength, defaultAmmoDoc.system, ranges);
-          defaultAmmoName = defaultAmmoDoc.name;
-        }
-      }
-
-      // Linked ammo on this actor
-      const ammoRows = [];
-      for (const ammoItem of actorDoc.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === weaponItem.id)) {
-        const b = calcWeaponBallistics(barrelLength, ammoItem.system, ranges);
-        ammoRows.push({
-          id: ammoItem.id,
-          name: ammoItem.name,
-          magCapacity: ammoItem.system.magCapacity ?? 0,
-          inMag:    ammoItem.system.inMag    ?? 0,
-          magFull:  ammoItem.system.magFull  ?? 0,
-          magTotal: ammoItem.system.magTotal ?? 0,
-          stock:    ammoItem.system.stock    ?? 0,
-          ballistics: b
-        });
-      }
-
-      const MELEE_SUBTYPES = ["melee", "bladed_weapons", "throwing"];
-      const isMeleeType = MELEE_SUBTYPES.includes(weaponSys.weaponSubtype);
-      let baseDamageFormula = "";
-      let baseDamageLabel = "";
-      if (isMeleeType) {
-        const weaponSkill = weaponSys.weaponSkill || "";
-        const actorCombat = actorDoc.system?.combat ?? {};
-        if (weaponSkill === "melee") {
-          baseDamageFormula = actorCombat.baseDamageMelee || "";
-          baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageMelee");
-        } else if (weaponSkill === "bladed_weapons") {
-          baseDamageFormula = actorCombat.baseDamageBladed || "";
-          baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageBladed");
-        } else if (weaponSkill.startsWith("custom_spec_")) {
-          baseDamageFormula = actorCombat.specializationBaseDamage?.[weaponSkill] || "";
-          const specName = weaponSkill.replace("custom_spec_", "");
-          baseDamageLabel = specName;
-        }
-      }
-
-      weaponBallisticsMap[weaponItem.id] = {
-        isMeleeType,
-        weaponDamage: isMeleeType ? (weaponSys.damage || "") : "",
-        baseDamageFormula,
-        baseDamageLabel,
-        defaultAmmoName,
-        default: defaultBallistics,
-        magazineSize: Number(weaponSys.magazine) || 0,
-        defaultStock: {
-          magCapacity: Number(weaponSys.defaultAmmoMagCapacity) || Number(weaponSys.magazine) || 0,
-          inMag:    weaponSys.defaultAmmoInMag    ?? 0,
-          magFull:  weaponSys.defaultAmmoMagFull  ?? 0,
-          magTotal: weaponSys.defaultAmmoMagTotal ?? 0,
-          stock:    weaponSys.defaultAmmoStock    ?? 0
-        },
-        ranges: {
-          short:   weaponSys.range?.short   ?? "",
-          medium:  weaponSys.range?.medium  ?? "",
-          long:    weaponSys.range?.long    ?? "",
-          extreme: weaponSys.range?.extreme ?? ""
-        },
-        ammo: ammoRows
-      };
-    }
-    data.weaponBallisticsMap = weaponBallisticsMap;
+    data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
 
     return data;
   }
@@ -2302,10 +2229,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     weaponDamageBtns.forEach(btn => {
       btn.addEventListener("click", (event) => {
         event.preventDefault();
+        const rollFormula = event.currentTarget.dataset.rollFormula || null;
         const itemId = event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
         const item = this.actor?.items?.get(itemId);
         if (item) {
-          this.rollWeaponDamage(item);
+          this.rollWeaponDamage(item, rollFormula);
         }
       });
     });
@@ -2579,12 +2507,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
    * If the weapon is melee or bladed_weapons, adds the corresponding base damage
    * @param {Item} item - The weapon item to roll damage for
    */
-  async rollWeaponDamage(item) {
+  async rollWeaponDamage(item, formulaOverride = null) {
     const actor = this.actor ?? this.document;
     if (!actor || !item) return;
     
-    // Get the weapon's base damage formula
-    const weaponDamageFormula = item.system?.damage;
+    // Get the weapon's base damage formula (override from button data-roll-formula takes priority)
+    const weaponDamageFormula = formulaOverride || item.system?.damage;
     if (!weaponDamageFormula) {
       ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
       return;
@@ -3481,6 +3409,95 @@ class MercFeatureSheet extends foundry.applications.api.HandlebarsApplicationMix
 }
 
 // ============================================================
+// buildWeaponBallisticsMap — helper partagé character + vehicle
+// ============================================================
+async function buildWeaponBallisticsMap(actorDoc) {
+  const map = {};
+  for (const weaponItem of actorDoc.items.filter(i => i.type === "weapon")) {
+    const weaponSys = weaponItem.system;
+    const ranges = weaponSys.range ?? {};
+    const barrelLength = Number(weaponSys.barrelLength) || 0;
+
+    let defaultBallistics = null;
+    let defaultAmmoName = weaponSys.defaultAmmoName || "";
+    const defaultAmmoId = weaponSys.defaultAmmoId || "";
+    if (defaultAmmoId) {
+      let defaultAmmoDoc = actorDoc.items.get(defaultAmmoId) ?? game.items?.get(defaultAmmoId);
+      if (!defaultAmmoDoc) {
+        const ammoPack = game.packs?.get("merc.ammos");
+        if (ammoPack) {
+          try { defaultAmmoDoc = await ammoPack.getDocument(defaultAmmoId); } catch (_e) {}
+        }
+      }
+      if (defaultAmmoDoc) {
+        defaultBallistics = calcWeaponBallistics(barrelLength, defaultAmmoDoc.system, ranges);
+        defaultAmmoName = defaultAmmoDoc.name;
+      }
+    }
+
+    const ammoRows = [];
+    for (const ammoItem of actorDoc.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === weaponItem.id)) {
+      const b = calcWeaponBallistics(barrelLength, ammoItem.system, ranges);
+      ammoRows.push({
+        id: ammoItem.id,
+        name: ammoItem.name,
+        magCapacity: ammoItem.system.magCapacity ?? 0,
+        inMag:    ammoItem.system.inMag    ?? 0,
+        magFull:  ammoItem.system.magFull  ?? 0,
+        magTotal: ammoItem.system.magTotal ?? 0,
+        stock:    ammoItem.system.stock    ?? 0,
+        ballistics: b
+      });
+    }
+
+    const MELEE_SUBTYPES = ["melee", "bladed_weapons", "throwing"];
+    const isMeleeType = MELEE_SUBTYPES.includes(weaponSys.weaponSubtype);
+    let baseDamageFormula = "";
+    let baseDamageLabel = "";
+    if (isMeleeType) {
+      const weaponSkill = weaponSys.weaponSkill || "";
+      const actorCombat = actorDoc.system?.combat ?? {};
+      if (weaponSkill === "melee") {
+        baseDamageFormula = actorCombat.baseDamageMelee || "";
+        baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageMelee");
+      } else if (weaponSkill === "bladed_weapons") {
+        baseDamageFormula = actorCombat.baseDamageBladed || "";
+        baseDamageLabel = game.i18n.localize("MERC.UI.combat.baseDamageBladed");
+      } else if (weaponSkill.startsWith("custom_spec_")) {
+        baseDamageFormula = actorCombat.specializationBaseDamage?.[weaponSkill] || "";
+        const specName = weaponSkill.replace("custom_spec_", "");
+        baseDamageLabel = specName;
+      }
+    }
+
+    map[weaponItem.id] = {
+      isMeleeType,
+      weaponDamage: isMeleeType ? (weaponSys.damage || "") : "",
+      baseDamageFormula,
+      baseDamageLabel,
+      defaultAmmoName,
+      default: defaultBallistics,
+      magazineSize: Number(weaponSys.magazine) || 0,
+      defaultStock: {
+        magCapacity: Number(weaponSys.defaultAmmoMagCapacity) || Number(weaponSys.magazine) || 0,
+        inMag:    weaponSys.defaultAmmoInMag    ?? 0,
+        magFull:  weaponSys.defaultAmmoMagFull  ?? 0,
+        magTotal: weaponSys.defaultAmmoMagTotal ?? 0,
+        stock:    weaponSys.defaultAmmoStock    ?? 0
+      },
+      ranges: {
+        short:   weaponSys.range?.short   ?? "",
+        medium:  weaponSys.range?.medium  ?? "",
+        long:    weaponSys.range?.long    ?? "",
+        extreme: weaponSys.range?.extreme ?? ""
+      },
+      ammo: ammoRows
+    };
+  }
+  return map;
+}
+
+// ============================================================
 // MercVehicleSheet — Fiche d'acteur Véhicule
 // ============================================================
 class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
@@ -3549,6 +3566,9 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
       }
     }
     data.weaponSkillLabels = weaponSkillLabels;
+
+    // Ballistics map for weapons tab
+    data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
 
     return data;
   }
@@ -3648,9 +3668,10 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
     html.querySelectorAll(".weapon-damage-roll").forEach(btn => {
       btn.addEventListener("click", async (event) => {
         event.preventDefault();
+        const rollFormula = event.currentTarget.dataset.rollFormula || null;
         const itemId = event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
         const item = this.actor?.items?.get(itemId);
-        if (item) await this.rollWeaponDamage(item);
+        if (item) await this.rollWeaponDamage(item, rollFormula);
       });
     });
   }
@@ -3711,11 +3732,11 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
     await this._sendD20RollMessage(label, modifier, `Fire Control +${fireControlBonus}`);
   }
 
-  async rollWeaponDamage(item) {
+  async rollWeaponDamage(item, formulaOverride = null) {
     const actor = this.actor ?? this.document;
     if (!actor || !item) return;
 
-    const weaponDamageFormula = item.system?.damage;
+    const weaponDamageFormula = formulaOverride || item.system?.damage;
     if (!weaponDamageFormula) {
       ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.missingDamage"));
       return;
@@ -4676,6 +4697,23 @@ Hooks.on("deleteItem", (item, options, userId) => {
       }
     }
   }
+});
+
+// Avant chaque sauvegarde d'une munition, recalcule et injecte braking_index + sectional_density
+// Ces valeurs sont dérivées de mass/diameter/coeff_trainee/rho et lues par calcWeaponBallistics.
+Hooks.on("preUpdateItem", (item, changes, options, userId) => {
+  if (item.type !== "ammo") return;
+  const sys = foundry.utils.mergeObject(item.system, changes.system ?? {}, { inplace: false });
+  const derived = calcAmmoDerived(sys.mass, sys.diameter, sys.coeff_trainee, sys.rho);
+  foundry.utils.setProperty(changes, "system.braking_index",    derived.braking_index);
+  foundry.utils.setProperty(changes, "system.sectional_density", derived.sectional_density);
+});
+
+Hooks.on("preCreateItem", (item, data, options, userId) => {
+  if (item.type !== "ammo") return;
+  const sys = item.system ?? {};
+  const derived = calcAmmoDerived(sys.mass, sys.diameter, sys.coeff_trainee, sys.rho);
+  item.updateSource({ "system.braking_index": derived.braking_index, "system.sectional_density": derived.sectional_density });
 });
 
 Hooks.on("updateItem", (item, changes, options, userId) => {

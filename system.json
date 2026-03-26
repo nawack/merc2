@@ -62,6 +62,20 @@
       "path": "packs/ammos",
       "type": "Item",
       "system": "merc"
+    },
+    {
+      "name": "armors",
+      "label": "Armures",
+      "path": "packs/armors",
+      "type": "Item",
+      "system": "merc"
+    },
+    {
+      "name": "equipments",
+      "label": "Équipements",
+      "path": "packs/equipments",
+      "type": "Item",
+      "system": "merc"
     }
   ],
   "url": "https://github.com/nawack/merc2",

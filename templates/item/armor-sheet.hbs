@@ -38,55 +38,55 @@
         <!-- ------------------------------------------
              FIGURE SVG – vue de face (bonhomme)
              Viewbox : 260 x 520
-             GCH = côté gauche de l'écran (bras droit du personnage vue de dos,
-                   mais ici on affiche vue de face donc GCH = gauche écran)
+             G = côté gauche de l'écran (bras droit du personnage vue de dos,
+                   mais ici on affiche vue de face donc G = gauche écran)
              ------------------------------------------ -->
         <svg class="armor-body-svg" viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg">
 
           <!-- -- Crâne (20) -- -->
-          <ellipse class="armor-zone" data-zone="crane" cx="130" cy="30" rx="26" ry="28"/>
+          <ellipse class="armor-zone" data-zone="crane" cx="130" cy="32" rx="26" ry="28"/>
           <!-- -- Visage (19) -- -->
-          <ellipse class="armor-zone" data-zone="visage" cx="130" cy="54" rx="18" ry="14"/>
+          <ellipse class="armor-zone" data-zone="visage" cx="130" cy="47" rx="20" ry="22"/>
           <!-- -- Cou (18) -- -->
           <rect class="armor-zone" data-zone="cou" x="118" y="66" width="24" height="14" rx="4"/>
-          <!-- -- Poitrine GCH (16) -- -->
+          <!-- -- Poitrine G (16) -- -->
           <path class="armor-zone" data-zone="poitrine_gch" d="M88,80 L130,80 L130,122 Q108,128 88,122 Z"/>
-          <!-- -- Poitrine DR (17) -- -->
+          <!-- -- Poitrine D (17) -- -->
           <path class="armor-zone" data-zone="poitrine_dr" d="M130,80 L172,80 L172,122 Q152,128 130,122 Z"/>
-          <!-- -- Abdomen GCH (14) -- -->
+          <!-- -- Abdomen G (14) -- -->
           <path class="armor-zone" data-zone="abdomen_gch" d="M92,122 Q110,132 130,130 L130,154 Q110,158 92,152 Z"/>
-          <!-- -- Abdomen DR (15) -- -->
+          <!-- -- Abdomen D (15) -- -->
           <path class="armor-zone" data-zone="abdomen_dr" d="M130,130 Q150,132 168,122 L168,152 Q150,158 130,154 Z"/>
           <!-- -- Bas-Ventre (13) -- -->
           <path class="armor-zone" data-zone="bas_ventre" d="M96,152 Q113,162 130,162 Q147,162 164,152 L162,172 Q146,180 130,180 Q114,180 98,172 Z"/>
-          <!-- -- Bras GCH haut (11) -- -->
+          <!-- -- Bras G haut (11) -- -->
           <path class="armor-zone" data-zone="bras_gch" d="M62,82 Q76,78 88,82 L88,122 Q76,126 62,120 Z"/>
-          <!-- -- Bras DR haut (12) -- -->
+          <!-- -- Bras D haut (12) -- -->
           <path class="armor-zone" data-zone="bras_dr" d="M172,82 Q184,78 198,82 L198,120 Q184,126 172,122 Z"/>
-          <!-- -- Av-bras GCH (7) -- -->
+          <!-- -- Av-bras G (7) -- -->
           <path class="armor-zone" data-zone="av_bras_gch" d="M56,122 Q68,118 80,122 L80,168 Q68,172 56,168 Z"/>
-          <!-- -- Av-bras DR (8) -- -->
+          <!-- -- Av-bras D (8) -- -->
           <path class="armor-zone" data-zone="av_bras_dr" d="M180,122 Q192,118 204,122 L204,168 Q192,172 180,168 Z"/>
-          <!-- -- Main GCH (3) -- -->
+          <!-- -- Main G (3) -- -->
           <ellipse class="armor-zone" data-zone="main_gch" cx="68" cy="182" rx="14" ry="18"/>
-          <!-- -- Main DR (4) -- -->
+          <!-- -- Main D (4) -- -->
           <ellipse class="armor-zone" data-zone="main_dr" cx="192" cy="182" rx="14" ry="18"/>
-          <!-- -- Cuisse GCH (9) -- -->
+          <!-- -- Cuisse G (9) -- -->
           <path class="armor-zone" data-zone="cuisse_gch" d="M100,180 Q114,176 128,178 L126,270 Q112,272 100,268 Z"/>
-          <!-- -- Cuisse DR (10) -- -->
+          <!-- -- Cuisse D (10) -- -->
           <path class="armor-zone" data-zone="cuisse_dr" d="M132,178 Q146,176 160,180 L160,268 Q148,272 134,270 Z"/>
-          <!-- -- Jambe GCH (5) -- -->
+          <!-- -- Jambe G (5) -- -->
           <path class="armor-zone" data-zone="jambe_gch" d="M100,270 Q113,266 126,270 L124,360 Q112,362 100,358 Z"/>
-          <!-- -- Jambe DR (6) -- -->
+          <!-- -- Jambe D (6) -- -->
           <path class="armor-zone" data-zone="jambe_dr" d="M134,270 Q147,266 160,270 L160,358 Q148,362 136,360 Z"/>
-          <!-- -- Pied GCH (1) -- -->
+          <!-- -- Pied G (1) -- -->
           <path class="armor-zone" data-zone="pied_gch" d="M98,360 Q112,356 126,360 L128,378 Q114,388 96,382 Z"/>
-          <!-- -- Pied DR (2) -- -->
+          <!-- -- Pied D (2) -- -->
           <path class="armor-zone" data-zone="pied_dr" d="M134,360 Q148,356 162,360 L164,382 Q146,388 132,378 Z"/>
 
           <!-- -- Étiquettes de numéro de zone -- -->
-          <text class="armor-zone-num" x="130" y="24">20</text>
-          <text class="armor-zone-num" x="130" y="56">19</text>
+          <text class="armor-zone-num" x="130" y="18">20</text>
+          <text class="armor-zone-num" x="130" y="45">19</text>
           <text class="armor-zone-num" x="130" y="76">18</text>
           <text class="armor-zone-num" x="110" y="106">16</text>
           <text class="armor-zone-num" x="150" y="106">17</text>
@@ -106,9 +106,6 @@
           <text class="armor-zone-num" x="112" y="372">1</text>
           <text class="armor-zone-num" x="148" y="372">2</text>
 
-          <!-- -- Indicateurs GCH / DR -- -->
-          <text class="armor-side-label" x="72" y="72">GCH</text>
-          <text class="armor-side-label" x="172" y="72">DR</text>
         </svg>
 
         <!-- ------------------------------------------

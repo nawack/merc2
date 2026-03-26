@@ -1,0 +1,1206 @@
+{
+    "folders":  [
+                    {
+                        "_id":  "lBSZkyK7jiEO2LHc",
+                        "name":  "Membres",
+                        "type":  "Item",
+                        "folder":  "ELAUo2vO3o1v37mu",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "ArAeU6AMb5UcgVjB",
+                        "name":  "Casques",
+                        "type":  "Item",
+                        "folder":  "ELAUo2vO3o1v37mu",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "KHqYfrPKInxqNAmc",
+                        "name":  "Gilets",
+                        "type":  "Item",
+                        "folder":  "ELAUo2vO3o1v37mu",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "D8yZka7PAsn6pylj",
+                        "name":  "Completes",
+                        "type":  "Item",
+                        "folder":  "ELAUo2vO3o1v37mu",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "ELAUo2vO3o1v37mu",
+                        "name":  "Armures",
+                        "type":  "Item",
+                        "folder":  null,
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    }
+                ],
+    "items":  [
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Gilet souple NIJ I",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  200,
+                                     "weightKg":  1.2,
+                                     "description":  "Protection balistique légère contre petits calibres — arrête les fragments et chevrotines",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  1,
+                                                       "poitrine_dr":  1,
+                                                       "abdomen_gch":  1,
+                                                       "abdomen_dr":  1,
+                                                       "bas_ventre":  1,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  1,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "30JwtoDWM1gXgnOD"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Gilet souple NIJ IIA",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  350,
+                                     "weightKg":  1.8,
+                                     "description":  "Protection contre munitions FMJ 9mm et .40 S\u0026W basse vélocité",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  2,
+                                                       "poitrine_dr":  2,
+                                                       "abdomen_gch":  2,
+                                                       "abdomen_dr":  2,
+                                                       "bas_ventre":  2,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  2,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "dZwit8mdmkY2VDnC"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Gilet souple NIJ II",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  500,
+                                     "weightKg":  2.5,
+                                     "description":  "Protection contre munitions FMJ .357 Magnum et 9mm haute vélocité",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  3,
+                                                       "poitrine_dr":  3,
+                                                       "abdomen_gch":  3,
+                                                       "abdomen_dr":  3,
+                                                       "bas_ventre":  3,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  3,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "o29gDTQlaYRzAugh"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Gilet souple NIJ IIIA",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  800,
+                                     "weightKg":  3.2,
+                                     "description":  "Protection contre munitions .44 Magnum et SMG — port discret possible",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  4,
+                                                       "poitrine_dr":  4,
+                                                       "abdomen_gch":  4,
+                                                       "abdomen_dr":  4,
+                                                       "bas_ventre":  4,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  4,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "xB1kO1DzKpgQJ88s"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Gilet tactique NIJ IIIA + cervical",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  1100,
+                                     "weightKg":  4,
+                                     "description":  "Gilet NIJ IIIA avec rehausse cervicale — protection poitrine, abdomen, bas-ventre et cou",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  2,
+                                                       "poitrine_gch":  4,
+                                                       "poitrine_dr":  4,
+                                                       "abdomen_gch":  4,
+                                                       "abdomen_dr":  4,
+                                                       "bas_ventre":  4,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  5,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "nl4fBTHXvUAU9Z10"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "IOTV Gen III (soft + plaques ESAPI)",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  2200,
+                                     "weightKg":  7.5,
+                                     "description":  "Gilet opérationnel avec poches plaques avant/arrière ESAPI NIJ IV + panneaux latéraux",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  1,
+                                                       "poitrine_gch":  8,
+                                                       "poitrine_dr":  8,
+                                                       "abdomen_gch":  7,
+                                                       "abdomen_dr":  7,
+                                                       "bas_ventre":  6,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  6,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "UaY9mxEzlbjaekGk"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Dragon Skin SOV-3000",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  6500,
+                                     "weightKg":  9.2,
+                                     "description":  "Armure composite disc-céramique révolutionnaire — haute résistance sur toute la zone tronc",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  2,
+                                                       "poitrine_gch":  10,
+                                                       "poitrine_dr":  10,
+                                                       "abdomen_gch":  9,
+                                                       "abdomen_dr":  9,
+                                                       "bas_ventre":  8,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  7,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "SnlzgDqEFFa1k6d0"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Combinaison de protection CBRN",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  4500,
+                                     "weightKg":  5.8,
+                                     "description":  "Tenue NBC avec gilet anti-fragmentation intégré — protection chimique 8h",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  2,
+                                                       "poitrine_gch":  5,
+                                                       "poitrine_dr":  5,
+                                                       "abdomen_gch":  5,
+                                                       "abdomen_dr":  5,
+                                                       "bas_ventre":  5,
+                                                       "bras_gch":  2,
+                                                       "bras_dr":  2,
+                                                       "av_bras_gch":  2,
+                                                       "av_bras_dr":  2,
+                                                       "main_gch":  1,
+                                                       "main_dr":  1,
+                                                       "cuisse_gch":  2,
+                                                       "cuisse_dr":  2,
+                                                       "jambe_gch":  2,
+                                                       "jambe_dr":  2,
+                                                       "pied_gch":  1,
+                                                       "pied_dr":  1
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  8,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "GWpDZ39KruOHBdJl"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Tenue EOD légère",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  12000,
+                                     "weightKg":  18,
+                                     "description":  "Protection contre explosions et fragmentation pour opérations déminage légères",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  3,
+                                                       "poitrine_gch":  7,
+                                                       "poitrine_dr":  7,
+                                                       "abdomen_gch":  7,
+                                                       "abdomen_dr":  7,
+                                                       "bas_ventre":  7,
+                                                       "bras_gch":  3,
+                                                       "bras_dr":  3,
+                                                       "av_bras_gch":  3,
+                                                       "av_bras_dr":  3,
+                                                       "main_gch":  2,
+                                                       "main_dr":  2,
+                                                       "cuisse_gch":  3,
+                                                       "cuisse_dr":  3,
+                                                       "jambe_gch":  3,
+                                                       "jambe_dr":  3,
+                                                       "pied_gch":  2,
+                                                       "pied_dr":  2
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  9,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "KHqYfrPKInxqNAmc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "jnfsI98pFbs1BmFE"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Casque lourd PASGT",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  180,
+                                     "weightKg":  1.4,
+                                     "description":  "Casque kevlar utilisé par les forces armées américaines depuis 1983 — protection balistique sol",
+                                     "locations":  {
+                                                       "crane":  3,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  10,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "FW2PTbNJxY8hb6Ql"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Casque ACH (Advanced Combat Helmet)",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  380,
+                                     "weightKg":  1.1,
+                                     "description":  "Casque modulaire rails latéraux — compatible NVG, caméra et systèmes de communication",
+                                     "locations":  {
+                                                       "crane":  4,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  11,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "8SjXCrSqGa9y7Jyz"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Casque FAST Ballistic",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  620,
+                                     "weightKg":  0.9,
+                                     "description":  "Casque allégé coupe haute — compatibilité systèmes de communication et interphone",
+                                     "locations":  {
+                                                       "crane":  4,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  12,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "VTGuXByNz6AiAdXM"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Casque Galvion Caiman avec visière",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  1800,
+                                     "weightKg":  1.3,
+                                     "description":  "Casque balistique haut de gamme avec visière balistique NIJ IIIA escamotable",
+                                     "locations":  {
+                                                       "crane":  4,
+                                                       "visage":  3,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  13,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "qOn95p6Y6g57Y9Hv"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Casque lourd EOD",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  3200,
+                                     "weightKg":  3.5,
+                                     "description":  "Casque intégral demi-sphère pour opérations déminage — protection visage et cou",
+                                     "locations":  {
+                                                       "crane":  5,
+                                                       "visage":  4,
+                                                       "cou":  3,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  14,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "1lWFB1PpJSjcNm64"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Coudières tactiques Hatch",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  80,
+                                     "weightKg":  0.6,
+                                     "description":  "Protection polymère renforcée pour coudes — compatibles sous-vêtement ou sur uniforme",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  2,
+                                                       "av_bras_dr":  2,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  15,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "0ofXvjT1HBeDLm7g"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Genouillères tactiques Hatch",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  90,
+                                     "weightKg":  0.7,
+                                     "description":  "Genouillères à glissière gel anatomique — positions de tir prolongées",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  2,
+                                                       "jambe_dr":  2,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  16,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "Q8TGcPfn4m8flsYS"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Brassards de protection",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  120,
+                                     "weightKg":  0.8,
+                                     "description":  "Protection avant-bras contre éclats et contusions en milieu urbain",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  2,
+                                                       "bras_dr":  2,
+                                                       "av_bras_gch":  2,
+                                                       "av_bras_dr":  2,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  0,
+                                                       "jambe_dr":  0,
+                                                       "pied_gch":  0,
+                                                       "pied_dr":  0
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  17,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "4gk3lmp86L0LOu3H"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Jambières tactiques balistiques",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  150,
+                                     "weightKg":  1.4,
+                                     "description":  "Protection jambe basse et cheville — milieu urbain et opérations de brèche",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  0,
+                                                       "bras_dr":  0,
+                                                       "av_bras_gch":  0,
+                                                       "av_bras_dr":  0,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  2,
+                                                       "jambe_dr":  2,
+                                                       "pied_gch":  2,
+                                                       "pied_dr":  2
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  18,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "5xUa45vs8N9cFkm2"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Kit protection membres complet",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  450,
+                                     "weightKg":  3.5,
+                                     "description":  "Ensemble brassards + genouillères + coudières — protection périphérique complète",
+                                     "locations":  {
+                                                       "crane":  0,
+                                                       "visage":  0,
+                                                       "cou":  0,
+                                                       "poitrine_gch":  0,
+                                                       "poitrine_dr":  0,
+                                                       "abdomen_gch":  0,
+                                                       "abdomen_dr":  0,
+                                                       "bas_ventre":  0,
+                                                       "bras_gch":  2,
+                                                       "bras_dr":  2,
+                                                       "av_bras_gch":  3,
+                                                       "av_bras_dr":  3,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  0,
+                                                       "cuisse_dr":  0,
+                                                       "jambe_gch":  3,
+                                                       "jambe_dr":  3,
+                                                       "pied_gch":  2,
+                                                       "pied_dr":  2
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  19,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "tIOXbpxC3FVx7PyT"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Armure légère complète (LAW)",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  3500,
+                                     "weightKg":  8,
+                                     "description":  "Casque ACH + gilet NIJ IIIA + protection membres légère — configuration d\u0027intervention",
+                                     "locations":  {
+                                                       "crane":  3,
+                                                       "visage":  0,
+                                                       "cou":  1,
+                                                       "poitrine_gch":  4,
+                                                       "poitrine_dr":  4,
+                                                       "abdomen_gch":  4,
+                                                       "abdomen_dr":  4,
+                                                       "bas_ventre":  4,
+                                                       "bras_gch":  1,
+                                                       "bras_dr":  1,
+                                                       "av_bras_gch":  2,
+                                                       "av_bras_dr":  2,
+                                                       "main_gch":  0,
+                                                       "main_dr":  0,
+                                                       "cuisse_gch":  1,
+                                                       "cuisse_dr":  1,
+                                                       "jambe_gch":  2,
+                                                       "jambe_dr":  2,
+                                                       "pied_gch":  1,
+                                                       "pied_dr":  1
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  20,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "D8yZka7PAsn6pylj",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "xQBHv4PTqOiIOhC4"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Armure assault complète (SAP)",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  8500,
+                                     "weightKg":  14,
+                                     "description":  "IOTV + casque FAST + membres — configuration assaut haute intensité",
+                                     "locations":  {
+                                                       "crane":  4,
+                                                       "visage":  0,
+                                                       "cou":  2,
+                                                       "poitrine_gch":  8,
+                                                       "poitrine_dr":  8,
+                                                       "abdomen_gch":  7,
+                                                       "abdomen_dr":  7,
+                                                       "bas_ventre":  6,
+                                                       "bras_gch":  2,
+                                                       "bras_dr":  2,
+                                                       "av_bras_gch":  3,
+                                                       "av_bras_dr":  3,
+                                                       "main_gch":  1,
+                                                       "main_dr":  1,
+                                                       "cuisse_gch":  2,
+                                                       "cuisse_dr":  2,
+                                                       "jambe_gch":  3,
+                                                       "jambe_dr":  3,
+                                                       "pied_gch":  2,
+                                                       "pied_dr":  2
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  21,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "D8yZka7PAsn6pylj",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "AYUQNX4jcmpdmjTZ"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Exosquelette de combat léger",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  45000,
+                                     "weightKg":  15,
+                                     "description":  "Exosquelette balistique assisté motorisé — protection renforcée toutes zones",
+                                     "locations":  {
+                                                       "crane":  3,
+                                                       "visage":  2,
+                                                       "cou":  2,
+                                                       "poitrine_gch":  6,
+                                                       "poitrine_dr":  6,
+                                                       "abdomen_gch":  5,
+                                                       "abdomen_dr":  5,
+                                                       "bas_ventre":  5,
+                                                       "bras_gch":  4,
+                                                       "bras_dr":  4,
+                                                       "av_bras_gch":  4,
+                                                       "av_bras_dr":  4,
+                                                       "main_gch":  2,
+                                                       "main_dr":  2,
+                                                       "cuisse_gch":  4,
+                                                       "cuisse_dr":  4,
+                                                       "jambe_gch":  4,
+                                                       "jambe_dr":  4,
+                                                       "pied_gch":  3,
+                                                       "pied_dr":  3
+                                                   }
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  22,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "armor",
+                      "folder":  "D8yZka7PAsn6pylj",
+                      "img":  "systems/merc/assets/items/armor/armor.png",
+                      "_id":  "DkY8QsOHdp4vP79b"
+                  }
+              ]
+}

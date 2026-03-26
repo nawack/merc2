@@ -1,0 +1,23 @@
+Folder;Nom;Rarete;Prix;Poids (kg);Description;crane;visage;cou;poitrine_gch;poitrine_dr;abdomen_gch;abdomen_dr;bas_ventre;bras_gch;bras_dr;av_bras_gch;av_bras_dr;main_gch;main_dr;cuisse_gch;cuisse_dr;jambe_gch;jambe_dr;pied_gch;pied_dr
+Armures\Gilets;Gilet souple NIJ I;common;200;1,2;Protection balistique légère contre petits calibres — arrête les fragments et chevrotines;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Gilets;Gilet souple NIJ IIA;common;350;1,8;Protection contre munitions FMJ 9mm et .40 S&W basse vélocité;0;0;0;2;2;2;2;2;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Gilets;Gilet souple NIJ II;common;500;2,5;Protection contre munitions FMJ .357 Magnum et 9mm haute vélocité;0;0;0;3;3;3;3;3;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Gilets;Gilet souple NIJ IIIA;uncommon;800;3,2;Protection contre munitions .44 Magnum et SMG — port discret possible;0;0;0;4;4;4;4;4;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Gilets;Gilet tactique NIJ IIIA + cervical;uncommon;1100;4,0;Gilet NIJ IIIA avec rehausse cervicale — protection poitrine, abdomen, bas-ventre et cou;0;0;2;4;4;4;4;4;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Gilets;IOTV Gen III (soft + plaques ESAPI);uncommon;2200;7,5;Gilet opérationnel avec poches plaques avant/arrière ESAPI NIJ IV + panneaux latéraux;0;0;1;8;8;7;7;6;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Gilets;Dragon Skin SOV-3000;rare;6500;9,2;Armure composite disc-céramique révolutionnaire — haute résistance sur toute la zone tronc;0;0;2;10;10;9;9;8;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Gilets;Combinaison de protection CBRN;rare;4500;5,8;Tenue NBC avec gilet anti-fragmentation intégré — protection chimique 8h;0;0;2;5;5;5;5;5;2;2;2;2;1;1;2;2;2;2;1;1
+Armures\Gilets;Tenue EOD légère;rare;12000;18;Protection contre explosions et fragmentation pour opérations déminage légères;0;0;3;7;7;7;7;7;3;3;3;3;2;2;3;3;3;3;2;2
+Armures\Casques;Casque lourd PASGT;common;180;1,4;Casque kevlar utilisé par les forces armées américaines depuis 1983 — protection balistique sol;3;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Casques;Casque ACH (Advanced Combat Helmet);common;380;1,1;Casque modulaire rails latéraux — compatible NVG, caméra et systèmes de communication;4;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Casques;Casque FAST Ballistic;uncommon;620;0,9;Casque allégé coupe haute — compatibilité systèmes de communication et interphone;4;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Casques;Casque Galvion Caiman avec visière;rare;1800;1,3;Casque balistique haut de gamme avec visière balistique NIJ IIIA escamotable;4;3;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Casques;Casque lourd EOD;rare;3200;3,5;Casque intégral demi-sphère pour opérations déminage — protection visage et cou;5;4;3;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+Armures\Membres;Coudières tactiques Hatch;common;80;0,6;Protection polymère renforcée pour coudes — compatibles sous-vêtement ou sur uniforme;0;0;0;0;0;0;0;0;0;0;2;2;0;0;0;0;0;0;0;0
+Armures\Membres;Genouillères tactiques Hatch;common;90;0,7;Genouillères à glissière gel anatomique — positions de tir prolongées;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2;2;0;0
+Armures\Membres;Brassards de protection;common;120;0,8;Protection avant-bras contre éclats et contusions en milieu urbain;0;0;0;0;0;0;0;0;2;2;2;2;0;0;0;0;0;0;0;0
+Armures\Membres;Jambières tactiques balistiques;common;150;1,4;Protection jambe basse et cheville — milieu urbain et opérations de brèche;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2;2;2;2
+Armures\Membres;Kit protection membres complet;uncommon;450;3,5;Ensemble brassards + genouillères + coudières — protection périphérique complète;0;0;0;0;0;0;0;0;2;2;3;3;0;0;0;0;3;3;2;2
+Armures\Completes;Armure légère complète (LAW);uncommon;3500;8,0;Casque ACH + gilet NIJ IIIA + protection membres légère — configuration d'intervention;3;0;1;4;4;4;4;4;1;1;2;2;0;0;1;1;2;2;1;1
+Armures\Completes;Armure assault complète (SAP);rare;8500;14;IOTV + casque FAST + membres — configuration assaut haute intensité;4;0;2;8;8;7;7;6;2;2;3;3;1;1;2;2;3;3;2;2
+Armures\Completes;Exosquelette de combat léger;rare;45000;15;Exosquelette balistique assisté motorisé — protection renforcée toutes zones;3;2;2;6;6;5;5;5;4;4;4;4;2;2;4;4;4;4;3;3

@@ -1,0 +1,1166 @@
+{
+    "folders":  [
+                    {
+                        "_id":  "AVHSYC69hz56KVgU",
+                        "name":  "Survie",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "JGYYD67LkykAqiTi",
+                        "name":  "Medical",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "h0PIZrGRnmGIPk68",
+                        "name":  "Equipement",
+                        "type":  "Item",
+                        "folder":  null,
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "0ZRQt9881i3fADx1",
+                        "name":  "Transport",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "fEYsHMyRrh6PPi43",
+                        "name":  "CBRN",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "QBa1XqJMJn8ahpEt",
+                        "name":  "Optique",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "42f3X20YYvAbKiBw",
+                        "name":  "Eclairage",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "IaT25zBgHDSBfqhf",
+                        "name":  "Outils",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    },
+                    {
+                        "_id":  "HReaHNCXB0hRWXVV",
+                        "name":  "Communication",
+                        "type":  "Item",
+                        "folder":  "h0PIZrGRnmGIPk68",
+                        "sorting":  "a",
+                        "sort":  0,
+                        "color":  null,
+                        "flags":  {
+
+                                  },
+                        "_stats":  {
+                                       "systemId":  "merc",
+                                       "systemVersion":  "1.0.16",
+                                       "coreVersion":  "13.351",
+                                       "createdTime":  null,
+                                       "modifiedTime":  null,
+                                       "lastModifiedBy":  null
+                                   }
+                    }
+                ],
+    "items":  [
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Trousse de premiers secours légère",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  50,
+                                     "weightKg":  1,
+                                     "description":  "Bandages stériles, désinfectant, garrot CAT — traitement blessures légères"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  1,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "JGYYD67LkykAqiTi",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "eJ64U4GcJqXecRE5"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Kit de trauma tactique (IFAK)",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  200,
+                                     "weightKg":  0.8,
+                                     "description":  "Pansement hémostatique QuikClot, décompression thoracique, garrot CAT, gants nitrile"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  2,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "JGYYD67LkykAqiTi",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "E6LBvfG9hnYWaL4m"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Trousse médicale avancée (TCCC)",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  600,
+                                     "weightKg":  3.5,
+                                     "description":  "Matériel réanimation, intubation nasopharyngée, sutures, traitement multi-plaies graves"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  3,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "JGYYD67LkykAqiTi",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "ztFpzFy3celHJN8d"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Défibrillateur portable DEA",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  1200,
+                                     "weightKg":  2,
+                                     "description":  "Défibrillateur automatique externe — usage par personnel non médical"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  4,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "JGYYD67LkykAqiTi",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "YgTn3s4mNAm38Pzt"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Auto-injecteur morphine x5",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  150,
+                                     "weightKg":  0.1,
+                                     "description":  "5 auto-injecteurs morphine 10mg — analgésie d\u0027urgence au combat"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  5,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "JGYYD67LkykAqiTi",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "Tur4uDpkDDcF4Urf"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Garrot tourniquet CAT x3",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  45,
+                                     "weightKg":  0.1,
+                                     "description":  "3 garrots Combat Application Tourniquet — 1 main possible — norme TCCC"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  6,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "JGYYD67LkykAqiTi",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "Roymkd4fXvo6VaDH"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Radio MBITR AN/PRC-148",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  3500,
+                                     "weightKg":  0.6,
+                                     "description":  "Radio militaire multi-bandes sécurisée — portée 5km sol-sol avec chiffrement"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  7,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "HReaHNCXB0hRWXVV",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "fisVFCoBTCzhNG9Y"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Radio longue portée AN/PRC-117G",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  8000,
+                                     "weightKg":  5,
+                                     "description":  "Radio tactique wideband avec capacité satcom — portée 50km+"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  8,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "HReaHNCXB0hRWXVV",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "5yBPIb4lhXRpkTeG"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Casque tactique Peltor ComTac IV",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  800,
+                                     "weightKg":  0.4,
+                                     "description":  "Protection auditive active avec passerelle radio intégrée — atténuation 26dB"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  9,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "HReaHNCXB0hRWXVV",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "k2LHpoAaH4QdSNyr"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Balise de détresse PLB 406MHz",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  350,
+                                     "weightKg":  0.2,
+                                     "description":  "Balise localisatrice personnelle COSPAS-SARSAT — activation manuelle ou automatique"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  10,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "HReaHNCXB0hRWXVV",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "HAGjuAKH0c4S4vrq"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Système de communication intra-équipe",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  1200,
+                                     "weightKg":  0.3,
+                                     "description":  "Kit PTT discret avec écouteur intra et micro laryngophone — discrétion opérationnelle"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  11,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "HReaHNCXB0hRWXVV",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "IP5D0XSZbHyHSGow"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Jumelles 8x42 tactiques",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  200,
+                                     "weightKg":  0.7,
+                                     "description":  "Jumelles milspecs résistantes chocs et eau — champ de vision 130m/1000m"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  12,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "QBa1XqJMJn8ahpEt",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "x4eHmfkGN89DQcVf"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Monoculaire NV AN/PVS-14 Gen III",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  3000,
+                                     "weightKg":  0.7,
+                                     "description":  "Intensificateur de lumière Gen III — vision nocturne opérationnelle 0 à 300m"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  13,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "QBa1XqJMJn8ahpEt",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "de39DKTnVfKdeTzH"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Caméra thermique FLIR Scout III",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  5000,
+                                     "weightKg":  1,
+                                     "description":  "Analyse thermique IR longue portée — détection silhouettes humaines à 500m+"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  14,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "QBa1XqJMJn8ahpEt",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "IQHJ2V5A6WDYPMi1"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Télémètre laser Vectronix PLRF",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  2500,
+                                     "weightKg":  0.8,
+                                     "description":  "Télémètre militaire 25m-10km avec boussole numérique et GPS intégré"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  15,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "QBa1XqJMJn8ahpEt",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "WXuyXPuHcs2YV4jE"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Masque respiratoire M50",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  500,
+                                     "weightKg":  0.8,
+                                     "description":  "Masque gaz militaire — protection agents chimiques et biologiques — autonomie 24h"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  16,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "fEYsHMyRrh6PPi43",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "nY96mdhoIwArzrtq"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Détecteur d\u0027agents chimiques M8A1",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  1500,
+                                     "weightKg":  1.5,
+                                     "description":  "Détecteur automatique agents neurotoxiques et vésicants — alarme sonore et visuelle"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  17,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "fEYsHMyRrh6PPi43",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "1jPxvBFGVBEoeOnC"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Tenue MOPP4 complète",
+                      "system":  {
+                                     "rarity":  "rare",
+                                     "price":  800,
+                                     "weightKg":  4.5,
+                                     "description":  "Ensemble protecteur NBC intégral (masque non inclus) — résistance certifiée 24h"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  18,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "fEYsHMyRrh6PPi43",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "Hyg4XqUw0h7RJujk"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Tablettes décontamination RSDL x10",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  60,
+                                     "weightKg":  0.1,
+                                     "description":  "10 lingettes décontaminantes peau — neutralisation agents chimiques en 2min"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  19,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "fEYsHMyRrh6PPi43",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "xGQviEn2NDQfxfFC"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Sac d\u0027assaut MOLLE 45L",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  150,
+                                     "weightKg":  2,
+                                     "description":  "Sac à dos tactique modulaire MOLLE — tissu 1000D Cordura — capacité 45L"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  20,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "0ZRQt9881i3fADx1",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "lOIrniFxrgoeWxgj"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Porte-plaques tactique (PC) MOLLE",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  200,
+                                     "weightKg":  1,
+                                     "description":  "Porte-équipement MOLLE sans plaques — transport matériel combat 15 poches modulaires"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  21,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "0ZRQt9881i3fADx1",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "99MIHro4YyiXnJBG"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Ceinturon ALICE avec accessoires",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  80,
+                                     "weightKg":  0.5,
+                                     "description":  "Ceinturon militaire avec porte-gourde, poches munitions et holster toile"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  22,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "0ZRQt9881i3fADx1",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "qyJFjrguuMXbornb"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Caisse de transport Pelican 1510",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  300,
+                                     "weightKg":  3.5,
+                                     "description":  "Malette rigide étanche IP67 — transport équipement sensible 56x36x23cm"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  23,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "0ZRQt9881i3fADx1",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "Gs039RUgUgTCCPmu"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Kit de survie 72h",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  150,
+                                     "weightKg":  2.5,
+                                     "description":  "Eau purifiée, barres énergétiques, bivouac urgence, allumettes tempête, miroir signal"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  24,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "AVHSYC69hz56KVgU",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "S7xcoZU8S47Ad50S"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Couvertures thermiques de survie x3",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  20,
+                                     "weightKg":  0.1,
+                                     "description":  "Couvertures aluminisées réfléchissantes — protection hypothermie jusqu\u0027à -20°C"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  25,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "AVHSYC69hz56KVgU",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "CoVkdfZ8SKDoAcCZ"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Filtre à eau LifeStraw Mission",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  40,
+                                     "weightKg":  0.1,
+                                     "description":  "Filtre portatif 1L/min — élimination 99,9999% bactéries et 99,9% parasites"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  26,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "AVHSYC69hz56KVgU",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "eo16RV7kRlliUOQh"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "GPS militaire Garmin GPSMAP 64sx",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  600,
+                                     "weightKg":  0.2,
+                                     "description":  "GPS milspecs IP68 — cartes topo MGRS — autonomie 16h batteries AA"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  27,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "AVHSYC69hz56KVgU",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "ICCsoc2UrzeWyFnw"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Lampe tactique Streamlight TLR-1",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  180,
+                                     "weightKg":  0.1,
+                                     "description":  "Lampe rail Picatinny 300 lumens — activation ambidextre — IP54"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  28,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "42f3X20YYvAbKiBw",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "p7LPKuQO1OEmsr5y"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Lampe frontale militaire THL-1 NV",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  120,
+                                     "weightKg":  0.2,
+                                     "description":  "Lampe frontale 4 modes: blanc/rouge/IR/strobe — compatible NVG"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  29,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "42f3X20YYvAbKiBw",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "tzeHlfAwOGStqT4F"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Bâtons lumineux chimiques x10",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  30,
+                                     "weightKg":  0.2,
+                                     "description":  "Cyalume 12h — balisage et jalonnement discret — spectre vert et infrarouge"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  30,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "42f3X20YYvAbKiBw",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "XCdzxUzqlyD0cDXV"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Outil multifonction Leatherman MUT",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  180,
+                                     "weightKg":  0.3,
+                                     "description":  "Outil multifonction avec adaptateur nettoyage arme, chasse-goupille et kit AR"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  31,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "IaT25zBgHDSBfqhf",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "O9SYvogr2fZ8u8YX"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Pince coupe-barbelés renforcée",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  60,
+                                     "weightKg":  0.6,
+                                     "description":  "Pince coupe acier galvanisé 5mm et câble acier 3mm — manche isolé"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  32,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "IaT25zBgHDSBfqhf",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "R1KmgB61s1g0hglp"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Pied de biche tactique compact",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  40,
+                                     "weightKg":  0.8,
+                                     "description":  "Pied de biche acier forgé 35cm — forçage portes et extraction matériel"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  33,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "IaT25zBgHDSBfqhf",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "Gx6dVusY43Wz15nE"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Scie-câble de survie",
+                      "system":  {
+                                     "rarity":  "common",
+                                     "price":  25,
+                                     "weightKg":  0.1,
+                                     "description":  "Scie-câble acier inox — coupe bois, os et matériaux composites légers"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  34,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "IaT25zBgHDSBfqhf",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "AbqBvzKN3SckOcqY"
+                  },
+                  {
+                      "effects":  [
+
+                                  ],
+                      "name":  "Détecteur de métaux Garrett THD",
+                      "system":  {
+                                     "rarity":  "uncommon",
+                                     "price":  800,
+                                     "weightKg":  1.3,
+                                     "description":  "Détecteur de métaux portable — mines PT et IED à moins de 15cm — mode discrimination"
+                                 },
+                      "flags":  {
+
+                                },
+                      "sort":  35,
+                      "_stats":  {
+                                     "systemId":  "merc",
+                                     "systemVersion":  "1.0.16",
+                                     "coreVersion":  "13.351",
+                                     "createdTime":  null,
+                                     "modifiedTime":  null,
+                                     "lastModifiedBy":  null
+                                 },
+                      "type":  "equipment",
+                      "folder":  "IaT25zBgHDSBfqhf",
+                      "img":  "systems/merc/assets/items/equipment/equipment.png",
+                      "_id":  "Dc8wBfRCJrDwEMRm"
+                  }
+              ]
+}

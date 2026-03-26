@@ -380,25 +380,167 @@ foreach ($row in $wcsv) {
 Write-Host "  OK $($weaponItems.Count) armes, $($weaponFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
-# Étape 5 – Sérialisation JSON
+# Étape 5 – Parsing du CSV Armors
 # =============================================================================
-$weaponsJsonPath = Join-Path $ToolsDir "_weapons.json"
-$ammosJsonPath   = Join-Path $ToolsDir "_ammos.json"
+Write-Host "> Lecture des armures..." -ForegroundColor Cyan
+$arcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Armors.csv") -Delimiter ";" -Encoding UTF8
+$arcols = $arcsv[0].PSObject.Properties.Name
+# Column indices (0-based):
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description
+#  6=crane  7=visage  8=cou  9=poitrine_gch  10=poitrine_dr
+# 11=abdomen_gch  12=abdomen_dr  13=bas_ventre  14=bras_gch  15=bras_dr
+# 16=av_bras_gch  17=av_bras_dr  18=main_gch  19=main_dr
+# 20=cuisse_gch  21=cuisse_dr  22=jambe_gch  23=jambe_dr  24=pied_gch  25=pied_dr
+
+$allARFolderPaths = $arcsv | ForEach-Object { $_.($arcols[0]).Trim() } | Where-Object { $_ }
+$armorFolderMap   = Build-FolderMap $allARFolderPaths
+
+$armorItems = [System.Collections.Generic.List[hashtable]]::new()
+$sort = 0
+foreach ($row in $arcsv) {
+  $name = $row.($arcols[1]).Trim()
+  if (-not $name) { continue }
+
+  $folderPath  = $row.($arcols[0]).Trim()
+  $rarity      = if ($row.($arcols[2]).Trim()) { $row.($arcols[2]).Trim() } else { "common" }
+  $price       = TryParseDouble $row.($arcols[3])
+  $weightKg    = TryParseDouble $row.($arcols[4])
+  $description = $row.($arcols[5]).Trim()
+
+  $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
+  $itemFolderId  = if ($armorFolderMap.ContainsKey($normFolderKey)) { $armorFolderMap[$normFolderKey]['_id'] } else { $null }
+  $sort++
+
+  $armorItems.Add([ordered]@{
+    "_id"    = New-FoundryId
+    "name"   = $name
+    "type"   = "armor"
+    "img"    = "systems/merc/assets/items/armor/armor.png"
+    "system" = [ordered]@{
+      "rarity"      = $rarity
+      "price"       = $price
+      "weightKg"    = $weightKg
+      "description" = $description
+      "locations"   = [ordered]@{
+        "crane"        = TryParseInt $row.($arcols[6])
+        "visage"       = TryParseInt $row.($arcols[7])
+        "cou"          = TryParseInt $row.($arcols[8])
+        "poitrine_gch" = TryParseInt $row.($arcols[9])
+        "poitrine_dr"  = TryParseInt $row.($arcols[10])
+        "abdomen_gch"  = TryParseInt $row.($arcols[11])
+        "abdomen_dr"   = TryParseInt $row.($arcols[12])
+        "bas_ventre"   = TryParseInt $row.($arcols[13])
+        "bras_gch"     = TryParseInt $row.($arcols[14])
+        "bras_dr"      = TryParseInt $row.($arcols[15])
+        "av_bras_gch"  = TryParseInt $row.($arcols[16])
+        "av_bras_dr"   = TryParseInt $row.($arcols[17])
+        "main_gch"     = TryParseInt $row.($arcols[18])
+        "main_dr"      = TryParseInt $row.($arcols[19])
+        "cuisse_gch"   = TryParseInt $row.($arcols[20])
+        "cuisse_dr"    = TryParseInt $row.($arcols[21])
+        "jambe_gch"    = TryParseInt $row.($arcols[22])
+        "jambe_dr"     = TryParseInt $row.($arcols[23])
+        "pied_gch"     = TryParseInt $row.($arcols[24])
+        "pied_dr"      = TryParseInt $row.($arcols[25])
+      }
+    }
+    "effects" = @()
+    "folder"  = $itemFolderId
+    "sort"    = $sort
+    "flags"   = [ordered]@{}
+    "_stats"  = [ordered]@{
+      "systemId"       = "merc"
+      "systemVersion"  = $SystemVersion
+      "coreVersion"    = "13.351"
+      "createdTime"    = $null
+      "modifiedTime"   = $null
+      "lastModifiedBy" = $null
+    }
+  })
+}
+Write-Host "  OK $($armorItems.Count) armures, $($armorFolderMap.Count) dossiers" -ForegroundColor Green
+
+# =============================================================================
+# Étape 6 – Parsing du CSV Equipment
+# =============================================================================
+Write-Host "> Lecture des équipements..." -ForegroundColor Cyan
+$eqcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Equipment.csv") -Delimiter ";" -Encoding UTF8
+$eqcols = $eqcsv[0].PSObject.Properties.Name
+# Column indices (0-based):
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description
+
+$allEQFolderPaths   = $eqcsv | ForEach-Object { $_.($eqcols[0]).Trim() } | Where-Object { $_ }
+$equipmentFolderMap = Build-FolderMap $allEQFolderPaths
+
+$equipmentItems = [System.Collections.Generic.List[hashtable]]::new()
+$sort = 0
+foreach ($row in $eqcsv) {
+  $name = $row.($eqcols[1]).Trim()
+  if (-not $name) { continue }
+
+  $folderPath  = $row.($eqcols[0]).Trim()
+  $rarity      = if ($row.($eqcols[2]).Trim()) { $row.($eqcols[2]).Trim() } else { "common" }
+  $price       = TryParseDouble $row.($eqcols[3])
+  $weightKg    = TryParseDouble $row.($eqcols[4])
+  $description = $row.($eqcols[5]).Trim()
+
+  $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
+  $itemFolderId  = if ($equipmentFolderMap.ContainsKey($normFolderKey)) { $equipmentFolderMap[$normFolderKey]['_id'] } else { $null }
+  $sort++
+
+  $equipmentItems.Add([ordered]@{
+    "_id"    = New-FoundryId
+    "name"   = $name
+    "type"   = "equipment"
+    "img"    = "systems/merc/assets/items/equipment/equipment.png"
+    "system" = [ordered]@{
+      "rarity"      = $rarity
+      "price"       = $price
+      "weightKg"    = $weightKg
+      "description" = $description
+    }
+    "effects" = @()
+    "folder"  = $itemFolderId
+    "sort"    = $sort
+    "flags"   = [ordered]@{}
+    "_stats"  = [ordered]@{
+      "systemId"       = "merc"
+      "systemVersion"  = $SystemVersion
+      "coreVersion"    = "13.351"
+      "createdTime"    = $null
+      "modifiedTime"   = $null
+      "lastModifiedBy" = $null
+    }
+  })
+}
+Write-Host "  OK $($equipmentItems.Count) équipements, $($equipmentFolderMap.Count) dossiers" -ForegroundColor Green
+
+# =============================================================================
+# Étape 7 – Sérialisation JSON
+# =============================================================================
+$weaponsJsonPath   = Join-Path $ToolsDir "_weapons.json"
+$ammosJsonPath     = Join-Path $ToolsDir "_ammos.json"
+$armorsJsonPath    = Join-Path $ToolsDir "_armors.json"
+$equipmentJsonPath = Join-Path $ToolsDir "_equipment.json"
 
 # PowerShell 5 : Set-Content -Encoding UTF8 ajoute un BOM ; JSON.parse() échoue.
 # On utilise System.IO.File::WriteAllText avec UTF8 sans BOM.
 $utf8NoBOM = New-Object System.Text.UTF8Encoding $false
 
 # Export { folders: [...], items: [...] } so the packer can write !folders! entries
-$weaponExport = [ordered]@{ 'folders' = @($weaponFolderMap.Values); 'items' = @($weaponItems) }
-$ammoExport   = [ordered]@{ 'folders' = @($ammoFolderMap.Values);   'items' = @($ammoItems)   }
-[System.IO.File]::WriteAllText($weaponsJsonPath, ($weaponExport | ConvertTo-Json -Depth 20), $utf8NoBOM)
-[System.IO.File]::WriteAllText($ammosJsonPath,   ($ammoExport   | ConvertTo-Json -Depth 20), $utf8NoBOM)
+$weaponExport    = [ordered]@{ 'folders' = @($weaponFolderMap.Values);    'items' = @($weaponItems)    }
+$ammoExport      = [ordered]@{ 'folders' = @($ammoFolderMap.Values);      'items' = @($ammoItems)      }
+$armorExport     = [ordered]@{ 'folders' = @($armorFolderMap.Values);     'items' = @($armorItems)     }
+$equipmentExport = [ordered]@{ 'folders' = @($equipmentFolderMap.Values); 'items' = @($equipmentItems) }
+[System.IO.File]::WriteAllText($weaponsJsonPath,   ($weaponExport    | ConvertTo-Json -Depth 20), $utf8NoBOM)
+[System.IO.File]::WriteAllText($ammosJsonPath,     ($ammoExport      | ConvertTo-Json -Depth 20), $utf8NoBOM)
+[System.IO.File]::WriteAllText($armorsJsonPath,    ($armorExport     | ConvertTo-Json -Depth 20), $utf8NoBOM)
+[System.IO.File]::WriteAllText($equipmentJsonPath, ($equipmentExport | ConvertTo-Json -Depth 20), $utf8NoBOM)
 
 New-Item -ItemType Directory -Path $PacksDir -Force | Out-Null
 
 # =============================================================================
-# Étape 6 – Génération LevelDB
+# Étape 8 – Génération LevelDB
 # =============================================================================
 Write-Host "> Generation pack Armes..." -ForegroundColor Cyan
 $weaponPackDir = Join-Path $PacksDir "weapons"
@@ -414,6 +556,20 @@ Push-Location $ToolsDir
 if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing ammos" }
 Pop-Location
 
+Write-Host "> Generation pack Armures..." -ForegroundColor Cyan
+$armorPackDir = Join-Path $PacksDir "armors"
+Push-Location $ToolsDir
+& $NodeExe $PackerScript $armorsJsonPath $armorPackDir
+if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing armors" }
+Pop-Location
+
+Write-Host "> Generation pack Equipements..." -ForegroundColor Cyan
+$equipmentPackDir = Join-Path $PacksDir "equipments"
+Push-Location $ToolsDir
+& $NodeExe $PackerScript $equipmentJsonPath $equipmentPackDir
+if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing equipments" }
+Pop-Location
+
 # =============================================================================
 # Résumé
 # =============================================================================
@@ -421,7 +577,9 @@ Write-Host ""
 Write-Host "======================================" -ForegroundColor Green
 Write-Host "  COMPENDIUM GENERE AVEC SUCCES" -ForegroundColor Green
 Write-Host "======================================" -ForegroundColor Green
-Write-Host "  Armes     : $($weaponItems.Count) items, $($weaponFolderMap.Count) dossiers -> $weaponPackDir"
-  Write-Host "  Munitions : $($ammoItems.Count) items, $($ammoFolderMap.Count) dossiers -> $ammoPackDir"
+Write-Host "  Armes       : $($weaponItems.Count) items, $($weaponFolderMap.Count) dossiers -> $weaponPackDir"
+Write-Host "  Munitions   : $($ammoItems.Count) items, $($ammoFolderMap.Count) dossiers -> $ammoPackDir"
+Write-Host "  Armures     : $($armorItems.Count) items, $($armorFolderMap.Count) dossiers -> $armorPackDir"
+Write-Host "  Equipements : $($equipmentItems.Count) items, $($equipmentFolderMap.Count) dossiers -> $equipmentPackDir"
 Write-Host ""
 Write-Host "-> Relancez Foundry VTT pour voir les compendiums." -ForegroundColor Yellow

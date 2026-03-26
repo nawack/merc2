@@ -1,0 +1,36 @@
+Folder;Nom;Rarete;Prix;Poids (kg);Description
+Equipement\Medical;Trousse de premiers secours légère;common;50;1,0;Bandages stériles, désinfectant, garrot CAT — traitement blessures légères
+Equipement\Medical;Kit de trauma tactique (IFAK);common;200;0,8;Pansement hémostatique QuikClot, décompression thoracique, garrot CAT, gants nitrile
+Equipement\Medical;Trousse médicale avancée (TCCC);uncommon;600;3,5;Matériel réanimation, intubation nasopharyngée, sutures, traitement multi-plaies graves
+Equipement\Medical;Défibrillateur portable DEA;uncommon;1200;2,0;Défibrillateur automatique externe — usage par personnel non médical
+Equipement\Medical;Auto-injecteur morphine x5;uncommon;150;0,1;5 auto-injecteurs morphine 10mg — analgésie d'urgence au combat
+Equipement\Medical;Garrot tourniquet CAT x3;common;45;0,1;3 garrots Combat Application Tourniquet — 1 main possible — norme TCCC
+Equipement\Communication;Radio MBITR AN/PRC-148;uncommon;3500;0,6;Radio militaire multi-bandes sécurisée — portée 5km sol-sol avec chiffrement
+Equipement\Communication;Radio longue portée AN/PRC-117G;rare;8000;5,0;Radio tactique wideband avec capacité satcom — portée 50km+
+Equipement\Communication;Casque tactique Peltor ComTac IV;common;800;0,4;Protection auditive active avec passerelle radio intégrée — atténuation 26dB
+Equipement\Communication;Balise de détresse PLB 406MHz;common;350;0,2;Balise localisatrice personnelle COSPAS-SARSAT — activation manuelle ou automatique
+Equipement\Communication;Système de communication intra-équipe;uncommon;1200;0,3;Kit PTT discret avec écouteur intra et micro laryngophone — discrétion opérationnelle
+Equipement\Optique;Jumelles 8x42 tactiques;common;200;0,7;Jumelles milspecs résistantes chocs et eau — champ de vision 130m/1000m
+Equipement\Optique;Monoculaire NV AN/PVS-14 Gen III;uncommon;3000;0,7;Intensificateur de lumière Gen III — vision nocturne opérationnelle 0 à 300m
+Equipement\Optique;Caméra thermique FLIR Scout III;rare;5000;1,0;Analyse thermique IR longue portée — détection silhouettes humaines à 500m+
+Equipement\Optique;Télémètre laser Vectronix PLRF;uncommon;2500;0,8;Télémètre militaire 25m-10km avec boussole numérique et GPS intégré
+Equipement\CBRN;Masque respiratoire M50;uncommon;500;0,8;Masque gaz militaire — protection agents chimiques et biologiques — autonomie 24h
+Equipement\CBRN;Détecteur d'agents chimiques M8A1;uncommon;1500;1,5;Détecteur automatique agents neurotoxiques et vésicants — alarme sonore et visuelle
+Equipement\CBRN;Tenue MOPP4 complète;rare;800;4,5;Ensemble protecteur NBC intégral (masque non inclus) — résistance certifiée 24h
+Equipement\CBRN;Tablettes décontamination RSDL x10;common;60;0,1;10 lingettes décontaminantes peau — neutralisation agents chimiques en 2min
+Equipement\Transport;Sac d'assaut MOLLE 45L;common;150;2,0;Sac à dos tactique modulaire MOLLE — tissu 1000D Cordura — capacité 45L
+Equipement\Transport;Porte-plaques tactique (PC) MOLLE;common;200;1,0;Porte-équipement MOLLE sans plaques — transport matériel combat 15 poches modulaires
+Equipement\Transport;Ceinturon ALICE avec accessoires;common;80;0,5;Ceinturon militaire avec porte-gourde, poches munitions et holster toile
+Equipement\Transport;Caisse de transport Pelican 1510;common;300;3,5;Malette rigide étanche IP67 — transport équipement sensible 56x36x23cm
+Equipement\Survie;Kit de survie 72h;common;150;2,5;Eau purifiée, barres énergétiques, bivouac urgence, allumettes tempête, miroir signal
+Equipement\Survie;Couvertures thermiques de survie x3;common;20;0,1;Couvertures aluminisées réfléchissantes — protection hypothermie jusqu'à -20°C
+Equipement\Survie;Filtre à eau LifeStraw Mission;common;40;0,1;Filtre portatif 1L/min — élimination 99,9999% bactéries et 99,9% parasites
+Equipement\Survie;GPS militaire Garmin GPSMAP 64sx;uncommon;600;0,2;GPS milspecs IP68 — cartes topo MGRS — autonomie 16h batteries AA
+Equipement\Eclairage;Lampe tactique Streamlight TLR-1;common;180;0,1;Lampe rail Picatinny 300 lumens — activation ambidextre — IP54
+Equipement\Eclairage;Lampe frontale militaire THL-1 NV;common;120;0,2;Lampe frontale 4 modes: blanc/rouge/IR/strobe — compatible NVG
+Equipement\Eclairage;Bâtons lumineux chimiques x10;common;30;0,2;Cyalume 12h — balisage et jalonnement discret — spectre vert et infrarouge
+Equipement\Outils;Outil multifonction Leatherman MUT;common;180;0,3;Outil multifonction avec adaptateur nettoyage arme, chasse-goupille et kit AR
+Equipement\Outils;Pince coupe-barbelés renforcée;common;60;0,6;Pince coupe acier galvanisé 5mm et câble acier 3mm — manche isolé
+Equipement\Outils;Pied de biche tactique compact;common;40;0,8;Pied de biche acier forgé 35cm — forçage portes et extraction matériel
+Equipement\Outils;Scie-câble de survie;common;25;0,1;Scie-câble acier inox — coupe bois, os et matériaux composites légers
+Equipement\Outils;Détecteur de métaux Garrett THD;uncommon;800;1,3;Détecteur de métaux portable — mines PT et IED à moins de 15cm — mode discrimination

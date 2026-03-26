@@ -84,14 +84,40 @@ La fiche arme affiche les valeurs calculées (en lecture seule) à partir des pr
 
 ```json
 {
-  "armorClass": 10,    // Valeur de protection (réduction dégâts)
-  "weight": 10,        // Poids en kg
-  "rarity": "common"   // common | uncommon | rare | epic
+  "rarity": "common",     // common | uncommon | rare | epic
+  "price": 0,             // Prix
+  "weightKg": 0,          // Poids en kg
+  "description": "",      // Description libre
+  "locations": {
+    // Points de blindage par zone corporelle (20 zones)
+    "crane": 0,           // 20 — Crâne
+    "visage": 0,          // 19 — Visage
+    "cou": 0,             // 18 — Cou
+    "poitrine_gch": 0,    // 16 — Poitrine GCH
+    "poitrine_dr": 0,     // 17 — Poitrine DR
+    "abdomen_gch": 0,     // 14 — Abdomen GCH
+    "abdomen_dr": 0,      // 15 — Abdomen DR
+    "bas_ventre": 0,      // 13 — Bas-ventre
+    "bras_gch": 0,        // 11 — Bras GCH
+    "bras_dr": 0,         // 12 — Bras DR
+    "av_bras_gch": 0,     //  7 — Avant-bras GCH
+    "av_bras_dr": 0,      //  8 — Avant-bras DR
+    "main_gch": 0,        //  3 — Main GCH
+    "main_dr": 0,         //  4 — Main DR
+    "cuisse_gch": 0,      //  9 — Cuisse GCH
+    "cuisse_dr": 0,       // 10 — Cuisse DR
+    "jambe_gch": 0,       //  5 — Jambe GCH
+    "jambe_dr": 0,        //  6 — Jambe DR
+    "pied_gch": 0,        //  1 — Pied GCH
+    "pied_dr": 0          //  2 — Pied DR
+  }
 }
 ```
 
-### Feuille
-`templates/item/armor-sheet.hbs`
+### Feuille personnalisée
+`templates/item/armor-sheet.hbs` — Sections : **Champs généraux** (Rareté / Prix / Poids / Description) + **Schéma de corps SVG** (20 zones interactives, inputs GCH à gauche, DR à droite)
+
+> Le numéro de chaque zone est affiché à la fois dans le SVG et dans le label de l'input.
 
 ---
 
@@ -101,10 +127,15 @@ La fiche arme affiche les valeurs calculées (en lecture seule) à partir des pr
 
 ```json
 {
-  "weight": 1,         // Poids en kg
-  "rarity": "common"
+  "rarity": "common",   // common | uncommon | rare | epic
+  "price": 0,           // Prix
+  "weightKg": 0,        // Poids en kg
+  "description": ""     // Description libre
 }
 ```
+
+### Feuille personnalisée
+`templates/item/equipment-sheet.hbs`
 
 ---
 
@@ -178,9 +209,15 @@ Traits spéciaux, augmentations cybernétiques, talents. Non équipables, mais m
 
 ```json
 {
-  "description": ""    // Description libre du trait
+  "rarity": "common",   // common | uncommon | rare | epic
+  "price": 0,           // Prix
+  "weightKg": 0,        // Poids en kg
+  "description": ""     // Description libre du trait
 }
 ```
+
+### Feuille personnalisée
+`templates/item/feature-sheet.hbs`
 
 ---
 

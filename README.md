@@ -27,6 +27,8 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 - **Système de dégâts mêlée** : Table de référence combinant Force et Degré de compétence
 - **Moteur balistique physique** : Dégâts et pénétration des armes à feu calculés par énergie cinétique (v1.0.12+)
 - **Statistiques de combat** : Calcul automatique des mouvements et bonus tactiques
+- **Fiches Armure, Équipement, Trait** : Items dédiés avec rareté, prix, poids et description (v1.0.16+)
+- **Schéma de corps SVG** : Fiche armure — 20 zones de localisation sur un diagramme interactif vue de face (v1.0.16+)
 
 ## 🎮 Comment Utiliser
 

@@ -2,6 +2,19 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.0.16] - 2026-03-26
+
+### Added
+- 🛡️ **Fiches Armure, Équipement, Trait** : Nouveaux types d'items avec fiches dédiées — champs communs : `rarity`, `price`, `weightKg`, `description`
+- 🎨 **Schéma de corps SVG — Fiche armure** : Diagramme interactif de 20 zones de localisation (bonhomme vue de face) avec columns d'inputs GCH (gauche) et DR (droite) positionnées autour du SVG
+- 🔢 **Numéros de zone dans les labels** : Chaque input de localisation affiche son numéro (ex : `Crâne (20)`, `Poitrine G (16)`, `Pied D (2)`…)
+
+### Changed
+- 🎨 **Style des inputs de localisation** : Harmonisé avec les inputs des champs généraux (bordure `#dcdcdc`, padding `3px 6px`, focus identique, labels en `text-transform: uppercase`)
+- 📐 **Positionnement des lignes d'input** : Pas uniforme de **32 px** (5, 37, 69, 101 … 357 px) — suppression des chevauchements et des écarts irréguliers
+
+---
+
 ## [1.0.15] - 2026-03-25
 
 ### Added

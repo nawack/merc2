@@ -227,6 +227,56 @@
           "description": "Description",
           "descriptionPlaceholder": "Description de la munition..."
         },
+        "armorSheet": {
+          "subtitle": "Fiche d'armure",
+          "namePlaceholder": "Nom de l'armure",
+          "rarity": "Rareté",
+          "rarityPlaceholder": "commun, rare, épique...",
+          "price": "Prix",
+          "pricePlaceholder": "100€",
+          "weightKg": "Poids (kg)",
+          "description": "Description",
+          "descriptionPlaceholder": "Description de l'armure...",
+          "locationsSection": "Points de blindage par localisation",
+          "sideGch": "GCH",
+          "sideDr": "DR",
+          "locations": {
+            "pied": "Pied",
+            "main": "Main",
+            "jambe": "Jambe",
+            "av_bras": "Av-bras",
+            "cuisse": "Cuisse",
+            "bras": "Bras",
+            "bas_ventre": "Bas-Ventre",
+            "abdomen": "Abdomen",
+            "poitrine": "Poitrine",
+            "cou": "Cou",
+            "visage": "Visage",
+            "crane": "Crâne"
+          }
+        },
+        "equipmentSheet": {
+          "subtitle": "Fiche d'équipement",
+          "namePlaceholder": "Nom de l'équipement",
+          "rarity": "Rareté",
+          "rarityPlaceholder": "commun, rare, épique...",
+          "price": "Prix",
+          "pricePlaceholder": "100€",
+          "weightKg": "Poids (kg)",
+          "description": "Description",
+          "descriptionPlaceholder": "Description de l'équipement..."
+        },
+        "featureSheet": {
+          "subtitle": "Fiche de capacité",
+          "namePlaceholder": "Nom de la capacité",
+          "rarity": "Rareté",
+          "rarityPlaceholder": "commun, rare, épique...",
+          "price": "Prix",
+          "pricePlaceholder": "100€",
+          "weightKg": "Poids (kg)",
+          "description": "Description",
+          "descriptionPlaceholder": "Description de la capacité..."
+        },
         "weaponSheet": {
           "subtitle": "Fiche d'arme",
           "namePlaceholder": "Nom de l'arme",

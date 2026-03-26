@@ -227,6 +227,56 @@
           "description": "Description",
           "descriptionPlaceholder": "Ammo description..."
         },
+        "armorSheet": {
+          "subtitle": "Armor Sheet",
+          "namePlaceholder": "Armor name",
+          "rarity": "Rarity",
+          "rarityPlaceholder": "common, rare, epic...",
+          "price": "Price",
+          "pricePlaceholder": "$100",
+          "weightKg": "Weight (kg)",
+          "description": "Description",
+          "descriptionPlaceholder": "Armor description...",
+          "locationsSection": "Armor Points by Location",
+          "sideGch": "L",
+          "sideDr": "R",
+          "locations": {
+            "pied": "Foot",
+            "main": "Hand",
+            "jambe": "Lower Leg",
+            "av_bras": "Forearm",
+            "cuisse": "Thigh",
+            "bras": "Upper Arm",
+            "bas_ventre": "Lower Abdomen",
+            "abdomen": "Abdomen",
+            "poitrine": "Chest",
+            "cou": "Neck",
+            "visage": "Face",
+            "crane": "Skull"
+          }
+        },
+        "equipmentSheet": {
+          "subtitle": "Equipment Sheet",
+          "namePlaceholder": "Equipment name",
+          "rarity": "Rarity",
+          "rarityPlaceholder": "common, rare, epic...",
+          "price": "Price",
+          "pricePlaceholder": "$100",
+          "weightKg": "Weight (kg)",
+          "description": "Description",
+          "descriptionPlaceholder": "Equipment description..."
+        },
+        "featureSheet": {
+          "subtitle": "Feature Sheet",
+          "namePlaceholder": "Feature name",
+          "rarity": "Rarity",
+          "rarityPlaceholder": "common, rare, epic...",
+          "price": "Price",
+          "pricePlaceholder": "$100",
+          "weightKg": "Weight (kg)",
+          "description": "Description",
+          "descriptionPlaceholder": "Feature description..."
+        },
         "weaponSheet": {
           "subtitle": "Weapon Sheet",
           "namePlaceholder": "Weapon name",

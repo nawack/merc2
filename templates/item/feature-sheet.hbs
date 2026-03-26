@@ -1,0 +1,32 @@
+<div class="{{cssClass}}" data-application-part="form">
+  <header class="feature-sheet-header">
+    <img class="feature-sheet-img" src="{{item.img}}" data-edit="img" title="{{item.name}}">
+    <div class="feature-sheet-title">
+      <input type="text" name="name" value="{{item.name}}" placeholder="{{localize "MERC.UI.items.featureSheet.namePlaceholder"}}">
+      <div class="feature-sheet-subtitle">{{localize "MERC.UI.items.featureSheet.subtitle"}}</div>
+    </div>
+  </header>
+
+  <section class="feature-sheet-body">
+
+    <div class="feature-main-grid">
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.rarity"}}</label>
+        <input type="text" name="system.rarity" value="{{item.system.rarity}}" placeholder="{{localize "MERC.UI.items.featureSheet.rarityPlaceholder"}}">
+      </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.price"}}</label>
+        <input type="text" name="system.price" value="{{item.system.price}}" placeholder="{{localize "MERC.UI.items.featureSheet.pricePlaceholder"}}">
+      </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.weightKg"}}</label>
+        <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="0.1">
+      </div>
+      <div class="feature-field ff-span3">
+        <label>{{localize "MERC.UI.items.featureSheet.description"}}</label>
+        <textarea name="system.description" rows="6" placeholder="{{localize "MERC.UI.items.featureSheet.descriptionPlaceholder"}}">{{item.system.description}}</textarea>
+      </div>
+    </div>
+
+  </section>
+</div>

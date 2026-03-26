@@ -3249,6 +3249,167 @@ class MercAmmoSheet extends foundry.applications.api.HandlebarsApplicationMixin(
 }
 
 // ============================================================
+// MercArmorSheet — Fiche d'objet Armure
+// ============================================================
+class MercArmorSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    classes: ["merc", "sheet", "item", "armor"],
+    width: 520,
+    height: 660,
+    resizable: true,
+    parts: ["form"],
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    }
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/item/armor-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const itemDoc = this.document ?? this.item;
+    if (!data.item) {
+      data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
+    }
+    const systemData = data?.item?.system ?? itemDoc?.system ?? {};
+    const defaults = {
+      rarity: "common",
+      price: 0,
+      weightKg: 0,
+      description: "",
+      locations: {
+        pied_gch: 0, pied_dr: 0,
+        main_gch: 0, main_dr: 0,
+        jambe_gch: 0, jambe_dr: 0,
+        av_bras_gch: 0, av_bras_dr: 0,
+        cuisse_gch: 0, cuisse_dr: 0,
+        bras_gch: 0, bras_dr: 0,
+        bas_ventre: 0,
+        abdomen_gch: 0, abdomen_dr: 0,
+        poitrine_gch: 0, poitrine_dr: 0,
+        cou: 0,
+        visage: 0,
+        crane: 0
+      }
+    };
+    if (!data.item) data.item = {};
+    data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+    return data;
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const itemDoc = this.document ?? this.item;
+    if (this.window?.title && itemDoc?.name) {
+      this.window.title.textContent = itemDoc.name;
+    }
+  }
+}
+
+// ============================================================
+// MercEquipmentSheet — Fiche d'objet Équipement
+// ============================================================
+class MercEquipmentSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    classes: ["merc", "sheet", "item", "equipment"],
+    width: 380,
+    height: 280,
+    resizable: true,
+    parts: ["form"],
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    }
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/item/equipment-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const itemDoc = this.document ?? this.item;
+    if (!data.item) {
+      data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
+    }
+    const systemData = data?.item?.system ?? itemDoc?.system ?? {};
+    const defaults = {
+      rarity: "common",
+      price: 0,
+      weightKg: 0,
+      description: ""
+    };
+    if (!data.item) data.item = {};
+    data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+    return data;
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const itemDoc = this.document ?? this.item;
+    if (this.window?.title && itemDoc?.name) {
+      this.window.title.textContent = itemDoc.name;
+    }
+  }
+}
+
+// ============================================================
+// MercFeatureSheet — Fiche d'objet Capacité
+// ============================================================
+class MercFeatureSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    classes: ["merc", "sheet", "item", "feature"],
+    width: 380,
+    height: 280,
+    resizable: true,
+    parts: ["form"],
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    }
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/item/feature-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const itemDoc = this.document ?? this.item;
+    if (!data.item) {
+      data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
+    }
+    const systemData = data?.item?.system ?? itemDoc?.system ?? {};
+    const defaults = {
+      rarity: "common",
+      price: 0,
+      weightKg: 0,
+      description: ""
+    };
+    if (!data.item) data.item = {};
+    data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+    return data;
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const itemDoc = this.document ?? this.item;
+    if (this.window?.title && itemDoc?.name) {
+      this.window.title.textContent = itemDoc.name;
+    }
+  }
+}
+
+// ============================================================
 // MercVehicleSheet — Fiche d'acteur Véhicule
 // ============================================================
 class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
@@ -3731,6 +3892,9 @@ Hooks.once("init", () => {
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   foundry.documents.collections.Items.registerSheet("merc", MercWeaponSheet, { types: ["weapon"], makeDefault: true });
   foundry.documents.collections.Items.registerSheet("merc", MercAmmoSheet, { types: ["ammo"], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet("merc", MercArmorSheet, { types: ["armor"], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet("merc", MercEquipmentSheet, { types: ["equipment"], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet("merc", MercFeatureSheet, { types: ["feature"], makeDefault: true });
 
   Hooks.on("preCreateCombat", (combat, data) => {
     data.flags = data.flags || {};

@@ -1067,6 +1067,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (data.actor.system.notes === undefined) {
       data.actor.system.notes = "";
     }
+    if (data.actor.system.description === undefined) {
+      data.actor.system.description = "";
+    }
     if (!data.actor.system.attributes) {
       data.actor.system.attributes = mergedAttributes || defaultAttributes;
     } else if (mergedAttributes) {
@@ -1384,6 +1387,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Compute per-weapon ballistics for the combat card display
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
+    data.isLimited = actorDoc.limited ?? false;
 
     return data;
   }
@@ -1495,6 +1499,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Handle tab switching
     const tabItems = html.querySelectorAll(".sheet-tabs .item");
+
+    // Limited access: force description tab only
+    if (this.actor?.limited) {
+      this._currentTab = "description";
+    }
 
     // Restore last active main tab
     if (this._currentTab) {
@@ -3555,7 +3564,8 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
       comMov: 0,
       fuelCap: 0,
       fuelCons: 0,
-      notes: ""
+      notes: "",
+      description: ""
     }, sys, { inplace: false, overwrite: true });
 
     // Labels for weapon skills (used in the template)
@@ -3569,6 +3579,7 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
 
     // Ballistics map for weapons tab
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
+    data.isLimited = actorDoc.limited ?? false;
 
     return data;
   }
@@ -3595,6 +3606,11 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
 
     // ── Tab handling (same pattern as MercCharacterSheet) ──
     const tabItems = html.querySelectorAll(".sheet-tabs .item");
+
+    // Limited access: force description tab only
+    if (this.actor?.limited) {
+      this._currentTab = "description";
+    }
 
     // Restore last active tab after re-render
     if (this._currentTab) {

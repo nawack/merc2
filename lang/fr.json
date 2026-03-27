@@ -442,6 +442,8 @@
       "proficiency": "Maîtrise",
       "notes": "Notes",
       "notesPlaceholder": "Notes...",
+      "description": "Description",
+      "descriptionPlaceholder": "Description...",
       "specializationPrefix": "Spécialisation :",
       "duplicateSpecialization": "Une spécialisation avec ce nom existe déjà",
       "tooltipBaseOutOfTable": "Base hors table",

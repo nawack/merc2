@@ -39,6 +39,7 @@
           <nav class="sheet-tabs tabs" data-group="primary">
             <a class="item active" data-tab="details">{{localize "MERC.Vehicle.tabs.details"}}</a>
             <a class="item" data-tab="weapons">{{localize "MERC.Vehicle.tabs.weapons"}}</a>
+            <a class="item" data-tab="description">{{localize "MERC.Labels.description"}}</a>
             <a class="item" data-tab="notes">{{localize "MERC.Vehicle.tabs.notes"}}</a>
           </nav>
         </div>
@@ -290,6 +291,13 @@
         </div>
       </div>
       -->
+    </div>
+
+    <!-- DESCRIPTION TAB -->
+    <div class="tab-content" data-tab="description">
+      <div class="notes-section">
+        <textarea class="notes-textarea" name="system.description" rows="16" placeholder="{{localize "MERC.Labels.descriptionPlaceholder"}}">{{actor.system.description}}</textarea>
+      </div>
     </div>
 
     <!-- NOTES TAB -->

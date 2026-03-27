@@ -16,7 +16,8 @@
       "comMov": 0,
       "fuelCap": 0,
       "fuelCons": 0,
-      "notes": ""
+      "notes": "",
+      "description": ""
     },
     "base": {
       "biography": {
@@ -124,7 +125,8 @@
         "marche": 0,
         "course": 0
       },
-      "notes": ""
+      "notes": "",
+      "description": ""
     }
   },
   "Item": {

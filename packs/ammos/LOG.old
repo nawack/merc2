@@ -1,3 +1,7 @@
-2026/03/26-20:57:36.381 9298 Recovering log #10
-2026/03/26-20:57:36.458 9298 Delete type=0 #10
-2026/03/26-20:57:36.458 9298 Delete type=3 #9
+2026/03/27-11:53:29.896 a94c Log #21: 0 ops saved to Table #22 OK
+2026/03/27-11:53:29.896 a94c Archiving ..\Data\systems\merc\packs\ammos/000021.log: OK
+2026/03/27-11:53:29.897 a94c Table #5: 271 entries OK
+2026/03/27-11:53:29.898 a94c Table #19: 271 entries OK
+2026/03/27-11:53:29.903 a94c Archiving ..\Data\systems\merc\packs\ammos/MANIFEST-000013: OK
+2026/03/27-11:53:29.903 a94c Archiving ..\Data\systems\merc\packs\ammos/MANIFEST-000020: OK
+2026/03/27-11:53:29.910 a94c **** Repaired leveldb ..\Data\systems\merc\packs\ammos; recovered 2 files; 84680 bytes. Some data may have been lost. ****

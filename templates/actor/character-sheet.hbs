@@ -77,6 +77,7 @@
             <a class="item" data-tab="skills">{{localize "MERC.UI.tabs.skills"}}</a>
             <a class="item" data-tab="combat">{{localize "MERC.UI.tabs.combat"}}</a>
             <a class="item" data-tab="items">{{localize "MERC.UI.tabs.items"}}</a>
+            <a class="item" data-tab="description">{{localize "MERC.Labels.description"}}</a>
             <a class="item" data-tab="notes">{{localize "MERC.Labels.notes"}}</a>
           </nav>
         </div>
@@ -814,6 +815,13 @@
       </div>
 
 
+    </div>
+
+    <!-- DESCRIPTION TAB -->
+    <div class="tab-content" data-tab="description">
+      <div class="notes-section">
+        <textarea class="notes-textarea" name="system.description" rows="12" placeholder="{{localize "MERC.Labels.descriptionPlaceholder"}}">{{actor.system.description}}</textarea>
+      </div>
     </div>
 
     <!-- NOTES TAB -->

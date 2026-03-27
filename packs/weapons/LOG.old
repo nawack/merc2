@@ -1,3 +1,7 @@
-2026/03/26-20:57:36.309 a018 Recovering log #10
-2026/03/26-20:57:36.378 a018 Delete type=0 #10
-2026/03/26-20:57:36.378 a018 Delete type=3 #9
+2026/03/27-11:53:29.858 a94c Log #21: 0 ops saved to Table #22 OK
+2026/03/27-11:53:29.859 a94c Archiving ..\Data\systems\merc\packs\weapons/000021.log: OK
+2026/03/27-11:53:29.860 a94c Table #5: 392 entries OK
+2026/03/27-11:53:29.862 a94c Table #19: 392 entries OK
+2026/03/27-11:53:29.867 a94c Archiving ..\Data\systems\merc\packs\weapons/MANIFEST-000013: OK
+2026/03/27-11:53:29.867 a94c Archiving ..\Data\systems\merc\packs\weapons/MANIFEST-000020: OK
+2026/03/27-11:53:29.874 a94c **** Repaired leveldb ..\Data\systems\merc\packs\weapons; recovered 2 files; 200760 bytes. Some data may have been lost. ****

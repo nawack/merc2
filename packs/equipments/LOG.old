@@ -1,3 +1,7 @@
-2026/03/26-20:57:36.511 974c Recovering log #10
-2026/03/26-20:57:36.566 974c Delete type=0 #10
-2026/03/26-20:57:36.567 974c Delete type=3 #9
+2026/03/27-11:53:29.960 a94c Log #21: 0 ops saved to Table #22 OK
+2026/03/27-11:53:29.960 a94c Archiving ..\Data\systems\merc\packs\equipments/000021.log: OK
+2026/03/27-11:53:29.961 a94c Table #5: 44 entries OK
+2026/03/27-11:53:29.962 a94c Table #19: 44 entries OK
+2026/03/27-11:53:29.967 a94c Archiving ..\Data\systems\merc\packs\equipments/MANIFEST-000013: OK
+2026/03/27-11:53:29.967 a94c Archiving ..\Data\systems\merc\packs\equipments/MANIFEST-000020: OK
+2026/03/27-11:53:29.974 a94c **** Repaired leveldb ..\Data\systems\merc\packs\equipments; recovered 2 files; 16312 bytes. Some data may have been lost. ****

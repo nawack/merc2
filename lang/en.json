@@ -442,6 +442,8 @@
       "proficiency": "Proficiency",
       "notes": "Notes",
       "notesPlaceholder": "Notes...",
+      "description": "Description",
+      "descriptionPlaceholder": "Description...",
       "specializationPrefix": "Specialization:",
       "duplicateSpecialization": "A specialization with this name already exists",
       "tooltipBaseOutOfTable": "Base out of table",

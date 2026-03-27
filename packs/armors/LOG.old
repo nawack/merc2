@@ -1,7 +1,1 @@
-2026/03/27-11:53:29.928 a94c Log #21: 0 ops saved to Table #22 OK
-2026/03/27-11:53:29.928 a94c Archiving ..\Data\systems\merc\packs\armors/000021.log: OK
-2026/03/27-11:53:29.929 a94c Table #5: 27 entries OK
-2026/03/27-11:53:29.930 a94c Table #19: 27 entries OK
-2026/03/27-11:53:29.935 a94c Archiving ..\Data\systems\merc\packs\armors/MANIFEST-000013: OK
-2026/03/27-11:53:29.935 a94c Archiving ..\Data\systems\merc\packs\armors/MANIFEST-000020: OK
-2026/03/27-11:53:29.942 a94c **** Repaired leveldb ..\Data\systems\merc\packs\armors; recovered 2 files; 13858 bytes. Some data may have been lost. ****
+2026/03/27-11:53:29.955 a94c Delete type=3 #1

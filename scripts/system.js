@@ -1070,6 +1070,22 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (data.actor.system.description === undefined) {
       data.actor.system.description = "";
     }
+    // Health locations defaults
+    if (!data.actor.system.health) {
+      data.actor.system.health = {};
+    }
+    const healthDefaultLocations = {
+      pied_gch: 0, pied_dr: 0, main_gch: 0, main_dr: 0,
+      jambe_gch: 0, jambe_dr: 0, av_bras_gch: 0, av_bras_dr: 0,
+      cuisse_gch: 0, cuisse_dr: 0, bras_gch: 0, bras_dr: 0,
+      bas_ventre: 0, abdomen_gch: 0, abdomen_dr: 0,
+      poitrine_gch: 0, poitrine_dr: 0, cou: 0, visage: 0, crane: 0
+    };
+    data.actor.system.health.locations = foundry.utils.mergeObject(
+      foundry.utils.deepClone(healthDefaultLocations),
+      data.actor.system.health.locations ?? {},
+      { inplace: false, overwrite: true }
+    );
     if (!data.actor.system.attributes) {
       data.actor.system.attributes = mergedAttributes || defaultAttributes;
     } else if (mergedAttributes) {
@@ -1275,27 +1291,31 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         "heavy_weapons",
         "electronic_weapons"
       ]),
-      makeGroup("aptitudes", game.i18n.localize("MERC.SkillGroups.aptitudes"), [
+      makeGroup("deplacement", game.i18n.localize("MERC.SkillGroups.deplacement"), [
         "running",
         "climbing",
         "swimming",
         "sliding",
         "air_sliding",
+        "tracking",
+        "survival"
+      ]),
+      makeGroup("conduite", game.i18n.localize("MERC.SkillGroups.conduite"), [
         "drive_wheeled",
         "drive_motorcycle",
         "drive_boats",
         "drive_tracked",
         "drive_planes",
         "drive_helicopters",
-        "riding",
-        "tracking",
+        "riding"
+      ]),
+      makeGroup("infiltration", game.i18n.localize("MERC.SkillGroups.infiltration"), [
         "stealth",
         "concealment",
         "pickpocket",
         "lockpicking",
         "tinkering",
-        "forgery",
-        "survival"
+        "forgery"
       ]),
       makeGroup("social", game.i18n.localize("MERC.SkillGroups.social"), [
         "eloquence",
@@ -1388,6 +1408,55 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     // Compute per-weapon ballistics for the combat card display
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
     data.isLimited = actorDoc.limited ?? false;
+
+    // Compute health wound groups and injury degrees
+    {
+      const pc = Number(data.actor.system.combat?.pointCorporence ?? 0);
+      const loc = data.actor.system.health.locations;
+      const calcDegree = (value, corpulance) => {
+        if (value <= 0) return 0;
+        if (corpulance <= 0) return value > 0 ? 6 : 0;
+        if (value <= corpulance) return 1;
+        if (value <= 2 * corpulance) return 2;
+        if (value <= 3 * corpulance) return 3;
+        if (value <= 4 * corpulance) return 4;
+        if (value <= 5 * corpulance) return 5;
+        return 6;
+      };
+      data.healthGroups = [
+        { key: 'jambeGch', label: 'MERC.Health.groups.jambeGch', fields: ['pied_gch', 'jambe_gch', 'cuisse_gch'] },
+        { key: 'jambeDr',  label: 'MERC.Health.groups.jambeDr',  fields: ['pied_dr',  'jambe_dr',  'cuisse_dr'] },
+        { key: 'brasGch',  label: 'MERC.Health.groups.brasGch',  fields: ['main_gch', 'av_bras_gch', 'bras_gch'] },
+        { key: 'brasDr',   label: 'MERC.Health.groups.brasDr',   fields: ['main_dr',  'av_bras_dr',  'bras_dr'] },
+        { key: 'abdomen',  label: 'MERC.Health.groups.abdomen',  fields: ['bas_ventre', 'abdomen_gch', 'abdomen_dr'] },
+        { key: 'poitrine', label: 'MERC.Health.groups.poitrine', fields: ['poitrine_gch', 'poitrine_dr'] },
+        { key: 'tete',     label: 'MERC.Health.groups.tete',     fields: ['cou', 'visage', 'crane'] },
+      ].map(g => {
+        const total = g.fields.reduce((sum, f) => sum + (Number(loc[f]) || 0), 0);
+        const degree = calcDegree(total, pc);
+        return { key: g.key, label: g.label, total, degree };
+      });
+    }
+
+    // Compute total armor points per location from all armor items owned by the actor
+    {
+      const locationKeys = [
+        'pied_gch', 'pied_dr', 'main_gch', 'main_dr',
+        'jambe_gch', 'jambe_dr', 'av_bras_gch', 'av_bras_dr',
+        'cuisse_gch', 'cuisse_dr', 'bras_gch', 'bras_dr',
+        'bas_ventre', 'abdomen_gch', 'abdomen_dr',
+        'poitrine_gch', 'poitrine_dr', 'cou', 'visage', 'crane'
+      ];
+      const armorLocations = Object.fromEntries(locationKeys.map(k => [k, 0]));
+      for (const item of actorDoc.items) {
+        if (item.type !== 'armor') continue;
+        const locs = item.system?.locations ?? {};
+        for (const key of locationKeys) {
+          armorLocations[key] += Number(locs[key]) || 0;
+        }
+      }
+      data.armorLocations = armorLocations;
+    }
 
     return data;
   }
@@ -1693,6 +1762,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
           // Dev and bonus fields are fully handled by the skill-specific listener below
           if (fieldPath.includes(".dev") || fieldPath.includes(".bonus")) return;
+
+          // Health location fields are handled by their own dedicated save listener below
+          if (fieldPath.startsWith("system.health.")) return;
           
           // Special handling for attribute current changes
           if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
@@ -2310,6 +2382,66 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       speedElements.forEach(el => {
         el.classList.remove('burden-level-1', 'burden-level-2', 'burden-level-3', 'burden-level-4');
         el.classList.add(`burden-level-${burdenLevel}`);
+      });
+    }
+
+    // Live update of health wound group totals and SVG zone colours
+    const healthInputs = html.querySelectorAll(".health-inp[data-location]");
+    if (healthInputs.length > 0) {
+      const groupFields = {
+        jambeGch: ['pied_gch', 'jambe_gch', 'cuisse_gch'],
+        jambeDr:  ['pied_dr',  'jambe_dr',  'cuisse_dr'],
+        brasGch:  ['main_gch', 'av_bras_gch', 'bras_gch'],
+        brasDr:   ['main_dr',  'av_bras_dr',  'bras_dr'],
+        abdomen:  ['bas_ventre', 'abdomen_gch', 'abdomen_dr'],
+        poitrine: ['poitrine_gch', 'poitrine_dr'],
+        tete:     ['cou', 'visage', 'crane'],
+      };
+      const woundDegree = (value, pc) => {
+        if (value <= 0) return 0;
+        if (pc <= 0) return value > 0 ? 6 : 0;
+        if (value <= pc) return 1;
+        if (value <= 2 * pc) return 2;
+        if (value <= 3 * pc) return 3;
+        if (value <= 4 * pc) return 4;
+        if (value <= 5 * pc) return 5;
+        return 6;
+      };
+      const updateHealthDisplay = () => {
+        const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
+        const loc = {};
+        html.querySelectorAll(".health-inp[data-location]").forEach(inp => {
+          loc[inp.dataset.location] = Number(inp.value) || 0;
+        });
+        Object.entries(groupFields).forEach(([groupKey, fields]) => {
+          const total = fields.reduce((sum, f) => sum + (loc[f] || 0), 0);
+          const degree = woundDegree(total, pc);
+          const totalEl = html.querySelector(`[data-group-total="${groupKey}"]`);
+          if (totalEl) totalEl.textContent = total;
+          const degreeEl = html.querySelector(`[data-group-degree="${groupKey}"]`);
+          if (degreeEl) {
+            degreeEl.textContent = `D${degree}`;
+            for (let i = 0; i <= 6; i++) degreeEl.classList.remove(`health-degree-${i}`);
+            degreeEl.classList.add(`health-degree-${degree}`);
+          }
+          html.querySelectorAll(`.health-zone[data-group="${groupKey}"]`).forEach(zone => {
+            zone.setAttribute('data-degree', degree);
+          });
+        });
+      };
+      updateHealthDisplay();
+      healthInputs.forEach(inp => inp.addEventListener("input", updateHealthDisplay));
+
+      // Dedicated save handler for health location inputs — saves without early-return
+      // so that 0 values are properly persisted to the actor database
+      healthInputs.forEach(inp => {
+        inp.addEventListener("change", async () => {
+          const fieldPath = inp.name;
+          if (!fieldPath) return;
+          const value = Number(inp.value) || 0;
+          await this.actor.update({ [fieldPath]: value }, { render: false });
+          updateHealthDisplay();
+        });
       });
     }
   }
@@ -3308,6 +3440,29 @@ class MercArmorSheet extends foundry.applications.api.HandlebarsApplicationMixin
     if (!data.item) data.item = {};
     data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
     return data;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;
+
+    const updateArmorZoneColors = () => {
+      html.querySelectorAll('.armor-inp[name^="system.locations."]').forEach(inp => {
+        const zoneName = inp.name.replace('system.locations.', '');
+        const zone = html.querySelector(`.armor-zone[data-zone="${zoneName}"]`);
+        if (!zone) return;
+        if ((Number(inp.value) || 0) > 0) {
+          zone.classList.add('has-armor');
+        } else {
+          zone.classList.remove('has-armor');
+        }
+      });
+    };
+
+    updateArmorZoneColors();
+    html.querySelectorAll('.armor-inp').forEach(inp => {
+      inp.addEventListener('input', updateArmorZoneColors);
+    });
   }
 
   _updateFrame(options) {
@@ -4551,6 +4706,38 @@ const getActorMigrationData = (actor) => {
     updateData["system.movement.course"] = computed.vitesses.course;
   }
 
+  // Ensure description field exists
+  if (system.description === undefined || system.description === null) {
+    updateData["system.description"] = "";
+  }
+
+  // Ensure health locations exist for actors created before the health feature was added
+  if (!system.health?.locations) {
+    const defaultLocations = {
+      pied_gch: 0, pied_dr: 0, main_gch: 0, main_dr: 0,
+      jambe_gch: 0, jambe_dr: 0, av_bras_gch: 0, av_bras_dr: 0,
+      cuisse_gch: 0, cuisse_dr: 0, bras_gch: 0, bras_dr: 0,
+      bas_ventre: 0, abdomen_gch: 0, abdomen_dr: 0,
+      poitrine_gch: 0, poitrine_dr: 0, cou: 0, visage: 0, crane: 0
+    };
+    for (const [key, value] of Object.entries(defaultLocations)) {
+      updateData[`system.health.locations.${key}`] = value;
+    }
+  } else {
+    const defaultLocations = {
+      pied_gch: 0, pied_dr: 0, main_gch: 0, main_dr: 0,
+      jambe_gch: 0, jambe_dr: 0, av_bras_gch: 0, av_bras_dr: 0,
+      cuisse_gch: 0, cuisse_dr: 0, bras_gch: 0, bras_dr: 0,
+      bas_ventre: 0, abdomen_gch: 0, abdomen_dr: 0,
+      poitrine_gch: 0, poitrine_dr: 0, cou: 0, visage: 0, crane: 0
+    };
+    for (const [key, value] of Object.entries(defaultLocations)) {
+      if (system.health.locations[key] === undefined) {
+        updateData[`system.health.locations.${key}`] = value;
+      }
+    }
+  }
+
   return updateData;
 };
 
@@ -4583,6 +4770,16 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
     combat: foundry.utils.deepClone(DEFAULT_COMBAT),
     movement: foundry.utils.deepClone(DEFAULT_MOVEMENT),
     notes: "",
+    description: "",
+    health: {
+      locations: {
+        pied_gch: 0, pied_dr: 0, main_gch: 0, main_dr: 0,
+        jambe_gch: 0, jambe_dr: 0, av_bras_gch: 0, av_bras_dr: 0,
+        cuisse_gch: 0, cuisse_dr: 0, bras_gch: 0, bras_dr: 0,
+        bas_ventre: 0, abdomen_gch: 0, abdomen_dr: 0,
+        poitrine_gch: 0, poitrine_dr: 0, cou: 0, visage: 0, crane: 0
+      }
+    },
     customLanguages: {},
     customSpecializations: {},
     skills: Object.fromEntries(

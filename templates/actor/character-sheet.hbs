@@ -80,6 +80,7 @@
               <a class="item" data-tab="skills">{{localize "MERC.UI.tabs.skills"}}</a>
               <a class="item" data-tab="combat">{{localize "MERC.UI.tabs.combat"}}</a>
               <a class="item" data-tab="items">{{localize "MERC.UI.tabs.items"}}</a>
+              <a class="item" data-tab="sante">{{localize "MERC.UI.tabs.health"}}</a>
               <a class="item" data-tab="description">{{localize "MERC.Labels.description"}}</a>
               <a class="item" data-tab="notes">{{localize "MERC.Labels.notes"}}</a>
             {{/if}}
@@ -819,6 +820,183 @@
       </div>
 
 
+    </div>
+
+    <!-- SANTÉ TAB -->
+    <div class="tab-content" data-tab="sante">
+      <div class="health-container">
+
+        <div class="armor-body-diagram">
+
+          <div class="armor-inputs-left">
+            <!-- Côté droit du personnage (vue de face : gauche écran) -->
+            <div class="armor-inp-row" style="--row-top: 5px">
+              <span class="armor-inp-label">Crâne (20)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "crane"}}">{{lookup armorLocations "crane"}}</span>
+              <input type="number" name="system.health.locations.crane" value="{{actor.system.health.locations.crane}}" min="0" step="1" class="armor-inp health-inp" data-location="crane">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 37px">
+              <span class="armor-inp-label">Visage (19)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "visage"}}">{{lookup armorLocations "visage"}}</span>
+              <input type="number" name="system.health.locations.visage" value="{{actor.system.health.locations.visage}}" min="0" step="1" class="armor-inp health-inp" data-location="visage">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 69px">
+              <span class="armor-inp-label">Cou (18)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "cou"}}">{{lookup armorLocations "cou"}}</span>
+              <input type="number" name="system.health.locations.cou" value="{{actor.system.health.locations.cou}}" min="0" step="1" class="armor-inp health-inp" data-location="cou">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 101px">
+              <span class="armor-inp-label">Poitrine D (17)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "poitrine_dr"}}">{{lookup armorLocations "poitrine_dr"}}</span>
+              <input type="number" name="system.health.locations.poitrine_dr" value="{{actor.system.health.locations.poitrine_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="poitrine_dr">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 133px">
+              <span class="armor-inp-label">Abdomen D (15)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "abdomen_dr"}}">{{lookup armorLocations "abdomen_dr"}}</span>
+              <input type="number" name="system.health.locations.abdomen_dr" value="{{actor.system.health.locations.abdomen_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="abdomen_dr">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 165px">
+              <span class="armor-inp-label">Bas-ventre (13)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "bas_ventre"}}">{{lookup armorLocations "bas_ventre"}}</span>
+              <input type="number" name="system.health.locations.bas_ventre" value="{{actor.system.health.locations.bas_ventre}}" min="0" step="1" class="armor-inp health-inp" data-location="bas_ventre">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 197px">
+              <span class="armor-inp-label">Bras D (12)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "bras_dr"}}">{{lookup armorLocations "bras_dr"}}</span>
+              <input type="number" name="system.health.locations.bras_dr" value="{{actor.system.health.locations.bras_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="bras_dr">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 229px">
+              <span class="armor-inp-label">Av-bras D (8)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "av_bras_dr"}}">{{lookup armorLocations "av_bras_dr"}}</span>
+              <input type="number" name="system.health.locations.av_bras_dr" value="{{actor.system.health.locations.av_bras_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="av_bras_dr">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 261px">
+              <span class="armor-inp-label">Main D (4)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "main_dr"}}">{{lookup armorLocations "main_dr"}}</span>
+              <input type="number" name="system.health.locations.main_dr" value="{{actor.system.health.locations.main_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="main_dr">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 293px">
+              <span class="armor-inp-label">Cuisse D (10)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "cuisse_dr"}}">{{lookup armorLocations "cuisse_dr"}}</span>
+              <input type="number" name="system.health.locations.cuisse_dr" value="{{actor.system.health.locations.cuisse_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="cuisse_dr">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 325px">
+              <span class="armor-inp-label">Jambe D (6)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "jambe_dr"}}">{{lookup armorLocations "jambe_dr"}}</span>
+              <input type="number" name="system.health.locations.jambe_dr" value="{{actor.system.health.locations.jambe_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="jambe_dr">
+            </div>
+            <div class="armor-inp-row" style="--row-top: 357px">
+              <span class="armor-inp-label">Pied D (2)</span>
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "pied_dr"}}">{{lookup armorLocations "pied_dr"}}</span>
+              <input type="number" name="system.health.locations.pied_dr" value="{{actor.system.health.locations.pied_dr}}" min="0" step="1" class="armor-inp health-inp" data-location="pied_dr">
+            </div>
+          </div>
+
+          <svg class="armor-body-svg" viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg">
+            <!-- Miroir horizontal : vue de face (gauche écran = bras droit du personnage) -->
+            <g transform="translate(260,0) scale(-1,1)">
+              <ellipse class="health-zone" data-zone="crane" data-group="tete" cx="130" cy="32" rx="26" ry="28"/>
+              <ellipse class="health-zone" data-zone="visage" data-group="tete" cx="130" cy="47" rx="20" ry="22"/>
+              <rect class="health-zone" data-zone="cou" data-group="tete" x="118" y="66" width="24" height="14" rx="4"/>
+              <path class="health-zone" data-zone="poitrine_gch" data-group="poitrine" d="M88,80 L130,80 L130,122 Q108,128 88,122 Z"/>
+              <path class="health-zone" data-zone="poitrine_dr" data-group="poitrine" d="M130,80 L172,80 L172,122 Q152,128 130,122 Z"/>
+              <path class="health-zone" data-zone="abdomen_gch" data-group="abdomen" d="M92,122 Q110,132 130,130 L130,154 Q110,158 92,152 Z"/>
+              <path class="health-zone" data-zone="abdomen_dr" data-group="abdomen" d="M130,130 Q150,132 168,122 L168,152 Q150,158 130,154 Z"/>
+              <path class="health-zone" data-zone="bas_ventre" data-group="abdomen" d="M96,152 Q113,162 130,162 Q147,162 164,152 L162,172 Q146,180 130,180 Q114,180 98,172 Z"/>
+              <path class="health-zone" data-zone="bras_gch" data-group="brasGch" d="M62,82 Q76,78 88,82 L88,122 Q76,126 62,120 Z"/>
+              <path class="health-zone" data-zone="bras_dr" data-group="brasDr" d="M172,82 Q184,78 198,82 L198,120 Q184,126 172,122 Z"/>
+              <path class="health-zone" data-zone="av_bras_gch" data-group="brasGch" d="M56,122 Q68,118 80,122 L80,168 Q68,172 56,168 Z"/>
+              <path class="health-zone" data-zone="av_bras_dr" data-group="brasDr" d="M180,122 Q192,118 204,122 L204,168 Q192,172 180,168 Z"/>
+              <ellipse class="health-zone" data-zone="main_gch" data-group="brasGch" cx="68" cy="182" rx="14" ry="18"/>
+              <ellipse class="health-zone" data-zone="main_dr" data-group="brasDr" cx="192" cy="182" rx="14" ry="18"/>
+              <path class="health-zone" data-zone="cuisse_gch" data-group="jambeGch" d="M100,180 Q114,176 128,178 L126,270 Q112,272 100,268 Z"/>
+              <path class="health-zone" data-zone="cuisse_dr" data-group="jambeDr" d="M132,178 Q146,176 160,180 L160,268 Q148,272 134,270 Z"/>
+              <path class="health-zone" data-zone="jambe_gch" data-group="jambeGch" d="M100,270 Q113,266 126,270 L124,360 Q112,362 100,358 Z"/>
+              <path class="health-zone" data-zone="jambe_dr" data-group="jambeDr" d="M134,270 Q147,266 160,270 L160,358 Q148,362 136,360 Z"/>
+              <path class="health-zone" data-zone="pied_gch" data-group="jambeGch" d="M98,360 Q112,356 126,360 L128,378 Q114,388 96,382 Z"/>
+              <path class="health-zone" data-zone="pied_dr" data-group="jambeDr" d="M134,360 Q148,356 162,360 L164,382 Q146,388 132,378 Z"/>
+            </g>
+            <!-- Étiquettes : x = 260 - x_original (miroir) -->
+            <text class="armor-zone-num" x="130" y="18">20</text>
+            <text class="armor-zone-num" x="130" y="45">19</text>
+            <text class="armor-zone-num" x="130" y="76">18</text>
+            <text class="armor-zone-num" x="150" y="106">16</text>
+            <text class="armor-zone-num" x="110" y="106">17</text>
+            <text class="armor-zone-num" x="150" y="144">14</text>
+            <text class="armor-zone-num" x="110" y="144">15</text>
+            <text class="armor-zone-num" x="130" y="165">13</text>
+            <text class="armor-zone-num" x="186" y="104">11</text>
+            <text class="armor-zone-num" x="74" y="104">12</text>
+            <text class="armor-zone-num" x="192" y="148">7</text>
+            <text class="armor-zone-num" x="68" y="148">8</text>
+            <text class="armor-zone-num" x="192" y="184">3</text>
+            <text class="armor-zone-num" x="68" y="184">4</text>
+            <text class="armor-zone-num" x="147" y="228">9</text>
+            <text class="armor-zone-num" x="113" y="228">10</text>
+            <text class="armor-zone-num" x="148" y="318">5</text>
+            <text class="armor-zone-num" x="112" y="318">6</text>
+            <text class="armor-zone-num" x="148" y="372">1</text>
+            <text class="armor-zone-num" x="112" y="372">2</text>
+          </svg>
+
+          <div class="armor-inputs-right">
+            <!-- Côté gauche du personnage (vue de face : droite écran) -->
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 101px">
+              <input type="number" name="system.health.locations.poitrine_gch" value="{{actor.system.health.locations.poitrine_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="poitrine_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "poitrine_gch"}}">{{lookup armorLocations "poitrine_gch"}}</span>
+              <span class="armor-inp-label">Poitrine G (16)</span>
+            </div>
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 133px">
+              <input type="number" name="system.health.locations.abdomen_gch" value="{{actor.system.health.locations.abdomen_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="abdomen_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "abdomen_gch"}}">{{lookup armorLocations "abdomen_gch"}}</span>
+              <span class="armor-inp-label">Abdomen G (14)</span>
+            </div>
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 197px">
+              <input type="number" name="system.health.locations.bras_gch" value="{{actor.system.health.locations.bras_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="bras_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "bras_gch"}}">{{lookup armorLocations "bras_gch"}}</span>
+              <span class="armor-inp-label">Bras G (11)</span>
+            </div>
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 229px">
+              <input type="number" name="system.health.locations.av_bras_gch" value="{{actor.system.health.locations.av_bras_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="av_bras_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "av_bras_gch"}}">{{lookup armorLocations "av_bras_gch"}}</span>
+              <span class="armor-inp-label">Av-bras G (7)</span>
+            </div>
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 261px">
+              <input type="number" name="system.health.locations.main_gch" value="{{actor.system.health.locations.main_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="main_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "main_gch"}}">{{lookup armorLocations "main_gch"}}</span>
+              <span class="armor-inp-label">Main G (3)</span>
+            </div>
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 293px">
+              <input type="number" name="system.health.locations.cuisse_gch" value="{{actor.system.health.locations.cuisse_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="cuisse_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "cuisse_gch"}}">{{lookup armorLocations "cuisse_gch"}}</span>
+              <span class="armor-inp-label">Cuisse G (9)</span>
+            </div>
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 325px">
+              <input type="number" name="system.health.locations.jambe_gch" value="{{actor.system.health.locations.jambe_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="jambe_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "jambe_gch"}}">{{lookup armorLocations "jambe_gch"}}</span>
+              <span class="armor-inp-label">Jambe G (5)</span>
+            </div>
+            <div class="armor-inp-row armor-inp-row--right" style="--row-top: 357px">
+              <input type="number" name="system.health.locations.pied_gch" value="{{actor.system.health.locations.pied_gch}}" min="0" step="1" class="armor-inp health-inp" data-location="pied_gch">
+              <span class="armor-pts-badge" data-armor="{{lookup armorLocations "pied_gch"}}">{{lookup armorLocations "pied_gch"}}</span>
+              <span class="armor-inp-label">Pied G (1)</span>
+            </div>
+          </div>
+
+        </div><!-- /.armor-body-diagram -->
+
+        <!-- Regroupements de blessures -->
+        <div class="health-groups-summary">
+          {{#each healthGroups}}
+          <div class="health-group-card" data-group-key="{{key}}">
+            <span class="health-group-name">{{localize label}}</span>
+            <span class="health-group-total" data-group-total="{{key}}">{{total}}</span>
+            <span class="health-degree-badge health-degree-{{degree}}" data-group-degree="{{key}}">D{{degree}}</span>
+          </div>
+          {{/each}}
+        </div>
+
+      </div>
     </div>
 
     <!-- DESCRIPTION TAB -->

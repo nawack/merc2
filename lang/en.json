@@ -74,7 +74,9 @@
     },
     "SkillGroups": {
       "combat": "Combat",
-      "aptitudes": "Aptitudes",
+      "deplacement": "Movement",
+      "conduite": "Driving",
+      "infiltration": "Infiltration",
       "social": "Social",
       "languages": "Languages",
       "knowledge": "Knowledge",
@@ -87,7 +89,8 @@
         "attributes": "Attributes",
         "skills": "Skills",
         "combat": "Combat",
-        "items": "Equipment"
+        "items": "Equipment",
+        "health": "Health"
       },
       "gender": {
         "male": "Male",
@@ -461,6 +464,20 @@
       "damageFormulaLabel": "Formula:",
       "damageDiceDetail": "Dice detail:",
       "damageTotalLabel": "Total damage: {total}"
+    },
+    "Health": {
+      "groups": {
+        "jambeGch": "Left Leg",
+        "jambeDr": "Right Leg",
+        "brasGch": "Left Arm",
+        "brasDr": "Right Arm",
+        "abdomen": "Abdomen",
+        "poitrine": "Chest",
+        "tete": "Head"
+      },
+      "woundLocations": "Wound points by location",
+      "woundGroups": "Wound groupings",
+      "degree": "Degree"
     }
   }
 }

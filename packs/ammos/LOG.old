@@ -1,1 +1,6 @@
-2026/03/27-11:53:29.923 a94c Delete type=3 #1
+2026/03/27-12:23:15.831 76a4 Log #26: 0 ops saved to Table #27 OK
+2026/03/27-12:23:15.831 76a4 Archiving ..\Data\systems\merc\packs\ammos/000026.log: OK
+2026/03/27-12:23:15.832 76a4 Table #5: 271 entries OK
+2026/03/27-12:23:15.832 76a4 Table #19: 271 entries OK
+2026/03/27-12:23:15.837 76a4 Archiving ..\Data\systems\merc\packs\ammos/MANIFEST-000025: OK
+2026/03/27-12:23:15.844 76a4 **** Repaired leveldb ..\Data\systems\merc\packs\ammos; recovered 2 files; 84680 bytes. Some data may have been lost. ****

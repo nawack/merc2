@@ -126,7 +126,31 @@
         "course": 0
       },
       "notes": "",
-      "description": ""
+      "description": "",
+      "health": {
+        "locations": {
+          "pied_gch": 0,
+          "pied_dr": 0,
+          "main_gch": 0,
+          "main_dr": 0,
+          "jambe_gch": 0,
+          "jambe_dr": 0,
+          "av_bras_gch": 0,
+          "av_bras_dr": 0,
+          "cuisse_gch": 0,
+          "cuisse_dr": 0,
+          "bras_gch": 0,
+          "bras_dr": 0,
+          "bas_ventre": 0,
+          "abdomen_gch": 0,
+          "abdomen_dr": 0,
+          "poitrine_gch": 0,
+          "poitrine_dr": 0,
+          "cou": 0,
+          "visage": 0,
+          "crane": 0
+        }
+      }
     }
   },
   "Item": {

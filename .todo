@@ -82,10 +82,11 @@ Gestion des features:
     - gérer impact des features sur les items, compétences, les dégats, etc
 
 Gerer un styeme de blessures:
-    - lister les degrés de blessures
-    - lister les localisations
+    ✔ lister les degrés de blessures @done(26-03-27 16:22)
+    ✔ lister les localisations @done(26-03-27 16:22)
     ✔ réaliser un svg pour les localisations @done(26-03-26 20:44)
-    - afficher les degrés de blessures par localisation sur svg
+    ✔ afficher les degrés de blessures par localisation sur svg @done(26-03-27 16:22)
+    - gérer les conséquences des blessures (malus, etc)
 
 Issues:
     ✔ liste des spécialités dans les compétences pour les armes (https://github.com/nawack/merc2/issues/7) @done(26-02-05 14:42)

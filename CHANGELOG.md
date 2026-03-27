@@ -1,6 +1,26 @@
-# Changelog
+﻿# Changelog
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
+
+## [1.0.17] - 2026-03-27
+
+### Added
+- 🟥 **Onglet Santé — points d’armure par localisation** : L’onglet Santé de la fiche personnage affiche désormais, pour chaque localisation, le total de points d’armure cumulés depuis tous les items d’armure équipés (badge bleu 🛡️ affiché entre le label et l’input ; invisible si 0)
+- 🔵 **Fiche armure — code couleur SVG** : Les zones du diagramme SVG sont grisées lorsque la localisation n’a aucun point d’armure, et retrouvent la couleur bleue standard dès qu’une valeur > 0 est saisie (mise à jour en direct via `_onRender`)
+
+### Changed
+- 🔄 **Vue de face sur les SVG** : Les silhouettes du diagramme corps (fiche armure **et** onglet Santé) sont désormais affichées vue de face — miroir horizontal via `<g transform="translate(260,0) scale(-1,1)">`. Les panneaux d’inputs ont été inversés en conséquence (côté droit du personnage à gauche écran, côté gauche à droite)
+- 🔢 **Numéros de zone — miroir** : Les étiquettes de numéros dans le SVG suivent le miroir (16↔4 et 17 échangés, 14/15, 11/12, 7/8, 3/4, 9/10, 5/6, 1/2)
+- 🗂️ **Onglet Compétences — éclatement du groupe « Aptitudes »** : Le groupe *Aptitudes* (20 compétences) est remplacé par 3 sous-onglets thématiques :
+  - 🏃 **Déplacement** (7) — Course, Escalade, Natation, Glisse, Glisse air, Pistage, Survie
+  - 🚗 **Conduite** (7) — Conduite vehi. à roues, Conduite cycle moteur, Conduite bateaux, Conduite chenillés, Conduite avions, Conduite hélicoptères, Équitation
+  - 🥷 **Infiltration** (6) — Discrétion, Dissimulation, Pick-pocket, Crochetage, Bricolage, Falsification
+
+### Fixed
+- 🐛 **Réinitialisation des champs de blessure lors de la mise à jour des `pointsCorporence`** : Les inputs de localisation de santé étaient réinitialisés à 0 quand un attribut déclenchait une mise à jour des stats de combat. Corrigé : les champs `system.health.*` sont exclus du listener générique `saveFieldOnChange` et traités par un listener dédié qui sauvegarde avec `render: false` (sans comparaison de valeur courante)
+- 🐛 **Santé à zéro sur acteurs pré-existants** : Les acteurs créés avant la fonctionnalité de santé n’avaient pas `system.health` en base de données ; la migration `getActorMigrationData` et le hook `preCreateActor` ont été complétés pour inclure toutes les localisations par défaut
+
+---
 
 ## [1.0.16] - 2026-03-26
 

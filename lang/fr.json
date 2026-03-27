@@ -74,7 +74,9 @@
     },
     "SkillGroups": {
       "combat": "Combat",
-      "aptitudes": "Aptitudes",
+      "deplacement": "Déplacement",
+      "conduite": "Conduite",
+      "infiltration": "Infiltration",
       "social": "Social",
       "languages": "Langues",
       "knowledge": "Connaissances",
@@ -87,7 +89,8 @@
         "attributes": "Attributs",
         "skills": "Compétences",
         "combat": "Combat",
-        "items": "Équipements"
+        "items": "Équipements",
+        "health": "Santé"
       },
       "gender": {
         "male": "Homme",
@@ -461,6 +464,20 @@
       "damageFormulaLabel": "Formule :",
       "damageDiceDetail": "Détail des dés lancés :",
       "damageTotalLabel": "Total des dégâts : {total}"
+    },
+    "Health": {
+      "groups": {
+        "jambeGch": "Jambe Gauche",
+        "jambeDr": "Jambe Droite",
+        "brasGch": "Bras Gauche",
+        "brasDr": "Bras Droit",
+        "abdomen": "Abdomen",
+        "poitrine": "Poitrine",
+        "tete": "Tête"
+      },
+      "woundLocations": "Points de blessure par localisation",
+      "woundGroups": "Regroupements de blessures",
+      "degree": "Dégré"
     }
   }
 }

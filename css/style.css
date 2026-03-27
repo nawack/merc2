@@ -2987,14 +2987,19 @@
 }
 
 .armor-zone {
-  fill: #c8d8e8;
-  stroke: #5a7a9a;
+  fill: #e0e0e0;
+  stroke: #b0b0b0;
   stroke-width: 1.2;
   transition: fill 0.15s;
   cursor: default;
 }
 
-.armor-zone:hover {
+.armor-zone.has-armor {
+  fill: #c8d8e8;
+  stroke: #5a7a9a;
+}
+
+.armor-zone.has-armor:hover {
   fill: #8ab4d4;
 }
 
@@ -3073,6 +3078,115 @@
   border-color: #666;
   box-shadow: 0 0 3px rgba(100, 100, 100, 0.3);
 }
+
+/* ==========================================
+   HEALTH / SANTÉ TAB
+   ========================================== */
+
+.health-container {
+  padding: 4px 0;
+}
+
+/* Health SVG body zones – red/pink tones (vs blue for armour) */
+.health-zone {
+  fill: #d4edda;
+  stroke: #5a9a6a;
+  stroke-width: 1.2;
+  transition: fill 0.2s, stroke 0.2s;
+  cursor: default;
+}
+
+.health-zone:hover {
+  filter: brightness(0.88);
+}
+
+/* Zone colour by wound degree (set via JS data-degree attribute) */
+.health-zone[data-degree="0"] { fill: #d4edda; stroke: #5a9a6a; }
+.health-zone[data-degree="1"] { fill: #fff3cd; stroke: #c9a000; }
+.health-zone[data-degree="2"] { fill: #ffe082; stroke: #d48000; }
+.health-zone[data-degree="3"] { fill: #ffb74d; stroke: #b85e00; }
+.health-zone[data-degree="4"] { fill: #ff8a65; stroke: #a03000; }
+.health-zone[data-degree="5"] { fill: #ef5350; stroke: #8b0000; }
+.health-zone[data-degree="6"] { fill: #b71c1c; stroke: #4a0000; }
+
+/* Wound group summary row */
+.health-groups-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.armor-pts-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 9px;
+  font-weight: bold;
+  background: #4a7a9a;
+  color: white;
+  border-radius: 3px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.armor-pts-badge[data-armor="0"] {
+  visibility: hidden;
+}
+
+.health-group-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 8px;
+  min-width: 66px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.health-group-name {
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #555;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.health-group-total {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  line-height: 1;
+}
+
+/* Degree badge colours */
+.health-degree-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 18px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  padding: 0 4px;
+}
+
+.health-degree-0 { background: #8d9dab; }
+.health-degree-1 { background: #5a9a3a; }
+.health-degree-2 { background: #c9a000; }
+.health-degree-3 { background: #d46f00; }
+.health-degree-4 { background: #c43000; }
+.health-degree-5 { background: #9b1a1a; }
+.health-degree-6 { background: #3d0000; }
 
 /* ==========================================
    EQUIPMENT SHEET

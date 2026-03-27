@@ -79,6 +79,10 @@ FoundryVTT-MercenarySystem/
 - `MercVehicleSheet` : feuille véhicule avec armes et jets Fire Control
 - `MercWeaponSheet` : feuille item arme
 - `MercAmmoSheet` : feuille item munition
+- `MercArmorSheet` : feuille item armure (SVG corps interactif, code couleur live)
+- `MercEquipmentSheet` : feuille item équipement
+- `MercFeatureSheet` : feuille item trait/capacité
+- `MercAmmoSheet` : feuille item munition
 
 ### `templates/actor/character-sheet.hbs`
 **Rôle** : Template HTML de la feuille de personnage (character, npc)

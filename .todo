@@ -74,7 +74,7 @@ Gestion des armes:
 Gestion des équipements & armures:
     ✔ creer la fiche d'équipement ==> (poids, prix, rareté, etc) @done(26-03-26 20:32)
     ✔ creer la fiche d'armures ==> besoin liste de types d'armures et ce qui les caractérise (localisation de protection, valeur de protection, etc) @done(26-03-26 20:32)
-    - gestion du poids de l'équipement et de l'armure dans la charge totale
+    ✔ gestion du poids de l'équipement et de l'armure dans la charge totale @done(26-03-27 17:51)
 
 Gestion des features:
     - creer fiche features

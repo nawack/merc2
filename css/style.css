@@ -3138,6 +3138,25 @@
   visibility: hidden;
 }
 
+.wound-degree-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 16px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: bold;
+  color: white;
+  padding: 0 3px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.wound-degree-badge.health-degree-0 {
+  visibility: hidden;
+}
+
 .health-group-card {
   display: flex;
   flex-direction: column;

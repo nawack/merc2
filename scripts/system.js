@@ -1409,7 +1409,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
     data.isLimited = actorDoc.limited ?? false;
 
-    // Compute health wound groups and injury degrees
+    // Compute health wound degrees per individual location
     {
       const pc = Number(data.actor.system.combat?.pointCorporence ?? 0);
       const loc = data.actor.system.health.locations;
@@ -1423,19 +1423,33 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         if (value <= 5 * corpulance) return 5;
         return 6;
       };
-      data.healthGroups = [
-        { key: 'jambeGch', label: 'MERC.Health.groups.jambeGch', fields: ['pied_gch', 'jambe_gch', 'cuisse_gch'] },
-        { key: 'jambeDr',  label: 'MERC.Health.groups.jambeDr',  fields: ['pied_dr',  'jambe_dr',  'cuisse_dr'] },
-        { key: 'brasGch',  label: 'MERC.Health.groups.brasGch',  fields: ['main_gch', 'av_bras_gch', 'bras_gch'] },
-        { key: 'brasDr',   label: 'MERC.Health.groups.brasDr',   fields: ['main_dr',  'av_bras_dr',  'bras_dr'] },
-        { key: 'abdomen',  label: 'MERC.Health.groups.abdomen',  fields: ['bas_ventre', 'abdomen_gch', 'abdomen_dr'] },
-        { key: 'poitrine', label: 'MERC.Health.groups.poitrine', fields: ['poitrine_gch', 'poitrine_dr'] },
-        { key: 'tete',     label: 'MERC.Health.groups.tete',     fields: ['cou', 'visage', 'crane'] },
-      ].map(g => {
-        const total = g.fields.reduce((sum, f) => sum + (Number(loc[f]) || 0), 0);
-        const degree = calcDegree(total, pc);
-        return { key: g.key, label: g.label, total, degree };
+      data.healthLocDegrees = [
+        { key: 'crane',        name: 'Crâne' },
+        { key: 'visage',       name: 'Visage' },
+        { key: 'cou',          name: 'Cou' },
+        { key: 'poitrine_dr',  name: 'Poitrine D' },
+        { key: 'poitrine_gch', name: 'Poitrine G' },
+        { key: 'abdomen_dr',   name: 'Abdomen D' },
+        { key: 'abdomen_gch',  name: 'Abdomen G' },
+        { key: 'bas_ventre',   name: 'Bas-ventre' },
+        { key: 'bras_dr',      name: 'Bras D' },
+        { key: 'bras_gch',     name: 'Bras G' },
+        { key: 'av_bras_dr',   name: 'Av-bras D' },
+        { key: 'av_bras_gch',  name: 'Av-bras G' },
+        { key: 'main_dr',      name: 'Main D' },
+        { key: 'main_gch',     name: 'Main G' },
+        { key: 'cuisse_dr',    name: 'Cuisse D' },
+        { key: 'cuisse_gch',   name: 'Cuisse G' },
+        { key: 'jambe_dr',     name: 'Jambe D' },
+        { key: 'jambe_gch',    name: 'Jambe G' },
+        { key: 'pied_dr',      name: 'Pied D' },
+        { key: 'pied_gch',     name: 'Pied G' },
+      ].map(l => {
+        const value = Number(loc[l.key]) || 0;
+        const degree = calcDegree(value, pc);
+        return { key: l.key, name: l.name, value, degree };
       });
+      data.healthLocDegreeValues = Object.fromEntries(data.healthLocDegrees.map(l => [l.key, l.degree]));
     }
 
     // Compute total armor points per location from all armor items owned by the actor
@@ -2385,18 +2399,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     }
 
-    // Live update of health wound group totals and SVG zone colours
+    // Live update of health wound degrees per location and SVG zone colours
     const healthInputs = html.querySelectorAll(".health-inp[data-location]");
     if (healthInputs.length > 0) {
-      const groupFields = {
-        jambeGch: ['pied_gch', 'jambe_gch', 'cuisse_gch'],
-        jambeDr:  ['pied_dr',  'jambe_dr',  'cuisse_dr'],
-        brasGch:  ['main_gch', 'av_bras_gch', 'bras_gch'],
-        brasDr:   ['main_dr',  'av_bras_dr',  'bras_dr'],
-        abdomen:  ['bas_ventre', 'abdomen_gch', 'abdomen_dr'],
-        poitrine: ['poitrine_gch', 'poitrine_dr'],
-        tete:     ['cou', 'visage', 'crane'],
-      };
       const woundDegree = (value, pc) => {
         if (value <= 0) return 0;
         if (pc <= 0) return value > 0 ? 6 : 0;
@@ -2409,24 +2414,20 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       };
       const updateHealthDisplay = () => {
         const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
-        const loc = {};
         html.querySelectorAll(".health-inp[data-location]").forEach(inp => {
-          loc[inp.dataset.location] = Number(inp.value) || 0;
-        });
-        Object.entries(groupFields).forEach(([groupKey, fields]) => {
-          const total = fields.reduce((sum, f) => sum + (loc[f] || 0), 0);
-          const degree = woundDegree(total, pc);
-          const totalEl = html.querySelector(`[data-group-total="${groupKey}"]`);
-          if (totalEl) totalEl.textContent = total;
-          const degreeEl = html.querySelector(`[data-group-degree="${groupKey}"]`);
+          const locKey = inp.dataset.location;
+          const value = Number(inp.value) || 0;
+          const degree = woundDegree(value, pc);
+          const degreeEl = html.querySelector(`[data-loc-degree="${locKey}"]`);
           if (degreeEl) {
             degreeEl.textContent = `D${degree}`;
             for (let i = 0; i <= 6; i++) degreeEl.classList.remove(`health-degree-${i}`);
             degreeEl.classList.add(`health-degree-${degree}`);
           }
-          html.querySelectorAll(`.health-zone[data-group="${groupKey}"]`).forEach(zone => {
-            zone.setAttribute('data-degree', degree);
-          });
+          const valueEl = html.querySelector(`[data-loc-value="${locKey}"]`);
+          if (valueEl) valueEl.textContent = value;
+          const zone = html.querySelector(`.health-zone[data-zone="${locKey}"]`);
+          if (zone) zone.setAttribute('data-degree', degree);
         });
       };
       updateHealthDisplay();

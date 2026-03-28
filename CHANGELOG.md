@@ -286,15 +286,42 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 
 ## [Planifié pour futures versions]
 
-### À venir
-- 📋 Gestion des objets améliorée
-- 📋 Système de statuts et conditions
-- 📋 Amélioration du système de degrés
-- 📋 Module d'images de portrait préselectionnées
-- 📋 Système de faveurs/réputation
-- 📋 Macros prédéfinies
-- 📋 Fiche de campagne
-- 📋 Support des tokens
+### Attributs & Compétences
+- 📋 Gestion des attributs secondaires (Apparence, Taille, Poids, Endurance, Chance) — valeurs origine et actuelle
+
+### Charge & Déplacement
+- 📋 Revoir la formule de malus de déplacement selon le type (course, marche, reptation)
+- 📋 Prise en compte du poids des munitions dans la charge totale
+
+### Armes & Munitions
+- 📋 Automatisation de la mise à jour du nombre de munitions (tir, rechargement)
+- 📋 Supprimer la possibilité de roller les dégâts pour armes blanches dans la section bonus (forcément lié à une arme)
+- 📋 Gestion des armes autres qu'à feu
+- 📋 Dispersion des munitions (en cas de réussite ou d'échec)
+- 📋 Gestion des dispersions de grenades et explosifs
+
+### Système de Difficultés & Coches
+- 📋 Liste des actions de corps (qui définissent les difficultés)
+- 📋 Tableau de difficulté (distance, localisation, type d'action, etc.)
+- 📋 Ajouter les difficultés lors d'un lancement de dés
+- 📋 Validation de gain de développement (coches) en cas de réussite
+- 📋 Calcul de la marge de réussite / échec
+- 📋 Conséquences en cas de réussite ou d'échec (gain de dev, dispersion, etc.)
+
+### Blessures
+- 📋 Gérer les conséquences des blessures (malus, etc.)
+
+### Features
+- 📋 Créer la fiche Features
+- 📋 Pouvoir ajouter des features à des items
+- 📋 Gérer l'impact des features sur les items, compétences et dégâts
+
+### Contrôles & Validation
+- 📋 Contrôles de valeurs des champs (pas de valeur négative pour les dev, attributs entre 1 et 10, etc.)
+- 📋 Validation du format des dégâts (regex : `^(0|[1-9](?:[dD]6(?:\+[12])?)?)$`)
+
+### Issues connues
+- 📋 Contrôle des valeurs des bonus de Discrétion et Dissimulation ([#11](https://github.com/nawack/merc2/issues/11))
 
 ---
 

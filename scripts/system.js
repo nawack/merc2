@@ -221,8 +221,8 @@ const INDEX_TO_DEGREE = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 
 // Combat & Movement Tables
 // These correspond to attribute indices from -11 to 20
 const STATS_TABLES = {
-  taille: [49, 57, 65, 73, 81, 89, 97, 105, 113, 121, 129, 137, 145, 153, 161, 169, 177, 186, 195, 206, 219, 235, 253, 275, 301, 332, 367, 408, 455, 509, 569, 600],
-  poids: [1.6, 2.5, 3.7, 5.3, 7, 9, 12, 15, 19, 24, 29, 34, 41, 48, 56, 64, 74, 85, 99, 116, 140, 172, 216, 277, 363, 485, 658, 904, 1253, 1749, 2449, 3000],
+  taille: [42, 49, 57, 65, 73, 81, 89, 97, 105, 113, 121, 129, 137, 145, 153, 161, 169, 177, 186, 195, 206, 219, 235, 253, 275, 301, 332, 367, 408, 455, 509, 569],
+  poids: [1, 1.6, 2.5, 3.7, 5.3, 7, 9, 12, 15, 19, 24, 29, 34, 41, 48, 56, 64, 74, 85, 99, 116, 140, 172, 216, 277, 363, 485, 658, 904, 1253, 1749, 2449],
   reptation: [0.5, 1, 1, 1, 1, 1, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2, 2, 2.5, 2.5, 2.5, 3, 3, 3.5, 3.5, 4, 4.5, 4.5, 5, 5.5, 6.5],
   marche: [2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 10, 11, 12, 13, 15, 16, 18, 20, 23, 25],
   course: [10, 11, 13, 15, 16, 18, 19, 21, 23, 24, 26, 27, 29, 31, 32, 34, 35, 37, 39, 41, 44, 47, 51, 55, 60, 66, 73, 82, 91, 102, 114, 128],
@@ -1566,6 +1566,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Initialize portrait selection with Foundry FilePicker
     initPortraitSelection(this.actor, html);
+
+    // Save actor name on blur
+    const nameInput = html.querySelector('input[name="name"]');
+    if (nameInput) {
+      nameInput.addEventListener("blur", async () => {
+        const value = nameInput.value.trim();
+        if (!value || value === this.actor.name) return;
+        await this.actor.update({ name: value });
+      });
+    }
 
     // Drag & Drop visual feedback: highlight weapon cards when dragging over them
     html.querySelectorAll(".item-card[data-item-id]").forEach(card => {
@@ -3915,6 +3925,16 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
 
     // Portrait selection
     initPortraitSelection(this.actor, html);
+
+    // Save actor name on blur
+    const nameInput = html.querySelector('input[name="name"]');
+    if (nameInput) {
+      nameInput.addEventListener("blur", async () => {
+        const value = nameInput.value.trim();
+        if (!value || value === this.actor.name) return;
+        await this.actor.update({ name: value });
+      });
+    }
 
     // Drag & Drop highlight on weapon cards
     html.querySelectorAll(".item-card[data-item-id]").forEach(card => {

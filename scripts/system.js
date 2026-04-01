@@ -1838,6 +1838,20 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     }
 
+    // Dedicated blur listeners for description and notes textareas.
+    // html.querySelector("form") returns null because DocumentSheetV2 sets tag:"form",
+    // so this.element IS already the <form> — nested forms don't exist.
+    for (const fieldName of ["system.description", "system.notes"]) {
+      const textarea = html.querySelector(`textarea[name="${fieldName}"]`);
+      if (!textarea) continue;
+      textarea.addEventListener("blur", async () => {
+        const value = textarea.value;
+        const current = foundry.utils.getProperty(this.actor, fieldName);
+        if (value === current) return;
+        await this.actor.update({ [fieldName]: value }, { render: false });
+      });
+    }
+
     // Synchronize attribute origin to current, and perception to sub-attributes
     const attributeOriginInputs = html.querySelectorAll('input[name*="system.attributes."][name*=".origin"]');
     attributeOriginInputs.forEach(input => {
@@ -1896,6 +1910,30 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     await handleBioPhysicalChange(heightInput, "system.biography.height");
     await handleBioPhysicalChange(weightInput, "system.biography.weight");
+
+    // Save biography text fields (age, origin) on blur
+    for (const fieldName of ["system.biography.age", "system.biography.origin"]) {
+      const input = html.querySelector(`input[name="${fieldName}"]`);
+      if (!input) continue;
+      input.addEventListener("blur", async () => {
+        const value = input.value;
+        const current = foundry.utils.getProperty(this.actor, fieldName);
+        if (value === current) return;
+        await this.actor.update({ [fieldName]: value }, { render: false });
+      });
+    }
+
+    // Save biography number fields (year, renown) on change
+    for (const fieldName of ["system.biography.year", "system.biography.renown"]) {
+      const input = html.querySelector(`input[name="${fieldName}"]`);
+      if (!input) continue;
+      input.addEventListener("change", async () => {
+        const value = Number(input.value) || 0;
+        const current = foundry.utils.getProperty(this.actor, fieldName);
+        if (value === current) return;
+        await this.actor.update({ [fieldName]: value }, { render: false });
+      });
+    }
 
     // Make skill names clickable to roll
     const skillNames = html.querySelectorAll(".skill-name");
@@ -3976,6 +4014,18 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
         if (item) await this.rollWeaponDamage(item, rollFormula);
       });
     });
+
+    // Dedicated blur listeners for description and notes textareas
+    for (const fieldName of ["system.description", "system.notes"]) {
+      const textarea = html.querySelector(`textarea[name="${fieldName}"]`);
+      if (!textarea) continue;
+      textarea.addEventListener("blur", async () => {
+        const value = textarea.value;
+        const current = foundry.utils.getProperty(this.actor, fieldName);
+        if (value === current) return;
+        await this.actor.update({ [fieldName]: value }, { render: false });
+      });
+    }
   }
 
   async _onDropItem(event, item) {

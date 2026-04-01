@@ -92,7 +92,7 @@ Issues:
     ✔ liste des spécialités dans les compétences pour les armes (https://github.com/nawack/merc2/issues/7) @done(26-02-05 14:42)
     ✔ fautes d'orthographes (https://github.com/nawack/merc2/issues/10) @done(26-02-05 13:17)
     ✔ Controle des valeurs des bonus de discretion et dissimulation (https://github.com/nawack/merc2/issues/2) @done(26-02-05 13:17)
-    - Controle des valeurs des bonus de discretion et dissimulation (https://github.com/nawack/merc2/issues/11)
+    ✔ Controle des valeurs des bonus de discretion et dissimulation (https://github.com/nawack/merc2/issues/11) @done(26-04-01 22:33)
 
 Controle de la réaction (https://github.com/nawack/merc2/issues/9):
     ✔ ajouter la base de réaction au dev de réaction pour le calcule du degré @done(26-02-05 15:21)

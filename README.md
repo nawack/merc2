@@ -28,6 +28,8 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 - **Moteur balistique physique** : Dégâts et pénétration des armes à feu calculés par énergie cinétique (v1.0.12+)
 - **Statistiques de combat** : Calcul automatique des mouvements et bonus tactiques
 - **Fiches Armure, Équipement, Trait** : Items dédiés avec rareté, prix, poids et description (v1.0.16+)
+- **Accessoires d'armes (feature)** : Lunettes, silencieux, pointeurs et autres accessoires avec bonus de tir par portée, réduction de bruit et augmentation de longueur. Attachables directement à une arme via drag & drop. Bonus affichés dans l'onglet Combat (v1.1.0+)
+- **Compendium Accessoires** : 29 entrées (visées rudimentaires, lunettes jour/IL/thermiques, addons, silencieux civils et militaires) organisées en dossiers (v1.1.0+)
 - **Schéma de corps SVG** : Fiche armure — 20 zones de localisation sur un diagramme interactif vue de face, code couleur (gris = non protégé, bleu = protégé) mis à jour en direct (v1.0.16+)
 - **Onglet Santé** : Suivi des points de blessure par localisation avec degrés de blessure, regroupements corporels et affichage des points d’armure cumulés depuis les items équipés (v1.0.17+)
 - **Onglet Combat mêlée** : Les armes de mêlée/taille/lancer affichent dégâts + formule de base compétence à la place du tableau munitions (v1.0.16+)

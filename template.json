@@ -243,10 +243,19 @@
       "description": ""
     },
     "feature": {
+      "featureType": "",
+      "bonusShortRange": 0,
+      "bonusMediumRange": 0,
+      "bonusLongRange": 0,
+      "bonusExtremeRange": 0,
+      "noiseReduction": 0,
+      "lateralNoiseReduction": "",
+      "lengthIncreaseCm": 0,
       "rarity": "common",
       "price": 0,
       "weightKg": 0,
-      "description": ""
+      "description": "",
+      "parentWeaponId": ""
     }
   }
 }

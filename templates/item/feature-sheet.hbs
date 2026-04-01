@@ -9,7 +9,16 @@
 
   <section class="feature-sheet-body">
 
+    <!-- Informations générales -->
     <div class="feature-main-grid">
+      <div class="feature-field ff-span2">
+        <label>{{localize "MERC.UI.items.featureSheet.featureType"}}</label>
+        <input type="text" name="system.featureType" value="{{item.system.featureType}}" placeholder="{{localize "MERC.UI.items.featureSheet.featureTypePlaceholder"}}">
+      </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.weightKg"}}</label>
+        <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="0.1">
+      </div>
       <div class="feature-field">
         <label>{{localize "MERC.UI.items.featureSheet.rarity"}}</label>
         <input type="text" name="system.rarity" value="{{item.system.rarity}}" placeholder="{{localize "MERC.UI.items.featureSheet.rarityPlaceholder"}}">
@@ -18,13 +27,51 @@
         <label>{{localize "MERC.UI.items.featureSheet.price"}}</label>
         <input type="text" name="system.price" value="{{item.system.price}}" placeholder="{{localize "MERC.UI.items.featureSheet.pricePlaceholder"}}">
       </div>
+    </div>
+
+    <!-- Bonus de tir par portée -->
+    <div class="feature-section-title">{{localize "MERC.UI.items.featureSheet.sectionBonusTir"}}</div>
+    <div class="feature-bonus-grid">
       <div class="feature-field">
-        <label>{{localize "MERC.UI.items.featureSheet.weightKg"}}</label>
-        <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="0.1">
+        <label>{{localize "MERC.UI.items.featureSheet.bonusShortRange"}}</label>
+        <input type="number" name="system.bonusShortRange" value="{{item.system.bonusShortRange}}" step="1">
       </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.bonusMediumRange"}}</label>
+        <input type="number" name="system.bonusMediumRange" value="{{item.system.bonusMediumRange}}" step="1">
+      </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.bonusLongRange"}}</label>
+        <input type="number" name="system.bonusLongRange" value="{{item.system.bonusLongRange}}" step="1">
+      </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.bonusExtremeRange"}}</label>
+        <input type="number" name="system.bonusExtremeRange" value="{{item.system.bonusExtremeRange}}" step="1">
+      </div>
+    </div>
+
+    <!-- Acoustique -->
+    <div class="feature-section-title">{{localize "MERC.UI.items.featureSheet.sectionNoise"}}</div>
+    <div class="feature-main-grid">
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.noiseReduction"}}</label>
+        <input type="number" name="system.noiseReduction" value="{{item.system.noiseReduction}}" step="1">
+      </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.lateralNoiseReduction"}}</label>
+        <input type="text" name="system.lateralNoiseReduction" value="{{item.system.lateralNoiseReduction}}" placeholder="{{localize "MERC.UI.items.featureSheet.lateralNoiseReductionPlaceholder"}}">
+      </div>
+      <div class="feature-field">
+        <label>{{localize "MERC.UI.items.featureSheet.lengthIncreaseCm"}}</label>
+        <input type="number" name="system.lengthIncreaseCm" value="{{item.system.lengthIncreaseCm}}" min="0" step="0.5">
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="feature-main-grid">
       <div class="feature-field ff-span3">
         <label>{{localize "MERC.UI.items.featureSheet.description"}}</label>
-        <textarea name="system.description" rows="6" placeholder="{{localize "MERC.UI.items.featureSheet.descriptionPlaceholder"}}">{{item.system.description}}</textarea>
+        <textarea name="system.description" rows="5" placeholder="{{localize "MERC.UI.items.featureSheet.descriptionPlaceholder"}}">{{item.system.description}}</textarea>
       </div>
     </div>
 

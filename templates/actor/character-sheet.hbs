@@ -751,6 +751,30 @@
 
             </div>
 
+            {{!-- Accessoires (features) attachés à cette arme --}}
+            {{#with (lookup ../weaponBallisticsMap item._id) as |wb|}}
+            {{#if wb.features}}
+            <div class="combat-weapon-features">
+              <div class="combat-weapon-features-title">{{localize "MERC.UI.combat.featuresTitle"}}</div>
+              {{#each wb.features as |feat|}}
+              <div class="combat-feature-row">
+                <span class="cfr-name">{{feat.name}}</span>
+                {{#if feat.featureType}}<span class="cfr-type">{{feat.featureType}}</span>{{/if}}
+                <div class="cfr-bonuses">
+                  {{#if feat.bonusShortRange}}<span class="cfr-tag">C: +{{feat.bonusShortRange}}</span>{{/if}}
+                  {{#if feat.bonusMediumRange}}<span class="cfr-tag">M: +{{feat.bonusMediumRange}}</span>{{/if}}
+                  {{#if feat.bonusLongRange}}<span class="cfr-tag">L: +{{feat.bonusLongRange}}</span>{{/if}}
+                  {{#if feat.bonusExtremeRange}}<span class="cfr-tag">X: +{{feat.bonusExtremeRange}}</span>{{/if}}
+                  {{#if feat.noiseReduction}}<span class="cfr-tag cfr-noise">🔇 {{feat.noiseReduction}}</span>{{/if}}
+                  {{#if feat.lateralNoiseReduction}}<span class="cfr-tag cfr-noise">↔ {{feat.lateralNoiseReduction}}</span>{{/if}}
+                  {{#if feat.lengthIncreaseCm}}<span class="cfr-tag cfr-len">+{{feat.lengthIncreaseCm}}cm</span>{{/if}}
+                </div>
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
+            {{/with}}
+
           </div>
         </div>
         {{/each}}

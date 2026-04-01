@@ -222,5 +222,38 @@
     </div>
     {{/if}}
 
+    <!-- Section Accessoires (features) -->
+    <div class="weapon-feature-section">
+      <div class="weapon-feature-header">{{localize "MERC.UI.items.weaponSheet.featureSection"}}</div>
+      <div class="weapon-feature-list">
+        {{#if featureItems}}
+          {{#each featureItems as |feat|}}
+          <div class="weapon-feature-item item" data-item-id="{{feat._id}}">
+            <div class="weapon-feature-info">
+              <span class="weapon-feature-name">{{feat.name}}</span>
+              {{#if feat.system.featureType}}<span class="weapon-feature-type">{{feat.system.featureType}}</span>{{/if}}
+              <div class="weapon-feature-bonuses">
+                {{#if feat.system.bonusShortRange}}<span class="wfb-tag">C: +{{feat.system.bonusShortRange}}</span>{{/if}}
+                {{#if feat.system.bonusMediumRange}}<span class="wfb-tag">M: +{{feat.system.bonusMediumRange}}</span>{{/if}}
+                {{#if feat.system.bonusLongRange}}<span class="wfb-tag">L: +{{feat.system.bonusLongRange}}</span>{{/if}}
+                {{#if feat.system.bonusExtremeRange}}<span class="wfb-tag">X: +{{feat.system.bonusExtremeRange}}</span>{{/if}}
+                {{#if feat.system.noiseReduction}}<span class="wfb-tag wfb-noise">🔇 {{feat.system.noiseReduction}}</span>{{/if}}
+                {{#if feat.system.lateralNoiseReduction}}<span class="wfb-tag wfb-noise">↔ {{feat.system.lateralNoiseReduction}}</span>{{/if}}
+                {{#if feat.system.lengthIncreaseCm}}<span class="wfb-tag wfb-len">+{{feat.system.lengthIncreaseCm}}cm</span>{{/if}}
+              </div>
+            </div>
+            <div class="weapon-feature-controls">
+              <button type="button" class="weapon-feature-edit" title="Edit">✎</button>
+              <button type="button" class="weapon-feature-delete" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          {{/each}}
+        {{else}}
+          <div class="weapon-feature-empty">{{localize "MERC.UI.items.weaponSheet.featureNone"}}</div>
+        {{/if}}
+      </div>
+      <button type="button" class="weapon-feature-add btn">{{localize "MERC.UI.items.weaponSheet.addFeature"}}</button>
+    </div>
+
   </section>
 </div>

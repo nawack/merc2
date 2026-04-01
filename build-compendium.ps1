@@ -2,8 +2,11 @@
 # build-compendium.ps1
 # Génère les packs compendium LevelDB pour le système Mercenary.
 # Lit les fichiers CSV source et produit :
-#   packs/weapons/   – armes (Item type: weapon)
-#   packs/ammos/     – munitions (Item type: ammo)
+#   packs/weapons/    – armes (Item type: weapon)
+#   packs/ammos/      – munitions (Item type: ammo)
+#   packs/armors/     – armures (Item type: armor)
+#   packs/equipments/ – équipements (Item type: equipment)
+#   packs/features/   – accessoires (Item type: feature)
 #
 # Usage : .\build-compendium.ps1
 #         .\build-compendium.ps1 -CsvDir "C:\mon\dossier"
@@ -185,7 +188,7 @@ if (-not (Test-Path $classicLevelDir)) {
 # Étape 3 – Parsing du CSV Ammo  (must run before weapons so we can link IDs)
 # =============================================================================
 Write-Host "> Lecture des munitions..." -ForegroundColor Cyan
-$acsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Ammo.csv") -Delimiter ";" -Encoding Default
+$acsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Ammo.csv") -Delimiter ";" -Encoding UTF8
 $acols = $acsv[0].PSObject.Properties.Name
 # Column indices (0-based):
 #  0=Folder  1=Munition  2=Type de munition  3=Calibre  4=type(subtype)
@@ -279,7 +282,7 @@ foreach ($item in $ammoItems) {
 # Étape 4 – Parsing du CSV Weapons
 # =============================================================================
 Write-Host "> Lecture des armes..." -ForegroundColor Cyan
-$wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapons.csv") -Delimiter ";" -Encoding Default
+$wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapons.csv") -Delimiter ";" -Encoding UTF8
 $wcols = $wcsv[0].PSObject.Properties.Name
 # Column indices (0-based):
 #  0=Folder  1=Nom  2=Sous-type  3=Compétence  4=Illustration  5=Munition
@@ -516,12 +519,95 @@ foreach ($row in $eqcsv) {
 Write-Host "  OK $($equipmentItems.Count) équipements, $($equipmentFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
-# Étape 7 – Sérialisation JSON
+# Étape 7 – Parsing du CSV Feature
+# =============================================================================
+# Colonnes CSV (0-based) :
+#  0=Folder  1=type feature  2=nom  3=Bonus tir courte  4=Bonus tir moyenne
+#  5=Bonus tir longue  6=Bonus tir extrême  7=Reduction de bruit
+#  8=Reduction de bruit Latérale  9=Augmentation de longueur
+# 10=Rarete  11=Prix  12=Poids (kg)  13=Description
+Write-Host "> Lecture des accessoires..." -ForegroundColor Cyan
+# Le CSV Feature a des colonnes dupliquées → lecture manuelle ligne par ligne
+$featureCsvPath = Join-Path $CsvDir "merc-compendium-Feature.csv"
+$featureRawLines = [System.IO.File]::ReadAllLines($featureCsvPath, [System.Text.Encoding]::UTF8)
+# Ignorer la ligne d'en-tête (index 0), traiter les lignes suivantes
+$featureDataLines = $featureRawLines | Select-Object -Skip 1
+
+$allFFolderPaths = $featureDataLines | ForEach-Object {
+  $cols = $_ -split ';'
+  if ($cols.Count -gt 0) { $cols[0].Trim() }
+} | Where-Object { $_ }
+$featureFolderMap = Build-FolderMap $allFFolderPaths
+
+$featureItems = [System.Collections.Generic.List[hashtable]]::new()
+$sort = 0
+foreach ($line in $featureDataLines) {
+  $cols = $line -split ';'
+  $name = if ($cols.Count -gt 2) { $cols[2].Trim() } else { "" }
+  if (-not $name) { continue }
+
+  $folderPath            = if ($cols.Count -gt 0)  { $cols[0].Trim()  } else { "" }
+  $featureType           = if ($cols.Count -gt 1)  { $cols[1].Trim()  } else { "" }
+  $bonusShortRange       = if ($cols.Count -gt 3)  { TryParseInt    $cols[3]  } else { 0 }
+  $bonusMediumRange      = if ($cols.Count -gt 4)  { TryParseInt    $cols[4]  } else { 0 }
+  $bonusLongRange        = if ($cols.Count -gt 5)  { TryParseInt    $cols[5]  } else { 0 }
+  $bonusExtremeRange     = if ($cols.Count -gt 6)  { TryParseInt    $cols[6]  } else { 0 }
+  $noiseReduction        = if ($cols.Count -gt 7)  { TryParseDouble $cols[7]  } else { 0 }
+  $lateralNoiseReduction = if ($cols.Count -gt 8)  { $cols[8].Trim()          } else { "" }
+  $lengthIncreaseCm      = if ($cols.Count -gt 9)  { TryParseDouble $cols[9]  } else { 0 }
+  $rarity                = if ($cols.Count -gt 10 -and $cols[10].Trim()) { $cols[10].Trim() } else { "common" }
+  $price                 = if ($cols.Count -gt 11) { TryParseDouble $cols[11] } else { 0 }
+  $weightKg              = if ($cols.Count -gt 12) { TryParseDouble $cols[12] } else { 0 }
+  $description           = if ($cols.Count -gt 13) { $cols[13].Trim()         } else { "" }
+
+  $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
+  $itemFolderId  = if ($featureFolderMap.ContainsKey($normFolderKey)) { $featureFolderMap[$normFolderKey]['_id'] } else { $null }
+  $sort++
+
+  $featureItems.Add([ordered]@{
+    "_id"    = New-FoundryId
+    "name"   = $name
+    "type"   = "feature"
+    "img"    = "systems/merc/assets/items/equipment/equipment.png"
+    "system" = [ordered]@{
+      "featureType"           = $featureType
+      "bonusShortRange"       = $bonusShortRange
+      "bonusMediumRange"      = $bonusMediumRange
+      "bonusLongRange"        = $bonusLongRange
+      "bonusExtremeRange"     = $bonusExtremeRange
+      "noiseReduction"        = $noiseReduction
+      "lateralNoiseReduction" = $lateralNoiseReduction
+      "lengthIncreaseCm"      = $lengthIncreaseCm
+      "rarity"                = $rarity
+      "price"                 = $price
+      "weightKg"              = $weightKg
+      "description"           = $description
+      "parentWeaponId"        = ""
+    }
+    "effects" = @()
+    "folder"  = $itemFolderId
+    "sort"    = $sort
+    "flags"   = [ordered]@{}
+    "_stats"  = [ordered]@{
+      "systemId"       = "merc"
+      "systemVersion"  = $SystemVersion
+      "coreVersion"    = "13.351"
+      "createdTime"    = $null
+      "modifiedTime"   = $null
+      "lastModifiedBy" = $null
+    }
+  })
+}
+Write-Host "  OK $($featureItems.Count) accessoires, $($featureFolderMap.Count) dossiers" -ForegroundColor Green
+
+# =============================================================================
+# Étape 8 – Sérialisation JSON
 # =============================================================================
 $weaponsJsonPath   = Join-Path $ToolsDir "_weapons.json"
 $ammosJsonPath     = Join-Path $ToolsDir "_ammos.json"
 $armorsJsonPath    = Join-Path $ToolsDir "_armors.json"
 $equipmentJsonPath = Join-Path $ToolsDir "_equipment.json"
+$featuresJsonPath  = Join-Path $ToolsDir "_features.json"
 
 # PowerShell 5 : Set-Content -Encoding UTF8 ajoute un BOM ; JSON.parse() échoue.
 # On utilise System.IO.File::WriteAllText avec UTF8 sans BOM.
@@ -532,15 +618,17 @@ $weaponExport    = [ordered]@{ 'folders' = @($weaponFolderMap.Values);    'items
 $ammoExport      = [ordered]@{ 'folders' = @($ammoFolderMap.Values);      'items' = @($ammoItems)      }
 $armorExport     = [ordered]@{ 'folders' = @($armorFolderMap.Values);     'items' = @($armorItems)     }
 $equipmentExport = [ordered]@{ 'folders' = @($equipmentFolderMap.Values); 'items' = @($equipmentItems) }
+$featureExport   = [ordered]@{ 'folders' = @($featureFolderMap.Values);   'items' = @($featureItems)   }
 [System.IO.File]::WriteAllText($weaponsJsonPath,   ($weaponExport    | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($ammosJsonPath,     ($ammoExport      | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($armorsJsonPath,    ($armorExport     | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($equipmentJsonPath, ($equipmentExport | ConvertTo-Json -Depth 20), $utf8NoBOM)
+[System.IO.File]::WriteAllText($featuresJsonPath,  ($featureExport   | ConvertTo-Json -Depth 20), $utf8NoBOM)
 
 New-Item -ItemType Directory -Path $PacksDir -Force | Out-Null
 
 # =============================================================================
-# Étape 8 – Génération LevelDB
+# Étape 9 – Génération LevelDB
 # =============================================================================
 Write-Host "> Generation pack Armes..." -ForegroundColor Cyan
 $weaponPackDir = Join-Path $PacksDir "weapons"
@@ -570,6 +658,13 @@ Push-Location $ToolsDir
 if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing equipments" }
 Pop-Location
 
+Write-Host "> Generation pack Accessoires..." -ForegroundColor Cyan
+$featurePackDir = Join-Path $PacksDir "features"
+Push-Location $ToolsDir
+& $NodeExe $PackerScript $featuresJsonPath $featurePackDir
+if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing features" }
+Pop-Location
+
 # =============================================================================
 # Résumé
 # =============================================================================
@@ -577,9 +672,10 @@ Write-Host ""
 Write-Host "======================================" -ForegroundColor Green
 Write-Host "  COMPENDIUM GENERE AVEC SUCCES" -ForegroundColor Green
 Write-Host "======================================" -ForegroundColor Green
-Write-Host "  Armes       : $($weaponItems.Count) items, $($weaponFolderMap.Count) dossiers -> $weaponPackDir"
-Write-Host "  Munitions   : $($ammoItems.Count) items, $($ammoFolderMap.Count) dossiers -> $ammoPackDir"
-Write-Host "  Armures     : $($armorItems.Count) items, $($armorFolderMap.Count) dossiers -> $armorPackDir"
-Write-Host "  Equipements : $($equipmentItems.Count) items, $($equipmentFolderMap.Count) dossiers -> $equipmentPackDir"
+Write-Host "  Armes        : $($weaponItems.Count) items, $($weaponFolderMap.Count) dossiers -> $weaponPackDir"
+Write-Host "  Munitions    : $($ammoItems.Count) items, $($ammoFolderMap.Count) dossiers -> $ammoPackDir"
+Write-Host "  Armures      : $($armorItems.Count) items, $($armorFolderMap.Count) dossiers -> $armorPackDir"
+Write-Host "  Equipements  : $($equipmentItems.Count) items, $($equipmentFolderMap.Count) dossiers -> $equipmentPackDir"
+Write-Host "  Accessoires  : $($featureItems.Count) items, $($featureFolderMap.Count) dossiers -> $featurePackDir"
 Write-Host ""
 Write-Host "-> Relancez Foundry VTT pour voir les compendiums." -ForegroundColor Yellow

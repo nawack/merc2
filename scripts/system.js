@@ -2998,6 +2998,15 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
     data.ammoItems = actorAmmo.map(a => a.toObject());
     data.hasActor = !!actorDoc;
 
+    // Gather feature items linked to this specific weapon via parentWeaponId
+    let actorFeatures = [];
+    if (actorDoc) {
+      actorFeatures = actorDoc.items.filter(i => i.type === "feature" && i.system?.parentWeaponId === weaponId);
+    } else {
+      actorFeatures = game.items?.filter(i => i.type === "feature" && i.system?.parentWeaponId === weaponId) ?? [];
+    }
+    data.featureItems = actorFeatures.map(f => f.toObject());
+
     // Look up the default ammo (from compendium) so the sheet can display it
     const defaultAmmoId = systemData?.defaultAmmoId || "";
     let defaultAmmo = null;
@@ -3237,6 +3246,64 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
         }
       });
     }
+
+    // Feature management within weapon sheet
+    const featureAddBtn = html.querySelector(".weapon-feature-add");
+    if (featureAddBtn) {
+      featureAddBtn.addEventListener("click", async () => {
+        const newItem = {
+          name: game.i18n.localize("MERC.UI.items.weaponSheet.newFeatureName"),
+          type: "feature",
+          system: { parentWeaponId: itemDoc?.id || "" }
+        };
+        let feat;
+        if (isEmbedded) {
+          feat = await Item.create(newItem, { parent: actorDoc });
+        } else {
+          feat = await Item.create(newItem);
+        }
+        feat?.sheet?.render(true);
+        this.render();
+      });
+    }
+
+    // Edit feature
+    html.querySelectorAll(".weapon-feature-edit").forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        const itemId = event.currentTarget.closest(".item")?.dataset.itemId;
+        const feat = isEmbedded ? actorDoc.items.get(itemId) : game.items.get(itemId);
+        if (feat) feat.sheet.render(true);
+      });
+    });
+
+    // Delete feature
+    html.querySelectorAll(".weapon-feature-delete").forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        const featId = event.currentTarget.closest(".item")?.dataset.itemId;
+        if (!featId) return;
+        if (isEmbedded) {
+          await actorDoc.deleteEmbeddedDocuments("Item", [featId]);
+        } else {
+          const feat = game.items.get(featId);
+          if (feat) await feat.delete();
+        }
+        this.render();
+      });
+    });
+
+    // Drag & Drop: accept feature items dropped onto the weapon sheet
+    const featureSection = html.querySelector(".weapon-feature-section");
+    if (featureSection) {
+      new foundry.applications.ux.DragDrop.implementation({
+        dropSelector: ".weapon-feature-section",
+        permissions: { drop: () => true },
+        callbacks: {
+          drop: this._onDropFeature.bind(this),
+          dragenter: (event) => event.currentTarget.classList?.add("drop-highlight"),
+          dragleave: (event) => event.currentTarget.classList?.remove("drop-highlight")
+        }
+      }).bind(html);
+    }
   }
 
   async close(options) {
@@ -3245,6 +3312,42 @@ class MercWeaponSheet extends foundry.applications.api.HandlebarsApplicationMixi
       delete this._ammoUpdateHookId;
     }
     return super.close(options);
+  }
+
+  /**
+   * Handle a feature item dropped onto the weapon sheet.
+   * Creates an embedded copy linked to this weapon via parentWeaponId.
+   */
+  async _onDropFeature(event) {
+    event.currentTarget?.classList?.remove("drop-highlight");
+    const data = TextEditor.implementation.getDragEventData(event);
+    if (data?.type !== "Item") return;
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== "feature") {
+      ui.notifications?.warn(game.i18n.localize("MERC.UI.items.weaponSheet.dropOnlyFeature"));
+      return;
+    }
+    const itemDoc = this.document ?? this.item;
+    const actorDoc = itemDoc?.parent;
+    const isEmbedded = !!actorDoc;
+    if (isEmbedded) {
+      const featData = droppedItem.toObject();
+      featData.system.parentWeaponId = itemDoc?.id || "";
+      const created = await Item.create(featData, { parent: actorDoc });
+      if (created) {
+        ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.featureLinked", { name: created.name }));
+        this.render();
+      }
+    } else {
+      // World-level weapon: link the dropped feature directly
+      const featData = droppedItem.toObject();
+      featData.system.parentWeaponId = itemDoc?.id || "";
+      const created = await Item.create(featData);
+      if (created) {
+        ui.notifications?.info(game.i18n.format("MERC.UI.items.weaponSheet.featureLinked", { name: created.name }));
+        this.render();
+      }
+    }
   }
 
   /**
@@ -3554,10 +3657,19 @@ class MercFeatureSheet extends foundry.applications.api.HandlebarsApplicationMix
     }
     const systemData = data?.item?.system ?? itemDoc?.system ?? {};
     const defaults = {
+      featureType: "",
+      bonusShortRange: 0,
+      bonusMediumRange: 0,
+      bonusLongRange: 0,
+      bonusExtremeRange: 0,
+      noiseReduction: 0,
+      lateralNoiseReduction: "",
+      lengthIncreaseCm: 0,
       rarity: "common",
       price: 0,
       weightKg: 0,
-      description: ""
+      description: "",
+      parentWeaponId: ""
     };
     if (!data.item) data.item = {};
     data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
@@ -3635,6 +3747,23 @@ async function buildWeaponBallisticsMap(actorDoc) {
       }
     }
 
+    // Gather features linked to this weapon
+    const featureRows = actorDoc.items
+      .filter(i => i.type === "feature" && i.system?.parentWeaponId === weaponItem.id)
+      .map(featItem => ({
+        id: featItem.id,
+        name: featItem.name,
+        featureType: featItem.system.featureType || "",
+        bonusShortRange:  featItem.system.bonusShortRange  ?? 0,
+        bonusMediumRange: featItem.system.bonusMediumRange ?? 0,
+        bonusLongRange:   featItem.system.bonusLongRange   ?? 0,
+        bonusExtremeRange: featItem.system.bonusExtremeRange ?? 0,
+        noiseReduction:       featItem.system.noiseReduction      ?? 0,
+        lateralNoiseReduction: featItem.system.lateralNoiseReduction || "",
+        lengthIncreaseCm:     featItem.system.lengthIncreaseCm    ?? 0,
+        description: featItem.system.description || ""
+      }));
+
     map[weaponItem.id] = {
       isMeleeType,
       weaponDamage: isMeleeType ? (weaponSys.damage || "") : "",
@@ -3656,7 +3785,8 @@ async function buildWeaponBallisticsMap(actorDoc) {
         long:    weaponSys.range?.long    ?? "",
         extreme: weaponSys.range?.extreme ?? ""
       },
-      ammo: ammoRows
+      ammo: ammoRows,
+      features: featureRows
     };
   }
   return map;

@@ -41,7 +41,7 @@ Controle des valeurs des champs:
     - format des dégats reg exp : ^(0|[1-9](?:[dD]6(?:\+[12])?)?)$
 
 Gestion des difficultés et ajout gestion des coches :
-    - liste des actions de corps (qui définissent les difficultés)
+    - liste des actions de corps à corps (qui définissent les difficultés)
     - tableau de difficulté (distance, localisation, type d'action, etc)
     - ajouter les difficultés lors d'un lancement de dés
     - ajouter une validation de gain de dev (coches) en cas de réussite
@@ -77,8 +77,8 @@ Gestion des équipements & armures:
     ✔ gestion du poids de l'équipement et de l'armure dans la charge totale @done(26-03-27 17:51)
 
 Gestion des features:
-    - creer fiche features
-    - pouvoir ajouter des features a des items
+    ✔ creer fiche features @done(26-04-01 17:36)
+    ✔ pouvoir ajouter des features a des items @done(26-04-01 17:36)
     - gérer impact des features sur les items, compétences, les dégats, etc
 
 Gerer un styeme de blessures:

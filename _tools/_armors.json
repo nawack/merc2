@@ -1,10 +1,10 @@
 {
     "folders":  [
                     {
-                        "_id":  "lBSZkyK7jiEO2LHc",
+                        "_id":  "8vX0MIfbHMHKHTsq",
                         "name":  "Membres",
                         "type":  "Item",
-                        "folder":  "ELAUo2vO3o1v37mu",
+                        "folder":  "Kxwth816EKzL34Vy",
                         "sorting":  "a",
                         "sort":  0,
                         "color":  null,
@@ -13,7 +13,7 @@
                                   },
                         "_stats":  {
                                        "systemId":  "merc",
-                                       "systemVersion":  "1.0.16",
+                                       "systemVersion":  "1.1.0",
                                        "coreVersion":  "13.351",
                                        "createdTime":  null,
                                        "modifiedTime":  null,
@@ -21,10 +21,10 @@
                                    }
                     },
                     {
-                        "_id":  "ArAeU6AMb5UcgVjB",
+                        "_id":  "tcNjDnaRddW7lKHr",
                         "name":  "Casques",
                         "type":  "Item",
-                        "folder":  "ELAUo2vO3o1v37mu",
+                        "folder":  "Kxwth816EKzL34Vy",
                         "sorting":  "a",
                         "sort":  0,
                         "color":  null,
@@ -33,7 +33,7 @@
                                   },
                         "_stats":  {
                                        "systemId":  "merc",
-                                       "systemVersion":  "1.0.16",
+                                       "systemVersion":  "1.1.0",
                                        "coreVersion":  "13.351",
                                        "createdTime":  null,
                                        "modifiedTime":  null,
@@ -41,10 +41,10 @@
                                    }
                     },
                     {
-                        "_id":  "KHqYfrPKInxqNAmc",
+                        "_id":  "wV6LYHplFVRvFYVa",
                         "name":  "Gilets",
                         "type":  "Item",
-                        "folder":  "ELAUo2vO3o1v37mu",
+                        "folder":  "Kxwth816EKzL34Vy",
                         "sorting":  "a",
                         "sort":  0,
                         "color":  null,
@@ -53,7 +53,7 @@
                                   },
                         "_stats":  {
                                        "systemId":  "merc",
-                                       "systemVersion":  "1.0.16",
+                                       "systemVersion":  "1.1.0",
                                        "coreVersion":  "13.351",
                                        "createdTime":  null,
                                        "modifiedTime":  null,
@@ -61,10 +61,10 @@
                                    }
                     },
                     {
-                        "_id":  "D8yZka7PAsn6pylj",
+                        "_id":  "LeN1waBTsG5YZqLE",
                         "name":  "Completes",
                         "type":  "Item",
-                        "folder":  "ELAUo2vO3o1v37mu",
+                        "folder":  "Kxwth816EKzL34Vy",
                         "sorting":  "a",
                         "sort":  0,
                         "color":  null,
@@ -73,7 +73,7 @@
                                   },
                         "_stats":  {
                                        "systemId":  "merc",
-                                       "systemVersion":  "1.0.16",
+                                       "systemVersion":  "1.1.0",
                                        "coreVersion":  "13.351",
                                        "createdTime":  null,
                                        "modifiedTime":  null,
@@ -81,7 +81,7 @@
                                    }
                     },
                     {
-                        "_id":  "ELAUo2vO3o1v37mu",
+                        "_id":  "Kxwth816EKzL34Vy",
                         "name":  "Armures",
                         "type":  "Item",
                         "folder":  null,
@@ -93,7 +93,7 @@
                                   },
                         "_stats":  {
                                        "systemId":  "merc",
-                                       "systemVersion":  "1.0.16",
+                                       "systemVersion":  "1.1.0",
                                        "coreVersion":  "13.351",
                                        "createdTime":  null,
                                        "modifiedTime":  null,
@@ -141,16 +141,16 @@
                       "sort":  1,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "30JwtoDWM1gXgnOD"
+                      "_id":  "zKADffVKnLA4BriZ"
                   },
                   {
                       "effects":  [
@@ -191,16 +191,16 @@
                       "sort":  2,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "dZwit8mdmkY2VDnC"
+                      "_id":  "7WyzxMFJDpBJ7AvD"
                   },
                   {
                       "effects":  [
@@ -241,16 +241,16 @@
                       "sort":  3,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "o29gDTQlaYRzAugh"
+                      "_id":  "mC2vDxV5SsnnFUa6"
                   },
                   {
                       "effects":  [
@@ -291,16 +291,16 @@
                       "sort":  4,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "xB1kO1DzKpgQJ88s"
+                      "_id":  "pc7qheO9De2K4PSA"
                   },
                   {
                       "effects":  [
@@ -341,16 +341,16 @@
                       "sort":  5,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "nl4fBTHXvUAU9Z10"
+                      "_id":  "QHLWqYS60cx4wkQ5"
                   },
                   {
                       "effects":  [
@@ -391,16 +391,16 @@
                       "sort":  6,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "UaY9mxEzlbjaekGk"
+                      "_id":  "3PcFtesq06HYH2me"
                   },
                   {
                       "effects":  [
@@ -441,16 +441,16 @@
                       "sort":  7,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "SnlzgDqEFFa1k6d0"
+                      "_id":  "ZcXV21tCcRcIeS28"
                   },
                   {
                       "effects":  [
@@ -491,16 +491,16 @@
                       "sort":  8,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "GWpDZ39KruOHBdJl"
+                      "_id":  "QnyHYviGGUVbRnr9"
                   },
                   {
                       "effects":  [
@@ -541,16 +541,16 @@
                       "sort":  9,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "KHqYfrPKInxqNAmc",
+                      "folder":  "wV6LYHplFVRvFYVa",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "jnfsI98pFbs1BmFE"
+                      "_id":  "aLi5IqrDj2vuyooe"
                   },
                   {
                       "effects":  [
@@ -591,16 +591,16 @@
                       "sort":  10,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "folder":  "tcNjDnaRddW7lKHr",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "FW2PTbNJxY8hb6Ql"
+                      "_id":  "7awr8RCVO5paVug2"
                   },
                   {
                       "effects":  [
@@ -641,16 +641,16 @@
                       "sort":  11,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "folder":  "tcNjDnaRddW7lKHr",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "8SjXCrSqGa9y7Jyz"
+                      "_id":  "1ELKOBJOy2M2PfiX"
                   },
                   {
                       "effects":  [
@@ -691,16 +691,16 @@
                       "sort":  12,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "folder":  "tcNjDnaRddW7lKHr",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "VTGuXByNz6AiAdXM"
+                      "_id":  "gHfHmKFUJc1DZw5x"
                   },
                   {
                       "effects":  [
@@ -741,16 +741,16 @@
                       "sort":  13,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "folder":  "tcNjDnaRddW7lKHr",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "qOn95p6Y6g57Y9Hv"
+                      "_id":  "BsAwyDUHIKPRqTx6"
                   },
                   {
                       "effects":  [
@@ -791,16 +791,16 @@
                       "sort":  14,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "ArAeU6AMb5UcgVjB",
+                      "folder":  "tcNjDnaRddW7lKHr",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "1lWFB1PpJSjcNm64"
+                      "_id":  "z6W5OC4baZg0Jhoy"
                   },
                   {
                       "effects":  [
@@ -841,16 +841,16 @@
                       "sort":  15,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "folder":  "8vX0MIfbHMHKHTsq",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "0ofXvjT1HBeDLm7g"
+                      "_id":  "SmlVTsiEUNg0qQT2"
                   },
                   {
                       "effects":  [
@@ -891,16 +891,16 @@
                       "sort":  16,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "folder":  "8vX0MIfbHMHKHTsq",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "Q8TGcPfn4m8flsYS"
+                      "_id":  "jl1qZ9ETmufZ8Dyu"
                   },
                   {
                       "effects":  [
@@ -941,16 +941,16 @@
                       "sort":  17,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "folder":  "8vX0MIfbHMHKHTsq",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "4gk3lmp86L0LOu3H"
+                      "_id":  "bQM26WMxrlkWjFyi"
                   },
                   {
                       "effects":  [
@@ -991,16 +991,16 @@
                       "sort":  18,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "folder":  "8vX0MIfbHMHKHTsq",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "5xUa45vs8N9cFkm2"
+                      "_id":  "Zmt0sXEpl0La8QBG"
                   },
                   {
                       "effects":  [
@@ -1041,16 +1041,16 @@
                       "sort":  19,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "lBSZkyK7jiEO2LHc",
+                      "folder":  "8vX0MIfbHMHKHTsq",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "tIOXbpxC3FVx7PyT"
+                      "_id":  "gW1hUsDE2d35WBZv"
                   },
                   {
                       "effects":  [
@@ -1091,16 +1091,16 @@
                       "sort":  20,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "D8yZka7PAsn6pylj",
+                      "folder":  "LeN1waBTsG5YZqLE",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "xQBHv4PTqOiIOhC4"
+                      "_id":  "pS3T4BsUF5vk5L5A"
                   },
                   {
                       "effects":  [
@@ -1141,16 +1141,16 @@
                       "sort":  21,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "D8yZka7PAsn6pylj",
+                      "folder":  "LeN1waBTsG5YZqLE",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "AYUQNX4jcmpdmjTZ"
+                      "_id":  "D1wrtk6amoHvTbaV"
                   },
                   {
                       "effects":  [
@@ -1191,16 +1191,16 @@
                       "sort":  22,
                       "_stats":  {
                                      "systemId":  "merc",
-                                     "systemVersion":  "1.0.16",
+                                     "systemVersion":  "1.1.0",
                                      "coreVersion":  "13.351",
                                      "createdTime":  null,
                                      "modifiedTime":  null,
                                      "lastModifiedBy":  null
                                  },
                       "type":  "armor",
-                      "folder":  "D8yZka7PAsn6pylj",
+                      "folder":  "LeN1waBTsG5YZqLE",
                       "img":  "systems/merc/assets/items/armor/armor.png",
-                      "_id":  "DkY8QsOHdp4vP79b"
+                      "_id":  "fz48fhB1U4GH9ocH"
                   }
               ]
 }

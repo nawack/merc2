@@ -1,7 +1,7 @@
 ﻿# Index de la documentation - Mercenary System
 
-**Version :** 1.0.14
-**Dernière mise à jour :** 2026-04-xx
+**Version :** 1.1.0
+**Dernière mise à jour :** 2026-04-01
 
 ---
 
@@ -36,6 +36,7 @@
 | Comment contribuer | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Installer pour le dev | [INSTALLATION.md](INSTALLATION.md) |
 | Historique des versions | [CHANGELOG.md](CHANGELOG.md) |
+| Planification (prochaines versions) | [ROADMAP.md](ROADMAP.md) |
 
 ### ADMINISTRATEURS - Publication
 
@@ -63,14 +64,15 @@
 7. [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) — Organisation des dossiers et fichiers
 8. [CONTRIBUTING.md](CONTRIBUTING.md) — Processus de contribution et PR
 9. [INSTALLATION.md](INSTALLATION.md) — Setup local et installation via manifest
-10. [CHANGELOG.md](CHANGELOG.md) — Historique des versions (v1.0.1 → v1.0.14)
+10. [CHANGELOG.md](CHANGELOG.md) — Historique des versions (v1.0.1 → v1.1.0)
+11. [ROADMAP.md](ROADMAP.md) — Planification des prochaines versions (issues, milestones)
 
 ### Publication
 
-11. [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md) — Étapes pour publier sur Foundry
-12. [EXAMPLE_MANIFEST.md](EXAMPLE_MANIFEST.md) — Exemple de system.json complet
+12. [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md) — Étapes pour publier sur Foundry
+13. [EXAMPLE_MANIFEST.md](EXAMPLE_MANIFEST.md) — Exemple de system.json complet
 
 ### Référence
 
-13. [system.json](system.json) — Métadonnées du système (version, compatibilité)
-14. [template.json](template.json) — Schéma complet des Actor et Item
+14. [system.json](system.json) — Métadonnées du système (version, compatibilité)
+15. [template.json](template.json) — Schéma complet des Actor et Item

@@ -2,6 +2,19 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.1.0] - 2026-04-01
+
+### Added
+- 🔧 **Type d'item « Accessoire » (feature)** : Nouveau type d'item dédié aux accessoires d'armes (lunettes, silencieux, pointeurs, adaptateurs…). Champs : featureType, bonus de tir par portée (courte/moyenne/longue/extrême), réduction de bruit, réduction latérale, augmentation de longueur, rareté, prix, poids, description
+- 🔗 **Accessoires liés aux armes** : La fiche d'arme dispose d'une section « Accessoires » permettant d'ajouter, éditer et supprimer des features rattachées à cette arme (via `parentWeaponId`). Support du drag & drop depuis le compendium ou l'inventaire
+- 📊 **Affichage des accessoires en onglet Combat** : Dans chaque sous-onglet d'arme de l'onglet Combat, la liste des accessoires attachés est affichée avec leurs bonus de tir et effets acoustiques (badges colorés : bleu = bonus portée, rouge = réduction bruit, vert = longueur)
+- 📦 **Compendium Accessoires** : Génération du pack LevelDB `packs/features` depuis le CSV `merc-compendium-Feature.csv` (29 entrées : visées rudimentaires, lunettes jour/IL/thermiques, addons, silencieux civils et militaires) avec hiérarchie de dossiers
+
+### Changed
+- 📋 **Fiche Feature redessinée** : L'ancienne fiche (rareté/prix/poids/description uniquement) est remplacée par un formulaire en 3 sections — Informations générales, Bonus de tir (4 portées), Acoustique — cohérent avec les données du compendium
+- 🔢 **`build-compendium.ps1`** : Lecture manuelle par index du CSV Feature (colonnes dupliquées incompatibles avec `Import-Csv`), étapes renumérotées 7→9, ajout de `_features.json` et du pack `packs/features`
+- 📝 **`system.json`** : Déclaration du pack `features` (label « Accessoires »)
+
 ## [1.0.17] - 2026-03-27
 
 ### Added
@@ -284,44 +297,7 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 
 ---
 
-## [Planifié pour futures versions]
-
-### Attributs & Compétences
-- 📋 Gestion des attributs secondaires (Apparence, Taille, Poids, Endurance, Chance) — valeurs origine et actuelle
-
-### Charge & Déplacement
-- 📋 Revoir la formule de malus de déplacement selon le type (course, marche, reptation)
-- 📋 Prise en compte du poids des munitions dans la charge totale
-
-### Armes & Munitions
-- 📋 Automatisation de la mise à jour du nombre de munitions (tir, rechargement)
-- 📋 Supprimer la possibilité de roller les dégâts pour armes blanches dans la section bonus (forcément lié à une arme)
-- 📋 Gestion des armes autres qu'à feu
-- 📋 Dispersion des munitions (en cas de réussite ou d'échec)
-- 📋 Gestion des dispersions de grenades et explosifs
-
-### Système de Difficultés & Coches
-- 📋 Liste des actions de corps (qui définissent les difficultés)
-- 📋 Tableau de difficulté (distance, localisation, type d'action, etc.)
-- 📋 Ajouter les difficultés lors d'un lancement de dés
-- 📋 Validation de gain de développement (coches) en cas de réussite
-- 📋 Calcul de la marge de réussite / échec
-- 📋 Conséquences en cas de réussite ou d'échec (gain de dev, dispersion, etc.)
-
-### Blessures
-- 📋 Gérer les conséquences des blessures (malus, etc.)
-
-### Features
-- 📋 Créer la fiche Features
-- 📋 Pouvoir ajouter des features à des items
-- 📋 Gérer l'impact des features sur les items, compétences et dégâts
-
-### Contrôles & Validation
-- 📋 Contrôles de valeurs des champs (pas de valeur négative pour les dev, attributs entre 1 et 10, etc.)
-- 📋 Validation du format des dégâts (regex : `^(0|[1-9](?:[dD]6(?:\+[12])?)?)$`)
-
-### Issues connues
-- 📋 Contrôle des valeurs des bonus de Discrétion et Dissimulation ([#11](https://github.com/nawack/merc2/issues/11))
+> 📋 La planification des prochaines versions est disponible dans [ROADMAP.md](ROADMAP.md).
 
 ---
 

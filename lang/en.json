@@ -388,6 +388,13 @@
           "blindageLong": "Long",
           "blindageExtreme": "Extreme"
         }
+      },
+      "health": {
+        "initMalus": "Init Malus",
+        "actionMalus": "Action Malus",
+        "enduranceTests": "Required Endurance Tests",
+        "difficulty": "Difficulty",
+        "unusableLimbs": "Unusable Limbs"
       }
     },
     "Tabs": {

@@ -1630,7 +1630,7 @@
   background-color: #fff;
   border: 1px solid #999;
   font-family: 'Roboto', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   color: #333;
 }
 
@@ -1944,6 +1944,12 @@
 .merc-roll-breakdown .roll-modifier {
   color: #999;
   min-width: 25px;
+}
+
+.merc-roll-breakdown .roll-modifier.merc-roll-wound-malus {
+  color: #b52020;
+  font-weight: bold;
+  text-align: center;
 }
 
 /* Override breakdown colors when critical add/remove classes are present */
@@ -3657,4 +3663,171 @@
   resize: vertical;
   font-family: inherit;
 }
+
+/* ============================================ */
+/* WOUND EFFECTS SUMMARY PANEL                 */
+/* ============================================ */
+
+.wound-effects-summary {
+  margin-top: 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  background: #fafafa;
+  overflow: hidden;
+  font-size: 11px;
+}
+
+/* Status banner (mort / coma / inconscient) */
+.wound-status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+}
+
+.wound-status-mort        { background: #5a0000; color: #fff; }
+.wound-status-coma        { background: #7a2e00; color: #fff; }
+.wound-status-inconscient { background: #5a4a00; color: #fff; }
+
+.wound-death-timer {
+  font-size: 11px;
+  font-weight: normal;
+  letter-spacing: 0;
+  opacity: 0.9;
+}
+
+/* Cumulative Init / Action malus row */
+.wound-malus-row {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.wound-malus-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 8px;
+  gap: 2px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.wound-malus-cell:last-child { border-right: none; }
+
+.wound-malus-label {
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #555;
+  letter-spacing: 0.5px;
+}
+
+.wound-malus-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.1;
+}
+
+.wound-malus-nonzero .wound-malus-value { color: #b52020; }
+.wound-malus-nonzero { background: rgba(181, 32, 32, 0.05); }
+
+/* Warnings list */
+.wound-warnings-list {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.wound-warning-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.wound-warn-mort        { color: #5a0000; background: rgba(90, 0, 0, 0.07); }
+.wound-warn-coma        { color: #7a2e00; background: rgba(122, 46, 0, 0.07); }
+.wound-warn-inconscient { color: #5a4a00; background: rgba(90, 74, 0, 0.07); }
+
+/* Section titles */
+.wound-section-title {
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555;
+  background: #f0f0f0;
+  padding: 3px 8px;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Endurance tests */
+.wound-endurance-list {
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.wound-endurance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+  font-size: 10px;
+}
+
+.wound-endurance-loc  { color: #333; font-weight: 500; }
+.wound-endurance-diff { color: #b52020; font-weight: bold; }
+
+.wound-roll-endurance {
+  background: none;
+  border: 1px solid #b52020;
+  border-radius: 3px;
+  color: #b52020;
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  padding: 1px 5px;
+  margin-left: 4px;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.wound-roll-endurance:hover {
+  background: #b52020;
+  color: #fff;
+}
+
+/* Unusable limbs */
+.wound-limbs-list {
+  padding: 5px 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.wound-limb-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  background: #8b1a1a;
+  color: white;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
 

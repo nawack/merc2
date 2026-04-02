@@ -2334,6 +2334,23 @@
   filter: grayscale(0.6);
 }
 
+.merc-combat-tracker .combatant.merc-combatant--incapacitated {
+  opacity: 0.35;
+  filter: grayscale(1) sepia(0.3);
+  pointer-events: none;
+}
+
+.merc-combat-tracker .combatant.merc-combatant--incapacitated::after {
+  content: "✖";
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #8b0000;
+  font-weight: bold;
+}
+
 .merc-combat-tracker .merc-reaction-initiative {
   display: inline-flex;
   align-items: center;

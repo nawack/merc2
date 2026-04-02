@@ -368,6 +368,16 @@ const getEligibleIdsForSegment = (combat, segment) => {
   return new Set(entries.map((entry) => entry.combatant.id));
 };
 
+/**
+ * Returns true if the combatant's actor is incapacitated (unconscious or dead status),
+ * meaning they cannot play their turn in combat.
+ */
+const isCombatantIncapacitated = (combatant) => {
+  const statuses = combatant?.actor?.statuses;
+  if (!statuses) return false;
+  return statuses.has('unconscious') || statuses.has('dead');
+};
+
 const buildSegmentTurns = (combat, segment) => {
   const combatants = Array.from(combat?.combatants ?? [])
     .map((combatant) => ({
@@ -429,7 +439,7 @@ class MercCombat extends Combat {
     const startIndex = Number.isInteger(this.turn) ? this.turn : 0;
     let nextIndex = -1;
     for (let i = startIndex + 1; i < turns.length; i++) {
-      if (eligibleIds.has(turns[i].id)) {
+      if (eligibleIds.has(turns[i].id) && !isCombatantIncapacitated(turns[i])) {
         nextIndex = i;
         break;
       }
@@ -2611,6 +2621,17 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           }
         }
         _updateWoundEffectsPanel(html, fx);
+
+        // Sync token status effects (dead / unconscious) — only when status changes
+        const _newWoundStatus = fx.worstStatus ?? '';
+        if (html.dataset.prevWoundStatus !== _newWoundStatus) {
+          html.dataset.prevWoundStatus = _newWoundStatus;
+          const _actor = this.actor;
+          const _dead        = _newWoundStatus === 'mort';
+          const _unconscious = _newWoundStatus === 'coma' || _newWoundStatus === 'inconscient';
+          _actor.toggleStatusEffect('dead',        { active: _dead        }).catch(() => {});
+          _actor.toggleStatusEffect('unconscious', { active: _unconscious }).catch(() => {});
+        }
       };
       updateHealthDisplay();
       healthInputs.forEach(inp => inp.addEventListener("input", updateHealthDisplay));
@@ -4806,10 +4827,15 @@ Hooks.once("init", () => {
           tokenInitiative.setAttribute("aria-label", reactionTitle);
         }
       }
-      if (id && !eligibleIds.has(id)) {
+      if (id && (!eligibleIds.has(id) || isCombatantIncapacitated(combatant))) {
         element.classList.add("merc-combatant--ineligible");
+        if (combatant && isCombatantIncapacitated(combatant)) {
+          element.classList.add("merc-combatant--incapacitated");
+        } else {
+          element.classList.remove("merc-combatant--incapacitated");
+        }
       } else {
-        element.classList.remove("merc-combatant--ineligible");
+        element.classList.remove("merc-combatant--ineligible", "merc-combatant--incapacitated");
       }
     });
   });

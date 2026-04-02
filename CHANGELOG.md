@@ -2,6 +2,38 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.1.3] - 2026-04-02
+
+### Fixed
+- 🐛 **`findTableIndex` — décalage d'index taille/poids** : La fonction utilisait `>=` (inclus) pour comparer la valeur aux bornes de la table, ce qui faisait monter l'index d'un cran quand la valeur tombait exactement sur une borne (ex : 177 cm → index 17 au lieu de 16, 65 kg → index 17 au lieu de 16). Corrigé en `>` (strict) — les bornes de la table sont les valeurs maximales incluses de la catégorie précédente
+- 🐛 **Migration — recalcul partiel des stats de combat** : `getActorMigrationData` ne recalculait `bonusDiscretion`, `bonusDissimulation`, `corpulence`, `pointCorporence`, `capaciteCharge` et les dégâts de base que si ces champs n'existaient pas encore. Les personnages existants avec des valeurs incorrectes (suite au bug `findTableIndex`) n'étaient donc pas corrigés. Corrigé : toutes les stats de combat sont désormais systématiquement recalculées à chaque migration, comme c'était déjà le cas pour les vitesses de déplacement
+- 🐛 **Parse error Handlebars** : Entités HTML `&quot;` dans les expressions `{{localize ...}}` de `character-sheet.hbs` (lignes des boutons équiper armes/armures/équipements) remplacées par des guillemets simples
+
+### Changed
+- 🎨 **Icône toggle équipé/non-équipé** : Remplacement des emojis (⚔🛡🎒) par l'icône FontAwesome `fa-backpack` unifiée pour tous les types d'items (armes, armures, équipements). Couleur verte (`#3a8a3a`) + lueur quand équipé, gris à 55% d'opacité quand non équipé, survol vert pleine opacité
+
+---
+
+## [1.1.2] - 2026-04-01
+
+### Added
+- ⚖️ **Encombrement et vitesse de déplacement** : Calcul en temps réel du poids total des items équipés — affichage dans la stat Encombrement de l'onglet Stats. Vitesses de déplacement effectives calculées selon le seuil de charge (libre / chargé / surchargé) et affichées en colonne secondaire dans la grille de déplacement
+- 🔘 **Toggle équipé/non-équipé** : Bouton par item dans l'onglet Items (armes, armures, équipements) pour basculer l'état `system.equipped`. Seuls les items équipés comptent dans l'encombrement et dans le calcul des PA d'armure
+
+---
+
+## [1.1.1] - 2026-04-01
+
+### Added
+- 🌐 **Traductions FR/EN completes** : Clés `MERC.UI.items.toggleEquipped`, `MERC.UI.items.equipped` ajoutées dans `lang/fr.json` et `lang/en.json`
+- 📋 **`template.json`** : Champ `equipped: false` ajouté par défaut sur les types `weapon`, `armor` et `equipment`
+
+### Fixed
+- 🐛 **Filtre onglet Combat** : Les sous-onglets d'armes et leur navigation n'affichent désormais que les armes équipées (`{{#if item.system.equipped}}`)
+- 🐛 **`armorLocations`** : Seules les armures équipées contribuent aux points d'armure par localisation
+
+---
+
 ## [1.1.0] - 2026-04-01
 
 ### Added

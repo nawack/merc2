@@ -4662,7 +4662,7 @@ const DEFAULT_MOVEMENT = {
 const findTableIndex = (value, table) => {
   if (!value || value <= 0) return 0;
   for (let i = table.length - 1; i >= 0; i--) {
-    if (value >= table[i]) return i;
+    if (value > table[i]) return i;
   }
   return 0;
 };
@@ -4912,14 +4912,7 @@ const getActorMigrationData = (actor) => {
     }
   }
 
-  const needsCombatValues =
-    system.combat?.endurance === undefined ||
-    system.combat?.pointCorporence === undefined ||
-    system.combat?.capaciteCharge === undefined ||
-    system.combat?.bonusDiscretion === undefined ||
-    system.combat?.bonusDissimulation === undefined;
-
-  // Always recompute movement speeds: the formula may have changed between versions
+  // Always recompute all combat stats and movement speeds: the formula may have changed between versions
   {
     const mergedSystem = foundry.utils.mergeObject(
       foundry.utils.duplicate(system),
@@ -4931,18 +4924,15 @@ const getActorMigrationData = (actor) => {
     updateData["system.movement.reptation"] = computed.vitesses.reptation;
     updateData["system.movement.marche"] = computed.vitesses.marche;
     updateData["system.movement.course"] = computed.vitesses.course;
-
-    if (needsCombatValues) {
-      updateData["system.combat.endurance"] = computed.endurance;
-      updateData["system.combat.pointCorporence"] = computed.pointCorporence;
-      updateData["system.combat.capaciteCharge"] = computed.capaciteCharge;
-      updateData["system.combat.bonusDiscretion"] = computed.bonusDiscretion;
-      updateData["system.combat.bonusDissimulation"] = computed.bonusDissimulation;
-      updateData["system.combat.corpulence"] = computed.corpulence;
-      updateData["system.combat.baseDamageMelee"] = computed.baseDamageMelee;
-      updateData["system.combat.baseDamageBladed"] = computed.baseDamageBladed;
-      updateData["system.combat.specializationBaseDamage"] = computed.specializationBaseDamage;
-    }
+    updateData["system.combat.endurance"] = computed.endurance;
+    updateData["system.combat.pointCorporence"] = computed.pointCorporence;
+    updateData["system.combat.capaciteCharge"] = computed.capaciteCharge;
+    updateData["system.combat.bonusDiscretion"] = computed.bonusDiscretion;
+    updateData["system.combat.bonusDissimulation"] = computed.bonusDissimulation;
+    updateData["system.combat.corpulence"] = computed.corpulence;
+    updateData["system.combat.baseDamageMelee"] = computed.baseDamageMelee;
+    updateData["system.combat.baseDamageBladed"] = computed.baseDamageBladed;
+    updateData["system.combat.specializationBaseDamage"] = computed.specializationBaseDamage;
   }
 
   // Ensure description field exists

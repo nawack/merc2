@@ -3226,7 +3226,7 @@
 /* ── SVG bonhomme ── */
 .armor-body-svg {
   width: 200px;
-  height: 390px;
+  height: 320px;
   display: block;
   margin: 0 auto;
 }
@@ -3272,13 +3272,13 @@
 .armor-inputs-left,
 .armor-inputs-right {
   position: relative;
-  height: 390px;
+  height: 320px;
 }
 
 /* Chaque ligne d'input est positionnée verticalement via la variable CSS --row-top */
 .armor-inp-row {
   position: absolute;
-  top: var(--row-top, 0);
+  top: calc(var(--row-top, 0px) * 0.82);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -3788,27 +3788,26 @@
   align-items: center;
   padding: 2px 0;
   font-size: 10px;
+  height: 15px;
 }
 
-.wound-endurance-loc  { color: #333; font-weight: 500; }
-.wound-endurance-diff { color: #b52020; font-weight: bold; }
+.wound-endurance-loc  { color: #333; font-weight: 500; flex: 1; }
+.wound-endurance-diff { color: #b52020; font-weight: bold; margin-left: auto; }
 
 .wound-roll-endurance {
   background: none;
-  border: 1px solid #b52020;
-  border-radius: 3px;
+  border: none;
   color: #b52020;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1;
-  padding: 1px 5px;
-  margin-left: 4px;
+  padding: 0 2px;
+  margin-left: 2px;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  transition: color 0.15s;
 }
 .wound-roll-endurance:hover {
-  background: #b52020;
-  color: #fff;
+  color: #7a0000;
 }
 
 /* Unusable limbs */

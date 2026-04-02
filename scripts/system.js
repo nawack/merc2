@@ -1474,7 +1474,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       // Compute cumulative wound effects from all locations
       const locDegreeMap = Object.fromEntries(data.healthLocDegrees.map(l => [l.key, l.degree]));
       const locRawMap    = Object.fromEntries(Object.entries(this.actor.system?.health?.locations ?? {}).map(([k, v]) => [k, Number(v) || 0]));
-      const rawFx = computeWoundEffects(locDegreeMap);
+      const _rawStabilised = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
+      const stabilisedLocs = new Set([..._rawStabilised].filter(k => (locDegreeMap[k] ?? 0) >= 3));
+      const rawFx = computeWoundEffects(locDegreeMap, stabilisedLocs);
       const snapshot = getLocSnapshot(locDegreeMap);
       const fx = { ...rawFx };
 
@@ -2577,7 +2579,19 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         });
 
         // Update wound effects summary panel
-        const rawFx = computeWoundEffects(locDegreeMap);
+        const _rawStab = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
+        const stabilisedLocs = new Set([..._rawStab].filter(k => (locDegreeMap[k] ?? 0) >= 3));
+        // If some stabilised locs healed below degree 3, clean up the flag
+        if (stabilisedLocs.size !== _rawStab.size) {
+          this.actor.update({"flags.merc.stabilisedLocs": [...stabilisedLocs]}, {render: false});
+        }
+        // Update first-aid button visibility: show when any location has degree >= 1
+        const firstAidBtn = html.querySelector('.first-aid-global-btn');
+        if (firstAidBtn) {
+          const anyWounded = Object.values(locDegreeMap).some(d => d >= 1);
+          firstAidBtn.style.display = anyWounded ? '' : 'none';
+        }
+        const rawFx = computeWoundEffects(locDegreeMap, stabilisedLocs);
         const snapshot = getLocSnapshot(locDegreeMap);
         const fx = { ...rawFx };
         // Endurance-derived inconscient
@@ -2605,7 +2619,40 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       if (!html.dataset.enduranceListenerAttached) {
         html.dataset.enduranceListenerAttached = "1";
         html.addEventListener("click", async (event) => {
-          // Bouton soin : diminue les dégâts de PC points
+          // Bouton premiers soins global
+          const firstAidBtn = event.target.closest(".first-aid-global-btn");
+          if (firstAidBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 1);
+            // Reconstruct current degree map from DOM inputs
+            const woundDeg = (v, p) => {
+              if (v <= 0) return 0; if (p <= 0) return v > 0 ? 6 : 0;
+              if (v <= p) return 1; if (v <= 2*p) return 2; if (v <= 3*p) return 3;
+              if (v <= 4*p) return 4; if (v <= 5*p) return 5; return 6;
+            };
+            const updates = {};
+            const newStabilised = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
+            html.querySelectorAll(".health-inp[data-location]").forEach(inp => {
+              const locKey = inp.dataset.location;
+              const value = Number(inp.value) || 0;
+              const degree = woundDeg(value, pc);
+              if (degree >= 3) {
+                // Stabilise: suppress death timer, no HP change
+                newStabilised.add(locKey);
+              } else if (degree > 0) {
+                // Reduce by one full degree: snap to (degree-1)*pc HP
+                const newVal = Math.max(0, (degree - 1) * pc);
+                inp.value = newVal;
+                updates[`system.health.locations.${locKey}`] = newVal;
+              }
+            });
+            updates["flags.merc.stabilisedLocs"] = [...newStabilised];
+            await this.actor.update(updates, { render: false });
+            updateHealthDisplay();
+            return;
+          }
+          // Bouton soin individuel : diminue les dégâts de PC points
           const healBtn = event.target.closest(".health-heal-btn");
           if (healBtn) {
             event.preventDefault();
@@ -4956,14 +5003,17 @@ function getLocSnapshot(locDegreeMap) {
 
 /**
  * Compute cumulative wound effects from a map of { locationKey: degree }.
- * Returns: { totalInitMalus, totalActionMalus, worstStatus, enduranceTests[], unusableLimbs[], warnings[] }
+ * @param {object} locDegrees - { locationKey: degree }
+ * @param {Set<string>} stabilisedLocs - locations stabilised by first aid (death timer suppressed)
+ * Returns: { totalInitMalus, totalActionMalus, worstStatus, shortestDeathDelay, stabilisedCount, enduranceTests[], unusableLimbs[], warnings[] }
  */
-function computeWoundEffects(locDegrees) {
+function computeWoundEffects(locDegrees, stabilisedLocs = new Set()) {
   let totalInitMalus = 0;
   let totalActionMalus = 0;
   let worstStatus = null; // "mort", "coma", "inconscient"
   const statusRank = { mort: 3, coma: 2, inconscient: 1 };
-  let shortestDeathDelayMin = null; // smallest death timer across all locations (minutes)
+  let shortestDeathDelayMin = null; // smallest death timer across all non-stabilised locations (minutes)
+  let stabilisedCount = 0;
   const enduranceTests = [];
   const unusableLimbs = [];
   const warnings = [];
@@ -4978,16 +5028,37 @@ function computeWoundEffects(locDegrees) {
     totalInitMalus   += fx.initMalus;
     totalActionMalus += fx.actionMalus;
 
+    const isStabilised = stabilisedLocs.has(locKey);
+
     if (fx.dead) {
-      const label = fx.deathDelay ? `MORT — ${LOCATION_DISPLAY[locKey]} (${fx.deathDelay})` : `MORT IMMÉDIATE — ${LOCATION_DISPLAY[locKey]}`;
       if (!worstStatus || statusRank.mort > statusRank[worstStatus]) worstStatus = "mort";
-      warnings.push({ severity: "mort", text: label });
+      if (isStabilised) {
+        stabilisedCount++;
+        warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
+      } else {
+        const label = fx.deathDelay ? `MORT — ${LOCATION_DISPLAY[locKey]} (${fx.deathDelay})` : `MORT IMMÉDIATE — ${LOCATION_DISPLAY[locKey]}`;
+        warnings.push({ severity: "mort", text: label });
+      }
     } else if (fx.coma) {
       if (!worstStatus || statusRank.coma > (statusRank[worstStatus] ?? 0)) worstStatus = "coma";
-      warnings.push({ severity: "coma", text: `COMA — ${LOCATION_DISPLAY[locKey]}${fx.deathDelay ? " (mort en " + fx.deathDelay + ")" : ""}` });
+      if (isStabilised) {
+        stabilisedCount++;
+        warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
+      } else {
+        warnings.push({ severity: "coma", text: `COMA — ${LOCATION_DISPLAY[locKey]}${fx.deathDelay ? " (mort en " + fx.deathDelay + ")" : ""}` });
+      }
     } else if (fx.incap) {
       if (!worstStatus || statusRank.inconscient > (statusRank[worstStatus] ?? 0)) worstStatus = "inconscient";
-      warnings.push({ severity: "inconscient", text: `INCONSCIENT — ${LOCATION_DISPLAY[locKey]}${fx.deathDelay ? " (mort en " + fx.deathDelay + ")" : ""}` });
+      if (isStabilised) {
+        stabilisedCount++;
+        warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
+      } else {
+        warnings.push({ severity: "inconscient", text: `INCONSCIENT — ${LOCATION_DISPLAY[locKey]}${fx.deathDelay ? " (mort en " + fx.deathDelay + ")" : ""}` });
+      }
+    } else if (fx.deathDelay && isStabilised) {
+      // Location has a death timer but no status (e.g. bras D3) — still show stabilised
+      stabilisedCount++;
+      warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
     }
 
     if (fx.enduranceTest !== null) {
@@ -4998,8 +5069,8 @@ function computeWoundEffects(locDegrees) {
       unusableLimbs.push(LOCATION_DISPLAY[locKey]);
     }
 
-    // Track shortest death delay across all locations
-    if (fx.deathDelay) {
+    // Track shortest death delay across non-stabilised locations only
+    if (fx.deathDelay && !isStabilised) {
       const mins = parseInt(fx.deathDelay, 10);
       if (!isNaN(mins) && (shortestDeathDelayMin === null || mins < shortestDeathDelayMin)) {
         shortestDeathDelayMin = mins;
@@ -5008,7 +5079,7 @@ function computeWoundEffects(locDegrees) {
   }
 
   const shortestDeathDelay = shortestDeathDelayMin !== null ? `${shortestDeathDelayMin} min` : null;
-  return { totalInitMalus, totalActionMalus, worstStatus, shortestDeathDelay, enduranceTests, unusableLimbs, warnings };
+  return { totalInitMalus, totalActionMalus, worstStatus, shortestDeathDelay, stabilisedCount, enduranceTests, unusableLimbs, warnings };
 }
 
 /**
@@ -5023,7 +5094,7 @@ function _updateWoundEffectsPanel(html, fx) {
 
   // --- Status banner ---
   let banner = summary.querySelector('.wound-status-banner');
-  const showBanner = fx.worstStatus || fx.shortestDeathDelay;
+  const showBanner = fx.worstStatus || fx.shortestDeathDelay || fx.stabilisedCount > 0;
   if (showBanner) {
     if (!banner) {
       banner = document.createElement('div');
@@ -5036,7 +5107,10 @@ function _updateWoundEffectsPanel(html, fx) {
     const delayHtml = fx.shortestDeathDelay && fx.worstStatus !== 'mort'
       ? `<span class="wound-death-timer">${statusText ? ' — ' : ''}⏱ mort dans ${fx.shortestDeathDelay}</span>`
       : '';
-    banner.innerHTML = statusText + delayHtml;
+    const stabilisedHtml = fx.stabilisedCount > 0 && !fx.shortestDeathDelay && fx.worstStatus !== 'mort'
+      ? `<span class="wound-stabilised-tag"> — ✓ STABILISÉ</span>`
+      : '';
+    banner.innerHTML = statusText + delayHtml + stabilisedHtml;
     banner.style.display = '';
   } else if (banner) {
     banner.style.display = 'none';
@@ -5065,9 +5139,12 @@ function _updateWoundEffectsPanel(html, fx) {
       if (malusRow) malusRow.after(warnList);
       else summary.append(warnList);
     }
-    warnList.innerHTML = fx.warnings.map(w =>
-      `<div class="wound-warning-item wound-warn-${w.severity}"><i class="fas fa-exclamation-triangle"></i> ${w.text}</div>`
-    ).join('');
+    warnList.innerHTML = fx.warnings.map(w => {
+      const icon = w.severity === 'stabilise'
+        ? '<i class="fas fa-check-circle"></i>'
+        : '<i class="fas fa-exclamation-triangle"></i>';
+      return `<div class="wound-warning-item wound-warn-${w.severity}">${icon} ${w.text}</div>`;
+    }).join('');
     warnList.style.display = '';
   } else if (warnList) {
     warnList.style.display = 'none';

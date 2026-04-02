@@ -22,6 +22,10 @@
         <label>{{localize "MERC.UI.items.equipmentSheet.weightKg"}}</label>
         <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="0.1">
       </div>
+      <div class="equipment-field">
+        <label>{{localize "MERC.UI.items.equipped"}}</label>
+        <input type="checkbox" name="system.equipped" {{#if item.system.equipped}}checked{{/if}}>
+      </div>
       <div class="equipment-field ef-span3">
         <label>{{localize "MERC.UI.items.equipmentSheet.description"}}</label>
         <textarea name="system.description" rows="6" placeholder="{{localize "MERC.UI.items.equipmentSheet.descriptionPlaceholder"}}">{{item.system.description}}</textarea>

@@ -199,6 +199,8 @@
         "addWeapon": "+ Ajouter une arme",
         "addArmor": "+ Ajouter une armure",
         "addEquipment": "+ Ajouter un équipement",
+        "equipped": "Équipé",
+        "toggleEquipped": "Basculer équipé/non-équipé",
         "armorClassShort": "CA",
         "rollWeaponSkill": "Jet decompétence",
         "rollWeaponSkillAimed": "Tir visé",

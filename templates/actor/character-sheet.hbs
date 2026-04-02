@@ -577,7 +577,9 @@
       <nav class="combat-subtabs">
         <a class="item active" data-tab="combat-base">{{localize "MERC.UI.combat.baseDamageHeader"}}</a>
         {{#each (filterItems actor.items "weapon") as |item|}}
+        {{#if item.system.equipped}}
         <a class="item" data-tab="combat-weapon-{{item._id}}">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</a>
+        {{/if}}
         {{/each}}
       </nav>
 
@@ -634,6 +636,7 @@
 
         <!-- One sub-tab per weapon -->
         {{#each (filterItems actor.items "weapon") as |item|}}
+        {{#if item.system.equipped}}
         <div class="combat-subtab-content" data-tab="combat-weapon-{{item._id}}">
           <div class="item-card item combat-weapon-card" data-item-id="{{item._id}}">
 
@@ -777,6 +780,7 @@
 
           </div>
         </div>
+        {{/if}}
         {{/each}}
 
       </section>
@@ -797,6 +801,7 @@
               <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
             </div>
             <div class="item-controls">
+              <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
               <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
@@ -816,6 +821,7 @@
               <div class="item-damage-skill">{{localize "MERC.UI.items.armorClassShort"}} {{item.system.armorClass}}</div>
             </div>
             <div class="item-controls">
+              <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
               <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>
@@ -834,6 +840,7 @@
               <div class="item-name">{{item.name}}</div>
             </div>
             <div class="item-controls">
+              <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
               <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
             </div>

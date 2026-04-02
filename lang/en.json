@@ -199,6 +199,8 @@
         "addWeapon": "+ Add Weapon",
         "addArmor": "+ Add Armor",
         "addEquipment": "+ Add Equipment",
+        "equipped": "Equipped",
+        "toggleEquipped": "Toggle equipped/unequipped",
         "armorClassShort": "AC",
         "rollWeaponSkill": "Skill roll",
         "rollWeaponSkillAimed": "Aimed shot",

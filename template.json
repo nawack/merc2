@@ -159,6 +159,7 @@
       "rarity": "common",
       "price": 0,
       "weightKg": 0,
+      "equipped": false,
       "weaponSubtype": "",
       "weaponSkill": "",
       "proficiency": 0,
@@ -212,6 +213,7 @@
       "rarity": "common",
       "price": 0,
       "weightKg": 0,
+      "equipped": false,
       "description": "",
       "locations": {
         "pied_gch": 0,
@@ -240,6 +242,7 @@
       "rarity": "common",
       "price": 0,
       "weightKg": 0,
+      "equipped": false,
       "description": ""
     },
     "feature": {

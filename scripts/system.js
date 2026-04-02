@@ -1464,6 +1464,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       const armorLocations = Object.fromEntries(locationKeys.map(k => [k, 0]));
       for (const item of actorDoc.items) {
         if (item.type !== 'armor') continue;
+        if (!item.system?.equipped) continue;
         const locs = item.system?.locations ?? {};
         for (const key of locationKeys) {
           armorLocations[key] += Number(locs[key]) || 0;
@@ -2387,14 +2388,28 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // Toggle equipped state on items (weapons, armor, equipment)
+    html.querySelectorAll(".item-equip-toggle").forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const itemId = btn.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (!item) return;
+        await item.update({ "system.equipped": !item.system.equipped });
+        await this.render();
+      });
+    });
+
     // Calculate and display total weight (encombrement) with burden levels
-    // Includes: weapons, armors, equipment. Excludes: ammo (tracked per weapon), feature (no physical weight).
+    // Includes: weapons, armors, equipment (only equipped). Excludes: ammo, feature.
     const totalWeightElement = html.querySelector("#total-weight");
     if (totalWeightElement) {
       let totalWeight = 0;
       if (this.actor?.items) {
         this.actor.items.forEach(item => {
           if (![ "weapon", "armor", "equipment" ].includes(item.type)) return;
+          if (!item.system?.equipped) return;
           const weight = Number(item.system?.weightKg ?? 0);
           if (!Number.isNaN(weight)) {
             totalWeight += weight;

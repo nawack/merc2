@@ -1,7 +1,7 @@
 # Roadmap - Mercenary System
 
-**Mise à jour :** 2026-04-01  
-**Version courante :** 1.1.0  
+**Mise à jour :** 2026-04-03  
+**Version courante :** 1.1.4  
 **Source :** `.todo`
 
 ---
@@ -61,6 +61,16 @@
 - Affichage des accessoires et leurs bonus dans l'onglet Combat (badges colorés par type)
 - Compendium Accessoires : 29 entrées depuis CSV (lunettes, silencieux, pointeurs, adaptateurs…)
 
+**Blessures & Santé (v1.1.4)**
+- Degrés de blessure D0-D6+ calculés automatiquement par localisation selon PC
+- Panneau récapitulatif : stati, malus cumulés Initiative/Action, warnings, tests d'endurance, membres inutilisables
+- Bouton soin individuel (✚) par localisation — réduit d'un degré
+- Bouton Premiers Soins global — stabilise (D≥3) ou réduit d'un degré (D1-2)
+- Indicateur STABILISÉ : supprime le timer de mort pour les localisations stabilisées
+- Jet d'endurance avec dé secondaire bonus/malus, résultat en chat et gestion de l'échec (inconscient)
+- Synchronisation temps réel des effets de statut token (`dead` / `unconscious`)
+- Incapacité en combat : combattants inconscients/morts sautés et grisés dans le traqueur
+
 ---
 
 ## 🔜 Planifié
@@ -108,9 +118,13 @@
 ---
 
 ### v1.6.0 — Conséquences des Blessures
-> Application des malus liés aux localisations blessées.
+> Application des malus liés aux localisations blessées sur les compétences et attributs (les malus Initiative/Action sont déjà implémentés en v1.1.4).
 
-- [ ] Gérer les conséquences des blessures (malus sur compétences, attributs, mouvements, etc.)
+- [x] Malus Initiative et Action par localisation blessée *(v1.1.4)*
+- [x] Statuts inconscient / coma / mort avec synchronisation token *(v1.1.4)*
+- [x] Membres inutilisables signalés dans le panneau *(v1.1.4)*
+- [ ] Répercussion des malus sur les jets de compétences liées au membre blessé
+- [ ] Répercussion des malus d'action sur le nombre d'actions disponibles en combat
 
 ---
 

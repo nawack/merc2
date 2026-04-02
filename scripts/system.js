@@ -313,7 +313,27 @@ const getReactionDegreeFromCombatant = (combatant) => {
     abilities: CONFIG.MERC?.skills?.reaction?.abilities || [],
     ...(system.skills?.reaction || {})
   };
-  return computeSkillDegreeFromSystem(system, "reaction", skillData);
+  const baseDegree = computeSkillDegreeFromSystem(system, "reaction", skillData)
+                   + Number(skillData.bonus ?? 0);
+
+  // Apply wound init malus (from health locations damage)
+  const locations = system.health?.locations ?? {};
+  const pc = Number(system.combat?.pointCorporence ?? 0);
+  const woundDegree = (value) => {
+    if (value <= 0 || pc <= 0) return value > 0 ? 6 : 0;
+    if (value <= pc) return 1;
+    if (value <= 2 * pc) return 2;
+    if (value <= 3 * pc) return 3;
+    if (value <= 4 * pc) return 4;
+    if (value <= 5 * pc) return 5;
+    return 6;
+  };
+  const locDegreeMap = Object.fromEntries(
+    Object.entries(locations).map(([k, v]) => [k, woundDegree(Number(v) || 0)])
+  );
+  const { totalInitMalus } = computeWoundEffects(locDegreeMap);
+
+  return Math.max(0, baseDegree + totalInitMalus);
 };
 
 const getSegmentOrderLabel = (segment) => {
@@ -346,6 +366,16 @@ const buildSegmentEntries = (combat, segment) => {
 const getEligibleIdsForSegment = (combat, segment) => {
   const entries = buildSegmentEntries(combat, segment);
   return new Set(entries.map((entry) => entry.combatant.id));
+};
+
+/**
+ * Returns true if the combatant's actor is incapacitated (unconscious or dead status),
+ * meaning they cannot play their turn in combat.
+ */
+const isCombatantIncapacitated = (combatant) => {
+  const statuses = combatant?.actor?.statuses;
+  if (!statuses) return false;
+  return statuses.has('unconscious') || statuses.has('dead');
 };
 
 const buildSegmentTurns = (combat, segment) => {
@@ -409,7 +439,7 @@ class MercCombat extends Combat {
     const startIndex = Number.isInteger(this.turn) ? this.turn : 0;
     let nextIndex = -1;
     for (let i = startIndex + 1; i < turns.length; i++) {
-      if (eligibleIds.has(turns[i].id)) {
+      if (eligibleIds.has(turns[i].id) && !isCombatantIncapacitated(turns[i])) {
         nextIndex = i;
         break;
       }
@@ -1450,6 +1480,33 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         return { key: l.key, name: l.name, value, degree };
       });
       data.healthLocDegreeValues = Object.fromEntries(data.healthLocDegrees.map(l => [l.key, l.degree]));
+
+      // Compute cumulative wound effects from all locations
+      const locDegreeMap = Object.fromEntries(data.healthLocDegrees.map(l => [l.key, l.degree]));
+      const locRawMap    = Object.fromEntries(Object.entries(this.actor.system?.health?.locations ?? {}).map(([k, v]) => [k, Number(v) || 0]));
+      const _rawStabilised = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
+      const stabilisedLocs = new Set([..._rawStabilised].filter(k => (locDegreeMap[k] ?? 0) >= 3));
+      const rawFx = computeWoundEffects(locDegreeMap, stabilisedLocs);
+      const snapshot = getLocSnapshot(locDegreeMap);
+      const fx = { ...rawFx };
+
+      // Endurance-derived inconscient
+      const _storedSnap = this.actor.getFlag("merc", "enduranceFailed");
+      if (_storedSnap) {
+        if (_storedSnap === snapshot) {
+          // Même état qu'au moment du jet raté → appliquer inconscient
+          const sRank = { mort: 3, coma: 2, inconscient: 1 };
+          if ((sRank[fx.worstStatus] ?? 0) < 1) fx.worstStatus = "inconscient";
+        } else {
+          // État différent : si un degré a diminué (guérison), effacer le flag définitivement
+          try {
+            const _stored = JSON.parse(_storedSnap);
+            const _anyDecrease = Object.entries(_stored).some(([k, v]) => (locDegreeMap[k] ?? 0) < v);
+            if (_anyDecrease) this.actor.update({"flags.merc.-=enduranceFailed": null}, {render: false});
+          } catch {}
+        }
+      }
+      data.woundEffects = fx;
     }
 
     // Compute total armor points per location from all armor items owned by the actor
@@ -2499,24 +2556,192 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       };
       const updateHealthDisplay = () => {
         const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
+        const locDegreeMap = {};
+        const locRawMap = {};
         html.querySelectorAll(".health-inp[data-location]").forEach(inp => {
           const locKey = inp.dataset.location;
           const value = Number(inp.value) || 0;
           const degree = woundDegree(value, pc);
+          locDegreeMap[locKey] = degree;
+          locRawMap[locKey] = value;
           const degreeEl = html.querySelector(`[data-loc-degree="${locKey}"]`);
           if (degreeEl) {
             degreeEl.textContent = `D${degree}`;
             for (let i = 0; i <= 6; i++) degreeEl.classList.remove(`health-degree-${i}`);
             degreeEl.classList.add(`health-degree-${degree}`);
+            // Bouton soin : toujours présent pour éviter le décalage, visibility selon degré
+            let healBtn = degreeEl.parentElement?.querySelector('.health-heal-btn');
+            if (!healBtn) {
+              healBtn = document.createElement('button');
+              healBtn.type = 'button';
+              healBtn.className = 'health-heal-btn';
+              healBtn.title = 'Soigner (- 1 degré)';
+              healBtn.innerHTML = '✚';
+              healBtn.dataset.location = locKey;
+              degreeEl.after(healBtn);
+            }
+            healBtn.style.visibility = degree > 0 ? '' : 'hidden';
           }
           const valueEl = html.querySelector(`[data-loc-value="${locKey}"]`);
           if (valueEl) valueEl.textContent = value;
           const zone = html.querySelector(`.health-zone[data-zone="${locKey}"]`);
           if (zone) zone.setAttribute('data-degree', degree);
         });
+
+        // Update wound effects summary panel
+        const _rawStab = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
+        const stabilisedLocs = new Set([..._rawStab].filter(k => (locDegreeMap[k] ?? 0) >= 3));
+        // If some stabilised locs healed below degree 3, clean up the flag
+        if (stabilisedLocs.size !== _rawStab.size) {
+          this.actor.update({"flags.merc.stabilisedLocs": [...stabilisedLocs]}, {render: false});
+        }
+        // Update first-aid button visibility: show when any location has degree >= 1
+        const firstAidBtn = html.querySelector('.first-aid-global-btn');
+        if (firstAidBtn) {
+          const anyWounded = Object.values(locDegreeMap).some(d => d >= 1);
+          firstAidBtn.style.display = anyWounded ? '' : 'none';
+        }
+        const rawFx = computeWoundEffects(locDegreeMap, stabilisedLocs);
+        const snapshot = getLocSnapshot(locDegreeMap);
+        const fx = { ...rawFx };
+        // Endurance-derived inconscient
+        const _storedSnap = this.actor.getFlag("merc", "enduranceFailed");
+        if (_storedSnap) {
+          if (_storedSnap === snapshot) {
+            // Même état qu'au moment du jet raté → appliquer inconscient
+            const sRank = { mort: 3, coma: 2, inconscient: 1 };
+            if ((sRank[fx.worstStatus] ?? 0) < 1) fx.worstStatus = "inconscient";
+          } else {
+            // État différent : si un degré a diminué (guérison), effacer le flag définitivement
+            try {
+              const _stored = JSON.parse(_storedSnap);
+              const _anyDecrease = Object.entries(_stored).some(([k, v]) => (locDegreeMap[k] ?? 0) < v);
+              if (_anyDecrease) this.actor.update({"flags.merc.-=enduranceFailed": null}, {render: false});
+            } catch {}
+          }
+        }
+        _updateWoundEffectsPanel(html, fx);
+
+        // Sync token status effects (dead / unconscious) — only when status changes
+        const _newWoundStatus = fx.worstStatus ?? '';
+        if (html.dataset.prevWoundStatus !== _newWoundStatus) {
+          html.dataset.prevWoundStatus = _newWoundStatus;
+          const _actor = this.actor;
+          const _dead        = _newWoundStatus === 'mort';
+          const _unconscious = _newWoundStatus === 'coma' || _newWoundStatus === 'inconscient';
+          _actor.toggleStatusEffect('dead',        { active: _dead        }).catch(() => {});
+          _actor.toggleStatusEffect('unconscious', { active: _unconscious }).catch(() => {});
+        }
       };
       updateHealthDisplay();
       healthInputs.forEach(inp => inp.addEventListener("input", updateHealthDisplay));
+
+      // Endurance roll buttons — delegated listener, attached only once per element
+      if (!html.dataset.enduranceListenerAttached) {
+        html.dataset.enduranceListenerAttached = "1";
+        html.addEventListener("click", async (event) => {
+          // Bouton premiers soins global
+          const firstAidBtn = event.target.closest(".first-aid-global-btn");
+          if (firstAidBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 1);
+            // Reconstruct current degree map from DOM inputs
+            const woundDeg = (v, p) => {
+              if (v <= 0) return 0; if (p <= 0) return v > 0 ? 6 : 0;
+              if (v <= p) return 1; if (v <= 2*p) return 2; if (v <= 3*p) return 3;
+              if (v <= 4*p) return 4; if (v <= 5*p) return 5; return 6;
+            };
+            const updates = {};
+            const newStabilised = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
+            html.querySelectorAll(".health-inp[data-location]").forEach(inp => {
+              const locKey = inp.dataset.location;
+              const value = Number(inp.value) || 0;
+              const degree = woundDeg(value, pc);
+              if (degree >= 3) {
+                // Stabilise: suppress death timer, no HP change
+                newStabilised.add(locKey);
+              } else if (degree > 0) {
+                // Reduce by one full degree: snap to (degree-1)*pc HP
+                const newVal = Math.max(0, (degree - 1) * pc);
+                inp.value = newVal;
+                updates[`system.health.locations.${locKey}`] = newVal;
+              }
+            });
+            updates["flags.merc.stabilisedLocs"] = [...newStabilised];
+            await this.actor.update(updates, { render: false });
+            updateHealthDisplay();
+            return;
+          }
+          // Bouton soin individuel : diminue les dégâts de PC points
+          const healBtn = event.target.closest(".health-heal-btn");
+          if (healBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+            const locKey = healBtn.dataset.location;
+            const fieldPath = `system.health.locations.${locKey}`;
+            const inp = html.querySelector(`.health-inp[data-location="${locKey}"]`);
+            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 1);
+            const current = Number(inp?.value ?? this.actor.system?.health?.locations?.[locKey] ?? 0);
+            const newVal = Math.max(0, current - pc);
+            if (inp) inp.value = newVal;
+            await this.actor.update({ [fieldPath]: newVal }, { render: false });
+            updateHealthDisplay();
+            return;
+          }
+          const btn = event.target.closest(".wound-roll-endurance");
+          if (!btn) return;
+          event.preventDefault();
+          event.stopPropagation();
+        const diff = Number(btn.dataset.diff) || 0;
+        const loc  = btn.dataset.loc || "?";
+        const actor = this.actor;
+        const endurance = Number(actor.system?.combat?.endurance ?? 0);
+        const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
+        const total = adjustedTotal + endurance;
+        const success = total >= diff;
+        const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
+        const badgeClass = success ? " merc-roll-badge--bonus" : " merc-roll-badge--penalty";
+        const rollTextClass = secondRollDirection === "added" ? " merc-roll-text--bonus"
+          : secondRollDirection === "subtracted" ? " merc-roll-text--penalty" : "";
+        const rollDice = secondRoll
+          ? `${firstRoll.total}${secondRollDirection === "added" ? " + " : " - "}${secondRoll.total}`
+          : `${firstRoll.total}`;
+        const resultLabel = success ? "✔ Succès" : "✘ Échec";
+
+        // Échec : enregistrer l'échec d'endurance pour cet état de blessures exact
+        if (!success) {
+          const locations = actor.system?.health?.locations ?? {};
+          const pc = Number(actor.system?.combat?.pointCorporence ?? 0);
+          const wdFn = (v) => { v = Number(v) || 0; if (v <= 0 || pc <= 0) return v > 0 ? 6 : 0; if (v <= pc) return 1; if (v <= 2*pc) return 2; if (v <= 3*pc) return 3; if (v <= 4*pc) return 4; if (v <= 5*pc) return 5; return 6; };
+          const ldMap = Object.fromEntries(Object.entries(locations).map(([k, v]) => [k, wdFn(v)]));
+          const currentFx = computeWoundEffects(ldMap);
+          const sRank = { mort: 3, coma: 2, inconscient: 1 };
+          // Ne passer inconscient que si pas de statut pire déjà actif
+          if ((sRank[currentFx.worstStatus] ?? 0) < 1) {
+            const failSnap = getLocSnapshot(ldMap);
+            await actor.setFlag("merc", "enduranceFailed", failSnap);
+            await actor.unsetFlag("merc", "inconscientCancelled"); // annule un éventuel revive précédent
+            updateHealthDisplay();
+          }
+        }
+        await ChatMessage.create({
+          user: game.user.id,
+          speaker: ChatMessage.getSpeaker({ actor }),
+          rolls,
+          content: `<div class="merc-roll">
+        <div class="merc-roll-header">
+          <span class="merc-roll-label">${actor.name} — Endurance (${loc})</span>
+          <span class="merc-roll-badge${badgeClass}">${total} ${resultLabel}</span>
+        </div>
+        <div class="merc-roll-breakdown">
+          <span class="roll-d20${rollTextClass}"><strong>${rollDice}</strong></span>
+          <span class="roll-modifier">${endurance >= 0 ? " + " : " − "}${Math.abs(endurance)} End. / Difficulté ${diff}</span>
+        </div>
+      </div>`
+        });
+        }); // close addEventListener
+      } // end if !enduranceListenerAttached
 
       // Dedicated save handler for health location inputs — saves without early-return
       // so that 0 values are properly persisted to the actor database
@@ -2533,15 +2758,41 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   }
 
   /**
+   * Compute the total action malus from wound effects for a given actor.
+   * @param {Actor} actor
+   * @returns {number} negative integer (or 0)
+   */
+  _getWoundActionMalus(actor) {
+    const system = actor?.system;
+    if (!system) return 0;
+    const locations = system.health?.locations ?? {};
+    const pc = Number(system.combat?.pointCorporence ?? 0);
+    const woundDegree = (value) => {
+      if (value <= 0 || pc <= 0) return value > 0 ? 6 : 0;
+      if (value <= pc) return 1;
+      if (value <= 2 * pc) return 2;
+      if (value <= 3 * pc) return 3;
+      if (value <= 4 * pc) return 4;
+      if (value <= 5 * pc) return 5;
+      return 6;
+    };
+    const locDegreeMap = Object.fromEntries(
+      Object.entries(locations).map(([k, v]) => [k, woundDegree(Number(v) || 0)])
+    );
+    return computeWoundEffects(locDegreeMap).totalActionMalus;
+  }
+
+  /**
    * Build and send a d20 roll chat message.
    * @param {string} label - The display label for the roll
    * @param {number} modifier - The total modifier to add to the roll
    * @param {string} breakdownText - Optional breakdown details (e.g., "Degré 3 / Bonus 1")
+   * @param {number} woundMalus - Action malus from wounds (0 or negative)
    */
-  async _sendD20RollMessage(label, modifier, breakdownText = "") {
+  async _sendD20RollMessage(label, modifier, breakdownText = "", woundMalus = 0) {
     const actor = this.actor ?? this.document;
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
-    const total = adjustedTotal + modifier;
+    const total = adjustedTotal + modifier + woundMalus;
     const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
     const badgeClass = secondRollDirection === "added"
       ? " merc-roll-badge--bonus"
@@ -2560,6 +2811,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     let breakdownHtml = `<span class="roll-modifier">${modifier > 0 ? ' + ' : ' - '}${Math.abs(modifier)}</span>`;
     if (breakdownText) {
       breakdownHtml += `\n          <span class="roll-modifier">(${breakdownText})</span>`;
+    }
+    if (woundMalus < 0) {
+      breakdownHtml += `\n          <span class="roll-modifier merc-roll-wound-malus">Blessures ${woundMalus}</span>`;
     }
     
     const chatData = {
@@ -2593,8 +2847,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const abilityScore = Number(typeof rawAbility === "object" ? (rawAbility.current ?? 0) : (rawAbility ?? 0));
     const abilityName = game.i18n.localize(CONFIG.MERC.abilities[abilityKey]);
     const label = `${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${abilityName}`;
-    
-    await this._sendD20RollMessage(label, abilityScore);
+    const woundMalus = this._getWoundActionMalus(actor);
+    await this._sendD20RollMessage(label, abilityScore, "", woundMalus);
   }
 
   async rollSkillCheck(skillKey) {
@@ -2671,7 +2925,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     
     const label = `${actor.name} - ${skillName}`;
     const breakdown = game.i18n.format("MERC.Labels.breakdownDegree", { degree, bonus, attr: combatBonus });
-    await this._sendD20RollMessage(label, total_modifier, breakdown);
+    const woundMalus = this._getWoundActionMalus(actor);
+    await this._sendD20RollMessage(label, total_modifier, breakdown, woundMalus);
   }
 
   async rollWeaponSkillCheck(item, aimBonus = 0) {
@@ -2726,7 +2981,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (aimBonus > 0) {
       breakdown += ` / ${game.i18n.localize("MERC.UI.items.rollWeaponSkillAimed")} +${aimBonus}`;
     }
-    await this._sendD20RollMessage(label, total_modifier, breakdown);
+    const woundMalus = this._getWoundActionMalus(actor);
+    await this._sendD20RollMessage(label, total_modifier, breakdown, woundMalus);
   }
 
   /**
@@ -4571,10 +4827,15 @@ Hooks.once("init", () => {
           tokenInitiative.setAttribute("aria-label", reactionTitle);
         }
       }
-      if (id && !eligibleIds.has(id)) {
+      if (id && (!eligibleIds.has(id) || isCombatantIncapacitated(combatant))) {
         element.classList.add("merc-combatant--ineligible");
+        if (combatant && isCombatantIncapacitated(combatant)) {
+          element.classList.add("merc-combatant--incapacitated");
+        } else {
+          element.classList.remove("merc-combatant--incapacitated");
+        }
       } else {
-        element.classList.remove("merc-combatant--ineligible");
+        element.classList.remove("merc-combatant--ineligible", "merc-combatant--incapacitated");
       }
     });
   });
@@ -4657,6 +4918,308 @@ const DEFAULT_MOVEMENT = {
   marche: 0,
   course: 0
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WOUND EFFECTS TABLES
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * For each body region, the cumulative Init penalty at each degree (index = degree).
+ * The value at a given degree is already the TOTAL penalty for that location at that degree.
+ * Status fields: { incap: bool, coma: bool, dead: bool, deathDelay: string|null,
+ *                  enduranceTest: number|null, actionMalus: number, limbUnusable: bool }
+ */
+const WOUND_REGION_EFFECTS = {
+  tete: [
+    // D0
+    { initMalus: 0,  actionMalus: 0, incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D1
+    { initMalus: -1, actionMalus: 0, incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D2
+    { initMalus: -3, actionMalus: -4, incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: 20, limbUnusable: false },
+    // D3
+    { initMalus: -3, actionMalus: -4, incap: false, coma: true,  dead: false, deathDelay: "2 min", enduranceTest: null, limbUnusable: false },
+    // D4+
+    { initMalus: -3, actionMalus: -4, incap: false, coma: false, dead: true,  deathDelay: null, enduranceTest: null, limbUnusable: false },
+  ],
+  poitrine: [
+    // D0
+    { initMalus: 0,  actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D1
+    { initMalus: -1, actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D2
+    { initMalus: -2, actionMalus: -4, incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: 15,  limbUnusable: false },
+    // D3
+    { initMalus: -2, actionMalus: -4, incap: true,  coma: false, dead: false, deathDelay: "5 min", enduranceTest: null, limbUnusable: false },
+    // D4
+    { initMalus: -2, actionMalus: -4, incap: false, coma: true,  dead: false, deathDelay: "1 min", enduranceTest: null, limbUnusable: false },
+    // D5+
+    { initMalus: -2, actionMalus: -4, incap: false, coma: false, dead: true,  deathDelay: null, enduranceTest: null, limbUnusable: false },
+  ],
+  abdomen: [
+    // D0
+    { initMalus: 0,  actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D1
+    { initMalus: -1, actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D2
+    { initMalus: -3, actionMalus: -4, incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: 10,  limbUnusable: false },
+    // D3
+    { initMalus: -3, actionMalus: -4, incap: true,  coma: false, dead: false, deathDelay: "10 min", enduranceTest: null, limbUnusable: false },
+    // D4
+    { initMalus: -3, actionMalus: -4, incap: false, coma: true,  dead: false, deathDelay: "2 min", enduranceTest: null, limbUnusable: false },
+    // D5+
+    { initMalus: -3, actionMalus: -4, incap: false, coma: false, dead: true,  deathDelay: null, enduranceTest: null, limbUnusable: false },
+  ],
+  bras: [
+    // D0
+    { initMalus: 0,  actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D1
+    { initMalus: 0,  actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D2
+    { initMalus: -1, actionMalus: -4, incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: true  },
+    // D3
+    { initMalus: -1, actionMalus: -4, incap: false, coma: false, dead: false, deathDelay: "15 min", enduranceTest: 20, limbUnusable: true  },
+    // D4
+    { initMalus: -1, actionMalus: -4, incap: true,  coma: false, dead: false, deathDelay: "10 min", enduranceTest: null, limbUnusable: true  },
+    // D5
+    { initMalus: -1, actionMalus: -4, incap: false, coma: true,  dead: false, deathDelay: "2 min",  enduranceTest: null, limbUnusable: true  },
+    // D6+
+    { initMalus: -1, actionMalus: -4, incap: false, coma: false, dead: true,  deathDelay: null, enduranceTest: null, limbUnusable: true  },
+  ],
+  jambe: [
+    // D0
+    { initMalus: 0,  actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D1
+    { initMalus: 0,  actionMalus: 0,  incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: false },
+    // D2
+    { initMalus: -1, actionMalus: -4, incap: false, coma: false, dead: false, deathDelay: null, enduranceTest: null, limbUnusable: true  },
+    // D3
+    { initMalus: -1, actionMalus: -4, incap: false, coma: false, dead: false, deathDelay: "10 min", enduranceTest: 15, limbUnusable: true  },
+    // D4
+    { initMalus: -1, actionMalus: -4, incap: true,  coma: false, dead: false, deathDelay: "5 min",  enduranceTest: null, limbUnusable: true  },
+    // D5
+    { initMalus: -1, actionMalus: -4, incap: false, coma: true,  dead: false, deathDelay: "1 min",  enduranceTest: null, limbUnusable: true  },
+    // D6+
+    { initMalus: -1, actionMalus: -4, incap: false, coma: false, dead: true,  deathDelay: null, enduranceTest: null, limbUnusable: true  },
+  ],
+};
+
+/** Map each location key → region name */
+const LOCATION_REGION = {
+  crane: "tete", visage: "tete", cou: "tete",
+  poitrine_gch: "poitrine", poitrine_dr: "poitrine",
+  abdomen_gch: "abdomen", abdomen_dr: "abdomen", bas_ventre: "abdomen",
+  bras_gch: "bras", bras_dr: "bras", av_bras_gch: "bras", av_bras_dr: "bras", main_gch: "bras", main_dr: "bras",
+  cuisse_gch: "jambe", cuisse_dr: "jambe", jambe_gch: "jambe", jambe_dr: "jambe", pied_gch: "jambe", pied_dr: "jambe",
+};
+
+/** Location display names for limb/endurance messages */
+const LOCATION_DISPLAY = {
+  crane: "Crâne", visage: "Visage", cou: "Cou",
+  poitrine_gch: "Poitrine G", poitrine_dr: "Poitrine D",
+  abdomen_gch: "Abdomen G", abdomen_dr: "Abdomen D", bas_ventre: "Bas-ventre",
+  bras_gch: "Bras G", bras_dr: "Bras D", av_bras_gch: "Av-bras G", av_bras_dr: "Av-bras D", main_gch: "Main G", main_dr: "Main D",
+  cuisse_gch: "Cuisse G", cuisse_dr: "Cuisse D", jambe_gch: "Jambe G", jambe_dr: "Jambe D", pied_gch: "Pied G", pied_dr: "Pied D",
+};
+
+/** Returns a stable string snapshot of a locDegreeMap, used to tie flags to a specific wound state. */
+function getLocSnapshot(locDegreeMap) {
+  return JSON.stringify(Object.fromEntries(Object.entries(locDegreeMap).sort()));
+}
+
+/**
+ * Compute cumulative wound effects from a map of { locationKey: degree }.
+ * @param {object} locDegrees - { locationKey: degree }
+ * @param {Set<string>} stabilisedLocs - locations stabilised by first aid (death timer suppressed)
+ * Returns: { totalInitMalus, totalActionMalus, worstStatus, shortestDeathDelay, stabilisedCount, enduranceTests[], unusableLimbs[], warnings[] }
+ */
+function computeWoundEffects(locDegrees, stabilisedLocs = new Set()) {
+  let totalInitMalus = 0;
+  let totalActionMalus = 0;
+  let worstStatus = null; // "mort", "coma", "inconscient"
+  const statusRank = { mort: 3, coma: 2, inconscient: 1 };
+  let shortestDeathDelayMin = null; // smallest death timer across all non-stabilised locations (minutes)
+  let stabilisedCount = 0;
+  const enduranceTests = [];
+  const unusableLimbs = [];
+  const warnings = [];
+
+  for (const [locKey, degree] of Object.entries(locDegrees)) {
+    if (degree <= 0) continue;
+    const region = LOCATION_REGION[locKey];
+    if (!region) continue;
+    const table = WOUND_REGION_EFFECTS[region];
+    const fx = table[Math.min(degree, table.length - 1)];
+
+    totalInitMalus   += fx.initMalus;
+    totalActionMalus += fx.actionMalus;
+
+    const isStabilised = stabilisedLocs.has(locKey);
+
+    if (fx.dead) {
+      if (!worstStatus || statusRank.mort > statusRank[worstStatus]) worstStatus = "mort";
+      if (isStabilised) {
+        stabilisedCount++;
+        warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
+      } else {
+        const label = fx.deathDelay ? `MORT — ${LOCATION_DISPLAY[locKey]} (${fx.deathDelay})` : `MORT IMMÉDIATE — ${LOCATION_DISPLAY[locKey]}`;
+        warnings.push({ severity: "mort", text: label });
+      }
+    } else if (fx.coma) {
+      if (!worstStatus || statusRank.coma > (statusRank[worstStatus] ?? 0)) worstStatus = "coma";
+      if (isStabilised) {
+        stabilisedCount++;
+        warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
+      } else {
+        warnings.push({ severity: "coma", text: `COMA — ${LOCATION_DISPLAY[locKey]}${fx.deathDelay ? " (mort en " + fx.deathDelay + ")" : ""}` });
+      }
+    } else if (fx.incap) {
+      if (!worstStatus || statusRank.inconscient > (statusRank[worstStatus] ?? 0)) worstStatus = "inconscient";
+      if (isStabilised) {
+        stabilisedCount++;
+        warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
+      } else {
+        warnings.push({ severity: "inconscient", text: `INCONSCIENT — ${LOCATION_DISPLAY[locKey]}${fx.deathDelay ? " (mort en " + fx.deathDelay + ")" : ""}` });
+      }
+    } else if (fx.deathDelay && isStabilised) {
+      // Location has a death timer but no status (e.g. bras D3) — still show stabilised
+      stabilisedCount++;
+      warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
+    }
+
+    if (fx.enduranceTest !== null) {
+      enduranceTests.push({ loc: LOCATION_DISPLAY[locKey], diff: fx.enduranceTest });
+    }
+
+    if (fx.limbUnusable) {
+      unusableLimbs.push(LOCATION_DISPLAY[locKey]);
+    }
+
+    // Track shortest death delay across non-stabilised locations only
+    if (fx.deathDelay && !isStabilised) {
+      const mins = parseInt(fx.deathDelay, 10);
+      if (!isNaN(mins) && (shortestDeathDelayMin === null || mins < shortestDeathDelayMin)) {
+        shortestDeathDelayMin = mins;
+      }
+    }
+  }
+
+  const shortestDeathDelay = shortestDeathDelayMin !== null ? `${shortestDeathDelayMin} min` : null;
+  return { totalInitMalus, totalActionMalus, worstStatus, shortestDeathDelay, stabilisedCount, enduranceTests, unusableLimbs, warnings };
+}
+
+/**
+ * Refresh the wound effects summary panel in the DOM without a full re-render.
+ * Called by updateHealthDisplay() on every input change.
+ * @param {HTMLElement} html - root element of the rendered sheet
+ * @param {object} fx - result of computeWoundEffects()
+ */
+function _updateWoundEffectsPanel(html, fx) {
+  const summary = html.querySelector('.wound-effects-summary');
+  if (!summary) return;
+
+  // --- Status banner ---
+  let banner = summary.querySelector('.wound-status-banner');
+  const showBanner = fx.worstStatus || fx.shortestDeathDelay || fx.stabilisedCount > 0;
+  if (showBanner) {
+    if (!banner) {
+      banner = document.createElement('div');
+      summary.prepend(banner);
+    }
+    const statusClass = fx.worstStatus ? `wound-status-${fx.worstStatus}` : 'wound-status-mort';
+    banner.className = `wound-status-banner ${statusClass}`;
+    const labels = { mort: '⚠ MORT', coma: '⚠ COMA', inconscient: '⚠ INCONSCIENT' };
+    const statusText = fx.worstStatus ? (labels[fx.worstStatus] ?? '') : '';
+    const delayHtml = fx.shortestDeathDelay && fx.worstStatus !== 'mort'
+      ? `<span class="wound-death-timer">${statusText ? ' — ' : ''}⏱ mort dans ${fx.shortestDeathDelay}</span>`
+      : '';
+    const stabilisedHtml = fx.stabilisedCount > 0 && !fx.shortestDeathDelay && fx.worstStatus !== 'mort'
+      ? `<span class="wound-stabilised-tag"> — ✓ STABILISÉ</span>`
+      : '';
+    banner.innerHTML = statusText + delayHtml + stabilisedHtml;
+    banner.style.display = '';
+  } else if (banner) {
+    banner.style.display = 'none';
+  }
+
+  // --- Init / Action malus cells ---
+  const cells = summary.querySelectorAll('.wound-malus-cell');
+  if (cells[0]) {
+    const v = cells[0].querySelector('.wound-malus-value');
+    if (v) v.textContent = fx.totalInitMalus < 0 ? String(fx.totalInitMalus) : '0';
+    cells[0].classList.toggle('wound-malus-nonzero', fx.totalInitMalus < 0);
+  }
+  if (cells[1]) {
+    const v = cells[1].querySelector('.wound-malus-value');
+    if (v) v.textContent = fx.totalActionMalus < 0 ? String(fx.totalActionMalus) : '0';
+    cells[1].classList.toggle('wound-malus-nonzero', fx.totalActionMalus < 0);
+  }
+
+  // --- Warnings list ---
+  let warnList = summary.querySelector('.wound-warnings-list');
+  if (fx.warnings.length > 0) {
+    if (!warnList) {
+      warnList = document.createElement('div');
+      warnList.className = 'wound-warnings-list';
+      const malusRow = summary.querySelector('.wound-malus-row');
+      if (malusRow) malusRow.after(warnList);
+      else summary.append(warnList);
+    }
+    warnList.innerHTML = fx.warnings.map(w => {
+      const icon = w.severity === 'stabilise'
+        ? '<i class="fas fa-check-circle"></i>'
+        : '<i class="fas fa-exclamation-triangle"></i>';
+      return `<div class="wound-warning-item wound-warn-${w.severity}">${icon} ${w.text}</div>`;
+    }).join('');
+    warnList.style.display = '';
+  } else if (warnList) {
+    warnList.style.display = 'none';
+  }
+
+  // --- Endurance tests ---
+  let endList  = summary.querySelector('.wound-endurance-list');
+  let endTitle = endList?.previousElementSibling?.matches('.wound-section-title')
+               ? endList.previousElementSibling : null;
+  if (fx.enduranceTests.length > 0) {
+    if (!endList) {
+      endTitle = document.createElement('div');
+      endTitle.className = 'wound-section-title';
+      endTitle.textContent = game.i18n.localize('MERC.UI.health.enduranceTests');
+      endList = document.createElement('div');
+      endList.className = 'wound-endurance-list';
+      summary.append(endTitle, endList);
+    }
+    endList.innerHTML = fx.enduranceTests.map(t =>
+      `<div class="wound-endurance-item"><span class="wound-endurance-loc">${t.loc}</span><span class="wound-endurance-diff">Difficulté ${t.diff}</span><button type="button" class="wound-roll-endurance" data-diff="${t.diff}" data-loc="${t.loc}" title="Jet d'Endurance"><i class="fas fa-dice-d20"></i></button></div>`
+    ).join('');
+    if (endTitle) endTitle.style.display = '';
+    endList.style.display = '';
+  } else {
+    if (endList)  endList.style.display  = 'none';
+    if (endTitle) endTitle.style.display = 'none';
+  }
+
+  // --- Unusable limbs ---
+  let limbList  = summary.querySelector('.wound-limbs-list');
+  let limbTitle = limbList?.previousElementSibling?.matches('.wound-section-title')
+               ? limbList.previousElementSibling : null;
+  if (fx.unusableLimbs.length > 0) {
+    if (!limbList) {
+      limbTitle = document.createElement('div');
+      limbTitle.className = 'wound-section-title';
+      limbTitle.textContent = game.i18n.localize('MERC.UI.health.unusableLimbs');
+      limbList = document.createElement('div');
+      limbList.className = 'wound-limbs-list';
+      summary.append(limbTitle, limbList);
+    }
+    limbList.innerHTML = fx.unusableLimbs.map(l => `<span class="wound-limb-tag">${l}</span>`).join('');
+    if (limbTitle) limbTitle.style.display = '';
+    limbList.style.display = '';
+  } else {
+    if (limbList)  limbList.style.display  = 'none';
+    if (limbTitle) limbTitle.style.display = 'none';
+  }
+}
 
 // Locate the closest lower/equal value index in a lookup table.
 const findTableIndex = (value, table) => {

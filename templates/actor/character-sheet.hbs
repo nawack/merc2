@@ -935,10 +935,10 @@
             </div>
           </div>
 
-          <svg class="armor-body-svg" viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg">
+          <svg class="armor-body-svg" viewBox="35 0 190 390" xmlns="http://www.w3.org/2000/svg">
             <!-- Miroir horizontal : vue de face (gauche écran = bras droit du personnage) -->
             <g transform="translate(260,0) scale(-1,1)">
-              <ellipse class="health-zone" data-zone="crane" data-group="tete" cx="130" cy="32" rx="26" ry="28"/>
+              <ellipse class="health-zone" data-zone="crane" data-group="tete" cx="130" cy="40" rx="26" ry="30"/>
               <ellipse class="health-zone" data-zone="visage" data-group="tete" cx="130" cy="47" rx="20" ry="22"/>
               <rect class="health-zone" data-zone="cou" data-group="tete" x="118" y="66" width="24" height="14" rx="4"/>
               <path class="health-zone" data-zone="poitrine_gch" data-group="poitrine" d="M88,80 L130,80 L130,122 Q108,128 88,122 Z"/>
@@ -983,6 +983,8 @@
           </svg>
 
           <div class="armor-inputs-right">
+            <!-- Bouton premiers soins global -->
+            <button type="button" class="first-aid-global-btn" title="Premiers soins" style="{{#unless woundEffects}}display:none{{/unless}}"><span class="first-aid-icon">&#10010;</span><span class="first-aid-label">Premiers Soins</span></button>
             <!-- Côté gauche du personnage (vue de face : droite écran) -->
             <div class="armor-inp-row armor-inp-row--right" style="--row-top: 101px">
               <span class="wound-degree-badge health-degree-{{lookup healthLocDegreeValues "poitrine_gch"}}" data-loc-degree="poitrine_gch">D{{lookup healthLocDegreeValues "poitrine_gch"}}</span>
@@ -1035,6 +1037,74 @@
           </div>
 
         </div><!-- /.armor-body-diagram -->
+
+        <!-- WOUND EFFECTS SUMMARY -->
+        <div class="wound-effects-summary">
+
+          <!-- Worst status banner -->
+          {{#if woundEffects.worstStatus}}
+          <div class="wound-status-banner wound-status-{{woundEffects.worstStatus}}">
+            {{#if (eq woundEffects.worstStatus "mort")}}⚠ MORT{{/if}}
+            {{#if (eq woundEffects.worstStatus "coma")}}⚠ COMA{{/if}}
+            {{#if (eq woundEffects.worstStatus "inconscient")}}⚠ INCONSCIENT{{/if}}
+            {{#unless (eq woundEffects.worstStatus "mort")}}{{#if woundEffects.shortestDeathDelay}}<span class="wound-death-timer"> — ⏱ mort dans {{woundEffects.shortestDeathDelay}}</span>{{/if}}{{#if woundEffects.stabilisedCount}}<span class="wound-stabilised-tag"> — ✓ STABILISÉ</span>{{/if}}{{/unless}}
+          </div>
+          {{else}}
+          {{#if woundEffects.shortestDeathDelay}}
+          <div class="wound-status-banner wound-status-mort">
+            ⏱ mort dans {{woundEffects.shortestDeathDelay}}
+          </div>
+          {{/if}}
+          {{/if}}
+
+          <!-- Cumulative malus row -->
+          <div class="wound-malus-row">
+            <div class="wound-malus-cell {{#if (lt woundEffects.totalInitMalus 0)}}wound-malus-nonzero{{/if}}">
+              <span class="wound-malus-label">{{localize "MERC.UI.health.initMalus"}}</span>
+              <span class="wound-malus-value">{{#if (lt woundEffects.totalInitMalus 0)}}{{woundEffects.totalInitMalus}}{{else}}0{{/if}}</span>
+            </div>
+            <div class="wound-malus-cell {{#if (lt woundEffects.totalActionMalus 0)}}wound-malus-nonzero{{/if}}">
+              <span class="wound-malus-label">{{localize "MERC.UI.health.actionMalus"}}</span>
+              <span class="wound-malus-value">{{#if (lt woundEffects.totalActionMalus 0)}}{{woundEffects.totalActionMalus}}{{else}}0{{/if}}</span>
+            </div>
+          </div>
+
+          <!-- Warnings (coma, inconscient, mort par loc) -->
+          {{#if woundEffects.warnings.length}}
+          <div class="wound-warnings-list">
+            {{#each woundEffects.warnings as |w|}}
+            <div class="wound-warning-item wound-warn-{{w.severity}}">
+              <i class="fas fa-exclamation-triangle"></i> {{w.text}}
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
+
+          <!-- Endurance tests required -->
+          {{#if woundEffects.enduranceTests.length}}
+          <div class="wound-section-title">{{localize "MERC.UI.health.enduranceTests"}}</div>
+          <div class="wound-endurance-list">
+            {{#each woundEffects.enduranceTests as |t|}}
+            <div class="wound-endurance-item">
+              <span class="wound-endurance-loc">{{t.loc}}</span>
+              <span class="wound-endurance-diff">{{localize "MERC.UI.health.difficulty"}} {{t.diff}}</span>
+              <button type="button" class="wound-roll-endurance" data-diff="{{t.diff}}" data-loc="{{t.loc}}" title="Jet d'Endurance"><i class="fas fa-dice-d20"></i></button>
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
+
+          <!-- Unusable limbs -->
+          {{#if woundEffects.unusableLimbs.length}}
+          <div class="wound-section-title">{{localize "MERC.UI.health.unusableLimbs"}}</div>
+          <div class="wound-limbs-list">
+            {{#each woundEffects.unusableLimbs as |limb|}}
+            <span class="wound-limb-tag">{{limb}}</span>
+            {{/each}}
+          </div>
+          {{/if}}
+
+        </div><!-- /.wound-effects-summary -->
 
       </div>
     </div>

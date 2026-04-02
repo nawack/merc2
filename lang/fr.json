@@ -388,6 +388,13 @@
           "blindageLong": "Longue",
           "blindageExtreme": "Extrême"
         }
+      },
+      "health": {
+        "initMalus": "Malus Init",
+        "actionMalus": "Malus Actions",
+        "enduranceTests": "Tests d'Endurance requis",
+        "difficulty": "Difficulté",
+        "unusableLimbs": "Membres inutilisables"
       }
     },
     "Tabs": {
@@ -500,5 +507,6 @@
       "woundGroups": "Regroupements de blessures",
       "degree": "Dégré"
     }
+
   }
 }

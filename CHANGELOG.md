@@ -2,6 +2,24 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.1.4] - 2026-04-03
+
+### Added
+- 🩹 **Système de blessures par localisation** : Calcul automatique du degré de blessure (D0 à D6+) par localisation en fonction des points de blessure reçus et du Point de Corpulence (PC). Effets cumulatifs sur l'initiative, les actions, les stati (inconscient / coma / mort), les tests d'endurance requis et les membres inutilisables — affiché dans un panneau récapitulatif sous le diagramme corps
+- ❤️ **Bouton soin individuel (✚)** : Bouton par localisation dans l'onglet Santé. Réduit les points de blessure de la localisation d'un degré complet (HP ramené à `(degré-1) × PC`). Toujours présent dans le DOM (visibility: hidden si D0) pour éviter les décalages visuels
+- 🆘 **Bouton Premiers Soins global** : Bouton "Premiers Soins" dans la colonne droite du diagramme. Pour chaque localisation blessée : si degré ≥ 3, stabilise (supprime le timer de mort, marque STABILISÉ) ; si degré 1-2, réduit d'un degré. Les localisations stabilisées sont mémorisées dans `flags.merc.stabilisedLocs` et nettoyées automatiquement si le degré redescend sous 3
+- 🎲 **Bouton jet d'endurance** : Bouton dé 🎲 par test d'endurance requis dans le panneau récapitulatif, avec jet D20 + dé secondaire (bonus/malus), comparé à l'Endurance de l'acteur. Résultat posté en chat
+- 😵 **Endurance échouée → inconscient** : En cas d'échec au jet d'endurance, l'acteur passe en état inconscient (snapshot horodaté du degré au moment de l'échec). L'état est effacé si un degré diminue (soins) et ne se réactive pas si les blessures s'aggravent différemment
+- 🔴 **Synchronisation des effets de statut token** : Le statut du token (`dead` / `unconscious`) est mis à jour automatiquement en temps réel selon le `worstStatus` calculé — mort → `dead`, coma ou inconscient → `unconscious`, aucun → effacement
+- 🚫 **Incapacité en combat** : Les combattants avec `unconscious` ou `dead` sont automatiquement sautés par `nextTurn()` et apparaissent grisés (niveaux de gris complet + icône ✖) dans le traqueur de combat
+
+### Changed
+- 🎨 **SVG corps — largeur réduite** : `viewBox` rogné de `0 0 260 390` à `35 0 190 390`, largeur CSS réduite de 200 px à 156 px — suppression des marges vides latérales sans déformer les proportions
+- ⚠️ **Bannière mort** : Suppression du timer "mort dans X min" lorsque le statut est déjà MORT (redondant)
+- 🟢 **Indicateur STABILISÉ** : Les localisations stabilisées affichent "STABILISÉ" en vert dans les warnings et "✓ STABILISÉ" dans la bannière, en lieu et place du timer de mort
+
+---
+
 ## [1.1.3] - 2026-04-02
 
 ### Fixed

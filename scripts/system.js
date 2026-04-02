@@ -1473,7 +1473,28 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
       // Compute cumulative wound effects from all locations
       const locDegreeMap = Object.fromEntries(data.healthLocDegrees.map(l => [l.key, l.degree]));
-      data.woundEffects = computeWoundEffects(locDegreeMap);
+      const locRawMap    = Object.fromEntries(Object.entries(this.actor.system?.health?.locations ?? {}).map(([k, v]) => [k, Number(v) || 0]));
+      const rawFx = computeWoundEffects(locDegreeMap);
+      const snapshot = getLocSnapshot(locDegreeMap);
+      const fx = { ...rawFx };
+
+      // Endurance-derived inconscient
+      const _storedSnap = this.actor.getFlag("merc", "enduranceFailed");
+      if (_storedSnap) {
+        if (_storedSnap === snapshot) {
+          // Même état qu'au moment du jet raté → appliquer inconscient
+          const sRank = { mort: 3, coma: 2, inconscient: 1 };
+          if ((sRank[fx.worstStatus] ?? 0) < 1) fx.worstStatus = "inconscient";
+        } else {
+          // État différent : si un degré a diminué (guérison), effacer le flag définitivement
+          try {
+            const _stored = JSON.parse(_storedSnap);
+            const _anyDecrease = Object.entries(_stored).some(([k, v]) => (locDegreeMap[k] ?? 0) < v);
+            if (_anyDecrease) this.actor.update({"flags.merc.-=enduranceFailed": null}, {render: false});
+          } catch {}
+        }
+      }
+      data.woundEffects = fx;
     }
 
     // Compute total armor points per location from all armor items owned by the actor
@@ -2524,16 +2545,30 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       const updateHealthDisplay = () => {
         const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
         const locDegreeMap = {};
+        const locRawMap = {};
         html.querySelectorAll(".health-inp[data-location]").forEach(inp => {
           const locKey = inp.dataset.location;
           const value = Number(inp.value) || 0;
           const degree = woundDegree(value, pc);
           locDegreeMap[locKey] = degree;
+          locRawMap[locKey] = value;
           const degreeEl = html.querySelector(`[data-loc-degree="${locKey}"]`);
           if (degreeEl) {
             degreeEl.textContent = `D${degree}`;
             for (let i = 0; i <= 6; i++) degreeEl.classList.remove(`health-degree-${i}`);
             degreeEl.classList.add(`health-degree-${degree}`);
+            // Bouton soin : toujours présent pour éviter le décalage, visibility selon degré
+            let healBtn = degreeEl.parentElement?.querySelector('.health-heal-btn');
+            if (!healBtn) {
+              healBtn = document.createElement('button');
+              healBtn.type = 'button';
+              healBtn.className = 'health-heal-btn';
+              healBtn.title = 'Soigner (- 1 degré)';
+              healBtn.innerHTML = '✚';
+              healBtn.dataset.location = locKey;
+              degreeEl.after(healBtn);
+            }
+            healBtn.style.visibility = degree > 0 ? '' : 'hidden';
           }
           const valueEl = html.querySelector(`[data-loc-value="${locKey}"]`);
           if (valueEl) valueEl.textContent = value;
@@ -2542,18 +2577,54 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         });
 
         // Update wound effects summary panel
-        const fx = computeWoundEffects(locDegreeMap);
+        const rawFx = computeWoundEffects(locDegreeMap);
+        const snapshot = getLocSnapshot(locDegreeMap);
+        const fx = { ...rawFx };
+        // Endurance-derived inconscient
+        const _storedSnap = this.actor.getFlag("merc", "enduranceFailed");
+        if (_storedSnap) {
+          if (_storedSnap === snapshot) {
+            // Même état qu'au moment du jet raté → appliquer inconscient
+            const sRank = { mort: 3, coma: 2, inconscient: 1 };
+            if ((sRank[fx.worstStatus] ?? 0) < 1) fx.worstStatus = "inconscient";
+          } else {
+            // État différent : si un degré a diminué (guérison), effacer le flag définitivement
+            try {
+              const _stored = JSON.parse(_storedSnap);
+              const _anyDecrease = Object.entries(_stored).some(([k, v]) => (locDegreeMap[k] ?? 0) < v);
+              if (_anyDecrease) this.actor.update({"flags.merc.-=enduranceFailed": null}, {render: false});
+            } catch {}
+          }
+        }
         _updateWoundEffectsPanel(html, fx);
       };
       updateHealthDisplay();
       healthInputs.forEach(inp => inp.addEventListener("input", updateHealthDisplay));
 
-      // Endurance roll buttons — delegated so dynamically created buttons also work
-      html.addEventListener("click", async (event) => {
-        const btn = event.target.closest(".wound-roll-endurance");
-        if (!btn) return;
-        event.preventDefault();
-        event.stopPropagation();
+      // Endurance roll buttons — delegated listener, attached only once per element
+      if (!html.dataset.enduranceListenerAttached) {
+        html.dataset.enduranceListenerAttached = "1";
+        html.addEventListener("click", async (event) => {
+          // Bouton soin : diminue les dégâts de PC points
+          const healBtn = event.target.closest(".health-heal-btn");
+          if (healBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+            const locKey = healBtn.dataset.location;
+            const fieldPath = `system.health.locations.${locKey}`;
+            const inp = html.querySelector(`.health-inp[data-location="${locKey}"]`);
+            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 1);
+            const current = Number(inp?.value ?? this.actor.system?.health?.locations?.[locKey] ?? 0);
+            const newVal = Math.max(0, current - pc);
+            if (inp) inp.value = newVal;
+            await this.actor.update({ [fieldPath]: newVal }, { render: false });
+            updateHealthDisplay();
+            return;
+          }
+          const btn = event.target.closest(".wound-roll-endurance");
+          if (!btn) return;
+          event.preventDefault();
+          event.stopPropagation();
         const diff = Number(btn.dataset.diff) || 0;
         const loc  = btn.dataset.loc || "?";
         const actor = this.actor;
@@ -2569,6 +2640,23 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           ? `${firstRoll.total}${secondRollDirection === "added" ? " + " : " - "}${secondRoll.total}`
           : `${firstRoll.total}`;
         const resultLabel = success ? "✔ Succès" : "✘ Échec";
+
+        // Échec : enregistrer l'échec d'endurance pour cet état de blessures exact
+        if (!success) {
+          const locations = actor.system?.health?.locations ?? {};
+          const pc = Number(actor.system?.combat?.pointCorporence ?? 0);
+          const wdFn = (v) => { v = Number(v) || 0; if (v <= 0 || pc <= 0) return v > 0 ? 6 : 0; if (v <= pc) return 1; if (v <= 2*pc) return 2; if (v <= 3*pc) return 3; if (v <= 4*pc) return 4; if (v <= 5*pc) return 5; return 6; };
+          const ldMap = Object.fromEntries(Object.entries(locations).map(([k, v]) => [k, wdFn(v)]));
+          const currentFx = computeWoundEffects(ldMap);
+          const sRank = { mort: 3, coma: 2, inconscient: 1 };
+          // Ne passer inconscient que si pas de statut pire déjà actif
+          if ((sRank[currentFx.worstStatus] ?? 0) < 1) {
+            const failSnap = getLocSnapshot(ldMap);
+            await actor.setFlag("merc", "enduranceFailed", failSnap);
+            await actor.unsetFlag("merc", "inconscientCancelled"); // annule un éventuel revive précédent
+            updateHealthDisplay();
+          }
+        }
         await ChatMessage.create({
           user: game.user.id,
           speaker: ChatMessage.getSpeaker({ actor }),
@@ -2584,7 +2672,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         </div>
       </div>`
         });
-      });
+        }); // close addEventListener
+      } // end if !enduranceListenerAttached
 
       // Dedicated save handler for health location inputs — saves without early-return
       // so that 0 values are properly persisted to the actor database
@@ -4860,6 +4949,11 @@ const LOCATION_DISPLAY = {
   cuisse_gch: "Cuisse G", cuisse_dr: "Cuisse D", jambe_gch: "Jambe G", jambe_dr: "Jambe D", pied_gch: "Pied G", pied_dr: "Pied D",
 };
 
+/** Returns a stable string snapshot of a locDegreeMap, used to tie flags to a specific wound state. */
+function getLocSnapshot(locDegreeMap) {
+  return JSON.stringify(Object.fromEntries(Object.entries(locDegreeMap).sort()));
+}
+
 /**
  * Compute cumulative wound effects from a map of { locationKey: degree }.
  * Returns: { totalInitMalus, totalActionMalus, worstStatus, enduranceTests[], unusableLimbs[], warnings[] }
@@ -4939,7 +5033,7 @@ function _updateWoundEffectsPanel(html, fx) {
     banner.className = `wound-status-banner ${statusClass}`;
     const labels = { mort: '⚠ MORT', coma: '⚠ COMA', inconscient: '⚠ INCONSCIENT' };
     const statusText = fx.worstStatus ? (labels[fx.worstStatus] ?? '') : '';
-    const delayHtml = fx.shortestDeathDelay
+    const delayHtml = fx.shortestDeathDelay && fx.worstStatus !== 'mort'
       ? `<span class="wound-death-timer">${statusText ? ' — ' : ''}⏱ mort dans ${fx.shortestDeathDelay}</span>`
       : '';
     banner.innerHTML = statusText + delayHtml;

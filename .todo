@@ -101,7 +101,7 @@ Controle de la réaction (https://github.com/nawack/merc2/issues/9):
 Revoir la mise en forme de la fiche (probléme hauteur de page):
     ✔ réorganisation du header et des onglets pour prendre moins de place @done(26-02-05 13:16)
     ✔ prévoir un assenceur au niveau du body (contenu des onglets) pour éviter que la fiche soit trop longue @done(26-03-11 22:55)
-    - Prevoir les differentes visions de la fiche (auncun, limité, observateur, propriétaire)
+    ✔ Prevoir les differentes visions de la fiche (auncun, limité, observateur, propriétaire) @done(26-04-02 22:16)
 
 Ajouter un système de combat :
     ✔ ajouter la gestion des segments (ordre, eligible, etc) @done(26-02-06 00:27)

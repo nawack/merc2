@@ -935,7 +935,7 @@
             </div>
           </div>
 
-          <svg class="armor-body-svg" viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg">
+          <svg class="armor-body-svg" viewBox="35 0 190 390" xmlns="http://www.w3.org/2000/svg">
             <!-- Miroir horizontal : vue de face (gauche écran = bras droit du personnage) -->
             <g transform="translate(260,0) scale(-1,1)">
               <ellipse class="health-zone" data-zone="crane" data-group="tete" cx="130" cy="32" rx="26" ry="28"/>
@@ -1045,7 +1045,7 @@
             {{#if (eq woundEffects.worstStatus "mort")}}⚠ MORT{{/if}}
             {{#if (eq woundEffects.worstStatus "coma")}}⚠ COMA{{/if}}
             {{#if (eq woundEffects.worstStatus "inconscient")}}⚠ INCONSCIENT{{/if}}
-            {{#if woundEffects.shortestDeathDelay}}<span class="wound-death-timer"> — ⏱ mort dans {{woundEffects.shortestDeathDelay}}</span>{{/if}}
+            {{#unless (eq woundEffects.worstStatus "mort")}}{{#if woundEffects.shortestDeathDelay}}<span class="wound-death-timer"> — ⏱ mort dans {{woundEffects.shortestDeathDelay}}</span>{{/if}}{{/unless}}
           </div>
           {{else}}
           {{#if woundEffects.shortestDeathDelay}}

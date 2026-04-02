@@ -1776,6 +1776,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             const numberValue = Number(value);
             if (Number.isNaN(numberValue)) return;
             value = numberValue;
+
+            // Clamp attribute values to integer [0, 10]
+            if (fieldPath.startsWith("system.attributes.")) {
+              value = Math.min(10, Math.max(0, Math.round(value)));
+              input.value = value;
+            }
           }
 
           const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
@@ -2420,15 +2426,31 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       const baseMarche = this.actor?.system?.movement?.marche || 0;
       const baseCourse = this.actor?.system?.movement?.course || 0;
       
-      let speedDiviseur = 1;
-      if (burdenLevel === 1) speedDiviseur = 1;
-      else if (burdenLevel === 2) speedDiviseur = 1.5;
-      else if (burdenLevel === 3) speedDiviseur = 2;
-      else if (burdenLevel === 4) speedDiviseur = 3;
+      let speedRepationDiviseur = 1;
+      let speedMarcheDiviseur = 1;
+      let speedCourseDiviseur = 1;
+
+      if (burdenLevel === 1) {
+        speedRepationDiviseur = 1;
+        speedMarcheDiviseur = 1;
+        speedCourseDiviseur = 1;
+      } else if (burdenLevel === 2) {
+        speedRepationDiviseur = 1.5;
+        speedMarcheDiviseur = 1.2;
+        speedCourseDiviseur = 1.5;
+      } else if (burdenLevel === 3) {
+        speedRepationDiviseur = 2;
+        speedMarcheDiviseur = 1.75;
+        speedCourseDiviseur = 2.2;
+      } else if (burdenLevel === 4) {
+        speedRepationDiviseur = 3;
+        speedMarcheDiviseur = 2.5;
+        speedCourseDiviseur = 3.2;
+      }
       
-      const actualReptation = burdenLevel === 1 ? baseReptation : Math.ceil(baseReptation / speedDiviseur);
-      const actualMarche = burdenLevel === 1 ? baseMarche : Math.ceil(baseMarche / speedDiviseur);
-      const actualCourse = burdenLevel === 1 ? baseCourse : Math.ceil(baseCourse / speedDiviseur);
+      const actualReptation = burdenLevel === 1 ? baseReptation : Math.ceil(baseReptation / speedRepationDiviseur);
+      const actualMarche = burdenLevel === 1 ? baseMarche : Math.ceil(baseMarche / speedMarcheDiviseur);
+      const actualCourse = burdenLevel === 1 ? baseCourse : Math.ceil(baseCourse / speedCourseDiviseur);
       
       // Update actual speed displays
       const speedReptationEl = html.querySelector("#speed-reptation-actual .stat-value-large");
@@ -4880,12 +4902,10 @@ const getActorMigrationData = (actor) => {
     system.combat?.pointCorporence === undefined ||
     system.combat?.capaciteCharge === undefined ||
     system.combat?.bonusDiscretion === undefined ||
-    system.combat?.bonusDissimulation === undefined ||
-    system.movement?.reptation === undefined ||
-    system.movement?.marche === undefined ||
-    system.movement?.course === undefined;
+    system.combat?.bonusDissimulation === undefined;
 
-  if (needsCombatValues) {
+  // Always recompute movement speeds: the formula may have changed between versions
+  {
     const mergedSystem = foundry.utils.mergeObject(
       foundry.utils.duplicate(system),
       foundry.utils.expandObject(updateData),
@@ -4893,18 +4913,21 @@ const getActorMigrationData = (actor) => {
     );
     const computed = computeCombatStatsFromSystem(mergedSystem);
 
-    updateData["system.combat.endurance"] = computed.endurance;
-    updateData["system.combat.pointCorporence"] = computed.pointCorporence;
-    updateData["system.combat.capaciteCharge"] = computed.capaciteCharge;
-    updateData["system.combat.bonusDiscretion"] = computed.bonusDiscretion;
-    updateData["system.combat.bonusDissimulation"] = computed.bonusDissimulation;
-    updateData["system.combat.corpulence"] = computed.corpulence;
-    updateData["system.combat.baseDamageMelee"] = computed.baseDamageMelee;
-    updateData["system.combat.baseDamageBladed"] = computed.baseDamageBladed;
-    updateData["system.combat.specializationBaseDamage"] = computed.specializationBaseDamage;
     updateData["system.movement.reptation"] = computed.vitesses.reptation;
     updateData["system.movement.marche"] = computed.vitesses.marche;
     updateData["system.movement.course"] = computed.vitesses.course;
+
+    if (needsCombatValues) {
+      updateData["system.combat.endurance"] = computed.endurance;
+      updateData["system.combat.pointCorporence"] = computed.pointCorporence;
+      updateData["system.combat.capaciteCharge"] = computed.capaciteCharge;
+      updateData["system.combat.bonusDiscretion"] = computed.bonusDiscretion;
+      updateData["system.combat.bonusDissimulation"] = computed.bonusDissimulation;
+      updateData["system.combat.corpulence"] = computed.corpulence;
+      updateData["system.combat.baseDamageMelee"] = computed.baseDamageMelee;
+      updateData["system.combat.baseDamageBladed"] = computed.baseDamageBladed;
+      updateData["system.combat.specializationBaseDamage"] = computed.specializationBaseDamage;
+    }
   }
 
   // Ensure description field exists

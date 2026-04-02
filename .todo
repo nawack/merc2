@@ -25,7 +25,7 @@ Gestion de la charge:
     ✔ rajouter le champs de charge actuelle @done(26-02-03 23:22)
     ✔ modifier vistesse de déplamcement en fonction de la charge @done(26-02-03 23:22)
     ✔ gerer la charge en fonction de l'équipement @done(26-02-03 23:22)
-    - revoir la formule de malus qui diffère selon si c'est de la course, marche ou reptation
+    ✔ revoir la formule de malus qui diffère selon si c'est de la course, marche ou reptation @done(26-04-02 10:40)
 
 Gestion des bonus de dégats:
     ✔ calcule du bonus de corps a corps @done(26-02-04 00:30)
@@ -37,7 +37,7 @@ Gestion D20 illimité :
     ✔  mettre en place les règles suivante lors de roll de D20 : sur un 20 :relancer 1 fois et ajouter et sur un 1 relancer 1 fois et soustrait @done(26-02-03 08:06)
 
 Controle des valeurs des champs:
-    - mettre en place des contrôles de valeurs pour les champs de la fiche (ex: pas de valeur négative pour les dev, valeur comprise en 1 et 10 pour les attributs, etc)
+    ✔ mettre en place des contrôles de valeurs pour les champs de la fiche (ex: pas de valeur négative pour les dev, valeur comprise en 1 et 10 pour les attributs, etc) @done(26-04-02 11:29)
     - format des dégats reg exp : ^(0|[1-9](?:[dD]6(?:\+[12])?)?)$
 
 Gestion des difficultés et ajout gestion des coches :

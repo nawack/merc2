@@ -2565,7 +2565,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       let _lastWoundStatus = '';
 
       let _localStabRaws = null;
-
+      // _enduranceResults, _healedLocs and _committedDegrees are stored on html (this.element) so they survive
+      // re-renders triggered by toggleStatusEffect or other Foundry updates.
+      if (!html._mercEnduranceResults) html._mercEnduranceResults = {};
+      if (!html._mercHealedLocs)       html._mercHealedLocs       = new Set();
+      if (!html._mercCommDeg)          html._mercCommDeg          = null;  // initialized on first updateHealthDisplay call
       const updateHealthDisplay = (commitStab = false) => {
         const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
         const locDegreeMap = {};
@@ -2609,6 +2613,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           const _rawStab = this.actor.getFlag("merc", "stabilisedLocs") ?? {};
           _localStabRaws = (!Array.isArray(_rawStab) && typeof _rawStab === 'object' && _rawStab) ? { ..._rawStab } : {};
         }
+        // Initialize committed degrees from actor on first render (= stable baseline).
+        if (html._mercCommDeg === null) {
+          html._mercCommDeg = Object.fromEntries(
+            Object.entries(this.actor.system?.health?.locations ?? {}).map(([k, v]) => [k, woundDegree(Number(v) || 0, pc)])
+          );
+        }
         // Loc stays stabilised as long as raw HP hasn't strictly increased beyond the snapshot at stabilisation.
         // Healing (raw decrease) does NOT remove stabilisation — only damage increase does.
         // Healing below D3 removes the entry cleanly (no longer needs stabilisation).
@@ -2621,6 +2631,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         // Only commit to _localStabRaws from change/button handlers (not on every input keystroke)
         // to avoid permanent destabilisation when a user types an intermediate high value then reverts.
         if (commitStab) _localStabRaws = stabilisedLocRaws;
+        // When committing: update degree baseline, track healing direction, clear stale roll results
+        if (commitStab) {
+          for (const [k, result] of Object.entries(html._mercEnduranceResults)) {
+            if ((locRawMap[k] ?? 0) > result.rawAtRoll) delete html._mercEnduranceResults[k];
+          }
+          for (const [k, d] of Object.entries(locDegreeMap)) {
+            const prev = html._mercCommDeg?.[k] ?? 0;
+            if (d < prev)      html._mercHealedLocs.add(k);    // degree decreased → hide test
+            else if (d > prev) html._mercHealedLocs.delete(k); // new damage → show test again
+            html._mercCommDeg[k] = d;
+          }
+        }
         // Update first-aid button visibility: show when any location has degree >= 1
         const firstAidBtn = html.querySelector('.first-aid-global-btn');
         if (firstAidBtn) {
@@ -2629,7 +2651,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         }
         const rawFx = computeWoundEffects(locDegreeMap, stabilisedLocs);
         const snapshot = getLocSnapshot(locDegreeMap);
-        const fx = { ...rawFx };
+        let fx = { ...rawFx };
+        // Hide endurance test only for locations whose degree was committed lower (healing).
+        // Stored on html element so state survives Foundry re-renders.
+        fx.enduranceTests = fx.enduranceTests.filter(t => !html._mercHealedLocs.has(t.locKey));
         // Endurance-derived inconscient
         const _storedSnap = this.actor.getFlag("merc", "enduranceFailed");
         if (_storedSnap) {
@@ -2646,7 +2671,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             } catch {}
           }
         }
-        _updateWoundEffectsPanel(html, fx);
+        _updateWoundEffectsPanel(html, fx, html._mercEnduranceResults);
 
         // Store latest status for the change handler to sync token effects (not done here to avoid re-render on input)
         _lastWoundStatus = fx.worstStatus ?? '';
@@ -2702,7 +2727,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             _localStabRaws = newStabilised;
             updates["flags.merc.stabilisedLocs"] = newStabilised;
             await this.actor.update(updates, { render: false });
-            updateHealthDisplay();
+            updateHealthDisplay(true);
             syncTokenStatus();
             return;
           }
@@ -2727,8 +2752,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           if (!btn) return;
           event.preventDefault();
           event.stopPropagation();
-        const diff = Number(btn.dataset.diff) || 0;
-        const loc  = btn.dataset.loc || "?";
+        const diff    = Number(btn.dataset.diff) || 0;
+        const loc     = btn.dataset.loc || "?";
+        const locKey  = btn.dataset.lockey || "";
+        // Raw HP at the moment of roll — used to detect later damage increase
+        const rawAtRoll = Number(html.querySelector(`.health-inp[data-location="${locKey}"]`)?.value) || 0;
         const actor = this.actor;
         const endurance = Number(actor.system?.combat?.endurance ?? 0);
         const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
@@ -2762,6 +2790,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             syncTokenStatus();
           }
         }
+        // Stocker le résultat dans html pour survivre aux re-renders Foundry
+        if (locKey) html._mercEnduranceResults[locKey] = { success, diff, rawAtRoll };
+        updateHealthDisplay();
+
         await ChatMessage.create({
           user: game.user.id,
           speaker: ChatMessage.getSpeaker({ actor }),
@@ -5135,7 +5167,7 @@ function computeWoundEffects(locDegrees, stabilisedLocs = new Set()) {
     }
 
     if (fx.enduranceTest !== null) {
-      enduranceTests.push({ loc: LOCATION_DISPLAY[locKey], diff: fx.enduranceTest });
+      enduranceTests.push({ loc: LOCATION_DISPLAY[locKey], locKey, diff: fx.enduranceTest });
     }
 
     if (fx.limbUnusable) {
@@ -5161,7 +5193,7 @@ function computeWoundEffects(locDegrees, stabilisedLocs = new Set()) {
  * @param {HTMLElement} html - root element of the rendered sheet
  * @param {object} fx - result of computeWoundEffects()
  */
-function _updateWoundEffectsPanel(html, fx) {
+function _updateWoundEffectsPanel(html, fx, enduranceResults = {}) {
   const summary = html.querySelector('.wound-effects-summary');
   if (!summary) return;
 
@@ -5236,9 +5268,15 @@ function _updateWoundEffectsPanel(html, fx) {
       endList.className = 'wound-endurance-list';
       summary.append(endTitle, endList);
     }
-    endList.innerHTML = fx.enduranceTests.map(t =>
-      `<div class="wound-endurance-item"><span class="wound-endurance-loc">${t.loc}</span><span class="wound-endurance-diff">Difficulté ${t.diff}</span><button type="button" class="wound-roll-endurance" data-diff="${t.diff}" data-loc="${t.loc}" title="Jet d'Endurance"><i class="fas fa-dice-d20"></i></button></div>`
-    ).join('');
+    endList.innerHTML = fx.enduranceTests.map(t => {
+      const result = enduranceResults[t.locKey];
+      if (result) {
+        const cls   = result.success ? 'wound-endurance-result--success' : 'wound-endurance-result--fail';
+        const label = result.success ? '✔ Succès' : '✘ Échec';
+        return `<div class="wound-endurance-item"><span class="wound-endurance-loc">${t.loc}</span><span class="wound-endurance-diff">Difficulté ${t.diff}</span><span class="wound-endurance-result ${cls}">${label}</span></div>`;
+      }
+      return `<div class="wound-endurance-item"><span class="wound-endurance-loc">${t.loc}</span><span class="wound-endurance-diff">Difficulté ${t.diff}</span><button type="button" class="wound-roll-endurance" data-diff="${t.diff}" data-loc="${t.loc}" data-lockey="${t.locKey}" title="Jet d'Endurance"><i class="fas fa-dice-d20"></i></button></div>`;
+    }).join('');
     if (endTitle) endTitle.style.display = '';
     endList.style.display = '';
   } else {

@@ -3903,6 +3903,27 @@
   color: #7a0000;
 }
 
+/* Endurance result badge (shown after roll instead of the button) */
+.wound-endurance-result {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-left: 2px;
+  line-height: 1.4;
+}
+.wound-endurance-result--success {
+  color: #1e5c1e;
+  background: #d4edda;
+  border: 1px solid #a3d6a8;
+}
+.wound-endurance-result--fail {
+  color: #7a1f1f;
+  background: #f8d7da;
+  border: 1px solid #f0aab0;
+}
+
 /* Unusable limbs */
 .wound-limbs-list {
   padding: 5px 8px;

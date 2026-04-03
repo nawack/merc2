@@ -331,7 +331,12 @@ const getReactionDegreeFromCombatant = (combatant) => {
   const locDegreeMap = Object.fromEntries(
     Object.entries(locations).map(([k, v]) => [k, woundDegree(Number(v) || 0)])
   );
-  const { totalInitMalus } = computeWoundEffects(locDegreeMap);
+  const _rawStabInit = actor?.getFlag?.('merc', 'stabilisedLocs') ?? {};
+  const _stabObjInit = (!Array.isArray(_rawStabInit) && typeof _rawStabInit === 'object' && _rawStabInit) ? _rawStabInit : {};
+  const stabilisedLocsInit = new Set(Object.entries(_stabObjInit).filter(([k, rawStored]) =>
+    (locDegreeMap[k] ?? 0) >= 3 && (Number(locations[k]) || 0) <= rawStored
+  ).map(([k]) => k));
+  const { totalInitMalus } = computeWoundEffects(locDegreeMap, stabilisedLocsInit);
 
   return Math.max(0, baseDegree + totalInitMalus);
 };
@@ -1484,8 +1489,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       // Compute cumulative wound effects from all locations
       const locDegreeMap = Object.fromEntries(data.healthLocDegrees.map(l => [l.key, l.degree]));
       const locRawMap    = Object.fromEntries(Object.entries(this.actor.system?.health?.locations ?? {}).map(([k, v]) => [k, Number(v) || 0]));
-      const _rawStabilised = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
-      const stabilisedLocs = new Set([..._rawStabilised].filter(k => (locDegreeMap[k] ?? 0) >= 3));
+      const _rawStabilised = this.actor.getFlag("merc", "stabilisedLocs") ?? {};
+      // Format: {locKey: rawHpAtStabilisation}. Array (old format) → treated as empty.
+      const _stabObj0 = (!Array.isArray(_rawStabilised) && typeof _rawStabilised === 'object' && _rawStabilised) ? _rawStabilised : {};
+      // Stabilised only if still D≥3 AND raw HP hasn't strictly increased past the snapshot at stabilisation
+      const stabilisedLocs = new Set(Object.entries(_stabObj0).filter(([k, rawStored]) =>
+        (locDegreeMap[k] ?? 0) >= 3 && (locRawMap[k] ?? 0) <= rawStored
+      ).map(([k]) => k));
       const rawFx = computeWoundEffects(locDegreeMap, stabilisedLocs);
       const snapshot = getLocSnapshot(locDegreeMap);
       const fx = { ...rawFx };
@@ -1497,14 +1507,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           // Même état qu'au moment du jet raté → appliquer inconscient
           const sRank = { mort: 3, coma: 2, inconscient: 1 };
           if ((sRank[fx.worstStatus] ?? 0) < 1) fx.worstStatus = "inconscient";
-        } else {
-          // État différent : si un degré a diminué (guérison), effacer le flag définitivement
-          try {
-            const _stored = JSON.parse(_storedSnap);
-            const _anyDecrease = Object.entries(_stored).some(([k, v]) => (locDegreeMap[k] ?? 0) < v);
-            if (_anyDecrease) this.actor.update({"flags.merc.-=enduranceFailed": null}, {render: false});
-          } catch {}
         }
+        // Suppression du flag (si degrés ont diminué) déléguée à updateHealthDisplay
+        // pour éviter les mises à jour concurrentes non-awaitées depuis _prepareContext.
       }
       data.woundEffects = fx;
     }
@@ -2554,7 +2559,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         if (value <= 5 * pc) return 5;
         return 6;
       };
-      const updateHealthDisplay = () => {
+      // Local synchronous cache of stabilised thresholds — avoids desync with async actor.update() calls.
+      // Null = not yet initialized; initialized on first call of updateHealthDisplay.
+      // Closure variable: last computed worstStatus, used by change handler to sync token effects
+      let _lastWoundStatus = '';
+
+      let _localStabRaws = null;
+
+      const updateHealthDisplay = (commitStab = false) => {
         const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
         const locDegreeMap = {};
         const locRawMap = {};
@@ -2578,7 +2590,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
               healBtn.title = 'Soigner (- 1 degré)';
               healBtn.innerHTML = '✚';
               healBtn.dataset.location = locKey;
-              degreeEl.after(healBtn);
+              // Colonne droite (--right) : bouton à gauche du badge pour symétrie
+              const isRightRow = degreeEl.parentElement?.classList.contains('armor-inp-row--right');
+              if (isRightRow) degreeEl.before(healBtn);
+              else degreeEl.after(healBtn);
             }
             healBtn.style.visibility = degree > 0 ? '' : 'hidden';
           }
@@ -2589,12 +2604,23 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         });
 
         // Update wound effects summary panel
-        const _rawStab = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
-        const stabilisedLocs = new Set([..._rawStab].filter(k => (locDegreeMap[k] ?? 0) >= 3));
-        // If some stabilised locs healed below degree 3, clean up the flag
-        if (stabilisedLocs.size !== _rawStab.size) {
-          this.actor.update({"flags.merc.stabilisedLocs": [...stabilisedLocs]}, {render: false});
+        // First call: initialize local cache from persisted flag.
+        if (_localStabRaws === null) {
+          const _rawStab = this.actor.getFlag("merc", "stabilisedLocs") ?? {};
+          _localStabRaws = (!Array.isArray(_rawStab) && typeof _rawStab === 'object' && _rawStab) ? { ..._rawStab } : {};
         }
+        // Loc stays stabilised as long as raw HP hasn't strictly increased beyond the snapshot at stabilisation.
+        // Healing (raw decrease) does NOT remove stabilisation — only damage increase does.
+        // Healing below D3 removes the entry cleanly (no longer needs stabilisation).
+        const stabilisedLocRaws = Object.fromEntries(
+          Object.entries(_localStabRaws).filter(([k, rawStored]) =>
+            (locDegreeMap[k] ?? 0) >= 3 && (locRawMap[k] ?? 0) <= rawStored
+          )
+        );
+        const stabilisedLocs = new Set(Object.keys(stabilisedLocRaws));
+        // Only commit to _localStabRaws from change/button handlers (not on every input keystroke)
+        // to avoid permanent destabilisation when a user types an intermediate high value then reverts.
+        if (commitStab) _localStabRaws = stabilisedLocRaws;
         // Update first-aid button visibility: show when any location has degree >= 1
         const firstAidBtn = html.querySelector('.first-aid-global-btn');
         if (firstAidBtn) {
@@ -2622,18 +2648,21 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         }
         _updateWoundEffectsPanel(html, fx);
 
-        // Sync token status effects (dead / unconscious) — only when status changes
-        const _newWoundStatus = fx.worstStatus ?? '';
-        if (html.dataset.prevWoundStatus !== _newWoundStatus) {
-          html.dataset.prevWoundStatus = _newWoundStatus;
-          const _actor = this.actor;
-          const _dead        = _newWoundStatus === 'mort';
-          const _unconscious = _newWoundStatus === 'coma' || _newWoundStatus === 'inconscient';
-          _actor.toggleStatusEffect('dead',        { active: _dead        }).catch(() => {});
-          _actor.toggleStatusEffect('unconscious', { active: _unconscious }).catch(() => {});
+        // Store latest status for the change handler to sync token effects (not done here to avoid re-render on input)
+        _lastWoundStatus = fx.worstStatus ?? '';
+      };
+      // Sync token status effects after a committed change (not on every input keystroke)
+      const syncTokenStatus = () => {
+        if (html.dataset.prevWoundStatus !== _lastWoundStatus) {
+          html.dataset.prevWoundStatus = _lastWoundStatus;
+          const _dead        = _lastWoundStatus === 'mort';
+          const _unconscious = _lastWoundStatus === 'coma' || _lastWoundStatus === 'inconscient';
+          this.actor.toggleStatusEffect('dead',        { active: _dead        }).catch(() => {});
+          this.actor.toggleStatusEffect('unconscious', { active: _unconscious }).catch(() => {});
         }
       };
       updateHealthDisplay();
+      syncTokenStatus(); // initial sync on sheet open
       healthInputs.forEach(inp => inp.addEventListener("input", updateHealthDisplay));
 
       // Endurance roll buttons — delegated listener, attached only once per element
@@ -2645,7 +2674,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           if (firstAidBtn) {
             event.preventDefault();
             event.stopPropagation();
-            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 1);
+            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
             // Reconstruct current degree map from DOM inputs
             const woundDeg = (v, p) => {
               if (v <= 0) return 0; if (p <= 0) return v > 0 ? 6 : 0;
@@ -2653,14 +2682,15 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
               if (v <= 4*p) return 4; if (v <= 5*p) return 5; return 6;
             };
             const updates = {};
-            const newStabilised = new Set(this.actor.getFlag("merc", "stabilisedLocs") ?? []);
+            // Build new stabilised map from local cache (not flag — avoids async desync)
+            const newStabilised = _localStabRaws ? { ..._localStabRaws } : {};
             html.querySelectorAll(".health-inp[data-location]").forEach(inp => {
               const locKey = inp.dataset.location;
               const value = Number(inp.value) || 0;
               const degree = woundDeg(value, pc);
               if (degree >= 3) {
-                // Stabilise: suppress death timer, no HP change
-                newStabilised.add(locKey);
+                // Stabilise: record current raw HP value so any future increase (even same degree) destabilises
+                newStabilised[locKey] = value;
               } else if (degree > 0) {
                 // Reduce by one full degree: snap to (degree-1)*pc HP
                 const newVal = Math.max(0, (degree - 1) * pc);
@@ -2668,9 +2698,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
                 updates[`system.health.locations.${locKey}`] = newVal;
               }
             });
-            updates["flags.merc.stabilisedLocs"] = [...newStabilised];
+            // Update local cache synchronously before async persist
+            _localStabRaws = newStabilised;
+            updates["flags.merc.stabilisedLocs"] = newStabilised;
             await this.actor.update(updates, { render: false });
             updateHealthDisplay();
+            syncTokenStatus();
             return;
           }
           // Bouton soin individuel : diminue les dégâts de PC points
@@ -2681,12 +2714,13 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             const locKey = healBtn.dataset.location;
             const fieldPath = `system.health.locations.${locKey}`;
             const inp = html.querySelector(`.health-inp[data-location="${locKey}"]`);
-            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 1);
+            const pc = Number(this.actor.system?.combat?.pointCorporence ?? 0);
             const current = Number(inp?.value ?? this.actor.system?.health?.locations?.[locKey] ?? 0);
             const newVal = Math.max(0, current - pc);
             if (inp) inp.value = newVal;
-            await this.actor.update({ [fieldPath]: newVal }, { render: false });
-            updateHealthDisplay();
+            updateHealthDisplay(true);
+            await this.actor.update({ [fieldPath]: newVal, "flags.merc.stabilisedLocs": _localStabRaws ?? {} }, { render: false });
+            syncTokenStatus();
             return;
           }
           const btn = event.target.closest(".wound-roll-endurance");
@@ -2711,18 +2745,21 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
         // Échec : enregistrer l'échec d'endurance pour cet état de blessures exact
         if (!success) {
-          const locations = actor.system?.health?.locations ?? {};
+          // Use DOM-based degree map (committed values may be stale if user typed but didn't blur yet)
           const pc = Number(actor.system?.combat?.pointCorporence ?? 0);
           const wdFn = (v) => { v = Number(v) || 0; if (v <= 0 || pc <= 0) return v > 0 ? 6 : 0; if (v <= pc) return 1; if (v <= 2*pc) return 2; if (v <= 3*pc) return 3; if (v <= 4*pc) return 4; if (v <= 5*pc) return 5; return 6; };
-          const ldMap = Object.fromEntries(Object.entries(locations).map(([k, v]) => [k, wdFn(v)]));
-          const currentFx = computeWoundEffects(ldMap);
+          const domLocDegreeMap = {};
+          html.querySelectorAll('.health-inp[data-location]').forEach(inp => {
+            domLocDegreeMap[inp.dataset.location] = wdFn(Number(inp.value) || 0);
+          });
+          const currentFx = computeWoundEffects(domLocDegreeMap, new Set(Object.keys(_localStabRaws ?? {})));
           const sRank = { mort: 3, coma: 2, inconscient: 1 };
           // Ne passer inconscient que si pas de statut pire déjà actif
           if ((sRank[currentFx.worstStatus] ?? 0) < 1) {
-            const failSnap = getLocSnapshot(ldMap);
+            const failSnap = getLocSnapshot(domLocDegreeMap);
             await actor.setFlag("merc", "enduranceFailed", failSnap);
-            await actor.unsetFlag("merc", "inconscientCancelled"); // annule un éventuel revive précédent
             updateHealthDisplay();
+            syncTokenStatus();
           }
         }
         await ChatMessage.create({
@@ -2744,14 +2781,19 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       } // end if !enduranceListenerAttached
 
       // Dedicated save handler for health location inputs — saves without early-return
-      // so that 0 values are properly persisted to the actor database
+      // so that 0 values are properly persisted to the actor database.
+      // IMPORTANT: stabilisedLocs is included in the same atomic update to avoid race conditions
+      // where a re-render reads the old flag before the separate async flag update completes.
       healthInputs.forEach(inp => {
         inp.addEventListener("change", async () => {
           const fieldPath = inp.name;
           if (!fieldPath) return;
-          const value = Number(inp.value) || 0;
-          await this.actor.update({ [fieldPath]: value }, { render: false });
-          updateHealthDisplay();
+          const value = Math.max(0, Number(inp.value) || 0);
+          // Run updateHealthDisplay with commitStab=true so _localStabRaws is updated from committed DOM value
+          updateHealthDisplay(true);
+          // Persist HP + current stabilisedLocs atomically (avoids re-render desync)
+          await this.actor.update({ [fieldPath]: value, "flags.merc.stabilisedLocs": _localStabRaws ?? {} }, { render: false });
+          syncTokenStatus();
         });
       });
     }
@@ -2779,7 +2821,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const locDegreeMap = Object.fromEntries(
       Object.entries(locations).map(([k, v]) => [k, woundDegree(Number(v) || 0)])
     );
-    return computeWoundEffects(locDegreeMap).totalActionMalus;
+    const _rawStabAction = actor?.getFlag?.('merc', 'stabilisedLocs') ?? {};
+    const _stabObjAction = (!Array.isArray(_rawStabAction) && typeof _rawStabAction === 'object' && _rawStabAction) ? _rawStabAction : {};
+    const stabilisedLocsAction = new Set(Object.entries(_stabObjAction).filter(([k, rawStored]) =>
+      (locDegreeMap[k] ?? 0) >= 3 && (Number(locations[k]) || 0) <= rawStored
+    ).map(([k]) => k));
+    return computeWoundEffects(locDegreeMap, stabilisedLocsAction).totalActionMalus;
   }
 
   /**
@@ -5057,7 +5104,7 @@ function computeWoundEffects(locDegrees, stabilisedLocs = new Set()) {
     const isStabilised = stabilisedLocs.has(locKey);
 
     if (fx.dead) {
-      if (!worstStatus || statusRank.mort > statusRank[worstStatus]) worstStatus = "mort";
+      if (!worstStatus || statusRank.mort > (statusRank[worstStatus] ?? 0)) worstStatus = "mort";
       if (isStabilised) {
         stabilisedCount++;
         warnings.push({ severity: "stabilise", text: `STABILISÉ — ${LOCATION_DISPLAY[locKey]}` });
@@ -5126,7 +5173,7 @@ function _updateWoundEffectsPanel(html, fx) {
       banner = document.createElement('div');
       summary.prepend(banner);
     }
-    const statusClass = fx.worstStatus ? `wound-status-${fx.worstStatus}` : 'wound-status-mort';
+    const statusClass = fx.worstStatus ? `wound-status-${fx.worstStatus}` : 'wound-status-stabilise';
     banner.className = `wound-status-banner ${statusClass}`;
     const labels = { mort: '⚠ MORT', coma: '⚠ COMA', inconscient: '⚠ INCONSCIENT' };
     const statusText = fx.worstStatus ? (labels[fx.worstStatus] ?? '') : '';

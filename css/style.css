@@ -3418,8 +3418,7 @@
 
 .health-heal-btn {
   background: #b52020;
-  border: none;
-  border-radius: 3px;
+  border-radius: 50%;
   color: #fff;
   cursor: pointer;
   font-size: 10px;

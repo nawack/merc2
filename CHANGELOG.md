@@ -2,6 +2,12 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.1.5] - 2026-04-07
+
+### Fixed
+- 🩹 **Gestion des blessures et des soins** : correction mineur de l'application des soins, et de leur percistance en cas de nouvelle blessures
+- 🎲 **jet de compétence ou dégat arme blanche** : suppression des boutons de jet de dés ou de dégat pour les armes blanche de la section degat de base (ces compétences étant lié a des armes)
+
 ## [1.1.4] - 2026-04-03
 
 ### Added

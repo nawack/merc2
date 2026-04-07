@@ -1,5 +1,9 @@
 {
   "MERC": {
+    "StatusEffects": {
+      "minus4": "-4",
+      "minus8": "-8"
+    },
     "Abilities": {
       "intelligence": "Intelligence",
       "will": "Willpower",

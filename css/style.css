@@ -2334,6 +2334,12 @@
   filter: grayscale(0.6);
 }
 
+.merc-combat-tracker .combatant.merc-combatant--stunned {
+  opacity: 0.45;
+  filter: grayscale(0.6) sepia(0.5) hue-rotate(160deg);
+  pointer-events: none;
+}
+
 .merc-combat-tracker .combatant.merc-combatant--incapacitated {
   opacity: 0.35;
   filter: grayscale(1) sepia(0.3);

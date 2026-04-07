@@ -383,6 +383,16 @@ const isCombatantIncapacitated = (combatant) => {
   return statuses.has('unconscious') || statuses.has('dead');
 };
 
+/**
+ * Returns true if the combatant's actor has the stunned status.
+ * A stunned combatant skips its turn for the current segment; the effect is removed at the next segment.
+ */
+const isCombatantStunned = (combatant) => {
+  const statuses = combatant?.actor?.statuses;
+  if (!statuses) return false;
+  return statuses.has('stun');
+};
+
 const buildSegmentTurns = (combat, segment) => {
   const combatants = Array.from(combat?.combatants ?? [])
     .map((combatant) => ({
@@ -427,9 +437,20 @@ class MercCombat extends Combat {
   async setSegment(segment) {
     const clamped = clampSegment(segment);
     if (clamped === this.currentSegment) return this;
+
+    // Retirer les états temporaires de tous les combattants au passage du segment suivant
+    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8'];
+    for (const combatant of this.combatants ?? []) {
+      for (const statusId of temporaryStatuses) {
+        if (combatant.actor?.statuses?.has(statusId)) {
+          await combatant.actor.toggleStatusEffect(statusId, { active: false }).catch(() => {});
+        }
+      }
+    }
+
     const turns = buildSegmentTurns(this, clamped);
     const eligibleIds = getEligibleIdsForSegment(this, clamped);
-    let firstEligible = turns.findIndex((combatant) => eligibleIds.has(combatant.id));
+    let firstEligible = turns.findIndex((combatant) => eligibleIds.has(combatant.id) && !isCombatantIncapacitated(combatant));
     if (firstEligible === -1) firstEligible = 0;
     return this.update({
       "flags.merc.segment": clamped,
@@ -444,7 +465,8 @@ class MercCombat extends Combat {
     const startIndex = Number.isInteger(this.turn) ? this.turn : 0;
     let nextIndex = -1;
     for (let i = startIndex + 1; i < turns.length; i++) {
-      if (eligibleIds.has(turns[i].id) && !isCombatantIncapacitated(turns[i])) {
+      const c = turns[i];
+      if (eligibleIds.has(c.id) && !isCombatantIncapacitated(c) && !isCombatantStunned(c)) {
         nextIndex = i;
         break;
       }
@@ -455,6 +477,19 @@ class MercCombat extends Combat {
     }
     ui.notifications?.info(game.i18n.localize("MERC.UI.combat.segments.endOfSegment"));
     return this;
+  }
+
+  async nextRound() {
+    // Retirer les états temporaires de tous les combattants avant le passage au round suivant
+    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8'];
+    for (const combatant of this.combatants ?? []) {
+      for (const statusId of temporaryStatuses) {
+        if (combatant.actor?.statuses?.has(statusId)) {
+          await combatant.actor.toggleStatusEffect(statusId, { active: false }).catch(() => {});
+        }
+      }
+    }
+    return super.nextRound();
   }
 }
 
@@ -4692,6 +4727,12 @@ Hooks.once("init", () => {
 
   CONFIG.Combat.documentClass = MercCombat;
 
+  // Ajouter les états de malus temporaires propres au système merc
+  CONFIG.statusEffects.push(
+    { id: "merc-minus4", name: "MERC.StatusEffects.minus4", img: "systems/merc/assets/ui/status-minus4.svg" },
+    { id: "merc-minus8", name: "MERC.StatusEffects.minus8", img: "systems/merc/assets/ui/status-minus8.svg" }
+  );
+
   // Register Handlebars helpers
   Handlebars.registerHelper("filterItems", function(items, type) {
     if (!items) return [];
@@ -4906,15 +4947,22 @@ Hooks.once("init", () => {
           tokenInitiative.setAttribute("aria-label", reactionTitle);
         }
       }
-      if (id && (!eligibleIds.has(id) || isCombatantIncapacitated(combatant))) {
+      const isStunned = isCombatantStunned(combatant);
+      const isIncapacitated = isCombatantIncapacitated(combatant);
+      const isIneligible = !eligibleIds.has(id) || isIncapacitated || isStunned;
+      if (id && isIneligible) {
         element.classList.add("merc-combatant--ineligible");
-        if (combatant && isCombatantIncapacitated(combatant)) {
+        if (isIncapacitated) {
           element.classList.add("merc-combatant--incapacitated");
-        } else {
+          element.classList.remove("merc-combatant--stunned");
+        } else if (isStunned) {
+          element.classList.add("merc-combatant--stunned");
           element.classList.remove("merc-combatant--incapacitated");
+        } else {
+          element.classList.remove("merc-combatant--incapacitated", "merc-combatant--stunned");
         }
       } else {
-        element.classList.remove("merc-combatant--ineligible", "merc-combatant--incapacitated");
+        element.classList.remove("merc-combatant--ineligible", "merc-combatant--incapacitated", "merc-combatant--stunned");
       }
     });
   });
@@ -5818,7 +5866,14 @@ Hooks.on("createItem", (item, options, userId) => {
   }
 });
 
-
+// Re-rendre le tracker quand un effet de statut change sur un acteur en combat
+// (nécessaire pour que l'état étourdi soit reflété immédiatement dans le tracker)
+function maybeRerenderCombatTracker() {
+  if (game.combat instanceof MercCombat) ui.combat?.render();
+}
+Hooks.on("createActiveEffect", () => maybeRerenderCombatTracker());
+Hooks.on("deleteActiveEffect", () => maybeRerenderCombatTracker());
+Hooks.on("updateActiveEffect", () => maybeRerenderCombatTracker());
 
 
 

@@ -2897,16 +2897,29 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   }
 
   /**
+   * Returns the malus from active status effects (merc-minus4 = -4, merc-minus8 = -8).
+   * The worst (most negative) malus wins if both are active.
+   */
+  _getStatusMalus(actor) {
+    const statuses = actor?.statuses;
+    if (!statuses) return 0;
+    if (statuses.has('merc-minus8')) return -8;
+    if (statuses.has('merc-minus4')) return -4;
+    return 0;
+  }
+
+  /**
    * Build and send a d20 roll chat message.
    * @param {string} label - The display label for the roll
    * @param {number} modifier - The total modifier to add to the roll
    * @param {string} breakdownText - Optional breakdown details (e.g., "Degré 3 / Bonus 1")
    * @param {number} woundMalus - Action malus from wounds (0 or negative)
+   * @param {number} statusMalus - Malus from status effects (-4, -8, or 0)
    */
-  async _sendD20RollMessage(label, modifier, breakdownText = "", woundMalus = 0) {
+  async _sendD20RollMessage(label, modifier, breakdownText = "", woundMalus = 0, statusMalus = 0) {
     const actor = this.actor ?? this.document;
     const { firstRoll, secondRoll, adjustedTotal, secondRollDirection } = await rollD20WithSecond();
-    const total = adjustedTotal + modifier + woundMalus;
+    const total = adjustedTotal + modifier + woundMalus + statusMalus;
     const rolls = secondRoll ? [firstRoll, secondRoll] : [firstRoll];
     const badgeClass = secondRollDirection === "added"
       ? " merc-roll-badge--bonus"
@@ -2928,6 +2941,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
     if (woundMalus < 0) {
       breakdownHtml += `\n          <span class="roll-modifier merc-roll-wound-malus">Blessures ${woundMalus}</span>`;
+    }
+    if (statusMalus < 0) {
+      breakdownHtml += `\n          <span class="roll-modifier merc-roll-wound-malus">État ${statusMalus}</span>`;
     }
     
     const chatData = {
@@ -2962,7 +2978,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const abilityName = game.i18n.localize(CONFIG.MERC.abilities[abilityKey]);
     const label = `${actor.name} - ${game.i18n.localize("MERC.Labels.check")} ${abilityName}`;
     const woundMalus = this._getWoundActionMalus(actor);
-    await this._sendD20RollMessage(label, abilityScore, "", woundMalus);
+    const statusMalus = this._getStatusMalus(actor);
+    await this._sendD20RollMessage(label, abilityScore, "", woundMalus, statusMalus);
   }
 
   async rollSkillCheck(skillKey) {
@@ -3040,7 +3057,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     const label = `${actor.name} - ${skillName}`;
     const breakdown = game.i18n.format("MERC.Labels.breakdownDegree", { degree, bonus, attr: combatBonus });
     const woundMalus = this._getWoundActionMalus(actor);
-    await this._sendD20RollMessage(label, total_modifier, breakdown, woundMalus);
+    const statusMalus = this._getStatusMalus(actor);
+    await this._sendD20RollMessage(label, total_modifier, breakdown, woundMalus, statusMalus);
   }
 
   async rollWeaponSkillCheck(item, aimBonus = 0) {
@@ -3096,7 +3114,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       breakdown += ` / ${game.i18n.localize("MERC.UI.items.rollWeaponSkillAimed")} +${aimBonus}`;
     }
     const woundMalus = this._getWoundActionMalus(actor);
-    await this._sendD20RollMessage(label, total_modifier, breakdown, woundMalus);
+    const statusMalus = this._getStatusMalus(actor);
+    await this._sendD20RollMessage(label, total_modifier, breakdown, woundMalus, statusMalus);
   }
 
   /**

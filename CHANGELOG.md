@@ -2,6 +2,11 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.1.6] - 2026-04-07
+
+### Added
+- 😵 **Malus tempraire** : Ajout de la gestion des malus temporaire (ajouté via token), impact dans la séquence de combats et application des malus sur jet de dés.
+
 ## [1.1.5] - 2026-04-07
 
 ### Fixed

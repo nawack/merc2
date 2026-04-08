@@ -2357,6 +2357,45 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // +1 dev buttons
+    const devAddBtns = html.querySelectorAll(".skill-dev-add-btn");
+    devAddBtns.forEach(btn => {
+      btn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const skillKey = btn.dataset.skill;
+        const langName = btn.dataset.langName;
+        const specName = btn.dataset.specName;
+        const baseSkillKey = btn.dataset.baseSkill;
+
+        const updateData = {};
+
+        if (langName) {
+          // Custom language: increment its dev
+          const currentDev = Number(this.actor.system.customLanguages?.[langName]?.dev ?? 0);
+          updateData[`system.customLanguages.${langName}.dev`] = currentDev + 1;
+        } else if (specName) {
+          // Custom specialization: increment spec dev AND base skill dev (if set)
+          const currentSpecDev = Number(this.actor.system.customSpecializations?.[specName]?.dev ?? 0);
+          updateData[`system.customSpecializations.${specName}.dev`] = currentSpecDev + 1;
+          if (baseSkillKey && this.actor.system.skills?.[baseSkillKey] !== undefined) {
+            const currentBaseDev = Number(this.actor.system.skills[baseSkillKey]?.dev ?? 0);
+            updateData[`system.skills.${baseSkillKey}.dev`] = currentBaseDev + 1;
+          }
+        } else if (skillKey) {
+          // Normal skill
+          const currentDev = Number(this.actor.system.skills?.[skillKey]?.dev ?? 0);
+          updateData[`system.skills.${skillKey}.dev`] = currentDev + 1;
+        }
+
+        if (Object.keys(updateData).length > 0) {
+          await this.actor.update(updateData, { render: false });
+          await this.render();
+        }
+      });
+    });
+
     // Handle custom specialization name edits
     const specializationNameInputs = html.querySelectorAll(".specialization-name-edit");
     specializationNameInputs.forEach(input => {

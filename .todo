@@ -40,6 +40,9 @@ Controle des valeurs des champs:
     ✔ mettre en place des contrôles de valeurs pour les champs de la fiche (ex: pas de valeur négative pour les dev, valeur comprise en 1 et 10 pour les attributs, etc) @done(26-04-02 11:29)
     - format des dégats reg exp : ^(0|[1-9](?:[dD]6(?:\+[12])?)?)$
 
+Gestion des xp :
+    ✔ ajouter un bouton [coche] pour valider le gain de dev en cas de réussite (1 pts dans la compétence liée, si spé alors un point dans la spé et un point dans la compétence liée) @done(26-04-08 10:59)
+
 Gestion des difficultés et ajout gestion des coches :
     - liste des actions de corps à corps (qui définissent les difficultés)
     - tableau de difficulté (distance, localisation, type d'action, etc)

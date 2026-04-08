@@ -193,7 +193,8 @@
         "languageAlreadyExists": "Une langue avec ce nom existe déjà",
         "addCustomSpecialization": "Ajouter une spécialisation",
         "removeCustomSpecialization": "Supprimer cette spécialisation",
-        "baseSkillLabel": "Compétence de base"
+        "baseSkillLabel": "Compétence de base",
+        "addOneDev": "+1 point de développement"
       },
       "items": {
         "equippedWeapons": "Armes équipées",

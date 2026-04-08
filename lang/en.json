@@ -193,7 +193,8 @@
         "languageAlreadyExists": "A language with this name already exists",
         "addCustomSpecialization": "Add Specialization",
         "removeCustomSpecialization": "Remove this specialization",
-        "baseSkillLabel": "Base Skill"
+        "baseSkillLabel": "Base Skill",
+        "addOneDev": "+1 development point"
       },
       "items": {
         "equippedWeapons": "Equipped Weapons",

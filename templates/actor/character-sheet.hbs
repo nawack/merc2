@@ -448,6 +448,7 @@
                         {{/if}}
                       </div>
                       <div class="skill-value">
+                        <button type="button" class="skill-dev-add-btn" title="{{localize "MERC.UI.skills.addOneDev"}}" {{#unless skill.unlocked}}disabled{{/unless}} data-skill="{{skill.key}}"{{#if skill.isCustomLanguage}} data-lang-name="{{skill.customLanguageName}}"{{/if}}{{#if skill.isCustomSpecialization}} data-spec-name="{{skill.customSpecializationName}}" data-base-skill="{{skill.customSpecializationBaseSkill}}"{{/if}}></button>
                         <div class="skill-inputs">
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{#if skill.baseTooltip}}{{skill.baseTooltip}}{{else}}{{localize "MERC.UI.skills.base"}}{{/if}}" readonly>
                           {{#if skill.isCustomLanguage}}
@@ -522,6 +523,7 @@
                         {{/if}}
                       </div>
                       <div class="skill-value">
+                        <button type="button" class="skill-dev-add-btn" title="{{localize "MERC.UI.skills.addOneDev"}}" {{#unless skill.unlocked}}disabled{{/unless}} data-skill="{{skill.key}}"{{#if skill.isCustomLanguage}} data-lang-name="{{skill.customLanguageName}}"{{/if}}{{#if skill.isCustomSpecialization}} data-spec-name="{{skill.customSpecializationName}}" data-base-skill="{{skill.customSpecializationBaseSkill}}"{{/if}}></button>
                         <div class="skill-inputs">
                           <input type="number" class="skill-input" name="system.skills.{{skill.key}}.base" value="{{skill.base}}" min="0" title="{{#if skill.baseTooltip}}{{skill.baseTooltip}}{{else}}{{localize "MERC.UI.skills.base"}}{{/if}}" readonly>
                           {{#if skill.isCustomLanguage}}

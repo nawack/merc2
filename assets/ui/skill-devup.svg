@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+  <!-- Arrow pointing up -->
+  <path d="M12 2 L4 11 H9 V19 H15 V11 H20 Z"/>
+  <!-- Horizontal base bar -->
+  <rect x="4" y="21" width="16" height="2" rx="1"/>
+</svg>

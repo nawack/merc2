@@ -2,16 +2,17 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
-## [1.1.6] - 2026-04-07
+## [1.1.6] - 2026-04-08
 
 ### Added
 - 😵 **Malus tempraire** : Ajout de la gestion des malus temporaire (ajouté via token), impact dans la séquence de combats et application des malus sur jet de dés.
+- ✅ **level up** : Ajout d'un bouton lvl up qui ajoute un point de dev pour une compétence (+1 point dans la compétence de base d'une spé si up d'un spé)
 
 ## [1.1.5] - 2026-04-07
 
 ### Fixed
-- 🩹 **Gestion des blessures et des soins** : correction mineur de l'application des soins, et de leur percistance en cas de nouvelle blessures
-- 🎲 **jet de compétence ou dégat arme blanche** : suppression des boutons de jet de dés ou de dégat pour les armes blanche de la section degat de base (ces compétences étant lié a des armes)
+- 🐛 **Gestion des blessures et des soins** : correction mineur de l'application des soins, et de leur percistance en cas de nouvelle blessures
+- 🐛 **jet de compétence ou dégat arme blanche** : suppression des boutons de jet de dés ou de dégat pour les armes blanche de la section degat de base (ces compétences étant lié a des armes)
 
 ## [1.1.4] - 2026-04-03
 

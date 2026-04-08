@@ -1305,6 +1305,51 @@
   color: white;
 }
 
+.skill-dev-add-btn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.skill-dev-add-btn::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: #2d9959;
+  -webkit-mask-image: url("../assets/ui/skill-devup.svg");
+  mask-image: url("../assets/ui/skill-devup.svg");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.skill-dev-add-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.skill-dev-add-btn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.skill-dev-add-btn:disabled:hover {
+  transform: none;
+}
+
 /* Items & Weapons Sections */
 .items-section,
 .weapons-section {

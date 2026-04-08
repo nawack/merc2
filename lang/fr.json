@@ -4,6 +4,15 @@
       "minus4": "-4",
       "minus8": "-8"
     },
+    "TokenCone": {
+      "title": "Cône de vision / tir",
+      "enabled": "Afficher le cône",
+      "angle": "Angle (°)",
+      "distance": "Distance (unités)",
+      "color": "Couleur",
+      "opacity": "Opacité (0–1)",
+      "showEdge": "Afficher les bords"
+    },
     "Abilities": {
       "intelligence": "Intelligence",
       "will": "Volonté",

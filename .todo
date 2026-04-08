@@ -78,11 +78,13 @@ Gestion des équipements & armures:
     ✔ creer la fiche d'équipement ==> (poids, prix, rareté, etc) @done(26-03-26 20:32)
     ✔ creer la fiche d'armures ==> besoin liste de types d'armures et ce qui les caractérise (localisation de protection, valeur de protection, etc) @done(26-03-26 20:32)
     ✔ gestion du poids de l'équipement et de l'armure dans la charge totale @done(26-03-27 17:51)
+    - pouvoir gérer une quantité d'un équipement (ex: x grenades, x kits de soin, etc)
 
 Gestion des features:
     ✔ creer fiche features @done(26-04-01 17:36)
     ✔ pouvoir ajouter des features a des items @done(26-04-01 17:36)
     - gérer impact des features sur les items, compétences, les dégats, etc
+    - pouvoir ajouter des features non lié a un équipement (par exemple dans un sac a dos)
 
 Gerer un styeme de blessures:
     ✔ lister les degrés de blessures @done(26-03-27 16:22)

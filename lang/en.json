@@ -4,6 +4,15 @@
       "minus4": "-4",
       "minus8": "-8"
     },
+    "TokenCone": {
+      "title": "Vision / Firing Cone",
+      "enabled": "Show cone",
+      "angle": "Angle (°)",
+      "distance": "Distance (units)",
+      "color": "Color",
+      "opacity": "Opacity (0–1)",
+      "showEdge": "Show edges"
+    },
     "Abilities": {
       "intelligence": "Intelligence",
       "will": "Willpower",

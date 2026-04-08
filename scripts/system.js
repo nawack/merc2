@@ -5933,5 +5933,162 @@ Hooks.on("createActiveEffect", () => maybeRerenderCombatTracker());
 Hooks.on("deleteActiveEffect", () => maybeRerenderCombatTracker());
 Hooks.on("updateActiveEffect", () => maybeRerenderCombatTracker());
 
+// ──────────────────────────────────────────────────────────────────────────────
+// TOKEN CONE (vision / arc de tir)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Dessine (ou met à jour) le cône PIXI sur un token selon ses flags merc.cone.
+ * Appelé à chaque drawToken et refreshToken.
+ */
+function refreshTokenCone(token) {
+  // Nettoyage du cône précédent
+  if (token._mercConeGfx) {
+    token._mercConeGfx.destroy({ children: true });
+    token._mercConeGfx = null;
+  }
+
+  const flags = token.document?.flags?.merc?.cone;
+  if (!flags?.enabled) return;
+
+  const angleDeg  = Math.max(1, Math.min(360, Number(flags.angle)    || 30));
+  const distUnits = Math.max(0.1, Number(flags.distance) || 100);
+  const colorStr  = flags.color   || "#ff5100";
+  const opacity   = Math.max(0, Math.min(1, Number(flags.opacity) ?? 0.2));
+  const showEdge  = flags.showEdge !== false;
+
+  // Conversion distance en pixels
+  const gridPx   = canvas.grid.size;
+  const gridUnit = canvas.grid.distance || 1;
+  const radiusPx = (distUnits / gridUnit) * gridPx;
+
+  // Couleur PIXI (entier)
+  const colorHex = parseInt(colorStr.replace("#", "0x"), 16);
+
+  // Direction : rotation Foundry (0 = sud/bas par défaut, sens horaire, degrés)
+  // PIXI : 0 = est, sens horaire, radians → on ajoute 90° pour aligner sud = rotation 0
+  const rotDeg   = token.document.rotation ?? 0;
+  const facingRad = (rotDeg + 90) * (Math.PI / 180);
+  const halfRad   = (angleDeg / 2) * (Math.PI / 180);
+
+  const g = new PIXI.Graphics();
+
+  // Remplissage du cône
+  g.beginFill(colorHex, opacity);
+  g.moveTo(0, 0);
+  g.arc(0, 0, radiusPx, facingRad - halfRad, facingRad + halfRad);
+  g.closePath();
+  g.endFill();
+
+  // Bordure
+  if (showEdge) {
+    g.lineStyle(1.5, colorHex, Math.min(opacity * 2.5, 1));
+    g.moveTo(0, 0);
+    g.lineTo(
+      Math.cos(facingRad - halfRad) * radiusPx,
+      Math.sin(facingRad - halfRad) * radiusPx
+    );
+    g.moveTo(0, 0);
+    g.lineTo(
+      Math.cos(facingRad + halfRad) * radiusPx,
+      Math.sin(facingRad + halfRad) * radiusPx
+    );
+    g.arc(0, 0, radiusPx, facingRad - halfRad, facingRad + halfRad);
+    g.lineStyle(0);
+  }
+
+  // Centrer sur le token (le container token est en haut-gauche)
+  const w = (token.document.width  || 1) * gridPx;
+  const h = (token.document.height || 1) * gridPx;
+  g.x = w / 2;
+  g.y = h / 2;
+
+  // Insérer sous le token (zIndex bas = derrière le sprite)
+  g.zIndex = -1;
+  token.addChild(g);
+  token._mercConeGfx = g;
+}
+
+// Dessiner lors de la création initiale du token sur le canvas
+Hooks.on("drawToken", (token) => {
+  refreshTokenCone(token);
+});
+
+// Mettre à jour à chaque refresh (déplacement, rotation, …)
+Hooks.on("refreshToken", (token) => {
+  refreshTokenCone(token);
+});
+
+// Mettre à jour quand les flags du token document changent
+Hooks.on("updateToken", (tokenDoc, changes) => {
+  if (changes?.flags?.merc?.cone === undefined) return;
+  const token = tokenDoc.object;
+  if (token) refreshTokenCone(token);
+});
+
+// ── UI : injectiondans la config token ──────────────────────────────────────
+
+Hooks.on("renderTokenConfig", (app, html) => {
+  // Compatibilité v1 (jQuery) et v2 (HTMLElement)
+  const root = html instanceof HTMLElement ? html : html[0];
+  if (!root) return;
+
+  const tokenDoc = app.document ?? app.token ?? app.object;
+  if (!tokenDoc) return;
+  const cone = tokenDoc.flags?.merc?.cone ?? {};
+
+  // Section HTML à injecter
+  const section = document.createElement("div");
+  section.className = "merc-cone-config form-group stacked";
+  section.innerHTML = `
+    <hr>
+    <h3 style="margin:6px 0 4px;font-size:0.9em;color:#555;">
+      <i class="fas fa-bullseye" style="margin-right:4px;"></i>${game.i18n.localize("MERC.TokenCone.title") || "Cône de vision / tir"}
+    </h3>
+
+    <div class="form-group">
+      <label style="flex:1;">${game.i18n.localize("MERC.TokenCone.enabled") || "Afficher le cône"}</label>
+      <input type="checkbox" name="flags.merc.cone.enabled" ${cone.enabled ? "checked" : ""} style="flex:0 0 auto;">
+    </div>
+
+    <div class="form-group">
+      <label style="flex:1;">${game.i18n.localize("MERC.TokenCone.angle") || "Angle (°)"}</label>
+      <input type="number" name="flags.merc.cone.angle" value="${cone.angle ?? 30}" min="1" max="360" step="1" style="width:70px;">
+    </div>
+
+    <div class="form-group">
+      <label style="flex:1;">${game.i18n.localize("MERC.TokenCone.distance") || "Distance (unités)"}</label>
+      <input type="number" name="flags.merc.cone.distance" value="${cone.distance ?? 100}" min="0.5" step="0.5" style="width:70px;">
+    </div>
+
+    <div class="form-group">
+      <label style="flex:1;">${game.i18n.localize("MERC.TokenCone.color") || "Couleur"}</label>
+      <input type="color" name="flags.merc.cone.color" value="${cone.color ?? "#ff5100"}" style="width:50px;height:26px;padding:1px 2px;cursor:pointer;">
+    </div>
+
+    <div class="form-group">
+      <label style="flex:1;">${game.i18n.localize("MERC.TokenCone.opacity") || "Opacité (0–1)"}</label>
+      <input type="number" name="flags.merc.cone.opacity" value="${cone.opacity ?? 0.2}" min="0" max="1" step="0.05" style="width:70px;">
+    </div>
+
+    <div class="form-group">
+      <label style="flex:1;">${game.i18n.localize("MERC.TokenCone.showEdge") || "Afficher les bords"}</label>
+      <input type="checkbox" name="flags.merc.cone.showEdge" ${cone.showEdge !== false ? "checked" : ""} style="flex:0 0 auto;">
+    </div>
+  `;
+
+  // Insérer dans l'onglet "Vision" (ou fallback form)
+  const visionTab = root.querySelector('.tab[data-tab="vision"]')
+    ?? root.querySelector("form");
+  if (visionTab) {
+    visionTab.appendChild(section);
+  } else {
+    root.appendChild(section);
+  }
+
+  // Redimensionner la fenêtre
+  if (app.setPosition) app.setPosition({ height: "auto" });
+});
+
 
 

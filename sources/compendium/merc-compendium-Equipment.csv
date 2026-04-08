@@ -1,187 +1,188 @@
 ﻿Folder;Nom;Rarete;Prix;Poids (kg);Description;Année
-Equipement\Armes;Housse étanche pour arme;uncommon;40;0,5;;0
-Equipement\Armes;Chargeur PA;common;20;0,2;Chargeur standart à 15x9P ;0
-Equipement\Armes;Chargeur Fusil;common;20;0,25;Chargeur standart à 10x7,62N;0
-Equipement\Armes;Chargeur Fusil d'assaut;common;50;0,15;Chargeur standart à 30x5,56N;0
-Equipement\Armes;Chargeur Fusil Tireur d'Elite;common;30;0,25;Chargeur standart à 10x7,62N;0
-Equipement\Armes;Chargeur Fusil Tireur d'Elite Lourd;common;50;0,3;Chargeur standart à 5x12,7BMG;0
-Equipement\Armes;Machine a garnir les bandes;uncommon;200;4;;0
-Equipement\Armes;Boite à Munitions (50);common;80;2;;0
-Equipement\Armes;Boite à Munitions (100);common;100;3;;0
-Equipement\CBRN;Masque respiratoire M50;uncommon;500;0,8;Masque gaz militaire – protection agents chimiques et biologiques – autonomie 24h;2003
-Equipement\CBRN;Détecteur d'agents chimiques M8A1;uncommon;1500;1,5;Détecteur automatique agents neurotoxiques et vésicants – alarme sonore et visuelle;0
-Equipement\CBRN;Tenue MOPP4 complète;rare;800;4,5;Ensemble protecteur NBC intégral (masque non inclus) – résistance certifiée 24h;0
-Equipement\CBRN;Tablettes décontamination RSDL x10;common;60;0,1;10 lingettes décontaminantes peau – neutralisation agents chimiques en 2min;0
-Equipement\CBRN;Atropine;rare;500;0,02;liquide;0
-Equipement\CBRN;S3C;rare;2000;0,05;seringue;0
-Equipement\Communication;Radio MBITR AN/PRC-148;uncommon;3500;0,6;Radio militaire multi-bandes sécurisée – portée 5km sol-sol avec chiffrement;2000
-Equipement\Communication;Radio longue portée AN/PRC-117G;rare;8000;5;Radio tactique wideband avec capacité satcom – portée 50km+;0
-Equipement\Communication;Casque tactique Peltor ComTac IV;common;800;0,4;Protection auditive active avec passerelle radio intégrée – atténuation 26dB;2012
-Equipement\Communication;Balise de détresse PLB 406MHz;common;350;0,2;Balise localisatrice personnelle COSPAS-SARSAT – activation manuelle ou automatique;0
-Equipement\Communication;Système de communication intra-équipe;uncommon;1200;0,3;Kit PTT discret avec écouteur intra et micro laryngophone – discrétion opérationnelle;0
-Equipement\Communication;radio portable 2km;common;250;0,5;;0
-Equipement\Communication;kit Oreillette;common;50;0;;0
-Equipement\Communication;radio de Véhicule ou sac 5/25 km;common;500;5;;0
-Equipement\Communication;radio de Véhicule ou sac 5/25 km cryptée;rare;2000;10;;0
-Equipement\Communication;radio de Véhicule 50 km;rare;1500;15;;0
-Equipement\Communication;radio de Véhicule 50 km cryptée;rare;6000;15;;0
-Equipement\Communication;Radio Tactique Individuelle;common;550;0,5;portée 2 km;0
-Equipement\Communication;Smartphone;common;1000;0,1;;2007
-Equipement\Communication;TAM-TAM;common;25;0,2;boum boum woula woula;0
-Equipement\Communication;Téléphone portable;common;75;0,5;;0
-Equipement\Communication;Téléphone satellitaire (INMARSAT);uncommon;10000;4;;0
-Equipement\Communication;Antenne Satellite portable;uncommon;1000;1;;1990
-Equipement\Communication;Micro directionnel;rare;2400;0,5;;0
-Equipement\Communication;Transpondeur;rare;3000;1;;0
-Equipement\Communication;Personal Locator System;rare;5000;2;;1990
-Equipement\Communication;Talky-Walky;common;300;0,3;Portée 500m ;0
-Equipement\Divers;Cartes de zones;common;20;0,1;Zone et echelle a définir;0
-Equipement\Divers;Boule à neige;Très très commun;5;0,05;y'en a partout;0
-Equipement\Divers;Frigo;common;100;20;;0
-Equipement\Divers;Jerrican 20 L;common;25;1;;0
-Equipement\Divers;Equipement de plongée;uncommon;300;12;;0
-Equipement\Divers;Treillis;common;125;3;;0
-Equipement\Divers;Rangers;common;80;2;;0
-Equipement\Divers;Chaussures de marche;common;100;1,5;;0
-Equipement\Divers;Combinaison de plongée;common;200;4;;0
-Equipement\Divers;Combinaison de Vol;uncommon;250;3;;0
-Equipement\Divers;Combinaison de saut;common;200;3;Pour faire du trampoline;0
-Equipement\Divers;Equipement de pluie;common;50;2;pour chanter sous la pluie;0
-Equipement\Divers;Equipement temps froid;common;60;2;Permet de resister a des tempé jusqu'à -10;0
-Equipement\Divers;Equipement Polaire;common;80;4;Permet de resister pendant 8h a des tempé jusqu'à -40;0
-Equipement\Eclairage;Lampe tactique Streamlight TLR-1;common;180;0,1;Lampe rail Picatinny 300 lumens – activation ambidextre – IP54;1999
-Equipement\Eclairage;Lampe frontale militaire THL-1 NV;common;120;0,2;Lampe frontale 4 modes: blanc/rouge/IR/strobe – compatible NVG;2000
-Equipement\Eclairage;Bâtons lumineux chimiques x10;common;30;0,2;Cyalume 12h – balisage et jalonnement discret – spectre vert et infrarouge;0
-Equipement\Eclairage;Flash light;common;30;0,5;;0
-Equipement\Eclairage;Strobe Light Jour+nuit+IR;uncommon;50;0,5;;0
-Equipement\Eclairage;Feux de Bengale;common;100;2;;0
-Equipement\Eclairage;Lampe torche;common;20;1;;0
-Equipement\Eclairage;Lampe baladeuse;common;100;0,5;;0
-Equipement\electronique;Anémomètre portable électronique;uncommon;125;0,5;;0
-Equipement\electronique;Anémomètre portable mécanique;uncommon;50;1;;0
-Equipement\electronique;Calculateur ballistique;uncommon;;;;1990
-Equipement\electronique;"Tablette 7""";common;;;;2010
-Equipement\electronique;"Tablette 10""";common;;;;2010
-Equipement\electronique;Caméra Numérique;common;;;;0
-Equipement\electronique;GoPro;common;;;;2004
-Equipement\electronique;Carte Mémoire;common;;;;0
-Equipement\electronique;récepteur GPS;common;300;0,5;;0
-Equipement\electronique;Ordinateur Portable bas de gamme;common;1000;3;;1995
-Equipement\electronique;Ordinateur Portable moyen gamme;common;1500;3;;1995
-Equipement\electronique;Ordinateur portable haut de gamme;common;2500;4;;1995
-Equipement\electronique;Appareil photo;common;400;0,5;;0
-Equipement\electronique;Appareil photo numérique;common;2500;1;;0
-Equipement\electronique;Caméra mini DV;common;2500;1,5;;0
-Equipement\electronique;Kit complet fibre optique (1m);common;1000;4;cam+ecran+poigné;1990
-Equipement\electronique;Radar de surveillance sol;rare;40000;7;avec 100m de cables;0
-Equipement\electronique;Radar de Contre-Batterie mortier;rare;100000;7;avec 100m de cables;0
-Equipement\electronique;Radar de Contre-Batterie artillerie;rare;200000;7;avec 100m de cables;0
-Equipement\electronique;Palm;common;500;0,4;;1996
-Equipement\electronique;Cassette mini DV;common;10;0,1;;1995
-Equipement\Explosifs;Baton de Dynamite;uncommon;7,5;0,25;;0
-Equipement\Explosifs;C4 (100gr);rare;3;0,1;;0
-Equipement\Explosifs;Semtex (50gr);rare;4;0,05;;0
-Equipement\Explosifs;Mine AP;rare;50;4;;0
-Equipement\Explosifs;Mine AP directionnelle;rare;250;2;;0
-Equipement\Explosifs;Mine AC;rare;100;35;;0
-Equipement\Explosifs;Mise de feu électrique;uncommon;2;-;;0
-Equipement\Explosifs;Mise de feu mécanique;uncommon;2;-;;0
-Equipement\Explosifs;Cordeau détonant instantané;uncommon;100;3;5900m/s;0
-Equipement\Explosifs;Cordeau détonant à retard;uncommon;75;3;100m/s;0
-Equipement\Explosifs;Fil piège;common;10;2;;0
-Equipement\Explosifs;Détonateur à retard;uncommon;20;0,25;Retard réglable de 30s à 48h;0
-Equipement\Explosifs;Détonateur instantané;uncommon;3;-;;0
-Equipement\Explosifs;Boitier déclancheur électrique;uncommon;50;0,5;10 charges en même temps;0
-Equipement\Explosifs;Fil électrique;common;50;5;;0
-Equipement\Explosifs;Détonateur a distance;uncommon;;;;0
-Equipement\Explosifs;Télécommande de détonateur;uncommon;;;portée 2 km;0
-Equipement\Medical;Trousse de premiers secours légère;common;50;1;Bandages stériles, désinfectant, garrot CAT – traitement blessures légères;0
-Equipement\Medical;Kit de trauma tactique (IFAK);common;200;0,8;Pansement hémostatique QuikClot, décompression thoracique, garrot CAT, gants nitrile;2000
-Equipement\Medical;Trousse médicale avancée (TCCC);uncommon;600;3,5;Matériel réanimation, intubation nasopharyngée, sutures, traitement multi-plaies graves;0
-Equipement\Medical;Défibrillateur portable DEA;uncommon;1200;2;Défibrillateur automatique externe – usage par personnel non médical;0
-Equipement\Medical;Auto-injecteur morphine x5;uncommon;150;0,1;5 auto-injecteurs morphine 10mg – analgésie d'urgence au combat;0
-Equipement\Medical;Garrot tourniquet CAT x3;common;45;0,1;3 garrots Combat Application Tourniquet – 1 main possible – norme TCCC;2004
-Equipement\Medical;Anesthésiant Complet;rare;150;0,01;liquide ou gaz;0
-Equipement\Medical;Anesthésiant Local;uncommon;100;0,05;liquide ou gaz;0
-Equipement\Medical;Antibiotique, plaquette de 8;common;20;0,02;liquide ou oral (250$/100);0
-Equipement\Medical;Anti fièvre, plaquette de 8;common;20;0,05;;0
-Equipement\Medical;Sedatif faible;uncommon;50;0,05;oral;0
-Equipement\Medical;Sedatif fort;rare;150;0,05;liquide (injection);0
-Equipement\Medical;Morphine x2;rare;500;0,05;liquide (injection);0
-Equipement\Medical;Poche de Sang;rare;250;0,5;;0
-Equipement\Medical;Poche de plasma;rare;1000;0,5;;0
-Equipement\Medical;Instruments chirurgicaux;rare;2500;5;scalpels… non ca c'est unpoireau, etc;0
-Equipement\Optique;Jumelles 8x42 tactiques;common;200;0,7;Jumelles milspecs résistantes chocs et eau;0
-Equipement\Optique;Télémètre laser Vectronix PLRF;uncommon;2500;0,8;Télémètre militaire 25m-10km avec boussole numérique et GPS intégré;0
+Equipement\Transport;Sac d'assaut MOLLE 45L;common;150;2;Sac à dos tactique modulaire MOLLE – tissu 1000D Cordura – capacité 45L;1997
+Equipement\Transport;Porte-plaques tactique (PC) MOLLE;common;200;1;Porte-équipement MOLLE sans plaques – transport matériel combat 15 poches modulaires;1997
+Equipement\Transport;Ceinturon ALICE avec accessoires;common;80;0,5;Ceinturon militaire avec porte-gourde, poches munitions et holster toile;1965
+Equipement\Transport;Caisse de transport Pelican 1510;common;300;3,5;Malette rigide étanche IP67 – transport équipement sensible 56x36x23cm;2005
+Equipement\Transport;Sac 25 L;common;100;2;;1930
+Equipement\Transport;sac 30 L;common;200;3;;2010
+Equipement\Transport;sac 40 L;common;300;5;;2010
+Equipement\Transport;Holster hanche;common;150;0,5;;1930
+Equipement\Transport;Holster d'aisselle;common;150;0,5;;1930
+Equipement\Transport;Exosquelette de combat léger;rare;45000;15;Exosquelette assisté motorisé Bonus de FO et levage;2010
+Equipement\Survie;Kit de survie 72h;common;150;2,5;Eau purifiée, barres énergétiques, bivouac urgence, allumettes tempête, miroir signal;2010
+Equipement\Survie;Couvertures thermiques de survie x3;common;20;0,1;Couvertures aluminisées réfléchissantes – protection hypothermie jusqu'à -20°C;2010
+Equipement\Survie;Filtre à eau LifeStraw Mission;common;40;0,1;Filtre portatif 1L/min – élimination 99,9999% bactéries et 99,9% parasites;2010
+Equipement\Survie;GPS militaire Garmin GPSMAP 64sx;uncommon;600;0,2;GPS milspecs IP68 – cartes topo MGRS – autonomie 16h batteries AA;2015
+Equipement\Survie;Miroir de survie;common;10;0,1;;1930
+Equipement\Survie;Fusées de détresse x3;common;50;0,5;;1930
+Equipement\Survie;Gourde 1L;common;10;0,5;;1930
+Equipement\Survie;Camelback 2L;common;50;0,5;;1990
+Equipement\Survie;Boussole;common;150;0,1;;1930
+Equipement\Survie;Harnais d'escalade;common;250;1;;1930
+Equipement\Survie;Filet de Camouflage 6x4;uncommon;5000;6;;1930
+Equipement\Survie;Filet de Camouflage 10x8;uncommon;7500;10;;1930
+Equipement\Survie;ECR;uncommon;800;10;;2010
+Equipement\Survie;Pelle US;common;150;2;;1930
+Equipement\Survie;Scie;common;150;2;;1930
+Equipement\Survie;Hache;common;150;2;interdit aux nains;1930
+Equipement\Survie;Réchaufeuse d'air;common;2000;3;;2010
+Equipement\Survie;Réchaud;common;50;0,8;4,75kw;1930
+Equipement\Survie;Gamelles;common;10;0,5;;1930
+Equipement\Survie;Glacière;common;50;3;;2010
+Equipement\Survie;Tente biplace;common;150;6;;1930
+Equipement\Survie;Tente 4 places;common;300;12;;1930
+Equipement\Survie;Tente 10 places;common;700;35;;1930
+Equipement\Survie;Ration de combat 1J;common;15;1;;2010
+Equipement\Survie;Ration Commando 1J;uncommon;20;0,5;;2010
+Equipement\Survie;Corde 15 m;common;30;5;;1930
+Equipement\Survie;Grappin ;common;20;2;;1930
+Equipement\Saut;Parachute rond;uncommon;1000;12;;1930
+Equipement\Saut;Parachute rectangulaire;common;2000;12;;2010
+Equipement\Saut;Parachute de secours;common;1500;6;;1930
+Equipement\Saut;parapente;common;2000;12;;2010
+Equipement\Saut;deltaplane;common;4000;20;vitesse : 120km/h;2010
+Equipement\Saut;Kit de larguage véhicules leger;rare;10000;500;;2010
+Equipement\Saut;Kit de parachutage véhicules leger;rare;15000;250;;2010
+Equipement\Outils;Outil multifonction Leatherman MUT;common;180;0,3;Outil multifonction avec adaptateur nettoyage arme, chasse-goupille et kit AR;2011
+Equipement\Outils;Pince coupe-barbelés renforcée;common;60;0,6;Pince coupe acier galvanisé 5mm et câble acier 3mm – manche isolé;1930
+Equipement\Outils;Pied de biche tactique compact;common;40;0,8;Pied de biche acier forgé 35cm – forçage portes et extraction matériel;1930
+Equipement\Outils;Scie-câble de survie;common;25;0,1;Scie-câble acier inox – coupe bois, os et matériaux composites légers;1930
+Equipement\Outils;Détecteur de métaux Garrett THD;uncommon;800;1,3;Détecteur de métaux portable – mines PT et IED à moins de 15cm – mode discrimination;2010
+Equipement\Outils;Outil de Démolition;uncommon;500;4;Outils basiques, masse;1930
+Equipement\Outils;Set d'outil classique;common;500;5;tournevis, etc;1930
+Equipement\Outils;Set d'outils haut de gamme;common;1500;35;outils electriques;2010
+Equipement\Outils;Outils pour Vehicule à roue;common;1000;10;La caisse a outils basique du coffre de la voiture;1930
+Equipement\Outils;Outils pour Vehicules a Chenilles;rare;10000;15;Une foutu grosse barre a mine;1930
+Equipement\Outils;Outils pour bateaux;uncommon;15000;15;De quoi faire des réparations de fortune;1930
+Equipement\Outils;Outils pour Hélicoptères;rare;200000;22;De quoi faire des réparations de fortune;2010
+Equipement\Outils;Outils pour Avion;rare;200000;22;De quoi faire des réparations de fortune;1930
+Equipement\Outils;Outils de construction;uncommon;500;30;;1930
+Equipement\Outils;Outils pour armes ;uncommon;200;5;;1930
+Equipement\Outils;Outils pour armes lourdes;uncommon;750;25;;1930
+Equipement\Outils;Set d'electricien;common;500;3;;1930
+Equipement\Outils;Set d'éléctronicien;common;1000;3;;1990
+Equipement\Outils;Set informaticien;common;1000;2;;2010
+Equipement\Outils;Etabli modulaire portatif;uncommon;750;1750;;2010
+Equipement\Outils;Outil de crochetage;rare;20;0,5;;1930
+Equipement\Outils;kit sécurité;uncommon;250;5;outils,multimetre,etc;2010
+Equipement\Optique;Jumelles 8x42 tactiques;common;200;0,7;Jumelles milspecs résistantes chocs et eau;1930
+Equipement\Optique;Télémètre laser Vectronix PLRF;uncommon;2500;0,8;Télémètre militaire 25m-10km avec boussole numérique et GPS intégré;2010
 Equipement\Optique;NVG (binoculaires);rare;8000;1,2;Intensificateur de lumière Gen III binoculaire;1985
 Equipement\Optique;Thermal sight (type Vector);uncommon;5000;1;Analyse thermique IR longue portée détection silhouettes humaines à 1000m+. Grossissement 2-8;1990
 Equipement\Optique;NVG (monoculaire);uncommon;1500;0,7;Intensificateur de lumière Gen III – vision nocturne opérationnelle 0 à 300m;1985
 Equipement\Optique;Adaptateur Thermique pour lunette jour;uncommon;7000;0,6;PMU : fct lunette, portée de detection 1500m;2000
 Equipement\Optique;Désignateur IL;rare;5000;2;PMU : 2000m;2000
-Equipement\Outils;Outil multifonction Leatherman MUT;common;180;0,3;Outil multifonction avec adaptateur nettoyage arme, chasse-goupille et kit AR;2011
-Equipement\Outils;Pince coupe-barbelés renforcée;common;60;0,6;Pince coupe acier galvanisé 5mm et câble acier 3mm – manche isolé;0
-Equipement\Outils;Pied de biche tactique compact;common;40;0,8;Pied de biche acier forgé 35cm – forçage portes et extraction matériel;0
-Equipement\Outils;Scie-câble de survie;common;25;0,1;Scie-câble acier inox – coupe bois, os et matériaux composites légers;0
-Equipement\Outils;Détecteur de métaux Garrett THD;uncommon;800;1,3;Détecteur de métaux portable – mines PT et IED à moins de 15cm – mode discrimination;0
-Equipement\Outils;Outil de Démolition;uncommon;500;4;Outils basiques, masse;0
-Equipement\Outils;Set d'outil classique;common;500;5;tournevis, etc;0
-Equipement\Outils;Set d'outils haut de gamme;common;1500;35;outils electriques;0
-Equipement\Outils;Outils pour Vehicule à roue;common;1000;10;La caisse a outils basique du coffre de la voiture;0
-Equipement\Outils;Outils pour Vehicules a Chenilles;rare;10000;15;Une foutu grosse barre a mine;0
-Equipement\Outils;Outils pour bateaux;uncommon;15000;15;De quoi faire des réparations de fortune;0
-Equipement\Outils;Outils pour Hélicoptères;rare;200000;22;De quoi faire des réparations de fortune;0
-Equipement\Outils;Outils pour Avion;rare;200000;22;De quoi faire des réparations de fortune;0
-Equipement\Outils;Outils de construction;uncommon;500;30;;0
-Equipement\Outils;Outils pour armes ;uncommon;200;5;;0
-Equipement\Outils;Outils pour armes lourdes;uncommon;750;25;;0
-Equipement\Outils;Set d'electricien;common;500;3;;0
-Equipement\Outils;Set l'électronicien;common;1000;3;;0
-Equipement\Outils;Set informaticien;common;1000;2;;0
-Equipement\Outils;Etabli modulaire portatif;uncommon;750;1750;;0
-Equipement\Outils;Outil de crochetage;rare;20;0,5;;0
-Equipement\Outils;kit sécurité;uncommon;250;5;outils,multimetre,etc;0
-Equipement\Protection;Gilet type CIRAS;rare;;;;2000
-Equipement\Saut;Parachute rond;uncommon;1000;12;;0
-Equipement\Saut;Parachute rectangulaire;common;2000;12;;0
-Equipement\Saut;Parachute de secours;common;1500;6;;0
-Equipement\Saut;parapente;common;2000;12;;0
-Equipement\Saut;deltaplane;common;4000;20;vitesse : 120km/h;0
-Equipement\Saut;Kit de larguage véhicules leger;rare;10000;500;;0
-Equipement\Saut;Kit de parachutage véhicules leger;rare;15000;250;;0
-Equipement\Survie;Kit de survie 72h;common;150;2,5;Eau purifiée, barres énergétiques, bivouac urgence, allumettes tempête, miroir signal;0
-Equipement\Survie;Couvertures thermiques de survie x3;common;20;0,1;Couvertures aluminisées réfléchissantes – protection hypothermie jusqu'à -20°C;0
-Equipement\Survie;Filtre à eau LifeStraw Mission;common;40;0,1;Filtre portatif 1L/min – élimination 99,9999% bactéries et 99,9% parasites;0
-Equipement\Survie;GPS militaire Garmin GPSMAP 64sx;uncommon;600;0,2;GPS milspecs IP68 – cartes topo MGRS – autonomie 16h batteries AA;2015
-Equipement\Survie;Miroir de survie;common;10;0,1;;0
-Equipement\Survie;Fusées de détresse x3;common;50;0,5;;0
-Equipement\Survie;Gourde 1L;common;10;0,5;;0
-Equipement\Survie;Camelback 2L;common;50;0,5;;1990
-Equipement\Survie;Boussole;common;150;0,1;;0
-Equipement\Survie;Harnais d'escalade;common;250;1;;0
-Equipement\Survie;Filet de Camouflage 6x4;uncommon;5000;6;;0
-Equipement\Survie;Filet de Camouflage 10x8;uncommon;7500;10;;0
-Equipement\Survie;ECR;uncommon;800;10;;0
-Equipement\Survie;Pelle US;common;150;2;;0
-Equipement\Survie;Scie;common;150;2;;0
-Equipement\Survie;Hache;common;150;2;interdit aux nains;0
-Equipement\Survie;Réchaufeuse d'air;common;2000;3;;0
-Equipement\Survie;Réchaud;common;50;0,8;4,75kw;0
-Equipement\Survie;Gamelles;common;10;0,5;;0
-Equipement\Survie;Glacière;common;50;3;;0
-Equipement\Survie;Tente biplace;common;150;6;;0
-Equipement\Survie;Tente 4 places;common;300;12;;0
-Equipement\Survie;Tente 10 places;common;700;35;;0
-Equipement\Survie;Ration de combat 1J;common;15;1;;0
-Equipement\Survie;Ration Commando 1J;uncommon;20;0,5;;0
-Equipement\Survie;Corde 15 m;common;30;5;;0
-Equipement\Survie;Grappin ;common;20;2;;0
-Equipement\Transport;Sac d'assaut MOLLE 45L;common;150;2;Sac à dos tactique modulaire MOLLE – tissu 1000D Cordura – capacité 45L;1997
-Equipement\Transport;Porte-plaques tactique (PC) MOLLE;common;200;1;Porte-équipement MOLLE sans plaques – transport matériel combat 15 poches modulaires;1997
-Equipement\Transport;Ceinturon ALICE avec accessoires;common;80;0,5;Ceinturon militaire avec porte-gourde, poches munitions et holster toile;1965
-Equipement\Transport;Caisse de transport Pelican 1510;common;300;3,5;Malette rigide étanche IP67 – transport équipement sensible 56x36x23cm;2005
-Equipement\Transport;Sac 25 L;common;100;2;;0
-Equipement\Transport;sac 30 L;common;200;3;;0
-Equipement\Transport;sac 40 L;common;300;5;;0
-Equipement\Transport;Holster hanche;common;150;0,5;;0
-Equipement\Transport;Holster d'aisselle;common;150;0,5;;0
-Equipement\Transport;Gilet de combat;uncommon;50;2;;0
+Equipement\Medical;Trousse de premiers secours légère;common;50;1;Bandages stériles, désinfectant, garrot CAT – traitement blessures légères;1930
+Equipement\Medical;Kit de trauma tactique (IFAK);common;200;0,8;Pansement hémostatique QuikClot, décompression thoracique, garrot CAT, gants nitrile;2000
+Equipement\Medical;Trousse médicale avancée (TCCC);uncommon;600;3,5;Matériel réanimation, intubation nasopharyngée, sutures, traitement multi-plaies graves;1930
+Equipement\Medical;Défibrillateur portable DEA;uncommon;1200;2;Défibrillateur automatique externe – usage par personnel non médical;2010
+Equipement\Medical;Auto-injecteur morphine x5;uncommon;150;0,1;5 auto-injecteurs morphine 10mg – analgésie d'urgence au combat;2010
+Equipement\Medical;Garrot tourniquet CAT x3;common;45;0,1;3 garrots Combat Application Tourniquet – 1 main possible – norme TCCC;2004
+Equipement\Medical;Anesthésiant Complet;rare;150;0,01;liquide ou gaz;1930
+Equipement\Medical;Anesthésiant Local;uncommon;100;0,05;liquide ou gaz;1930
+Equipement\Medical;Antibiotique, plaquette de 8;common;20;0,02;liquide ou oral (250$/100);1930
+Equipement\Medical;Anti fièvre, plaquette de 8;common;20;0,05;;1930
+Equipement\Medical;Sedatif faible;uncommon;50;0,05;oral;1930
+Equipement\Medical;Sedatif fort;rare;150;0,05;liquide (injection);1930
+Equipement\Medical;Morphine x2;rare;500;0,05;liquide (injection);1930
+Equipement\Medical;Poche de Sang;rare;250;0,5;;1930
+Equipement\Medical;Poche de plasma;rare;1000;0,5;;2010
+Equipement\Medical;Instruments chirurgicaux;rare;2500;5;scalpels… non ca c'est unpoireau, etc;1930
+Equipement\Explosifs;Baton de Dynamite;uncommon;7,5;0,25;;1930
+Equipement\Explosifs;C4 (100gr);rare;3;0,1;;2010
+Equipement\Explosifs;Semtex (50gr);rare;4;0,05;;2010
+Equipement\Explosifs;Mine AP;rare;50;4;;1930
+Equipement\Explosifs;Mine AP directionnelle;rare;250;2;;2010
+Equipement\Explosifs;Mine AC;rare;100;35;;1930
+Equipement\Explosifs;Mise de feu électrique;uncommon;2;-;;1930
+Equipement\Explosifs;Mise de feu mécanique;uncommon;2;-;;1930
+Equipement\Explosifs;Cordeau détonant instantané;uncommon;100;3;5900m/s;1930
+Equipement\Explosifs;Cordeau détonant à retard;uncommon;75;3;100m/s;1930
+Equipement\Explosifs;Fil piège;common;10;2;;1930
+Equipement\Explosifs;Détonateur à retard;uncommon;20;0,25;Retard réglable de 30s à 48h;1930
+Equipement\Explosifs;Détonateur instantané;uncommon;3;-;;1930
+Equipement\Explosifs;Boitier déclancheur électrique;uncommon;50;0,5;10 charges en même temps;1930
+Equipement\Explosifs;Fil électrique;common;50;5;;1930
+Equipement\Explosifs;Télécommande de détonateur;uncommon;;;portée 2 km;2010
+Equipement\Explosifs;Détonateur à distance;uncommon;50;0;A coupler avec une télécommande;2010
+Equipement\Electronique;Anémomètre portable électronique;uncommon;125;0,5;;1960
+Equipement\Electronique;Anémomètre portable mécanique;uncommon;50;1;;1930
+Equipement\Electronique;Calculateur ballistique;uncommon;;;;1990
+Equipement\Electronique;Tablette 7";common;;;;2010
+Equipement\Electronique;Tablette 10";common;;;;2010
+Equipement\Electronique;Caméra Numérique;common;;;;2010
+Equipement\Electronique;GoPro;common;;;;2004
+Equipement\Electronique;Carte Mémoire;common;;;;2010
+Equipement\Electronique;récepteur GPS;common;300;0,5;;2010
+Equipement\Electronique;Ordinateur Portable bas de gamme;common;1000;3;;1995
+Equipement\Electronique;Ordinateur Portable moyen gamme;common;1500;3;;1995
+Equipement\Electronique;Ordinateur portable haut de gamme;common;2500;4;;1995
+Equipement\Electronique;Appareil photo;common;400;0,5;;1930
+Equipement\Electronique;Appareil photo numérique;common;2500;1;;2010
+Equipement\Electronique;Caméra mini DV;common;2500;1,5;;2010
+Equipement\Electronique;Kit complet fibre optique (1m);common;1000;4;cam+ecran+poigné;1990
+Equipement\Electronique;Radar de surveillance sol;rare;40000;7;avec 100m de cables;2010
+Equipement\Electronique;Radar de Contre-Batterie mortier;rare;100000;7;avec 100m de cables;2010
+Equipement\Electronique;Radar de Contre-Batterie artillerie;rare;200000;7;avec 100m de cables;2010
+Equipement\Electronique;Palm;common;500;0,4;;1996
+Equipement\Electronique;Cassette mini DV;common;10;0,1;;1995
+Equipement\Electronique;Anémomêtre portable électronique;uncommon;125;0,5;;2010
+Equipement\Electronique;Anémomêtre portable mécanique;uncommon;50;1;;1930
+Equipement\Eclairage;Lampe tactique Streamlight TLR-1;common;180;0,1;Lampe rail Picatinny 300 lumens – activation ambidextre – IP54;1999
+Equipement\Eclairage;Lampe frontale militaire THL-1 NV;common;120;0,2;Lampe frontale 4 modes: blanc/rouge/IR/strobe – compatible NVG;2000
+Equipement\Eclairage;Bâtons lumineux chimiques x10;common;30;0,2;Cyalume 12h – balisage et jalonnement discret – spectre vert et infrarouge;2010
+Equipement\Eclairage;Flash light;common;30;0,5;;1930
+Equipement\Eclairage;Strobe Light Jour+nuit+IR;uncommon;50;0,5;;2010
+Equipement\Eclairage;Feux de Bengale;common;100;2;;1930
+Equipement\Eclairage;Lampe torche;common;20;1;;1930
+Equipement\Eclairage;Lampe baladeuse;common;100;0,5;;1930
+Equipement\Divers;Cartes de zones;common;20;0,1;Zone et echelle a définir;1930
+Equipement\Divers;Boule à neige;Très très commun;5;0,05;y'en a partout;1930
+Equipement\Divers;Frigo;common;100;20;;1930
+Equipement\Divers;Jerrican 20 L;common;25;1;;1930
+Equipement\Divers;Equipement de plongée;uncommon;300;12;;1930
+Equipement\Divers;Treillis;common;125;3;;1930
+Equipement\Divers;Rangers;common;80;2;;1930
+Equipement\Divers;Chaussures de marche;common;100;1,5;;1930
+Equipement\Divers;Combinaison de plongée;common;200;4;;1930
+Equipement\Divers;Combinaison de Vol;uncommon;250;3;;1930
+Equipement\Divers;Combinaison de saut;common;200;3;Pour faire du trampoline;1930
+Equipement\Divers;Equipement de pluie;common;50;2;pour chanter sous la pluie;1930
+Equipement\Divers;Equipement temps froid;common;60;2;Permet de resister a des tempé jusqu'à -10;1930
+Equipement\Divers;Equipement Polaire;common;80;4;Permet de resister pendant 8h a des tempé jusqu'à -40;1930
+Equipement\Communication;Radio MBITR AN/PRC-148;uncommon;3500;0,6;Radio militaire multi-bandes sécurisée – portée 5km sol-sol avec chiffrement;2000
+Equipement\Communication;Radio longue portée AN/PRC-117G;rare;8000;5;Radio tactique wideband avec capacité satcom – portée 50km+;2010
+Equipement\Communication;Casque tactique Peltor ComTac IV;common;800;0,4;Protection auditive active avec passerelle radio intégrée – atténuation 26dB;2012
+Equipement\Communication;Balise de détresse PLB 406MHz;common;350;0,2;Balise localisatrice personnelle COSPAS-SARSAT – activation manuelle ou automatique;2010
+Equipement\Communication;Système de communication intra-équipe;uncommon;1200;0,3;Kit PTT discret avec écouteur intra et micro laryngophone – discrétion opérationnelle;2010
+Equipement\Communication;radio portable 2km;common;250;0,5;;1930
+Equipement\Communication;kit Oreillette;common;50;0;;2010
+Equipement\Communication;radio de Véhicule ou sac 5/25 km;common;500;5;;1930
+Equipement\Communication;radio de Véhicule ou sac 5/25 km cryptée;rare;2000;10;;2010
+Equipement\Communication;radio de Véhicule 50 km;rare;1500;15;;1930
+Equipement\Communication;radio de Véhicule 50 km cryptée;rare;6000;15;;2010
+Equipement\Communication;Radio Tactique Individuelle;common;550;0,5;portée 2 km;2010
+Equipement\Communication;Smartphone;common;1000;0,1;;2007
+Equipement\Communication;TAM-TAM;common;25;0,2;boum boum woula woula;2010
+Equipement\Communication;Téléphone portable;common;75;0,5;;2010
+Equipement\Communication;Téléphone satellitaire (INMARSAT);uncommon;10000;4;;2010
+Equipement\Communication;Antenne Satellite portable;uncommon;1000;1;;1990
+Equipement\Communication;Micro directionnel;rare;2400;0,5;;2010
+Equipement\Communication;Transpondeur;rare;3000;1;;2010
+Equipement\Communication;Personal Locator System;rare;5000;2;;1990
+Equipement\Communication;Talky-Walky;common;300;0,3;Portée 500m ;1930
+Equipement\CBRN;Masque respiratoire M50;uncommon;500;0,8;Masque gaz militaire – protection agents chimiques et biologiques – autonomie 24h;2003
+Equipement\CBRN;Détecteur d'agents chimiques M8A1;uncommon;1500;1,5;Détecteur automatique agents neurotoxiques et vésicants – alarme sonore et visuelle;2010
+Equipement\CBRN;Tenue MOPP4 complète;rare;800;4,5;Ensemble protecteur NBC intégral (masque non inclus) – résistance certifiée 24h;2010
+Equipement\CBRN;Tablettes décontamination RSDL x10;common;60;0,1;10 lingettes décontaminantes peau – neutralisation agents chimiques en 2min;2010
+Equipement\CBRN;Atropine;rare;500;0,02;liquide;2010
+Equipement\CBRN;S3C;rare;2000;0,05;seringue;2010
+Equipement\Armes;Housse étanche pour arme;uncommon;40;0,5;;1930
+Equipement\Armes;Chargeur PA;common;20;0,2;Chargeur standart à 15x9P ;1930
+Equipement\Armes;Chargeur Fusil;common;20;0,25;Chargeur standart à 10x7,62N;1930
+Equipement\Armes;Chargeur Fusil d'assaut;common;50;0,15;Chargeur standart à 30x5,56N;1930
+Equipement\Armes;Chargeur Fusil Tireur d'Elite;common;30;0,25;Chargeur standart à 10x7,62N;1930
+Equipement\Armes;Chargeur Fusil Tireur d'Elite Lourd;common;50;0,3;Chargeur standart à 5x12,7BMG;1930
+Equipement\Armes;Machine a garnir les bandes;uncommon;200;4;;1930
+Equipement\Armes;Boite à Munitions (50);common;80;2;;1930
+Equipement\Armes;Boite à Munitions (100);common;100;3;;1930

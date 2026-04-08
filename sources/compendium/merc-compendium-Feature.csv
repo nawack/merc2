@@ -1,7 +1,7 @@
 ﻿Folder;type feature;nom;Bonus tir portée courte;Bonus tir portée moyenne;Bonus tir portée longue;Bonus tir portée extreme;Reduction de bruit;Reduction de bruit Latérale;Augmentation de longueur;Rarete;Prix;Poids (kg);Description;Année
-Feature\Visée rudimentaire;Visée rudimentaire;pointeur Laser jour;1;0;0;0;0;0;0;common;150;0,1;PMU : 500m;1994
+Feature\Visée rudimentaire;Visée rudimentaire;pointeur laser jour;1;0;0;0;0;0;0;common;150;0,1;PMU : 500m;1994
 Feature\Visée rudimentaire;Visée rudimentaire;pointeur laser IL;1;0;0;0;0;0;0;uncommon;300;0,1;PMU : 300m;1994
-Feature\Visée rudimentaire;Visée rudimentaire;Pointeur mixte;1;0;0;0;0;0;0;uncommon;500;0,2;;1998
+Feature\Visée rudimentaire;Visée rudimentaire;Pointeur mixte;1;0;0;0;0;0;0;uncommon;500;0,2;PMU : 500m;1998
 Feature\Visée rudimentaire;Visée rudimentaire;Viseur Holographique;1;1;0;0;0;0;0;common;500;0,1;PMU : 200m, pas de grossissement permet visée rudimentaire a chaque tir, tant que recul absorbé;1996
 Feature\Visée lunette;Visée lunette;Aimpoint x2;1;1;0;0;0;0;0;common;450;0,1;PMU : 200m;1975
 Feature\Visée lunette;Visée lunette;Lunette IL x10;0;0;2;1;0;0;0;uncommon;2300;1;PMU : 1200m;1990
@@ -19,12 +19,12 @@ Feature\Visée lunette;Visée lunette;Lunette Jour x5-30;0;1;2;3;0;0;0;uncommon;
 Feature\Visée lunette;Visée lunette;Lunette mixte x3-15;0;1;2;2;0;0;0;common;2000;1;PMU : 1400mJ, 1200mN;1995
 Feature\Visée lunette;Visée lunette;Lunette Thermique x4;0;1;1;0;0;0;0;uncommon;4000;1,3;PMU : 600m, portée de détection 2000m;2000
 Feature\Visée lunette;Visée lunette;Lunette Thermique x10;0;0;2;1;0;0;0;rare;5000;1,4;PMU : 1500m portée de detection 4000m;2005
-Feature\Addons;Addons;Adaptateur Thermique;0;0;0;0;0;0;0;;;1,3;;2000
-Feature\Addons;Addons;Loupe Jour Basculante x3;0;1;1;0;0;0;0;common;;0,3;PMU : 500m, à combiner avec un Aimpoint ou Holosight;1990
-Feature\Silencieux;Silencieux;silencieux intégral;0;0;0;0;-40%;-80%;0;rare;3000;1,5;;0
-Feature\Silencieux;Silencieux;Silencieux civil Léger;0;0;0;0;-15;-30;17,5;uncommon;200;0,1;pour armes de poings;0
-Feature\Silencieux;Silencieux;Silencieux civil Lourd;0;0;0;0;-25;-50;13;uncommon;450;0,3;Calibres de .22 à 9x19;0
-Feature\Silencieux;Silencieux;Silencieux civil Auto;0;0;0;0;-45;-90;32,5;rare;900;0,8;calibres de .222 à .308;0
-Feature\Silencieux;Silencieux;Silencieux militaire Léger;0;0;0;0;-30;-60;17,5;uncommon;850;0,2;pour armes de poings;0
-Feature\Silencieux;Silencieux;Silencieux militaire Lourd;0;0;0;0;-40;-80;30;uncommon;1400;0,6;calibres de .223 à .338;0
-Feature\Silencieux;Silencieux;Silencieux militaire Auto;0;0;0;0;-60;-120;42,5;rare;1800;0,8;Calibres de 5,56 à 9mm pour armes automatiques;0
+Feature\Addons;Addons;Adaptateur Thermique;0;0;0;0;0;0;0;uncommon;1100;1,3;PMU : 500m se rajoute sur une lunnette;2000
+Feature\Addons;Addons;Loupe Jour Basculante x3;0;1;1;0;0;0;0;common;300;0,3;PMU : 500m, à combiner avec un Aimpoint ou Holosight;1990
+Feature\Silencieux;Silencieux;silencieux intégral;0;0;0;0;-40%;-80%;0;rare;3000;1,5;Remplacement complet du canon;1930
+Feature\Silencieux;Silencieux;Silencieux civil Léger;0;0;0;0;-15;-30;0;uncommon;200;0,1;pour armes de poings;1930
+Feature\Silencieux;Silencieux;Silencieux civil Lourd;0;0;0;0;-25;-50;0;uncommon;450;0,3;Calibres de .22 à 9x19;1990
+Feature\Silencieux;Silencieux;Silencieux civil Auto;0;0;0;0;-45;-90;0;rare;900;0,8;calibres de .222 à .308;1960
+Feature\Silencieux;Silencieux;Silencieux militaire Léger;0;0;0;0;-30;-60;0;uncommon;850;0,2;pour armes de poings;1930
+Feature\Silencieux;Silencieux;Silencieux militaire Lourd;0;0;0;0;-40;-80;0;uncommon;1400;0,6;calibres de .223 à .338;1990
+Feature\Silencieux;Silencieux;Silencieux militaire Auto;0;0;0;0;-60;-120;0;rare;1800;0,8;Calibres de 5,56 à 9mm pour armes automatiques;1960

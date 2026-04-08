@@ -65,6 +65,10 @@
         <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="1">
       </div>
       <div class="weapon-field">
+        <label>{{localize "MERC.UI.items.year"}}</label>
+        <input type="number" name="system.year" value="{{item.system.year}}" min="0" step="1" placeholder="0">
+      </div>
+      <div class="weapon-field">
         <label>{{localize "MERC.UI.items.equipped"}}</label>
         <input type="checkbox" name="system.equipped" {{#if item.system.equipped}}checked{{/if}}>
       </div>

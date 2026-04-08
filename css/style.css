@@ -3994,4 +3994,7 @@
   font-weight: bold;
 }
 
+/* Compendium year filter — overrides Foundry's inline display without conflicting with name filter */
+.merc-year-hidden { display: none !important; }
+
 

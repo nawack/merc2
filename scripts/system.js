@@ -2532,7 +2532,21 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const itemId = btn.dataset.itemId;
         const item = this.actor?.items?.get(itemId);
         if (!item) return;
-        await item.update({ "system.equipped": !item.system.equipped });
+        const newEquippedState = !item.system.equipped;
+        // Block equipping if item year is posterior to actor year
+        if (newEquippedState) {
+          const actorYear = Number(this.actor?.system?.biography?.year ?? 0);
+          const itemYear  = Number(item.system?.year ?? 0);
+          if (actorYear > 0 && itemYear > 0 && itemYear > actorYear) {
+            ui.notifications.warn(game.i18n.format("MERC.UI.items.equipFutureYear", {
+              item: item.name,
+              itemYear,
+              actorYear
+            }));
+            return;
+          }
+        }
+        await item.update({ "system.equipped": newEquippedState });
         await this.render();
       });
     });
@@ -4708,6 +4722,13 @@ Hooks.once("init", () => {
     default: ""
   });
 
+  // Add system.year to the compendium index so it can be used for filtering
+  CONFIG.Item = CONFIG.Item || {};
+  CONFIG.Item.compendiumIndexFields = CONFIG.Item.compendiumIndexFields || [];
+  if (!CONFIG.Item.compendiumIndexFields.includes("system.year")) {
+    CONFIG.Item.compendiumIndexFields.push("system.year");
+  }
+
   // Define custom config with i18n keys
   CONFIG.MERC = {
     abilities: {
@@ -6090,5 +6111,61 @@ Hooks.on("renderTokenConfig", (app, html) => {
   if (app.setPosition) app.setPosition({ height: "auto" });
 });
 
+// ── Compendium browser: filter items by year ─────────────────────────────────
+Hooks.on("renderCompendium", (app, html) => {
+  // Only inject for Item packs
+  if (app.collection?.documentName !== "Item") return;
+  const root = html instanceof HTMLElement ? html : html[0];
+  if (!root) return;
+  // Prevent double-injection on re-render
+  if (root.querySelector(".merc-year-filter")) return;
 
+  const searchEl = root.querySelector("search");
+  if (!searchEl) return;
+
+  // Build the filter UI
+  const wrapper = document.createElement("div");
+  wrapper.className = "merc-year-filter";
+  wrapper.style.cssText = "display:flex;align-items:center;gap:4px;padding:2px 4px;";
+  wrapper.innerHTML = `
+    <label style="font-size:0.8em;white-space:nowrap;">${game.i18n.localize("MERC.UI.items.compendiumYearFilter")}</label>
+    <input type="number" min="0" step="1" placeholder="—"
+      style="width:70px;font-size:0.85em;padding:1px 4px;"
+      title="${game.i18n.localize("MERC.UI.items.compendiumYearFilter")}">
+  `;
+  searchEl.appendChild(wrapper);
+
+  // Pre-fetch the index so system.year is available when the user starts typing.
+  // getIndex() is a no-op if the pack is already fully indexed.
+  const indexReady = app.collection.indexed
+    ? Promise.resolve()
+    : app.collection.getIndex().catch(err => console.error("MERC | Compendium index error:", err));
+
+  // Shared filter function — applies both year and name filters independently.
+  // Uses a CSS class (.merc-year-hidden) so the year filter never touches
+  // style.display, leaving Foundry's name filter state fully intact.
+  const applyYearFilter = async () => {
+    await indexReady;
+    const maxYear = parseInt(input.value);
+    const entries = root.querySelectorAll(".directory-list .directory-item:not(.folder)");
+    entries.forEach(li => {
+      if (!maxYear || isNaN(maxYear)) {
+        li.classList.remove("merc-year-hidden");
+        return;
+      }
+      const entryId  = li.dataset.entryId;
+      const entry    = app.collection.index.get(entryId);
+      const itemYear = Number(entry?.system?.year ?? 0);
+      // year=0 means no restriction → always visible
+      li.classList.toggle("merc-year-hidden", itemYear !== 0 && itemYear > maxYear);
+    });
+  };
+
+  const input = wrapper.querySelector("input");
+  input.addEventListener("input", applyYearFilter);
+
+  // Re-apply year filter after Foundry's name filter runs so both stay cumulative.
+  const nameInput = searchEl.querySelector("input[type='search']");
+  if (nameInput) nameInput.addEventListener("input", applyYearFilter);
+});
 

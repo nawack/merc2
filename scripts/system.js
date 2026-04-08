@@ -1626,6 +1626,19 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (this.actor.uuid === item.parent?.uuid) {
       return (await this._onSortItem(event, item))?.length ? item : null;
     }
+
+    // Block drop if item year is posterior to actor year
+    {
+      const actorYear = Number(this.actor?.system?.biography?.year ?? 0);
+      const itemYear  = Number(item.system?.year ?? 0);
+      if (actorYear > 0 && itemYear > 0 && itemYear > actorYear) {
+        ui.notifications.warn(game.i18n.format("MERC.UI.items.equipFutureYear", {
+          item: item.name, itemYear, actorYear
+        }));
+        return null;
+      }
+    }
+
     const keepId = !this.actor.items.has(item.id);
     const result = await Item.implementation.create(item.toObject(), { parent: this.actor, keepId });
 
@@ -4552,6 +4565,19 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
     if (this.actor.uuid === item.parent?.uuid) {
       return (await this._onSortItem(event, item))?.length ? item : null;
     }
+
+    // Block drop if item year is posterior to actor year
+    {
+      const actorYear = Number(this.actor?.system?.biography?.year ?? 0);
+      const itemYear  = Number(item.system?.year ?? 0);
+      if (actorYear > 0 && itemYear > 0 && itemYear > actorYear) {
+        ui.notifications.warn(game.i18n.format("MERC.UI.items.equipFutureYear", {
+          item: item.name, itemYear, actorYear
+        }));
+        return null;
+      }
+    }
+
     const keepId = !this.actor.items.has(item.id);
     const result = await Item.implementation.create(item.toObject(), { parent: this.actor, keepId });
 

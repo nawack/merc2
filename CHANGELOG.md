@@ -7,6 +7,7 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 ### Added
 - 😵 **Malus tempraire** : Ajout de la gestion des malus temporaire (ajouté via token), impact dans la séquence de combats et application des malus sur jet de dés.
 - ✅ **level up** : Ajout d'un bouton lvl up qui ajoute un point de dev pour une compétence (+1 point dans la compétence de base d'une spé si up d'un spé)
+- 👓 **Token Cone** Ajout de la fonction « Token Cone » ; intégration de la configuration UI pour les cônes de vue et de tir.
 
 ## [1.1.5] - 2026-04-07
 

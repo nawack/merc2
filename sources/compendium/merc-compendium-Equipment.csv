@@ -116,6 +116,8 @@ Equipement\Optique;Télémètre laser Vectronix PLRF;uncommon;2500;0,8;Télémè
 Equipement\Optique;NVG (binoculaires);rare;8000;1,2;Intensificateur de lumière Gen III binoculaire;1985
 Equipement\Optique;Thermal sight (type Vector);uncommon;5000;1;Analyse thermique IR longue portée détection silhouettes humaines à 1000m+. Grossissement 2-8;1990
 Equipement\Optique;NVG (monoculaire);uncommon;1500;0,7;Intensificateur de lumière Gen III – vision nocturne opérationnelle 0 à 300m;1985
+Equipement\Optique;Adaptateur Thermique pour lunette jour;uncommon;7000;0,6;PMU : fct lunette, portée de detection 1500m;2000
+Equipement\Optique;Désignateur IL;rare;5000;2;PMU : 2000m;2000
 Equipement\Outils;Outil multifonction Leatherman MUT;common;180;0,3;Outil multifonction avec adaptateur nettoyage arme, chasse-goupille et kit AR;2011
 Equipement\Outils;Pince coupe-barbelés renforcée;common;60;0,6;Pince coupe acier galvanisé 5mm et câble acier 3mm – manche isolé;0
 Equipement\Outils;Pied de biche tactique compact;common;40;0,8;Pied de biche acier forgé 35cm – forçage portes et extraction matériel;0

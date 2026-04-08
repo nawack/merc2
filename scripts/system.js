@@ -4299,7 +4299,7 @@ async function buildWeaponBallisticsMap(actorDoc) {
         bonusLongRange:   featItem.system.bonusLongRange   ?? 0,
         bonusExtremeRange: featItem.system.bonusExtremeRange ?? 0,
         noiseReduction:       featItem.system.noiseReduction      ?? 0,
-        lateralNoiseReduction: featItem.system.lateralNoiseReduction || "",
+        lateralNoiseReduction: (featItem.system.lateralNoiseReduction && featItem.system.lateralNoiseReduction !== "0") ? featItem.system.lateralNoiseReduction : "",
         lengthIncreaseCm:     featItem.system.lengthIncreaseCm    ?? 0,
         description: featItem.system.description || ""
       }));

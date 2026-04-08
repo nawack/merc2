@@ -559,7 +559,8 @@ foreach ($line in $featureDataLines) {
   $bonusLongRange        = if ($cols.Count -gt 5)  { TryParseInt    $cols[5]  } else { 0 }
   $bonusExtremeRange     = if ($cols.Count -gt 6)  { TryParseInt    $cols[6]  } else { 0 }
   $noiseReduction        = if ($cols.Count -gt 7)  { TryParseDouble $cols[7]  } else { 0 }
-  $lateralNoiseReduction = if ($cols.Count -gt 8)  { $cols[8].Trim()          } else { "" }
+  $lateralNoiseReductionRaw = if ($cols.Count -gt 8) { $cols[8].Trim() } else { "" }
+  $lateralNoiseReduction = if ($lateralNoiseReductionRaw -and $lateralNoiseReductionRaw -ne "0") { $lateralNoiseReductionRaw } else { "" }
   $lengthIncreaseCm      = if ($cols.Count -gt 9)  { TryParseDouble $cols[9]  } else { 0 }
   $rarity                = if ($cols.Count -gt 10 -and $cols[10].Trim()) { $cols[10].Trim() } else { "common" }
   $price                 = if ($cols.Count -gt 11) { TryParseDouble $cols[11] } else { 0 }

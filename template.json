@@ -262,7 +262,8 @@
       "price": 0,
       "weightKg": 0,
       "description": "",
-      "parentWeaponId": ""
+      "parentWeaponId": "",
+      "equipped": false
     }
   }
 }

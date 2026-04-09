@@ -1477,6 +1477,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Compute per-weapon ballistics for the combat card display
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
+
+    // Free features: feature items NOT linked to any weapon (parentWeaponId empty or absent)
+    data.freeFeatures = actorDoc.items
+      .filter(i => i.type === "feature" && !i.system?.parentWeaponId)
+      .map(i => i.toObject());
+
     data.isLimited = actorDoc.limited ?? false;
 
     // Compute health wound degrees per individual location
@@ -1640,7 +1646,15 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
 
     const keepId = !this.actor.items.has(item.id);
-    const result = await Item.implementation.create(item.toObject(), { parent: this.actor, keepId });
+    const itemData = item.toObject();
+
+    // When a feature is dropped onto the actor sheet (not via a weapon), clear any parentWeaponId
+    // so it appears in the free accessories list and not hidden inside a weapon
+    if (item.type === "feature") {
+      itemData.system.parentWeaponId = "";
+    }
+
+    const result = await Item.implementation.create(itemData, { parent: this.actor, keepId });
 
     // When a weapon is dropped, also copy its linked ammo items
     if (result && item.type === "weapon") {
@@ -2565,15 +2579,33 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     });
 
     // Calculate and display total weight (encombrement) with burden levels
-    // Includes: weapons, armors, equipment (only equipped). Excludes: ammo, feature.
+    // Includes: weapons (+ their linked features) + armors + equipment + free features (only equipped). Excludes: ammo.
     const totalWeightElement = html.querySelector("#total-weight");
     if (totalWeightElement) {
       let totalWeight = 0;
       if (this.actor?.items) {
+        // Pre-compute weight of features grouped by parentWeaponId
+        const featureWeightByWeapon = {};
         this.actor.items.forEach(item => {
-          if (![ "weapon", "armor", "equipment" ].includes(item.type)) return;
-          if (!item.system?.equipped) return;
-          const weight = Number(item.system?.weightKg ?? 0);
+          if (item.type !== "feature" || !item.system?.parentWeaponId) return;
+          const wid = item.system.parentWeaponId;
+          featureWeightByWeapon[wid] = (featureWeightByWeapon[wid] ?? 0) + (Number(item.system?.weightKg) || 0);
+        });
+
+        this.actor.items.forEach(item => {
+          if (item.type === "feature") {
+            // Only count free features (not linked to a weapon) when equipped
+            if (item.system?.parentWeaponId || !item.system?.equipped) return;
+          } else if (![ "weapon", "armor", "equipment" ].includes(item.type)) {
+            return;
+          } else if (!item.system?.equipped) {
+            return;
+          }
+          let weight = Number(item.system?.weightKg ?? 0);
+          // For weapons, add the weight of all linked features
+          if (item.type === "weapon") {
+            weight += featureWeightByWeapon[item.id] ?? 0;
+          }
           if (!Number.isNaN(weight)) {
             totalWeight += weight;
           }
@@ -4846,6 +4878,10 @@ Hooks.once("init", () => {
   Handlebars.registerHelper("filterItems", function(items, type) {
     if (!items) return [];
     return items.filter(item => item.type === type);
+  });
+  Handlebars.registerHelper("filterFreeFeatures", function(items) {
+    if (!items) return [];
+    return items.filter(item => item.type === "feature" && !item.system?.parentWeaponId);
   });
   Handlebars.registerHelper("gt", function(a, b) {
     return a > b;

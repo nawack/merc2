@@ -213,6 +213,8 @@
         "addWeapon": "+ Ajouter une arme",
         "addArmor": "+ Ajouter une armure",
         "addEquipment": "+ Ajouter un équipement",
+        "features": "Accessoires",
+        "addFeature": "+ Ajouter un accessoire",
         "equipped": "Équipé",
         "year": "Année (dispo.)",
         "equipFutureYear": "{item} est une technologie de l'an {itemYear} — personnage en {actorYear} ne peut pas l'utiliser.",

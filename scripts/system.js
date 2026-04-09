@@ -5899,9 +5899,27 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
   
   const customSpecChanged = changes.system?.customSpecializations !== undefined;
   const skillsChanged = meleeChanged || bladedChanged || customSpecChanged;
-  
+
+  const healthChanged = changes.system?.health !== undefined;
+  const stabFlagsChanged = changes.flags?.merc !== undefined;
+
+  if (!needsUpdate && !skillsChanged && !healthChanged && !stabFlagsChanged) return;
+
+  // When wound/stab data changes, recalculate initiative order in the combat tracker.
+  // setupTurns() reads health live from the actor, so only a re-render is needed.
+  if (healthChanged || stabFlagsChanged) {
+    for (const combat of game.combats ?? []) {
+      const isCombatant = combat.combatants.some(c => c.actor?.id === actor.id);
+      if (!isCombatant) continue;
+      combat.setupTurns();
+      if (ui.combat?.viewed?.id === combat.id) {
+        ui.combat.render();
+      }
+    }
+  }
+
   if (!needsUpdate && !skillsChanged) return;
-  
+
   // Recalculate using the current actor data (which now has the updates)
   const stats = computeCombatStatsFromSystem(actor.system);
   

@@ -4868,6 +4868,7 @@ Hooks.once("init", () => {
 
   // Ajouter les états de malus temporaires propres au système merc
   CONFIG.statusEffects.push(
+    { id: "merc-injured", name: "MERC.StatusEffects.injured", img: "systems/merc/assets/ui/status-injured.svg" },
     { id: "merc-minus4", name: "MERC.StatusEffects.minus4", img: "systems/merc/assets/ui/status-minus4.svg" },
     { id: "merc-minus8", name: "MERC.StatusEffects.minus8", img: "systems/merc/assets/ui/status-minus8.svg" },
     { id: "merc-minus12", name: "MERC.StatusEffects.minus12", img: "systems/merc/assets/ui/status-minus12.svg" },
@@ -5915,6 +5916,16 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
       if (ui.combat?.viewed?.id === combat.id) {
         ui.combat.render();
       }
+    }
+  }
+
+  // Sync the merc-injured token status with the current wound state.
+  if (healthChanged) {
+    const locations = actor.system.health?.locations ?? {};
+    const anyWounded = Object.values(locations).some(v => Number(v) > 0);
+    const isCurrentlyInjured = actor.statuses?.has('merc-injured') ?? false;
+    if (anyWounded !== isCurrentlyInjured) {
+      await actor.toggleStatusEffect('merc-injured', { active: anyWounded }).catch(() => {});
     }
   }
 

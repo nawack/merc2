@@ -1,6 +1,7 @@
 {
   "MERC": {
     "StatusEffects": {
+      "injured": "Injured",
       "minus4": "-4",
       "minus8": "-8"
     },

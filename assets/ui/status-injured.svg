@@ -1,0 +1,5 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="12" fill="#c0392b"/>
+  <!-- Blood drop: teardrop pointing up -->
+  <path d="M50 12 C38 30, 22 50, 22 64 C22 80 34 91 50 91 C66 91 78 80 78 64 C78 50 62 30 50 12 Z" fill="white"/>
+</svg>

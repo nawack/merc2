@@ -832,9 +832,9 @@
         </div>
       </div>
 
-      <!-- Equipment -->
+      <!-- Equipment & Features -->
       <div class="items-section">
-        <h3><div class="items-header"><span>{{localize "MERC.UI.items.equipment"}}</span><button type="button" class="item-create btn" data-type="equipment">{{localize "MERC.UI.items.addEquipment"}}</button></div></h3>
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.equipment"}}</span> & <span>{{localize "MERC.UI.items.features"}}</span><button type="button" class="item-create btn" data-type="equipment">{{localize "MERC.UI.items.addEquipment"}}</button><button type="button" class="item-create btn" data-type="feature">{{localize "MERC.UI.items.addFeature"}}</button></div></h3>
         <div class="items-list">
           {{#each (filterItems actor.items "equipment") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
@@ -848,7 +848,19 @@
             </div>
           </div>
           {{/each}}
-          
+          {{#each freeFeatures as |item|}}
+          <div class="item-card item" data-item-id="{{item._id}}">
+            <div class="item-info">
+              <div class="item-name">{{item.name}}</div>
+              {{#if item.system.featureType}}<div class="item-damage-skill">{{item.system.featureType}}</div>{{/if}}
+            </div>
+            <div class="item-controls">
+              <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
+              <button type="button" class="item-edit">✎</button>
+              <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          {{/each}}
         </div>
       </div>
 

@@ -439,7 +439,7 @@ class MercCombat extends Combat {
     if (clamped === this.currentSegment) return this;
 
     // Retirer les états temporaires de tous les combattants au passage du segment suivant
-    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8'];
+    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8', 'merc-minus12', 'merc-minus16'];
     for (const combatant of this.combatants ?? []) {
       for (const statusId of temporaryStatuses) {
         if (combatant.actor?.statuses?.has(statusId)) {
@@ -481,7 +481,7 @@ class MercCombat extends Combat {
 
   async nextRound() {
     // Retirer les états temporaires de tous les combattants avant le passage au round suivant
-    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8'];
+    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8', 'merc-minus12', 'merc-minus16'];
     for (const combatant of this.combatants ?? []) {
       for (const statusId of temporaryStatuses) {
         if (combatant.actor?.statuses?.has(statusId)) {
@@ -1477,6 +1477,12 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Compute per-weapon ballistics for the combat card display
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
+
+    // Free features: feature items NOT linked to any weapon (parentWeaponId empty or absent)
+    data.freeFeatures = actorDoc.items
+      .filter(i => i.type === "feature" && !i.system?.parentWeaponId)
+      .map(i => i.toObject());
+
     data.isLimited = actorDoc.limited ?? false;
 
     // Compute health wound degrees per individual location
@@ -1626,8 +1632,29 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     if (this.actor.uuid === item.parent?.uuid) {
       return (await this._onSortItem(event, item))?.length ? item : null;
     }
+
+    // Block drop if item year is posterior to actor year
+    {
+      const actorYear = Number(this.actor?.system?.biography?.year ?? 0);
+      const itemYear  = Number(item.system?.year ?? 0);
+      if (actorYear > 0 && itemYear > 0 && itemYear > actorYear) {
+        ui.notifications.warn(game.i18n.format("MERC.UI.items.equipFutureYear", {
+          item: item.name, itemYear, actorYear
+        }));
+        return null;
+      }
+    }
+
     const keepId = !this.actor.items.has(item.id);
-    const result = await Item.implementation.create(item.toObject(), { parent: this.actor, keepId });
+    const itemData = item.toObject();
+
+    // When a feature is dropped onto the actor sheet (not via a weapon), clear any parentWeaponId
+    // so it appears in the free accessories list and not hidden inside a weapon
+    if (item.type === "feature") {
+      itemData.system.parentWeaponId = "";
+    }
+
+    const result = await Item.implementation.create(itemData, { parent: this.actor, keepId });
 
     // When a weapon is dropped, also copy its linked ammo items
     if (result && item.type === "weapon") {
@@ -2532,21 +2559,53 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         const itemId = btn.dataset.itemId;
         const item = this.actor?.items?.get(itemId);
         if (!item) return;
-        await item.update({ "system.equipped": !item.system.equipped });
+        const newEquippedState = !item.system.equipped;
+        // Block equipping if item year is posterior to actor year
+        if (newEquippedState) {
+          const actorYear = Number(this.actor?.system?.biography?.year ?? 0);
+          const itemYear  = Number(item.system?.year ?? 0);
+          if (actorYear > 0 && itemYear > 0 && itemYear > actorYear) {
+            ui.notifications.warn(game.i18n.format("MERC.UI.items.equipFutureYear", {
+              item: item.name,
+              itemYear,
+              actorYear
+            }));
+            return;
+          }
+        }
+        await item.update({ "system.equipped": newEquippedState });
         await this.render();
       });
     });
 
     // Calculate and display total weight (encombrement) with burden levels
-    // Includes: weapons, armors, equipment (only equipped). Excludes: ammo, feature.
+    // Includes: weapons (+ their linked features) + armors + equipment + free features (only equipped). Excludes: ammo.
     const totalWeightElement = html.querySelector("#total-weight");
     if (totalWeightElement) {
       let totalWeight = 0;
       if (this.actor?.items) {
+        // Pre-compute weight of features grouped by parentWeaponId
+        const featureWeightByWeapon = {};
         this.actor.items.forEach(item => {
-          if (![ "weapon", "armor", "equipment" ].includes(item.type)) return;
-          if (!item.system?.equipped) return;
-          const weight = Number(item.system?.weightKg ?? 0);
+          if (item.type !== "feature" || !item.system?.parentWeaponId) return;
+          const wid = item.system.parentWeaponId;
+          featureWeightByWeapon[wid] = (featureWeightByWeapon[wid] ?? 0) + (Number(item.system?.weightKg) || 0);
+        });
+
+        this.actor.items.forEach(item => {
+          if (item.type === "feature") {
+            // Only count free features (not linked to a weapon) when equipped
+            if (item.system?.parentWeaponId || !item.system?.equipped) return;
+          } else if (![ "weapon", "armor", "equipment" ].includes(item.type)) {
+            return;
+          } else if (!item.system?.equipped) {
+            return;
+          }
+          let weight = Number(item.system?.weightKg ?? 0);
+          // For weapons, add the weight of all linked features
+          if (item.type === "weapon") {
+            weight += featureWeightByWeapon[item.id] ?? 0;
+          }
           if (!Number.isNaN(weight)) {
             totalWeight += weight;
           }
@@ -2936,12 +2995,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   }
 
   /**
-   * Returns the malus from active status effects (merc-minus4 = -4, merc-minus8 = -8).
+   * Returns the malus from active status effects (merc-minus4 = -4, merc-minus8 = -8, merc-minus12 = -12, merc-minus16 = -16).
    * The worst (most negative) malus wins if both are active.
    */
   _getStatusMalus(actor) {
     const statuses = actor?.statuses;
     if (!statuses) return 0;
+    if (statuses.has('merc-minus16')) return -16;
+    if (statuses.has('merc-minus12')) return -12;
     if (statuses.has('merc-minus8')) return -8;
     if (statuses.has('merc-minus4')) return -4;
     return 0;
@@ -4272,7 +4333,7 @@ async function buildWeaponBallisticsMap(actorDoc) {
         bonusLongRange:   featItem.system.bonusLongRange   ?? 0,
         bonusExtremeRange: featItem.system.bonusExtremeRange ?? 0,
         noiseReduction:       featItem.system.noiseReduction      ?? 0,
-        lateralNoiseReduction: featItem.system.lateralNoiseReduction || "",
+        lateralNoiseReduction: (featItem.system.lateralNoiseReduction && featItem.system.lateralNoiseReduction !== "0") ? featItem.system.lateralNoiseReduction : "",
         lengthIncreaseCm:     featItem.system.lengthIncreaseCm    ?? 0,
         description: featItem.system.description || ""
       }));
@@ -4538,6 +4599,19 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
     if (this.actor.uuid === item.parent?.uuid) {
       return (await this._onSortItem(event, item))?.length ? item : null;
     }
+
+    // Block drop if item year is posterior to actor year
+    {
+      const actorYear = Number(this.actor?.system?.biography?.year ?? 0);
+      const itemYear  = Number(item.system?.year ?? 0);
+      if (actorYear > 0 && itemYear > 0 && itemYear > actorYear) {
+        ui.notifications.warn(game.i18n.format("MERC.UI.items.equipFutureYear", {
+          item: item.name, itemYear, actorYear
+        }));
+        return null;
+      }
+    }
+
     const keepId = !this.actor.items.has(item.id);
     const result = await Item.implementation.create(item.toObject(), { parent: this.actor, keepId });
 
@@ -4708,6 +4782,13 @@ Hooks.once("init", () => {
     default: ""
   });
 
+  // Add system.year to the compendium index so it can be used for filtering
+  CONFIG.Item = CONFIG.Item || {};
+  CONFIG.Item.compendiumIndexFields = CONFIG.Item.compendiumIndexFields || [];
+  if (!CONFIG.Item.compendiumIndexFields.includes("system.year")) {
+    CONFIG.Item.compendiumIndexFields.push("system.year");
+  }
+
   // Define custom config with i18n keys
   CONFIG.MERC = {
     abilities: {
@@ -4787,14 +4868,21 @@ Hooks.once("init", () => {
 
   // Ajouter les états de malus temporaires propres au système merc
   CONFIG.statusEffects.push(
+    { id: "merc-injured", name: "MERC.StatusEffects.injured", img: "systems/merc/assets/ui/status-injured.svg" },
     { id: "merc-minus4", name: "MERC.StatusEffects.minus4", img: "systems/merc/assets/ui/status-minus4.svg" },
-    { id: "merc-minus8", name: "MERC.StatusEffects.minus8", img: "systems/merc/assets/ui/status-minus8.svg" }
+    { id: "merc-minus8", name: "MERC.StatusEffects.minus8", img: "systems/merc/assets/ui/status-minus8.svg" },
+    { id: "merc-minus12", name: "MERC.StatusEffects.minus12", img: "systems/merc/assets/ui/status-minus12.svg" },
+    { id: "merc-minus16", name: "MERC.StatusEffects.minus16", img: "systems/merc/assets/ui/status-minus16.svg" }
   );
 
   // Register Handlebars helpers
   Handlebars.registerHelper("filterItems", function(items, type) {
     if (!items) return [];
     return items.filter(item => item.type === type);
+  });
+  Handlebars.registerHelper("filterFreeFeatures", function(items) {
+    if (!items) return [];
+    return items.filter(item => item.type === "feature" && !item.system?.parentWeaponId);
   });
   Handlebars.registerHelper("gt", function(a, b) {
     return a > b;
@@ -5812,9 +5900,37 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
   
   const customSpecChanged = changes.system?.customSpecializations !== undefined;
   const skillsChanged = meleeChanged || bladedChanged || customSpecChanged;
-  
+
+  const healthChanged = changes.system?.health !== undefined;
+  const stabFlagsChanged = changes.flags?.merc !== undefined;
+
+  if (!needsUpdate && !skillsChanged && !healthChanged && !stabFlagsChanged) return;
+
+  // When wound/stab data changes, recalculate initiative order in the combat tracker.
+  // setupTurns() reads health live from the actor, so only a re-render is needed.
+  if (healthChanged || stabFlagsChanged) {
+    for (const combat of game.combats ?? []) {
+      const isCombatant = combat.combatants.some(c => c.actor?.id === actor.id);
+      if (!isCombatant) continue;
+      combat.setupTurns();
+      if (ui.combat?.viewed?.id === combat.id) {
+        ui.combat.render();
+      }
+    }
+  }
+
+  // Sync the merc-injured token status with the current wound state.
+  if (healthChanged) {
+    const locations = actor.system.health?.locations ?? {};
+    const anyWounded = Object.values(locations).some(v => Number(v) > 0);
+    const isCurrentlyInjured = actor.statuses?.has('merc-injured') ?? false;
+    if (anyWounded !== isCurrentlyInjured) {
+      await actor.toggleStatusEffect('merc-injured', { active: anyWounded }).catch(() => {});
+    }
+  }
+
   if (!needsUpdate && !skillsChanged) return;
-  
+
   // Recalculate using the current actor data (which now has the updates)
   const stats = computeCombatStatsFromSystem(actor.system);
   
@@ -6090,5 +6206,61 @@ Hooks.on("renderTokenConfig", (app, html) => {
   if (app.setPosition) app.setPosition({ height: "auto" });
 });
 
+// ── Compendium browser: filter items by year ─────────────────────────────────
+Hooks.on("renderCompendium", (app, html) => {
+  // Only inject for Item packs
+  if (app.collection?.documentName !== "Item") return;
+  const root = html instanceof HTMLElement ? html : html[0];
+  if (!root) return;
+  // Prevent double-injection on re-render
+  if (root.querySelector(".merc-year-filter")) return;
 
+  const searchEl = root.querySelector("search");
+  if (!searchEl) return;
+
+  // Build the filter UI
+  const wrapper = document.createElement("div");
+  wrapper.className = "merc-year-filter";
+  wrapper.style.cssText = "display:flex;align-items:center;gap:4px;padding:2px 4px;";
+  wrapper.innerHTML = `
+    <label style="font-size:0.8em;white-space:nowrap;">${game.i18n.localize("MERC.UI.items.compendiumYearFilter")}</label>
+    <input type="number" min="0" step="1" placeholder="—"
+      style="width:70px;font-size:0.85em;padding:1px 4px;"
+      title="${game.i18n.localize("MERC.UI.items.compendiumYearFilter")}">
+  `;
+  searchEl.appendChild(wrapper);
+
+  // Pre-fetch the index so system.year is available when the user starts typing.
+  // getIndex() is a no-op if the pack is already fully indexed.
+  const indexReady = app.collection.indexed
+    ? Promise.resolve()
+    : app.collection.getIndex().catch(err => console.error("MERC | Compendium index error:", err));
+
+  // Shared filter function — applies both year and name filters independently.
+  // Uses a CSS class (.merc-year-hidden) so the year filter never touches
+  // style.display, leaving Foundry's name filter state fully intact.
+  const applyYearFilter = async () => {
+    await indexReady;
+    const maxYear = parseInt(input.value);
+    const entries = root.querySelectorAll(".directory-list .directory-item:not(.folder)");
+    entries.forEach(li => {
+      if (!maxYear || isNaN(maxYear)) {
+        li.classList.remove("merc-year-hidden");
+        return;
+      }
+      const entryId  = li.dataset.entryId;
+      const entry    = app.collection.index.get(entryId);
+      const itemYear = Number(entry?.system?.year ?? 0);
+      // year=0 means no restriction → always visible
+      li.classList.toggle("merc-year-hidden", itemYear !== 0 && itemYear > maxYear);
+    });
+  };
+
+  const input = wrapper.querySelector("input");
+  input.addEventListener("input", applyYearFilter);
+
+  // Re-apply year filter after Foundry's name filter runs so both stay cumulative.
+  const nameInput = searchEl.querySelector("input[type='search']");
+  if (nameInput) nameInput.addEventListener("input", applyYearFilter);
+});
 

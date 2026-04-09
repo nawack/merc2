@@ -10,8 +10,8 @@ _tools/npm
 _tools/npm.cmd
 _tools/npx
 _tools/npx.cmd
-_tools/_weapons.json
-_tools/_ammos.json
+_tools/*.json
+
 
 # LevelDB metadata – auto-updated by Foundry at every launch (not actual data)
 # Les fichiers *.ldb et CURRENT restent trackés car ils contiennent les vraies données

@@ -1,6 +1,7 @@
 {
   "MERC": {
     "StatusEffects": {
+      "injured": "Injured",
       "minus4": "-4",
       "minus8": "-8"
     },
@@ -213,7 +214,12 @@
         "addWeapon": "+ Add Weapon",
         "addArmor": "+ Add Armor",
         "addEquipment": "+ Add Equipment",
+        "features": "Accessories",
+        "addFeature": "+ Add Accessory",
         "equipped": "Equipped",
+        "year": "Year (avail.)",
+        "equipFutureYear": "{item} is a technology from year {itemYear} — character in {actorYear} cannot use it.",
+        "compendiumYearFilter": "Year ≤",
         "toggleEquipped": "Toggle equipped/unequipped",
         "armorClassShort": "AC",
         "rollWeaponSkill": "Skill roll",

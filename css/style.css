@@ -1411,7 +1411,7 @@
   gap: 8px;
   max-height: 175px;
   overflow-y: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
 }
 
 .item-card {
@@ -1425,6 +1425,7 @@
   border: 1px solid #999;
   font-size: 11px;
   transition: background-color 0.2s;
+  margin-right: 10px;
 }
 
 .item-card:hover {
@@ -1633,7 +1634,7 @@
 }
 
 .item-create {
-  width: 200px;
+  width: 170px;
   padding: 4px 8px;
   font-size: 11px;
   cursor: pointer;
@@ -3993,5 +3994,8 @@
   font-size: 10px;
   font-weight: bold;
 }
+
+/* Compendium year filter — overrides Foundry's inline display without conflicting with name filter */
+.merc-year-hidden { display: none !important; }
 
 

@@ -105,6 +105,27 @@ function Build-FolderMap([string[]]$rawPaths) {
   return $map
 }
 
+# Supprime les diacritiques et met en minuscules – évite tout problème d'encodage
+# entre les littéraux du PS1 (page de code Windows) et les chaînes lues en UTF-8.
+function Remove-Diacritics([string]$s) {
+  $nfd = $s.Normalize([System.Text.NormalizationForm]::FormD)
+  [string]::new(($nfd.ToCharArray() | Where-Object {
+    [System.Globalization.CharUnicodeInfo]::GetUnicodeCategory($_) -ne
+    [System.Globalization.UnicodeCategory]::NonSpacingMark
+  })).ToLower()
+}
+
+function Get-ArmorImage([string]$folderPath) {
+  $leaf = ($folderPath -split '\\')[-1].Trim()
+  switch -Exact ($leaf) {
+    'Gilets'   { return 'systems/merc/assets/items/armor/armor.png' }
+    'Casques'  { return 'systems/merc/assets/items/armor/helmet.png' }
+    'Membres'  { return 'systems/merc/assets/items/armor/parts.png' }
+    'Completes'{ return 'systems/merc/assets/items/armor/full.png' }
+    default    { return 'systems/merc/assets/items/armor/armor.png' }
+  }
+}
+
 function Get-WeaponImage([string]$subtype) {
   switch -Wildcard ($subtype.ToLower()) {
     "*pistolet mitrailleur*"  { return "systems/merc/assets/items/weapons/mitraillette.png" }
@@ -288,7 +309,7 @@ $wcols = $wcsv[0].PSObject.Properties.Name
 #  0=Folder  1=Nom  2=Sous-type  3=Compétence  4=Illustration  5=Munition
 #  6=Calibre  7=Poids_à_vide  8=Canon(pouces)  9=Range_Short  10=Range_Med
 #  11=Range_Long  12=Range_Extrem  13=Recul_C/C  14=Recul_Burst  15=Chargeur
-#  16=ROF_mode  17=ROF_limited
+#  16=ROF_mode  17=ROF_limited  18=Année
 
 # Build weapon folder hierarchy from all Folder paths in the CSV
 $allWFolderPaths = $wcsv | ForEach-Object { $_.($wcols[0]).Trim() } | Where-Object { $_ }
@@ -319,6 +340,7 @@ foreach ($row in $wcsv) {
   $magazine     = TryParseInt $row.($wcols[15])
   $rofMode      = $row.($wcols[16]).Trim()
   $rofLimited   = TryParseInt $row.($wcols[17])
+  $itemYear     = TryParseInt $row.($wcols[18])
 
   # Resolve default ammo by name — case-insensitive
   $defaultAmmoId = if ($ammoNameToId.ContainsKey($munitionName.ToLower())) { $ammoNameToId[$munitionName.ToLower()] } else { "" }
@@ -345,6 +367,7 @@ foreach ($row in $wcsv) {
       "rarity"          = "common"
       "price"           = 0
       "weightKg"        = $weightKg
+      "year"            = $itemYear
       "weaponSubtype"   = $subtype
       "weaponSkill"     = if ($skill) { $skill } else { "powder_projectiles" }
       "proficiency"     = 0
@@ -389,11 +412,11 @@ Write-Host "> Lecture des armures..." -ForegroundColor Cyan
 $arcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Armors.csv") -Delimiter ";" -Encoding UTF8
 $arcols = $arcsv[0].PSObject.Properties.Name
 # Column indices (0-based):
-#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description
-#  6=crane  7=visage  8=cou  9=poitrine_gch  10=poitrine_dr
-# 11=abdomen_gch  12=abdomen_dr  13=bas_ventre  14=bras_gch  15=bras_dr
-# 16=av_bras_gch  17=av_bras_dr  18=main_gch  19=main_dr
-# 20=cuisse_gch  21=cuisse_dr  22=jambe_gch  23=jambe_dr  24=pied_gch  25=pied_dr
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description  6=Année
+#  7=crane  8=visage  9=cou  10=poitrine_gch  11=poitrine_dr
+# 12=abdomen_gch  13=abdomen_dr  14=bas_ventre  15=bras_gch  16=bras_dr
+# 17=av_bras_gch  18=av_bras_dr  19=main_gch  20=main_dr
+# 21=cuisse_gch  22=cuisse_dr  23=jambe_gch  24=jambe_dr  25=pied_gch  26=pied_dr
 
 $allARFolderPaths = $arcsv | ForEach-Object { $_.($arcols[0]).Trim() } | Where-Object { $_ }
 $armorFolderMap   = Build-FolderMap $allARFolderPaths
@@ -401,14 +424,15 @@ $armorFolderMap   = Build-FolderMap $allARFolderPaths
 $armorItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
 foreach ($row in $arcsv) {
-  $name = $row.($arcols[1]).Trim()
+  $name = ([string]$row.($arcols[1])).Trim()
   if (-not $name) { continue }
 
-  $folderPath  = $row.($arcols[0]).Trim()
-  $rarity      = if ($row.($arcols[2]).Trim()) { $row.($arcols[2]).Trim() } else { "common" }
+  $folderPath  = ([string]$row.($arcols[0])).Trim()
+  $rarity      = if (([string]$row.($arcols[2])).Trim()) { ([string]$row.($arcols[2])).Trim() } else { "common" }
   $price       = TryParseDouble $row.($arcols[3])
   $weightKg    = TryParseDouble $row.($arcols[4])
-  $description = $row.($arcols[5]).Trim()
+  $itemYear    = TryParseInt $row.($arcols[5])
+  $description = ([string]$row.($arcols[6])).Trim()
 
   $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
   $itemFolderId  = if ($armorFolderMap.ContainsKey($normFolderKey)) { $armorFolderMap[$normFolderKey]['_id'] } else { $null }
@@ -418,33 +442,34 @@ foreach ($row in $arcsv) {
     "_id"    = New-FoundryId
     "name"   = $name
     "type"   = "armor"
-    "img"    = "systems/merc/assets/items/armor/armor.png"
+    "img"    = Get-ArmorImage $folderPath
     "system" = [ordered]@{
       "rarity"      = $rarity
       "price"       = $price
       "weightKg"    = $weightKg
+      "year"        = $itemYear
       "description" = $description
       "locations"   = [ordered]@{
-        "crane"        = TryParseInt $row.($arcols[6])
-        "visage"       = TryParseInt $row.($arcols[7])
-        "cou"          = TryParseInt $row.($arcols[8])
-        "poitrine_gch" = TryParseInt $row.($arcols[9])
-        "poitrine_dr"  = TryParseInt $row.($arcols[10])
-        "abdomen_gch"  = TryParseInt $row.($arcols[11])
-        "abdomen_dr"   = TryParseInt $row.($arcols[12])
-        "bas_ventre"   = TryParseInt $row.($arcols[13])
-        "bras_gch"     = TryParseInt $row.($arcols[14])
-        "bras_dr"      = TryParseInt $row.($arcols[15])
-        "av_bras_gch"  = TryParseInt $row.($arcols[16])
-        "av_bras_dr"   = TryParseInt $row.($arcols[17])
-        "main_gch"     = TryParseInt $row.($arcols[18])
-        "main_dr"      = TryParseInt $row.($arcols[19])
-        "cuisse_gch"   = TryParseInt $row.($arcols[20])
-        "cuisse_dr"    = TryParseInt $row.($arcols[21])
-        "jambe_gch"    = TryParseInt $row.($arcols[22])
-        "jambe_dr"     = TryParseInt $row.($arcols[23])
-        "pied_gch"     = TryParseInt $row.($arcols[24])
-        "pied_dr"      = TryParseInt $row.($arcols[25])
+        "crane"        = TryParseInt $row.($arcols[7])
+        "visage"       = TryParseInt $row.($arcols[8])
+        "cou"          = TryParseInt $row.($arcols[9])
+        "poitrine_gch" = TryParseInt $row.($arcols[10])
+        "poitrine_dr"  = TryParseInt $row.($arcols[11])
+        "abdomen_gch"  = TryParseInt $row.($arcols[12])
+        "abdomen_dr"   = TryParseInt $row.($arcols[13])
+        "bas_ventre"   = TryParseInt $row.($arcols[14])
+        "bras_gch"     = TryParseInt $row.($arcols[15])
+        "bras_dr"      = TryParseInt $row.($arcols[16])
+        "av_bras_gch"  = TryParseInt $row.($arcols[17])
+        "av_bras_dr"   = TryParseInt $row.($arcols[18])
+        "main_gch"     = TryParseInt $row.($arcols[19])
+        "main_dr"      = TryParseInt $row.($arcols[20])
+        "cuisse_gch"   = TryParseInt $row.($arcols[21])
+        "cuisse_dr"    = TryParseInt $row.($arcols[22])
+        "jambe_gch"    = TryParseInt $row.($arcols[23])
+        "jambe_dr"     = TryParseInt $row.($arcols[24])
+        "pied_gch"     = TryParseInt $row.($arcols[25])
+        "pied_dr"      = TryParseInt $row.($arcols[26])
       }
     }
     "effects" = @()
@@ -466,26 +491,27 @@ Write-Host "  OK $($armorItems.Count) armures, $($armorFolderMap.Count) dossiers
 # =============================================================================
 # Étape 6 – Parsing du CSV Equipment
 # =============================================================================
-Write-Host "> Lecture des équipements..." -ForegroundColor Cyan
+Write-Host "> Lecture des equipements..." -ForegroundColor Cyan
 $eqcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Equipment.csv") -Delimiter ";" -Encoding UTF8
 $eqcols = $eqcsv[0].PSObject.Properties.Name
 # Column indices (0-based):
-#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description  6=Année
 
-$allEQFolderPaths   = $eqcsv | ForEach-Object { $_.($eqcols[0]).Trim() } | Where-Object { $_ }
+$allEQFolderPaths   = $eqcsv | ForEach-Object { ([string]$_.($eqcols[0])).Trim() } | Where-Object { $_ }
 $equipmentFolderMap = Build-FolderMap $allEQFolderPaths
 
 $equipmentItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
 foreach ($row in $eqcsv) {
-  $name = $row.($eqcols[1]).Trim()
+  $name = ([string]$row.($eqcols[1])).Trim()
   if (-not $name) { continue }
 
-  $folderPath  = $row.($eqcols[0]).Trim()
-  $rarity      = if ($row.($eqcols[2]).Trim()) { $row.($eqcols[2]).Trim() } else { "common" }
+  $folderPath  = ([string]$row.($eqcols[0])).Trim()
+  $rarity      = if (([string]$row.($eqcols[2])).Trim()) { ([string]$row.($eqcols[2])).Trim() } else { "common" }
   $price       = TryParseDouble $row.($eqcols[3])
   $weightKg    = TryParseDouble $row.($eqcols[4])
-  $description = $row.($eqcols[5]).Trim()
+  $description = ([string]$row.($eqcols[5])).Trim()
+  $itemYear    = TryParseInt $row.($eqcols[6])
 
   $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
   $itemFolderId  = if ($equipmentFolderMap.ContainsKey($normFolderKey)) { $equipmentFolderMap[$normFolderKey]['_id'] } else { $null }
@@ -500,6 +526,7 @@ foreach ($row in $eqcsv) {
       "rarity"      = $rarity
       "price"       = $price
       "weightKg"    = $weightKg
+      "year"        = $itemYear
       "description" = $description
     }
     "effects" = @()
@@ -539,6 +566,15 @@ $allFFolderPaths = $featureDataLines | ForEach-Object {
 } | Where-Object { $_ }
 $featureFolderMap = Build-FolderMap $allFFolderPaths
 
+# Clés en ASCII pur (sans accents, minuscules) pour éviter tout problème d'encodage PS1/UTF-8
+$featureIconMap = @{
+  'silencieux'         = 'systems/merc/assets/items/features/suppressor.png'
+  'visee lunette'      = 'systems/merc/assets/items/features/crosshair.png'
+  'visee rudimentaire' = 'systems/merc/assets/items/features/aim.png'
+  'addons'             = 'systems/merc/assets/items/features/addons.svg'
+}
+$featureIconDefault = 'systems/merc/assets/items/features/addons.svg'
+
 $featureItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
 foreach ($line in $featureDataLines) {
@@ -553,22 +589,27 @@ foreach ($line in $featureDataLines) {
   $bonusLongRange        = if ($cols.Count -gt 5)  { TryParseInt    $cols[5]  } else { 0 }
   $bonusExtremeRange     = if ($cols.Count -gt 6)  { TryParseInt    $cols[6]  } else { 0 }
   $noiseReduction        = if ($cols.Count -gt 7)  { TryParseDouble $cols[7]  } else { 0 }
-  $lateralNoiseReduction = if ($cols.Count -gt 8)  { $cols[8].Trim()          } else { "" }
+  $lateralNoiseReductionRaw = if ($cols.Count -gt 8) { $cols[8].Trim() } else { "" }
+  $lateralNoiseReduction = if ($lateralNoiseReductionRaw -and $lateralNoiseReductionRaw -ne "0") { $lateralNoiseReductionRaw } else { "" }
   $lengthIncreaseCm      = if ($cols.Count -gt 9)  { TryParseDouble $cols[9]  } else { 0 }
   $rarity                = if ($cols.Count -gt 10 -and $cols[10].Trim()) { $cols[10].Trim() } else { "common" }
   $price                 = if ($cols.Count -gt 11) { TryParseDouble $cols[11] } else { 0 }
   $weightKg              = if ($cols.Count -gt 12) { TryParseDouble $cols[12] } else { 0 }
   $description           = if ($cols.Count -gt 13) { $cols[13].Trim()         } else { "" }
+  $itemYear              = if ($cols.Count -gt 14) { TryParseInt $cols[14]    } else { 0 }
 
   $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
   $itemFolderId  = if ($featureFolderMap.ContainsKey($normFolderKey)) { $featureFolderMap[$normFolderKey]['_id'] } else { $null }
   $sort++
 
+  $ftKey = Remove-Diacritics $featureType
+  $featureImg = if ($featureIconMap.ContainsKey($ftKey)) { $featureIconMap[$ftKey] } else { $featureIconDefault }
+
   $featureItems.Add([ordered]@{
     "_id"    = New-FoundryId
     "name"   = $name
     "type"   = "feature"
-    "img"    = "systems/merc/assets/items/equipment/equipment.png"
+    "img"    = $featureImg
     "system" = [ordered]@{
       "featureType"           = $featureType
       "bonusShortRange"       = $bonusShortRange
@@ -581,6 +622,7 @@ foreach ($line in $featureDataLines) {
       "rarity"                = $rarity
       "price"                 = $price
       "weightKg"              = $weightKg
+      "year"                  = $itemYear
       "description"           = $description
       "parentWeaponId"        = ""
     }

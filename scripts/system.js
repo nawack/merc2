@@ -439,7 +439,7 @@ class MercCombat extends Combat {
     if (clamped === this.currentSegment) return this;
 
     // Retirer les états temporaires de tous les combattants au passage du segment suivant
-    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8'];
+    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8', 'merc-minus12', 'merc-minus16'];
     for (const combatant of this.combatants ?? []) {
       for (const statusId of temporaryStatuses) {
         if (combatant.actor?.statuses?.has(statusId)) {
@@ -481,7 +481,7 @@ class MercCombat extends Combat {
 
   async nextRound() {
     // Retirer les états temporaires de tous les combattants avant le passage au round suivant
-    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8'];
+    const temporaryStatuses = ['stun', 'merc-minus4', 'merc-minus8', 'merc-minus12', 'merc-minus16'];
     for (const combatant of this.combatants ?? []) {
       for (const statusId of temporaryStatuses) {
         if (combatant.actor?.statuses?.has(statusId)) {
@@ -2963,12 +2963,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
   }
 
   /**
-   * Returns the malus from active status effects (merc-minus4 = -4, merc-minus8 = -8).
+   * Returns the malus from active status effects (merc-minus4 = -4, merc-minus8 = -8, merc-minus12 = -12, merc-minus16 = -16).
    * The worst (most negative) malus wins if both are active.
    */
   _getStatusMalus(actor) {
     const statuses = actor?.statuses;
     if (!statuses) return 0;
+    if (statuses.has('merc-minus16')) return -16;
+    if (statuses.has('merc-minus12')) return -12;
     if (statuses.has('merc-minus8')) return -8;
     if (statuses.has('merc-minus4')) return -4;
     return 0;
@@ -4835,7 +4837,9 @@ Hooks.once("init", () => {
   // Ajouter les états de malus temporaires propres au système merc
   CONFIG.statusEffects.push(
     { id: "merc-minus4", name: "MERC.StatusEffects.minus4", img: "systems/merc/assets/ui/status-minus4.svg" },
-    { id: "merc-minus8", name: "MERC.StatusEffects.minus8", img: "systems/merc/assets/ui/status-minus8.svg" }
+    { id: "merc-minus8", name: "MERC.StatusEffects.minus8", img: "systems/merc/assets/ui/status-minus8.svg" },
+    { id: "merc-minus12", name: "MERC.StatusEffects.minus12", img: "systems/merc/assets/ui/status-minus12.svg" },
+    { id: "merc-minus16", name: "MERC.StatusEffects.minus16", img: "systems/merc/assets/ui/status-minus16.svg" }
   );
 
   // Register Handlebars helpers

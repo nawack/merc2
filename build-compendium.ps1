@@ -105,6 +105,27 @@ function Build-FolderMap([string[]]$rawPaths) {
   return $map
 }
 
+# Supprime les diacritiques et met en minuscules – évite tout problème d'encodage
+# entre les littéraux du PS1 (page de code Windows) et les chaînes lues en UTF-8.
+function Remove-Diacritics([string]$s) {
+  $nfd = $s.Normalize([System.Text.NormalizationForm]::FormD)
+  [string]::new(($nfd.ToCharArray() | Where-Object {
+    [System.Globalization.CharUnicodeInfo]::GetUnicodeCategory($_) -ne
+    [System.Globalization.UnicodeCategory]::NonSpacingMark
+  })).ToLower()
+}
+
+function Get-ArmorImage([string]$folderPath) {
+  $leaf = ($folderPath -split '\\')[-1].Trim()
+  switch -Exact ($leaf) {
+    'Gilets'   { return 'systems/merc/assets/items/armor/armor.png' }
+    'Casques'  { return 'systems/merc/assets/items/armor/helmet.png' }
+    'Membres'  { return 'systems/merc/assets/items/armor/parts.png' }
+    'Completes'{ return 'systems/merc/assets/items/armor/full.png' }
+    default    { return 'systems/merc/assets/items/armor/armor.png' }
+  }
+}
+
 function Get-WeaponImage([string]$subtype) {
   switch -Wildcard ($subtype.ToLower()) {
     "*pistolet mitrailleur*"  { return "systems/merc/assets/items/weapons/mitraillette.png" }
@@ -421,7 +442,7 @@ foreach ($row in $arcsv) {
     "_id"    = New-FoundryId
     "name"   = $name
     "type"   = "armor"
-    "img"    = "systems/merc/assets/items/armor/armor.png"
+    "img"    = Get-ArmorImage $folderPath
     "system" = [ordered]@{
       "rarity"      = $rarity
       "price"       = $price
@@ -545,6 +566,15 @@ $allFFolderPaths = $featureDataLines | ForEach-Object {
 } | Where-Object { $_ }
 $featureFolderMap = Build-FolderMap $allFFolderPaths
 
+# Clés en ASCII pur (sans accents, minuscules) pour éviter tout problème d'encodage PS1/UTF-8
+$featureIconMap = @{
+  'silencieux'         = 'systems/merc/assets/items/features/suppressor.png'
+  'visee lunette'      = 'systems/merc/assets/items/features/crosshair.png'
+  'visee rudimentaire' = 'systems/merc/assets/items/features/aim.png'
+  'addons'             = 'systems/merc/assets/items/features/addons.svg'
+}
+$featureIconDefault = 'systems/merc/assets/items/features/addons.svg'
+
 $featureItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
 foreach ($line in $featureDataLines) {
@@ -572,11 +602,14 @@ foreach ($line in $featureDataLines) {
   $itemFolderId  = if ($featureFolderMap.ContainsKey($normFolderKey)) { $featureFolderMap[$normFolderKey]['_id'] } else { $null }
   $sort++
 
+  $ftKey = Remove-Diacritics $featureType
+  $featureImg = if ($featureIconMap.ContainsKey($ftKey)) { $featureIconMap[$ftKey] } else { $featureIconDefault }
+
   $featureItems.Add([ordered]@{
     "_id"    = New-FoundryId
     "name"   = $name
     "type"   = "feature"
-    "img"    = "systems/merc/assets/items/equipment/equipment.png"
+    "img"    = $featureImg
     "system" = [ordered]@{
       "featureType"           = $featureType
       "bonusShortRange"       = $bonusShortRange

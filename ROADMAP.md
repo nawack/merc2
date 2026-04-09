@@ -1,7 +1,7 @@
 # Roadmap - Mercenary System
 
-**Mise à jour :** 2026-04-03  
-**Version courante :** 1.1.4  
+**Mise à jour :** 2026-04-09  
+**Version courante :** 1.1.7  
 **Source :** `.todo`
 
 ---
@@ -71,6 +71,18 @@
 - Synchronisation temps réel des effets de statut token (`dead` / `unconscious`)
 - Incapacité en combat : combattants inconscients/morts sautés et grisés dans le traqueur
 
+**Finitions & Correctifs (v1.1.3 → v1.1.7)**
+- Formule malus de charge revue : différenciée selon course / marche / reptation
+- Contrôle des valeurs de champs (pas de dev négatif, attributs entre 1 et 10)
+- Correction `findTableIndex` (opérateur `>` strict) et recalcul systématique des stats de combat à chaque migration
+- Correction parse error Handlebars (`&quot;` → guillemets simples)
+- Icône toggle équipé/non-équipé unifiée (`fa-backpack`) pour tous les types d'items
+- Suppression du bouton de jet de dégâts pour les armes blanches dans la section bonus (liées à une arme)
+- Malus temporaires via token : impact en combat et sur les jets de dés
+- Bouton level-up (✔) par compétence : +1 dev, +1 spé + +1 compétence origine si spécialisation
+- Token Cone : configuration UI pour cônes de vue et de tir
+- Compendium armures — icônes par catégorie : Gilets → `armor.png`, Casques → `helmet.png`, Membres → `parts.png`, Completes → `full.png`
+
 ---
 
 ## 🔜 Planifié
@@ -79,9 +91,9 @@
 > Corrections de comportement et attributs manquants.
 
 - [ ] **Attributs secondaires** : Apparence, Taille, Poids, Endurance, Chance (origine / actuel) *(Revoir calcul bonus attributs)*
-- [ ] **Malus de charge** : revoir la formule qui diffère selon course, marche ou reptation *(Gestion de la charge)*
-- [ ] **Armes blanches** : supprimer la possibilité de lancer les dégâts depuis la section bonus (car toujours liée à une arme) *(Gestion des bonus de dégâts)*
-- [ ] **Contrôle des valeurs** : pas de valeur négative pour les dev, valeurs comprises entre 1 et 10 pour les attributs *(Contrôle des valeurs des champs)*
+- [x] **Malus de charge** : formule revue, différenciée selon course / marche / reptation *(v1.1.3)*
+- [x] **Armes blanches** : suppression de la possibilité de lancer les dégâts depuis la section bonus *(v1.1.5)*
+- [x] **Contrôle des valeurs** : pas de valeur négative pour les dev, valeurs comprises entre 1 et 10 pour les attributs *(v1.1.3)*
 - [ ] **Format des dégâts** : validation par regexp `^(0|[1-9](?:[dD]6(?:\+[12])?)?)$`
 - [ ] **Issue #11** : Contrôle des valeurs des bonus de discrétion et dissimulation
 

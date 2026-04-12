@@ -1972,12 +1972,20 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Ensure gender radio buttons reflect current actor data
     const genderValue = this.actor?.system?.biography?.gender || "";
+    const genderRadios = html.querySelectorAll('input[name="system.biography.gender"]');
     if (genderValue) {
-      const genderRadios = html.querySelectorAll('input[name="system.biography.gender"]');
       genderRadios.forEach(radio => {
         radio.checked = radio.value === genderValue;
       });
     }
+
+    // Save gender on change (bypasses formElement which is null in AppV2)
+    genderRadios.forEach(radio => {
+      radio.addEventListener("change", async () => {
+        if (!radio.checked) return;
+        await this.actor.update({ "system.biography.gender": radio.value }, { render: false });
+      });
+    });
 
     // Dedicated blur listeners for description and notes textareas.
     // html.querySelector("form") returns null because DocumentSheetV2 sets tag:"form",
@@ -5833,6 +5841,13 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
 
   if (!data.system) {
     data.system = {};
+  }
+
+  // Set default portrait if none provided
+  const defaultImg = "systems/merc/assets/ui/portrait-default.png";
+  const mysteryMan = "icons/svg/mystery-man.svg";
+  if (!data.img || data.img === mysteryMan || data.img === CONST.DEFAULT_TOKEN) {
+    actor.updateSource({ img: defaultImg });
   }
   
   const systemData = {

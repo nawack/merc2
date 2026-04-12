@@ -3840,7 +3840,6 @@
   background: var(--ts-page);
   overflow: hidden;
   font-size: 11px;
-  mar
 }
 
 /* Status banner (mort / coma / inconscient) */
@@ -3981,10 +3980,6 @@
   line-height: 1.3;
   text-align: center;
   flex: 1;
-}
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  line-height: 1;
 }
 
 /* Section titles */

@@ -2153,6 +2153,7 @@
   background-color: var(--ts-section);
   padding: 8px 10px;
   border-radius: 6px;
+  border: 1px solid var(--ts-border);
 }
 
 .wf-span2 { grid-column: span 2; }
@@ -2257,6 +2258,7 @@
   background-color: var(--ts-section);
   padding: 8px;
   border-radius: 6px;
+  border: 1px solid var(--ts-border);
 }
 
 .weapon-ranges-header {
@@ -2312,12 +2314,13 @@
   background-color: var(--ts-section);
   padding: 8px;
   border-radius: 6px;
+  border: 1px solid var(--ts-border);
 }
 
 .weapon-tactical-header {
   margin: 0 0 6px 0;
   color: var(--ts-text);
-  border-bottom: 1px solid #d8e0e8;
+  border-bottom: 1px solid var(--ts-sep);
   padding-bottom: 3px;
   font-size: 12px;
   text-transform: uppercase;
@@ -2507,7 +2510,7 @@
   background-color: var(--ts-section);
   padding: 10px;
   border-radius: 6px;
-  margin-top: 10px;
+  border: 1px solid var(--ts-border);
 }
 
 .weapon-ammo-header {
@@ -2880,7 +2883,7 @@
   background: var(--ts-section);
   border-radius: 6px;
   padding: 8px 10px;
-  margin-top: 6px;
+  border: 1px solid var(--ts-border);
 }
 
 .weapon-feature-header {
@@ -3299,6 +3302,7 @@
   background-color: var(--ts-section);
   padding: 8px 10px;
   border-radius: 6px;
+  border: 1px solid var(--ts-border);
 }
 
 .armor-field {
@@ -3345,6 +3349,7 @@
   background-color: var(--ts-section);
   padding: 8px 10px;
   border-radius: 6px;
+  border: 1px solid var(--ts-border);
 }
 
 .armor-locations-header {
@@ -3670,6 +3675,7 @@
   background-color: var(--ts-section);
   padding: 8px 10px;
   border-radius: 6px;
+  border: 1px solid var(--ts-border);
 }
 
 .equipment-field {
@@ -3759,6 +3765,14 @@
   gap: 8px;
 }
 
+.feature-noise-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background-color: var(--ts-section);
+  border-radius: 6px;
+}
+
 .feature-main-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -3778,14 +3792,27 @@
 .feature-field.ff-span3 { grid-column: 1 / -1; }
 
 .feature-section-title {
-  font-size: 10px;
+  margin: 0 0 6px 0;
+  color: var(--ts-text);
+  border-bottom: 1px solid var(--ts-sep);
+  padding-bottom: 3px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  /* font-size: 10px;
   font-weight: bold;
   color: var(--ts-text-mid);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 1px solid #ccc;
   padding-bottom: 2px;
-  margin-top: 4px;
+  margin-top: 4px; */
+}
+
+.feature-section {
+  background-color: var(--ts-section);
+  padding: 8px 10px;
+  border-radius: 6px;
 }
 
 .feature-bonus-grid {
@@ -3793,7 +3820,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   background-color: var(--ts-section);
-  padding: 8px 10px;
+  /* padding: 8px 10px; */
   border-radius: 6px;
 }
 

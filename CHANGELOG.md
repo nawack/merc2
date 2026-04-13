@@ -3,6 +3,22 @@
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
 
+## [1.2.0] - 2026-04-13
+
+### Added
+- 🖼️ **Portrait Polaroïd** : Le portrait du personnage s'affiche dans un cadre Polaroïd (fond blanc, grande marge basse, ombre portée, légère rotation) avec un nom écrit à la main en dessous (police Permanent Marker).
+- 🖼️ **Portrait par défaut** : Un portrait `portrait-default.png` est automatiquement assigné lors de la création d'un personnage ou d'un PNJ.
+
+### Fixed
+- 🐛 **Sauvegarde du genre** : Le champ genre (radio buttons) ne se sauvegardait pas en raison de `formElement` toujours `null` dans AppV2. Corrigé via un listener dédié directement sur l'élément HTML.
+
+### Changed
+- 🎨 **Refonte visuelle de la fiche personnage** : Palette "dossier kraft" unifiée via variables CSS (`--ts-bg`, `--ts-section`, `--ts-page`, `--ts-border`, etc.) appliquée à toute la fiche — fond manila, encre brune, sections imprimées crème. Police `Geist Mono` pour tous les champs de saisie.
+- 🎨 **Mise en forme des onglets** : Onglets principaux et sous-onglets (Combat, Compétences) avec `border-radius: 8px 8px 0 0`, fond inactif `--ts-bg-dark`, fond actif `--ts-bg-active`, transition douce au survol. Style unifié entre les trois niveaux d'onglets.
+- 🎨 **En-tête de fiche** : Mise en page en deux colonnes (portrait gauche / infos droite) via CSS Grid, `overflow: visible` pour permettre l'effet Polaroïd et intégration du bandeau d'onglets en bas de l'en-tête.
+- 🎨 **Onglets Compétences** : Le bandeau d'onglets a été déplacé en dehors de la section `.skills-section` pour s'aligner avec les autres niveaux d'onglets.
+- ⚡ **Optimisation des performances** : Réduction des violations `requestAnimationFrame` — suppression du double-rendu sur mise à jour d'acteur (`render: false`), calculs différés via `setTimeout`, méthode `debouncedRender()` (50 ms) remplaçant tous les appels directs à `this.render()`, suppression du bloc `formElement` mort (~90 lignes).
+
 ## [1.1.6] - 2026-04-09
 
 ### Added

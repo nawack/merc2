@@ -11,6 +11,7 @@
               <i class="fas fa-folder-open"></i>
             </button>
           </div>
+          <div class="portrait-name">{{actor.name}}</div>
         </div>
       </div>
       
@@ -19,11 +20,8 @@
         <div class="header-info-and-tabs">
           <!-- Block 1: Header Info (photo removed) -->
           <div class="header-info-block">
-            <!-- Row 1: Name + Gender -->
+            <!-- Row 1: Gender + Name + Year -->
             <div class="header-info-row header-row-1">
-              <div class="field-name-large">
-                <input type="text" name="name" value="{{actor.name}}" placeholder="{{localize "MERC.UI.biography.namePlaceholder"}}">
-              </div>
               <div class="field-inline field-gender">
                 <div class="gender-toggle">
                   <label class="gender-option male" title="{{localize "MERC.UI.gender.male"}}">
@@ -35,6 +33,13 @@
                     <span class="gender-icon" aria-hidden="true"></span>
                   </label>
                 </div>
+              </div>
+              <div class="field-name-large">
+                <input type="text" name="name" value="{{actor.name}}" placeholder="{{localize "MERC.UI.biography.namePlaceholder"}}">
+              </div>
+              <div class="field-inline field-year">
+                <label>{{localize "MERC.UI.biography.year"}}</label>
+                <input type="number" name="system.biography.year" value="{{actor.system.biography.year}}" min="0" placeholder="{{localize "MERC.UI.biography.yearPlaceholder"}}">
               </div>
             </div>
             
@@ -54,17 +59,13 @@
               </div>
             </div>
             
-            <!-- Row 3: Année + Origine + Renommé -->
+            <!-- Row 3: Origine + Renommé -->
             <div class="header-info-row header-row-3">
-              <div class="field-inline">
-                <label>{{localize "MERC.UI.biography.year"}}</label>
-                <input type="number" name="system.biography.year" value="{{actor.system.biography.year}}" min="0" placeholder="{{localize "MERC.UI.biography.yearPlaceholder"}}">
-              </div>
               <div class="field-inline">
                 <label>{{localize "MERC.UI.biography.origin"}}</label>
                 <input type="text" name="system.biography.origin" value="{{actor.system.biography.origin}}" placeholder="{{localize "MERC.UI.biography.originPlaceholder"}}">
               </div>
-              <div class="field-inline">
+              <div class="field-inline field-renown">
                 <label>{{localize "MERC.UI.biography.renown"}}</label>
                 <input type="number" name="system.biography.renown" value="{{actor.system.biography.renown}}" min="0" placeholder="{{localize "MERC.UI.biography.renownPlaceholder"}}">
               </div>
@@ -282,8 +283,8 @@
             <span class="stats-name-header">{{localize "MERC.UI.stats.physical"}}</span>
           </div>
           
-          <div class="headerStat" data-stat="endurance">
-            <span class="headerStatLabel">{{localize "MERC.UI.stats.endurance"}}</span>
+          <div class="headerStat endurance" data-stat="endurance">
+            <span class="headerStatLabel endurance">{{localize "MERC.UI.stats.endurance"}}</span>
             <div class="stat-values">
               <div class="stat-display">
                 <div class="stat-value-large">{{actor.system.combat.endurance}}</div>
@@ -394,12 +395,12 @@
     <!-- SKILLS TAB -->
     <div class="tab-content" data-tab="skills">
       
+      <nav class="skills-tabs">
+        {{#each skillGroups as |group|}}
+          <a class="item {{#if @first}}active{{/if}}" data-tab="{{group.id}}">{{group.label}}</a>
+        {{/each}}
+      </nav>
       <div class="skills-section">
-        <nav class="skills-tabs">
-          {{#each skillGroups as |group|}}
-            <a class="item {{#if @first}}active{{/if}}" data-tab="{{group.id}}">{{group.label}}</a>
-          {{/each}}
-        </nav>
         <section class="skills-tabs-body">
           {{#each skillGroups as |group|}}
           <div class="skills-tab-content {{#if @first}}active{{/if}}" data-tab="{{group.id}}">
@@ -640,6 +641,7 @@
         {{#each (filterItems actor.items "weapon") as |item|}}
         {{#if item.system.equipped}}
         <div class="combat-subtab-content" data-tab="combat-weapon-{{item._id}}">
+          <div class="combat-base-damage-section">
           <div class="item-card item combat-weapon-card" data-item-id="{{item._id}}">
 
             <!-- Zone 1: titre — compétence + gestion -->
@@ -779,7 +781,7 @@
             </div>
             {{/if}}
             {{/with}}
-
+          </div>
           </div>
         </div>
         {{/if}}

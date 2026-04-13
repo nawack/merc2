@@ -1053,7 +1053,18 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
   };
 
-  // Calculate Base: 30 - (ATTR1 + ATTR2) or 30 - (ATTR1 * 2)
+  // Debounced render: coalesces rapid successive render() calls into one,
+  // scheduled after the current call stack clears (50ms delay).
+  // Replaces direct this.render() calls throughout the sheet listeners.
+  debouncedRender() {
+    if (this._renderDebounceTimer) clearTimeout(this._renderDebounceTimer);
+    this._renderDebounceTimer = setTimeout(() => {
+      this._renderDebounceTimer = null;
+      if (this.rendered) this.render();
+    }, 50);
+  }
+
+
   computeSkillBase(actor, skillKey, skillData) {
     if (!actor || !skillData) return 0;
     return computeSkillBaseFromSystem(actor.system, skillKey, skillData);
@@ -1883,93 +1894,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       attachEnduranceClick(enduranceLabel);
     }
 
-    // Persist individual field changes immediately
-    const formElement = html.querySelector("form");
-    if (formElement) {
-      const allInputs = formElement.querySelectorAll("input, select, textarea");
-
-      allInputs.forEach(input => {
-        const saveFieldOnChange = async () => {
-          const fieldPath = input.name;
-          if (!fieldPath) return;
-
-          let value = input.value;
-          
-          // Handle number inputs
-          if (input.type === "number") {
-            if (value === "" || value === null) return;
-            const numberValue = Number(value);
-            if (Number.isNaN(numberValue)) return;
-            value = numberValue;
-
-            // Clamp attribute values to integer [0, 10]
-            if (fieldPath.startsWith("system.attributes.")) {
-              value = Math.min(10, Math.max(0, Math.round(value)));
-              input.value = value;
-            }
-          }
-
-          const currentValue = foundry.utils.getProperty(this.actor, fieldPath);
-          if (value === currentValue) return;
-
-          // Perception principale gérée par un listener dédié plus bas
-          if (fieldPath === "system.attributes.perception") return;
-
-          // Dev and bonus fields are fully handled by the skill-specific listener below
-          if (fieldPath.includes(".dev") || fieldPath.includes(".bonus")) return;
-
-          // Health location fields are handled by their own dedicated save listener below
-          if (fieldPath.startsWith("system.health.")) return;
-          
-          // Special handling for attribute current changes
-          if (fieldPath.startsWith("system.attributes.") && fieldPath.endsWith(".current")) {
-            await this.actor.update({ [fieldPath]: value });
-            const statsUpdate = this.buildCombatStatsUpdate();
-            if (statsUpdate) {
-              await this.actor.update(statsUpdate, { render: false });
-            }
-            await this.render();
-            return;
-          }
-          
-          await this.actor.update({ [fieldPath]: value });
-
-          // Additional combat stats recalculation for other relevant changes
-          const shouldRecalcCombat =
-            fieldPath.startsWith("system.biography.") ||
-            fieldPath.startsWith("system.skills.") ||
-            fieldPath.startsWith("system.customSpecializations.");
-
-          if (shouldRecalcCombat) {
-            const statsUpdate = this.buildCombatStatsUpdate();
-            if (statsUpdate) {
-              // Mettre à jour immédiatement l'affichage des bonus de discrétion/dissimulation
-              const bonusDiscretionEl = html.querySelector('.headerStat[data-stat="bonusDiscretion"] .stat-value-large');
-              const bonusDissimulationEl = html.querySelector('.headerStat[data-stat="bonusDissimulation"] .stat-value-large');
-
-              if (bonusDiscretionEl && Object.prototype.hasOwnProperty.call(statsUpdate, "system.combat.bonusDiscretion")) {
-                bonusDiscretionEl.textContent = statsUpdate["system.combat.bonusDiscretion"];
-              }
-              if (bonusDissimulationEl && Object.prototype.hasOwnProperty.call(statsUpdate, "system.combat.bonusDissimulation")) {
-                bonusDissimulationEl.textContent = statsUpdate["system.combat.bonusDissimulation"];
-              }
-
-              await this.actor.update(statsUpdate, { render: false });
-            }
-            await this.render();
-          }
-        };
-
-        if (input.type === "text" || input.tagName === "TEXTAREA") {
-          input.addEventListener("blur", saveFieldOnChange);
-        } else if (input.type === "number" || input.tagName === "SELECT") {
-          input.addEventListener("change", saveFieldOnChange);
-        } else if (input.type === "radio") {
-          input.addEventListener("change", saveFieldOnChange);
-        }
-      });
-    }
-
     // Ensure gender radio buttons reflect current actor data
     const genderValue = this.actor?.system?.biography?.gender || "";
     const genderRadios = html.querySelectorAll('input[name="system.biography.gender"]');
@@ -1988,8 +1912,6 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     });
 
     // Dedicated blur listeners for description and notes textareas.
-    // html.querySelector("form") returns null because DocumentSheetV2 sets tag:"form",
-    // so this.element IS already the <form> — nested forms don't exist.
     for (const fieldName of ["system.description", "system.notes"]) {
       const textarea = html.querySelector(`textarea[name="${fieldName}"]`);
       if (!textarea) continue;
@@ -2019,7 +1941,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         if (statsUpdate) {
           await this.actor.update(statsUpdate, { render: false });
         }
-        await this.render();
+        this.debouncedRender();
       });
     });
 
@@ -2037,7 +1959,8 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           "system.attributes.perceptionDetail.touch": perceptionValue
         };
 
-        await this.actor.update(updateData);
+        await this.actor.update(updateData, { render: false });
+        this.debouncedRender();
       });
     }
 
@@ -2053,7 +1976,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         if (statsUpdate) {
           await this.actor.update(statsUpdate, { render: false });
         }
-        await this.render();
+        this.debouncedRender();
       });
     };
 
@@ -2175,7 +2098,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
                 bonusUpdateData[input.name] = bonusValue;
               }
               await this.actor.update(bonusUpdateData, { render: false });
-              await this.render();
+              this.debouncedRender();
             } catch (e) {
               console.error("MERC | Error saving skill bonus", e);
             }
@@ -2220,7 +2143,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           }
 
           // Laisse _prepareContext et le rendu de la fiche recalculer base/degree/total
-          await this.render();
+          this.debouncedRender();
         } catch (e) {
           console.error("MERC | Error updating skill dev", e);
         }
@@ -2254,7 +2177,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         };
         
         await this.actor.update(updateData);
-        await this.render();
+        this.debouncedRender();
       });
     }
 
@@ -2282,7 +2205,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           };
 
           await this.actor.update(updateData);
-          await this.render();
+          this.debouncedRender();
         }
       });
     });
@@ -2321,7 +2244,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         };
         
         await this.actor.update(updateData);
-        await this.render();
+        this.debouncedRender();
       });
     });
 
@@ -2367,7 +2290,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         };
         
         await this.actor.update(updateData);
-        await this.render();
+        this.debouncedRender();
       });
     }
 
@@ -2387,7 +2310,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           };
 
           await this.actor.update(updateData);
-          await this.render();
+          this.debouncedRender();
         }
       });
     });
@@ -2426,7 +2349,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
         if (Object.keys(updateData).length > 0) {
           await this.actor.update(updateData, { render: false });
-          await this.render();
+          this.debouncedRender();
         }
       });
     });
@@ -2463,7 +2386,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         };
         
         await this.actor.update(updateData);
-        await this.render();
+        this.debouncedRender();
       });
     });
 
@@ -2496,7 +2419,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         }
         
         await this.actor.update(updateData);
-        await this.render();
+        this.debouncedRender();
       });
     });
     
@@ -2582,12 +2505,14 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           }
         }
         await item.update({ "system.equipped": newEquippedState });
-        await this.render();
+        this.debouncedRender();
       });
     });
 
     // Calculate and display total weight (encombrement) with burden levels
+    // Deferred via setTimeout to keep _onRender out of the rAF frame budget.
     // Includes: weapons (+ their linked features) + armors + equipment + free features (only equipped). Excludes: ammo.
+    setTimeout(() => {
     const totalWeightElement = html.querySelector("#total-weight");
     if (totalWeightElement) {
       let totalWeight = 0;
@@ -2686,6 +2611,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         el.classList.add(`burden-level-${burdenLevel}`);
       });
     }
+    }, 0); // end setTimeout weight
 
     // Live update of health wound degrees per location and SVG zone colours
     const healthInputs = html.querySelectorAll(".health-inp[data-location]");
@@ -2827,8 +2753,10 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
           this.actor.toggleStatusEffect('unconscious', { active: _unconscious }).catch(() => {});
         }
       };
-      updateHealthDisplay();
-      syncTokenStatus(); // initial sync on sheet open
+      setTimeout(() => {
+        updateHealthDisplay();
+        syncTokenStatus(); // initial sync on sheet open
+      }, 0);
       healthInputs.forEach(inp => inp.addEventListener("input", updateHealthDisplay));
 
       // Endurance roll buttons — delegated listener, attached only once per element
@@ -5981,7 +5909,7 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
     }
     
     if (Object.keys(updateData).length > 0) {
-      await actor.update(updateData, { render: true, isRecalculatingCombatStats: true });
+      await actor.update(updateData, { render: false, isRecalculatingCombatStats: true });
     }
   }
 });

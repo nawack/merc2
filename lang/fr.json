@@ -173,15 +173,15 @@
         },
         "rounds": {
           "label": "Round {round}",
-          "notStarted": "Round -",
-          "previous": "Round préc.",
-          "next": "Round suiv."
+          "notStarted": "Round",
+          "previous": "Précédent",
+          "next": "Suivant"
         },
         "turns": {
           "label": "Tour {turn}/{total}",
-          "notStarted": "Tour -",
-          "previous": "Tour préc.",
-          "next": "Tour suiv."
+          "notStarted": "Tour",
+          "previous": "Précédent",
+          "next": "Suivant"
         }
       },
       "units": {

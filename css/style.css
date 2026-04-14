@@ -1432,7 +1432,7 @@
 
 /* Items tab — scrollable inventory (cap height, scroll as a whole) */
 .tab-content[data-tab="items"] {
-  max-height: min(620px, calc(100vh - 260px));
+  max-height: min(600px, calc(100vh - 260px));
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
@@ -3537,7 +3537,7 @@
 
 /* Cargo tab — scrollable (same pattern as items tab on character sheet) */
 .tab-content[data-tab="cargo"] {
-  max-height: min(620px, calc(100vh - 260px));
+  max-height: min(600px, calc(100vh - 260px));
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;

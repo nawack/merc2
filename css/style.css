@@ -1430,6 +1430,29 @@
   transform: none;
 }
 
+/* Items tab — scrollable inventory (cap height, scroll as a whole) */
+.tab-content[data-tab="items"] {
+  max-height: min(620px, calc(100vh - 260px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ts-border) transparent;
+  padding-right: 4px;
+}
+
+.tab-content[data-tab="items"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tab-content[data-tab="items"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tab-content[data-tab="items"]::-webkit-scrollbar-thumb {
+  background-color: var(--ts-border);
+  border-radius: 3px;
+}
+
 /* Items & Weapons Sections */
 .items-section,
 .weapons-section {
@@ -3511,6 +3534,29 @@
 /* ==========================================
    CARGO TAB (vehicle sheet)
    ========================================== */
+
+/* Cargo tab — scrollable (same pattern as items tab on character sheet) */
+.tab-content[data-tab="cargo"] {
+  max-height: min(620px, calc(100vh - 260px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ts-border) transparent;
+  padding-right: 4px;
+}
+
+.tab-content[data-tab="cargo"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tab-content[data-tab="cargo"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tab-content[data-tab="cargo"]::-webkit-scrollbar-thumb {
+  background-color: var(--ts-border);
+  border-radius: 3px;
+}
 
 .cargo-section {
   padding: 8px;

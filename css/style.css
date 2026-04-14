@@ -1491,9 +1491,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 175px;
+  /* max-height: 175px;
   overflow-y: auto;
-  scrollbar-width: thin;
+  scrollbar-width: thin; */
 }
 
 .item-card {
@@ -1506,7 +1506,7 @@
   border: 1px solid var(--ts-bg-dark);
   font-size: 11px;
   transition: background-color 0.2s;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 
 .item-card:hover {
@@ -1715,7 +1715,7 @@
 }
 
 .item-create {
-  width: 170px;
+  width: 150px;
   padding: 4px 8px;
   font-size: 11px;
   cursor: pointer;
@@ -3080,12 +3080,12 @@
 }
 
 /* Weapon card on character sheet drop highlight */
-.item-card.drop-highlight {
+/* .item-card.drop-highlight {
   outline: 2px dashed #4a90d9;
   outline-offset: -2px;
   background-color: #e8f0fe;
   transition: background-color 0.15s, outline 0.15s;
-}
+} */
 
 /* ==========================================
    VEHICLE SHEET
@@ -3599,7 +3599,7 @@
 .storage-card {
   background: var(--ts-section);
   border: 1px solid var(--ts-bg-dark);
-  border-radius: 6px;
+  border-radius: 10px;
   margin-bottom: 6px;
   overflow: hidden;
 }

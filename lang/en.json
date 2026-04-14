@@ -425,7 +425,8 @@
           "noActorHint": "Add this storage to a character or vehicle to drop items inside it.",
           "removeFromStorage": "Remove from storage",
           "deleteItem": "Delete item",
-          "overCapacity": "Weight capacity exceeded!"
+          "overCapacity": "Weight capacity exceeded!",
+          "dropHintItems": "Drag an item here"
         }
       },
       "health": {

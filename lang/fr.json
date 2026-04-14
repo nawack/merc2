@@ -425,7 +425,8 @@
           "noActorHint": "Ajoutez ce stockage à un personnage ou véhicule pour pouvoir y déposer des items.",
           "removeFromStorage": "Retirer du stockage",
           "deleteItem": "Supprimer l'item",
-          "overCapacity": "Capacité en poids dépassée !"
+          "overCapacity": "Capacité en poids dépassée !",
+          "dropHintItems": "Glissez un item ici"
         }
       },
       "health": {

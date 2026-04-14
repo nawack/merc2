@@ -282,7 +282,8 @@
       "capacityKg": 0,
       "description": "",
       "parentStorageId": "",
-      "isCargo": false
+      "isCargo": false,
+      "equipped": false
     }
   }
 }

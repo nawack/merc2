@@ -797,9 +797,12 @@
       <!-- Weapons -->
       <div class="items-section">
         <h3><div class="items-header"><span>{{localize "MERC.UI.items.weapons"}}</span><button type="button" class="item-create btn" data-type="weapon">+ {{localize "MERC.UI.items.addWeapon"}}</button></div></h3>
-        <div class="items-list">
+        <div class="items-list" data-accepts="weapon">
+          {{#unless (filterItems actor.items "weapon")}}
+          <p class="storage-drop-hint">{{localize "MERC.UI.items.storageSheet.dropHintItems"}}</p>
+          {{/unless}}
           {{#each (filterItems actor.items "weapon") as |item|}}
-          <div class="item-card item" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}" draggable="true">
             <div class="item-info">
               <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</div>
               <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
@@ -817,9 +820,12 @@
       <!-- Armor -->
       <div class="items-section">
         <h3><div class="items-header"><span>{{localize "MERC.UI.items.armor"}}</span><button type="button" class="item-create btn" data-type="armor">+ {{localize "MERC.UI.items.addArmor"}}</button></div></h3>
-        <div class="items-list">
+        <div class="items-list" data-accepts="armor">
+          {{#unless (filterItems actor.items "armor")}}
+          <p class="storage-drop-hint">{{localize "MERC.UI.items.storageSheet.dropHintItems"}}</p>
+          {{/unless}}
           {{#each (filterItems actor.items "armor") as |item|}}
-          <div class="item-card item" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}" draggable="true">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
               <div class="item-damage-skill">{{localize "MERC.UI.items.armorClassShort"}} {{item.system.armorClass}}</div>
@@ -837,9 +843,12 @@
       <!-- Equipment & Features -->
       <div class="items-section">
         <h3><div class="items-header"><span>{{localize "MERC.UI.items.equipment"}}</span> & <span>{{localize "MERC.UI.items.features"}}</span><button type="button" class="item-create btn" data-type="equipment">+ {{localize "MERC.UI.items.addEquipment"}}</button><button type="button" class="item-create btn" data-type="feature">+ {{localize "MERC.UI.items.addFeature"}}</button></div></h3>
-        <div class="items-list">
+        <div class="items-list" data-accepts="equipment,feature">
+          {{#unless (or (filterItems actor.items "equipment") freeFeatures.length)}}
+          <p class="storage-drop-hint">{{localize "MERC.UI.items.storageSheet.dropHintItems"}}</p>
+          {{/unless}}
           {{#each (filterItems actor.items "equipment") as |item|}}
-          <div class="item-card item" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}" draggable="true">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
             </div>
@@ -851,7 +860,7 @@
           </div>
           {{/each}}
           {{#each freeFeatures as |item|}}
-          <div class="item-card item" data-item-id="{{item._id}}">
+          <div class="item-card item" data-item-id="{{item._id}}" draggable="true">
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
               {{#if item.system.featureType}}<div class="item-damage-skill">{{item.system.featureType}}</div>{{/if}}
@@ -860,6 +869,57 @@
               <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
               <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- Storage -->
+      <div class="items-section">
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.storage"}}</span><button type="button" class="item-create btn" data-type="storage">+ {{localize "MERC.UI.items.addStorage"}}</button></div></h3>
+        <div class="items-list" data-accepts="storage">
+          {{#unless characterStorages.length}}
+          <p class="storage-drop-hint">{{localize "MERC.UI.items.storageSheet.dropHintItems"}}</p>
+          {{/unless}}
+          {{#each characterStorages as |stor|}}
+          <div class="storage-card item" data-item-id="{{stor._id}}">
+            <div class="storage-card-header" draggable="true" data-item-id="{{stor._id}}">
+              <img class="cargo-item-icon" src="{{stor.img}}" alt="{{stor.name}}">
+              <span class="storage-card-name">{{stor.name}}</span>
+              <span class="storage-weight-info {{#if stor.isOverCapacity}}over-capacity{{/if}}">
+                {{stor.usedWeight}} / {{stor.system.capacityKg}} kg
+              </span>
+              <div class="item-controls">
+                <button type="button" class="item-equip-toggle {{#if stor.system.equipped}}is-equipped{{/if}}" data-item-id="{{stor._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
+                <button type="button" class="storage-toggle-btn" data-storage-id="{{stor._id}}">▸</button>
+                <button type="button" class="item-edit">✎</button>
+                <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="storage-contents" data-storage-id="{{stor._id}}">
+              <div class="storage-inner-drop" data-storage-id="{{stor._id}}">
+                {{#if stor.contents.length}}
+                <div class="items-list">
+                  {{#each stor.contents as |ci|}}
+                  <div class="item-card item" data-item-id="{{ci._id}}" draggable="true">
+                    <img class="cargo-item-icon" src="{{ci.img}}" alt="{{ci.name}}">
+                    <div class="item-info">
+                      <div class="item-name">{{ci.name}}</div>
+                      <div class="item-sub">{{ci.system.weightKg}} kg</div>
+                    </div>
+                    <div class="item-controls">
+                      <button type="button" class="storage-item-remove-btn" data-item-id="{{ci._id}}" title="{{localize "MERC.UI.items.storageSheet.removeFromStorage"}}">⤴</button>
+                      <button type="button" class="item-edit">✎</button>
+                      <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                  {{/each}}
+                </div>
+                {{else}}
+                <p class="storage-drop-hint">{{localize "MERC.UI.items.storageSheet.dropHint"}}</p>
+                {{/if}}
+              </div>
             </div>
           </div>
           {{/each}}

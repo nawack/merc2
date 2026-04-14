@@ -6,6 +6,11 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 ## [1.2.1] - 2026-04-14
 
 ### Added
+- 🎒 **Stockage sur la fiche personnage** : Les items de type `storage` peuvent désormais être ajoutés à un personnage depuis l'onglet Équipements. Affichage expandable (▸/▾), poids utilisé / capacité, zone de drop pour ajouter des items directement dans le conteneur. Bouton équipé/non-équipé pour inclure ou exclure le poids total du conteneur (poids propre + contenu) dans le calcul de l'encombrement.
+- 🔒 **Isolation des items dans un stockage** : Un item lié à un stockage (`parentStorageId` renseigné) n'apparaît plus dans les listes générales du personnage (armes, armures, équipement, accessoires, onglet Combat) — uniquement visible à l'intérieur de son conteneur.
+- ⚖️ **Poids des stockages équipés** : Le calcul d'encombrement du personnage intègre le `computeStorageTotalWeight` (poids propre + tout le contenu) pour chaque stockage marqué équipé. Les items à l'intérieur ne sont pas comptés une seconde fois.
+
+
 - � **Fiche véhicule — Onglet Équipage** : Nouvel onglet dédié à la gestion de l'équipage. Glisser-déposer d'acteurs (personnages) sur la fiche pour les ajouter. Chaque membre peut avoir plusieurs rôles simultanés (pilote, tireur, passager).
 - 🎯 **Rôles d'équipage multiples** : Un même personnage peut être assigné à plusieurs rôles. Bouton "＋ Ajouter un rôle" par membre, suppression individuelle de chaque assignation. Migration automatique de l'ancien format mono-rôle.
 - 🛞 **Pilote** : Bouton de jet de compétence de pilotage 🛞 par assignation pilote, utilisant la compétence de pilotage définie sur le véhicule.

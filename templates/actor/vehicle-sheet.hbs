@@ -379,7 +379,7 @@
             </div>
             <div class="items-list">
               {{#each cat.items as |item|}}
-              <div class="item-card item" data-item-id="{{item._id}}">
+              <div class="item-card item" data-item-id="{{item._id}}" draggable="true">
                 <img class="cargo-item-icon" src="{{item.img}}" alt="{{item.name}}">
                 <div class="item-info">
                   <div class="item-name">{{item.name}}</div>
@@ -403,7 +403,7 @@
             </div>
             {{#each cargoStorages as |stor|}}
             <div class="storage-card item" data-item-id="{{stor._id}}">
-              <div class="storage-card-header">
+              <div class="storage-card-header" draggable="true" data-item-id="{{stor._id}}">
                 <img class="cargo-item-icon" src="{{stor.img}}" alt="{{stor.name}}">
                 <span class="storage-card-name">{{stor.name}}</span>
                 <span class="storage-weight-info {{#if stor.isOverCapacity}}over-capacity{{/if}}">
@@ -420,7 +420,7 @@
                   {{#if stor.contents.length}}
                   <div class="items-list">
                     {{#each stor.contents as |ci|}}
-                    <div class="item-card item" data-item-id="{{ci._id}}">
+                    <div class="item-card item" data-item-id="{{ci._id}}" draggable="true">
                       <img class="cargo-item-icon" src="{{ci.img}}" alt="{{ci.name}}">
                       <div class="item-info">
                         <div class="item-name">{{ci.name}}</div>

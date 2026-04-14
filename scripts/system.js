@@ -1053,6 +1053,11 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     }
   };
 
+  constructor(...args) {
+    super(...args);
+    this._expandedStorages = new Set();
+  }
+
   // Debounced render: coalesces rapid successive render() calls into one,
   // scheduled after the current call stack clears (50ms delay).
   // Replaces direct this.render() calls throughout the sheet listeners.
@@ -1489,10 +1494,25 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
     // Compute per-weapon ballistics for the combat card display
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
 
-    // Free features: feature items NOT linked to any weapon (parentWeaponId empty or absent)
+    // Free features: feature items NOT linked to any weapon or storage (parentWeaponId and parentStorageId empty or absent)
     data.freeFeatures = actorDoc.items
-      .filter(i => i.type === "feature" && !i.system?.parentWeaponId)
+      .filter(i => i.type === "feature" && !i.system?.parentWeaponId && !i.system?.parentStorageId)
       .map(i => i.toObject());
+
+    // Storage items on character (not vehicle cargo)
+    data.characterStorages = Array.from(actorDoc.items)
+      .filter(i => i.type === "storage" && !i.system?.parentStorageId)
+      .map(s => {
+        const sObj = s.toObject();
+        sObj._id = s.id;
+        const contents = Array.from(actorDoc.items)
+          .filter(i => i.system?.parentStorageId === s.id)
+          .map(c => ({ ...(c.toObject()), _id: c.id }));
+        const totalWeight = computeStorageTotalWeight(s, actorDoc.items);
+        const usedWeight = Math.round((totalWeight - (s.system?.weightKg ?? 0)) * 1000) / 1000;
+        const isOverCapacity = (s.system?.capacityKg ?? 0) > 0 && usedWeight > s.system.capacityKg;
+        return { ...sObj, contents, totalWeight, usedWeight, isOverCapacity };
+      });
 
     data.isLimited = actorDoc.limited ?? false;
 
@@ -2527,11 +2547,20 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
         this.actor.items.forEach(item => {
           if (item.type === "feature") {
-            // Only count free features (not linked to a weapon) when equipped
-            if (item.system?.parentWeaponId || !item.system?.equipped) return;
+            // Only count free features (not linked to a weapon or storage) when equipped
+            if (item.system?.parentWeaponId || item.system?.parentStorageId || !item.system?.equipped) return;
+          } else if (item.type === "storage") {
+            // Count storage total weight (own weight + contents) only when equipped and not inside another storage
+            if (!item.system?.equipped || item.system?.parentStorageId) return;
+            const storageTotalWeight = computeStorageTotalWeight(item, this.actor.items);
+            if (!Number.isNaN(storageTotalWeight)) totalWeight += storageTotalWeight;
+            return;
           } else if (![ "weapon", "armor", "equipment" ].includes(item.type)) {
             return;
           } else if (!item.system?.equipped) {
+            return;
+          } else if (item.system?.parentStorageId) {
+            // Item inside a storage — already counted via the storage's totalWeight
             return;
           }
           let weight = Number(item.system?.weightKg ?? 0);
@@ -2898,6 +2927,163 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
         });
       });
     }
+
+    // Storage toggle buttons — restore expanded state, persist on click
+    html.querySelectorAll(".storage-toggle-btn").forEach(btn => {
+      const sid = btn.dataset.storageId;
+      const contents = html.querySelector(`.storage-contents[data-storage-id="${sid}"]`);
+      if (contents && this._expandedStorages.has(sid)) {
+        contents.classList.add("storage-expanded");
+        btn.textContent = "▾";
+      }
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const el = html.querySelector(`.storage-contents[data-storage-id="${sid}"]`);
+        if (el) {
+          const expanded = el.classList.toggle("storage-expanded");
+          btn.textContent = expanded ? "▾" : "▸";
+          if (expanded) this._expandedStorages.add(sid);
+          else this._expandedStorages.delete(sid);
+        }
+      });
+    });
+
+    // Storage inner-drop zones — accept items dragged in
+    html.querySelectorAll(".storage-inner-drop").forEach(dropZone => {
+      const storageId = dropZone.dataset.storageId;
+      dropZone.addEventListener("dragover", e => {
+        e.preventDefault(); e.stopPropagation();
+        dropZone.classList.add("cargo-drop-active");
+      });
+      dropZone.addEventListener("dragleave", e => {
+        if (!dropZone.contains(e.relatedTarget)) dropZone.classList.remove("cargo-drop-active");
+      });
+      dropZone.addEventListener("drop", async e => {
+        e.preventDefault(); e.stopPropagation();
+        dropZone.classList.remove("cargo-drop-active");
+        let dropData;
+        try { dropData = JSON.parse(e.dataTransfer.getData("text/plain")); } catch { return; }
+        if (dropData.type !== "Item") return;
+        const droppedItem = await fromUuid(dropData.uuid);
+        if (!droppedItem) return;
+        const ALLOWED = ["weapon", "ammo", "armor", "equipment", "feature", "storage"];
+        if (!ALLOWED.includes(droppedItem.type)) return;
+        if (droppedItem.id === storageId) return;
+        const storage = this.actor.items.get(storageId);
+        if (!storage) return;
+        const existingItem = this.actor.items.get(droppedItem.id);
+        if (existingItem) {
+          const addedWt = existingItem.system?.weightKg ?? 0;
+          if (!_checkStorageCapacity(storage, this.actor.items, addedWt, existingItem.id)) {
+            ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+            return;
+          }
+          await existingItem.update({ "system.parentStorageId": storageId });
+        } else {
+          const itemData = droppedItem.toObject();
+          const addedWt = itemData.system?.weightKg ?? 0;
+          if (!_checkStorageCapacity(storage, this.actor.items, addedWt, null)) {
+            ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+            return;
+          }
+          itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { parentStorageId: storageId });
+          await Item.implementation.create(itemData, { parent: this.actor });
+          // Delete from source actor (move semantics)
+          if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+            await droppedItem.delete();
+          }
+        }
+        this._expandedStorages.add(storageId);
+        this.render();
+      });
+    });
+
+    // Remove item from character storage (unlink, keep on actor)
+    html.querySelectorAll(".storage-item-remove-btn").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault(); e.stopPropagation();
+        const itemId = btn.dataset.itemId;
+        if (!itemId) return;
+        const item = this.actor.items.get(itemId);
+        if (item) await item.update({ "system.parentStorageId": "" });
+      });
+    });
+
+    // Dragstart on inventory item cards and storage card headers
+    html.querySelectorAll(".item-card[data-item-id][draggable], .storage-card-header[data-item-id][draggable]").forEach(card => {
+      card.addEventListener("dragstart", e => {
+        const itemId = card.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        if (!item) { e.preventDefault(); return; }
+        e.stopPropagation();
+        e.dataTransfer.setData("text/plain", JSON.stringify({
+          type: "Item",
+          uuid: item.uuid
+        }));
+      });
+    });
+
+    // Drop on regular items-list sections — full drop handler (all sources + type filtering)
+    html.querySelectorAll(".items-section .items-list[data-accepts]").forEach(list => {
+      const accepts = (list.dataset.accepts ?? "").split(",").map(s => s.trim()).filter(Boolean);
+      list.addEventListener("dragover", e => {
+        e.preventDefault();
+        list.classList.add("cargo-drop-active");
+      });
+      list.addEventListener("dragleave", e => {
+        if (!list.contains(e.relatedTarget)) list.classList.remove("cargo-drop-active");
+      });
+      list.addEventListener("drop", async e => {
+        e.preventDefault(); e.stopPropagation();
+        list.classList.remove("cargo-drop-active");
+        let dropData;
+        try { dropData = JSON.parse(e.dataTransfer.getData("text/plain")); } catch { return; }
+        if (dropData.type !== "Item") return;
+        const droppedItem = await fromUuid(dropData.uuid);
+        if (!droppedItem) return;
+        // Type gate
+        if (accepts.length && !accepts.includes(droppedItem.type)) return;
+        const existingItem = this.actor.items.get(droppedItem.id);
+        if (existingItem) {
+          // Own-actor item: remove from storage if needed, otherwise no-op
+          if (existingItem.system?.parentStorageId) {
+            await existingItem.update({ "system.parentStorageId": "" });
+          }
+        } else {
+          // External item (other actor, compendium, world) — create a copy
+          const itemData = droppedItem.toObject();
+          // Clear linkage flags so it lands as a free item
+          foundry.utils.mergeObject(itemData, {
+            "system.parentStorageId": "",
+            "system.parentWeaponId": "",
+            "system.isCargo": false
+          }, { overwrite: true });
+          const createdItem = await Item.implementation.create(itemData, { parent: this.actor });
+          // If a storage: also copy all actor-embedded contents
+          if (droppedItem.type === "storage" && createdItem && droppedItem.parent) {
+            const contents = droppedItem.parent.items.filter(
+              i => i.system?.parentStorageId === droppedItem.id
+            );
+            for (const ci of contents) {
+              const ciData = ci.toObject();
+              foundry.utils.mergeObject(ciData, {
+                "system.parentStorageId": createdItem.id,
+                "system.isCargo": false
+              }, { overwrite: true });
+              await Item.implementation.create(ciData, { parent: this.actor });
+            }
+          }
+          // Delete from source actor (move semantics)
+          if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+            if (droppedItem.type === "storage") {
+              const srcContents = droppedItem.parent.items.filter(i => i.system?.parentStorageId === droppedItem.id);
+              for (const ci of srcContents) await ci.delete();
+            }
+            await droppedItem.delete();
+          }
+        }
+      });
+    });
   }
 
   /**
@@ -4762,6 +4948,28 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
             });
             await Item.implementation.create(wData, { parent: this.actor });
           }
+          // Also copy actor-embedded contents (from source actor)
+          if (droppedItem.parent) {
+            const actorContents = droppedItem.parent.items.filter(
+              i => i.system?.parentStorageId === droppedItem.id
+            );
+            for (const actorItem of actorContents) {
+              const aData = actorItem.toObject();
+              foundry.utils.mergeObject(aData, {
+                "system.parentStorageId": createdItem.id,
+                "system.isCargo": true
+              }, { overwrite: true });
+              await Item.implementation.create(aData, { parent: this.actor });
+            }
+          }
+        }
+        // Delete from source actor (move semantics)
+        if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+          if (droppedItem.type === "storage") {
+            const srcContents = droppedItem.parent.items.filter(i => i.system?.parentStorageId === droppedItem.id);
+            for (const ci of srcContents) await ci.delete();
+          }
+          await droppedItem.delete();
         }
       });
     }
@@ -4809,6 +5017,10 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
           }
           itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { parentStorageId: storageId, isCargo: true });
           await Item.implementation.create(itemData, { parent: this.actor });
+          // Delete from source actor (move semantics)
+          if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+            await droppedItem.delete();
+          }
         }
         // Keep the storage expanded after re-render
         this._expandedStorages.add(storageId);
@@ -4845,6 +5057,44 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
         if (!itemId) return;
         const item = this.actor.items.get(itemId);
         if (item) await item.update({ "system.parentStorageId": "" });
+      });
+    });
+
+    // Dragstart on cargo item cards and storage card headers
+    html.querySelectorAll(".item-card[data-item-id][draggable], .storage-card-header[data-item-id][draggable]").forEach(card => {
+      card.addEventListener("dragstart", e => {
+        const itemId = card.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        if (!item) { e.preventDefault(); return; }
+        e.stopPropagation();
+        e.dataTransfer.setData("text/plain", JSON.stringify({
+          type: "Item",
+          uuid: item.uuid
+        }));
+      });
+    });
+
+    // Drop on regular cargo items-list — removes item from storage when dragged out
+    html.querySelectorAll(".cargo-category .items-list").forEach(list => {
+      if (list.closest(".storage-inner-drop")) return;
+      list.addEventListener("dragover", e => {
+        e.preventDefault();
+        list.classList.add("cargo-drop-active");
+      });
+      list.addEventListener("dragleave", e => {
+        if (!list.contains(e.relatedTarget)) list.classList.remove("cargo-drop-active");
+      });
+      list.addEventListener("drop", async e => {
+        e.preventDefault(); e.stopPropagation();
+        list.classList.remove("cargo-drop-active");
+        let dropData;
+        try { dropData = JSON.parse(e.dataTransfer.getData("text/plain")); } catch { return; }
+        if (dropData.type !== "Item") return;
+        const droppedItem = await fromUuid(dropData.uuid);
+        if (!droppedItem) return;
+        const existingItem = this.actor.items.get(droppedItem.id);
+        if (!existingItem || !existingItem.system?.parentStorageId) return;
+        await existingItem.update({ "system.parentStorageId": "" });
       });
     });
 
@@ -5445,11 +5695,11 @@ Hooks.once("init", () => {
   // Register Handlebars helpers
   Handlebars.registerHelper("filterItems", function(items, type) {
     if (!items) return [];
-    return items.filter(item => item.type === type);
+    return items.filter(item => item.type === type && !item.system?.parentStorageId);
   });
   Handlebars.registerHelper("filterFreeFeatures", function(items) {
     if (!items) return [];
-    return items.filter(item => item.type === "feature" && !item.system?.parentWeaponId);
+    return items.filter(item => item.type === "feature" && !item.system?.parentWeaponId && !item.system?.parentStorageId);
   });
   Handlebars.registerHelper("gt", function(a, b) {
     return a > b;

@@ -7,6 +7,7 @@
 #   packs/armors/     – armures (Item type: armor)
 #   packs/equipments/ – équipements (Item type: equipment)
 #   packs/features/   – accessoires (Item type: feature)
+#   packs/storages/   – stockage (Item type: storage)
 #
 # Usage : .\build-compendium.ps1
 #         .\build-compendium.ps1 -CsvDir "C:\mon\dossier"
@@ -59,7 +60,7 @@ function Build-FolderMap([string[]]$rawPaths) {
   $paths = $rawPaths | Where-Object { $_ } | Sort-Object -Unique
 
   foreach ($rawPath in $paths) {
-    $parts = ($rawPath -split '\\') | Where-Object { $_ -ne '' }
+    $parts = @(($rawPath -split '\\') | Where-Object { $_ -ne '' })
     if ($parts.Count -lt 1) { continue }
 
     for ($i = 0; $i -lt $parts.Count; $i++) {
@@ -643,6 +644,67 @@ foreach ($line in $featureDataLines) {
 Write-Host "  OK $($featureItems.Count) accessoires, $($featureFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
+# Étape 7.5 – Parsing du CSV Storage
+# =============================================================================
+Write-Host "> Lecture du stockage..." -ForegroundColor Cyan
+$stcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Storage.csv") -Delimiter ";" -Encoding UTF8
+$stcols = $stcsv[0].PSObject.Properties.Name
+# Column indices (0-based):
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Capacite_L  6=Capacite_Kg  7=Description
+
+$allSTFolderPaths = $stcsv | ForEach-Object { ([string]$_.($stcols[0])).Trim() } | Where-Object { $_ }
+$storageFolderMap = Build-FolderMap $allSTFolderPaths
+
+$storageItems = [System.Collections.Generic.List[hashtable]]::new()
+$sort = 0
+foreach ($row in $stcsv) {
+  $name = ([string]$row.($stcols[1])).Trim()
+  if (-not $name) { continue }
+
+  $folderPath  = ([string]$row.($stcols[0])).Trim()
+  $rarity      = if (([string]$row.($stcols[2])).Trim()) { ([string]$row.($stcols[2])).Trim() } else { "common" }
+  $price       = TryParseDouble $row.($stcols[3])
+  $weightKg    = TryParseDouble $row.($stcols[4])
+  $capacityL   = TryParseDouble $row.($stcols[5])
+  $capacityKg  = TryParseDouble $row.($stcols[6])
+  $description = ([string]$row.($stcols[7])).Trim()
+
+  $normFolderKey = ($folderPath -split '\\' | ForEach-Object { $_.ToLower() }) -join '\'
+  $itemFolderId  = if ($storageFolderMap.ContainsKey($normFolderKey)) { $storageFolderMap[$normFolderKey]['_id'] } else { $null }
+  $sort++
+
+  $storageItems.Add([ordered]@{
+    "_id"    = New-FoundryId
+    "name"   = $name
+    "type"   = "storage"
+    "img"    = "systems/merc/assets/items/equipment/equipment.png"
+    "system" = [ordered]@{
+      "rarity"          = $rarity
+      "price"           = $price
+      "weightKg"        = $weightKg
+      "capacityL"       = $capacityL
+      "capacityKg"      = $capacityKg
+      "description"     = $description
+      "parentStorageId" = ""
+      "isCargo"         = $false
+    }
+    "effects" = @()
+    "folder"  = $itemFolderId
+    "sort"    = $sort
+    "flags"   = [ordered]@{}
+    "_stats"  = [ordered]@{
+      "systemId"       = "merc"
+      "systemVersion"  = $SystemVersion
+      "coreVersion"    = "13.351"
+      "createdTime"    = $null
+      "modifiedTime"   = $null
+      "lastModifiedBy" = $null
+    }
+  })
+}
+Write-Host "  OK $($storageItems.Count) stockages, $($storageFolderMap.Count) dossiers" -ForegroundColor Green
+
+# =============================================================================
 # Étape 8 – Sérialisation JSON
 # =============================================================================
 $weaponsJsonPath   = Join-Path $ToolsDir "_weapons.json"
@@ -650,6 +712,7 @@ $ammosJsonPath     = Join-Path $ToolsDir "_ammos.json"
 $armorsJsonPath    = Join-Path $ToolsDir "_armors.json"
 $equipmentJsonPath = Join-Path $ToolsDir "_equipment.json"
 $featuresJsonPath  = Join-Path $ToolsDir "_features.json"
+$storageJsonPath   = Join-Path $ToolsDir "_storages.json"
 
 # PowerShell 5 : Set-Content -Encoding UTF8 ajoute un BOM ; JSON.parse() échoue.
 # On utilise System.IO.File::WriteAllText avec UTF8 sans BOM.
@@ -661,11 +724,13 @@ $ammoExport      = [ordered]@{ 'folders' = @($ammoFolderMap.Values);      'items
 $armorExport     = [ordered]@{ 'folders' = @($armorFolderMap.Values);     'items' = @($armorItems)     }
 $equipmentExport = [ordered]@{ 'folders' = @($equipmentFolderMap.Values); 'items' = @($equipmentItems) }
 $featureExport   = [ordered]@{ 'folders' = @($featureFolderMap.Values);   'items' = @($featureItems)   }
+$storageExport   = [ordered]@{ 'folders' = @($storageFolderMap.Values);   'items' = @($storageItems)   }
 [System.IO.File]::WriteAllText($weaponsJsonPath,   ($weaponExport    | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($ammosJsonPath,     ($ammoExport      | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($armorsJsonPath,    ($armorExport     | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($equipmentJsonPath, ($equipmentExport | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($featuresJsonPath,  ($featureExport   | ConvertTo-Json -Depth 20), $utf8NoBOM)
+[System.IO.File]::WriteAllText($storageJsonPath,   ($storageExport   | ConvertTo-Json -Depth 20), $utf8NoBOM)
 
 New-Item -ItemType Directory -Path $PacksDir -Force | Out-Null
 
@@ -707,6 +772,13 @@ Push-Location $ToolsDir
 if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing features" }
 Pop-Location
 
+Write-Host "> Generation pack Stockage..." -ForegroundColor Cyan
+$storagePackDir = Join-Path $PacksDir "storages"
+Push-Location $ToolsDir
+& $NodeExe $PackerScript $storageJsonPath $storagePackDir
+if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing storages" }
+Pop-Location
+
 # =============================================================================
 # Résumé
 # =============================================================================
@@ -719,5 +791,6 @@ Write-Host "  Munitions    : $($ammoItems.Count) items, $($ammoFolderMap.Count) 
 Write-Host "  Armures      : $($armorItems.Count) items, $($armorFolderMap.Count) dossiers -> $armorPackDir"
 Write-Host "  Equipements  : $($equipmentItems.Count) items, $($equipmentFolderMap.Count) dossiers -> $equipmentPackDir"
 Write-Host "  Accessoires  : $($featureItems.Count) items, $($featureFolderMap.Count) dossiers -> $featurePackDir"
+Write-Host "  Stockage     : $($storageItems.Count) items, $($storageFolderMap.Count) dossiers -> $storagePackDir"
 Write-Host ""
 Write-Host "-> Relancez Foundry VTT pour voir les compendiums." -ForegroundColor Yellow

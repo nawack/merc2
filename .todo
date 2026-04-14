@@ -118,6 +118,13 @@ Ajouter un système de combat :
 
 Gestion des véhicules :
     ✔ créer la fiche de véhicule pour gestion token véhicule @done(26-03-11 22:54)
-    - gérer la liste des postes dans un véhicule (ex: conducteur, passager, etc)
-    - ajouter des personnages dans le véhicule
-    - assigner les personnages à des postes et associer les compétences liées à ces postes (ex: conduite pour le conducteur, etc)
+    ✔ gérer la liste des postes dans un véhicule (ex: conducteur, passager, etc) @done(26-04-14 18:18)
+    ✔ ajouter des personnages dans le véhicule @done(26-04-14 18:18)
+    ✔ assigner les personnages à des postes et associer les compétences liées à ces postes (ex: conduite pour le conducteur, etc) @done(26-04-14 18:18)
+
+Gestion des stockage (sacs à dos, malle, etc):
+    ✔ ajouter la possibilité d'ajouter des stockages dans la section d'équipement et cargaison @done(26-04-09 12:06)
+    ✔ pouvoir ajouter des items dans les stockages @done(26-04-09 12:06)
+    ✔ afficher le contenu des stockages dans la fiche @done(26-04-09 12:06)
+    ✔ gérer le poids total des stockages et son impact sur la charge totale @done(26-04-09 12:06)
+    ✔ gérer le drag and drop des items entre les stocages et les fiches @done(26-04-14 18:47)

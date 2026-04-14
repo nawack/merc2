@@ -3,6 +3,44 @@
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
 
+## [1.2.1] - 2026-04-14
+
+### Added
+
+### Changed
+
+### Added
+- 🖱️ **Drag & drop des stockages** : Les cartes de stockage (sur fiche personnage et fiche véhicule) sont désormais draggables depuis leur en-tête. Un stockage peut être déplacé vers une autre fiche personnage ou vers l'onglet Cargaison d'un véhicule — son contenu est automatiquement copié avec lui.
+- 🗑️ **Sémantique de déplacement** : Lorsqu'un item (ou stockage + contenu) est glissé depuis la fiche d'un acteur vers une autre fiche d'acteur, l'original est supprimé de la source (déplacement réel, pas une copie).
+- 📥 **Zones de drop visibles à vide** : Les trois sections de l'onglet Équipements (Armes, Armures, Équipement & Accessoires) ainsi que la section Stockages affichent désormais un indicateur « Glissez un item ici » quand elles sont vides, et acceptent les drops depuis n'importe quelle source (autre acteur, véhicule, compendium).
+- 🎒 **Stockage sur la fiche personnage** : Les items de type `storage` peuvent désormais être ajoutés à un personnage depuis l'onglet Équipements. Affichage expandable (▸/▾), poids utilisé / capacité, zone de drop pour ajouter des items directement dans le conteneur. Bouton équipé/non-équipé pour inclure ou exclure le poids total du conteneur (poids propre + contenu) dans le calcul de l'encombrement.
+- 🔒 **Isolation des items dans un stockage** : Un item lié à un stockage (`parentStorageId` renseigné) n'apparaît plus dans les listes générales du personnage (armes, armures, équipement, accessoires, onglet Combat) — uniquement visible à l'intérieur de son conteneur.
+- ⚖️ **Poids des stockages équipés** : Le calcul d'encombrement du personnage intègre le `computeStorageTotalWeight` (poids propre + tout le contenu) pour chaque stockage marqué équipé. Les items à l'intérieur ne sont pas comptés une seconde fois.
+- � **Fiche véhicule — Onglet Équipage** : Nouvel onglet dédié à la gestion de l'équipage. Glisser-déposer d'acteurs (personnages) sur la fiche pour les ajouter. Chaque membre peut avoir plusieurs rôles simultanés (pilote, tireur, passager).
+- 🎯 **Rôles d'équipage multiples** : Un même personnage peut être assigné à plusieurs rôles. Bouton "＋ Ajouter un rôle" par membre, suppression individuelle de chaque assignation. Migration automatique de l'ancien format mono-rôle.
+- 🛞 **Pilote** : Bouton de jet de compétence de pilotage 🛞 par assignation pilote, utilisant la compétence de pilotage définie sur le véhicule.
+- 🎯 **Tireur** : Sélection de l'arme assignée via un menu déroulant. Bouton jet de compétence 🎯 et bouton jet de dégâts 🎲 avec affichage de la formule calculée (balistique ou formule arme).
+- 🚗 **Fiche véhicule — Onglet Cargaison** : Nouvel onglet pour gérer les items transportés par le véhicule. Glisser-déposer d'items depuis la bibliothèque ou le compendium. Boutons de création rapide en bas de zone.
+- 🏷️ **Flag `isCargo`** : Les armes et munitions sont distinguées « armes du véhicule » (onglet Armes) vs « cargo » (`isCargo: true`) pour éviter les doublons dans les listes d'assignation tireur.
+- 📂 **Catégories de cargaison** : Les items cargo sont regroupés par type (Armes, Munitions, Armure, Équipement, Accessoires) et n'apparaissent que si la catégorie est non vide.
+- 🔧 **Compétence de pilotage sur le véhicule** : Nouveau champ `pilotingSkill` sur la fiche véhicule (onglet Détails) — liste déroulante parmi toutes les compétences de conduite/équitation.
+- �📦 **Nouveau type d'item : Stockage** : Nouveau type d'item `storage` (sac, caisse, conteneur…) avec fiche dédiée, compendium de 15 entrées et icônes par catégorie. Champs : rareté, prix, poids propre, capacité (L et kg), description, liste du contenu.
+- 📦 **Stockage standalone** : Un stockage peut être pré-rempli en mode monde (sans acteur) par glisser-déposer d'items. Les items monde sont liés via `parentStorageId`.
+- 📦 **Stockage dans la cargaison des véhicules** : Les conteneurs peuvent être ajoutés à la cargaison d'un véhicule, avec affichage expandable (▸/▾), poids utilisé / capacité, zone de drop imbriquée pour ajouter des items directement dans le conteneur.
+- 📦 **Transfert automatique du contenu** : Lorsqu'un stockage monde est déposé dans la cargaison d'un véhicule, tous ses items monde liés sont automatiquement embarqués en tant qu'items embedded avec le bon `parentStorageId`.
+
+### Fixed
+- 🐛 **Drop item compendium dans stockage standalone** : Les items de compendium ont `parent === null` comme les items monde, ce qui provoquait une tentative de mise à jour dans le compendium verrouillé. Corrigé en vérifiant aussi `item.pack` pour distinguer item monde vs compendium.
+- 🐛 **Contrôle du poids max en mode standalone** : Le contrôle de capacité du stockage n'était pas effectué pour les drops en mode standalone. Corrigé pour les deux chemins (item monde existant et item compendium / copie).
+- 🐛 **Liste du stockage cargo reste ouverte après drop** : La liste rebondissait à l'état fermé après chaque dépôt d'item car l'état expanded n'était pas persisté entre les re-renders. L'état ouvert est maintenant mémorisé dans `this._expandedStorages` (Set) et restauré à chaque `_onRender`.
+
+### Changed
+- 🎨 **Scroll onglet Équipements** : L'onglet Équipements de la fiche personnage est maintenant scrollable verticalement (`max-height: min(620px, 100vh - 260px)`, `overflow-y: auto`) — la fenêtre ne grandit plus indéfiniment avec de nombreux items.
+- 🎨 **Scroll onglet Cargaison** : L'onglet Cargaison de la fiche véhicule bénéficie du même comportement de scroll.
+- 🎨 **Fiche stockage — refonte visuelle** : Harmonisation complète avec les autres fiches d'items (fiche armure comme référence) : variables CSS du thème kraft (`--ts-page`, `--ts-section`, `--ts-border`, `--ts-text-mid`, `--ts-danger`…), suppression de tous les fallbacks hardcodés mode sombre (`#1e1e1e`, `#888`, `#ddd`), layout `flex-direction: column` homogène, section contenu en card `--ts-section`.
+- 🏷️ **Harmonisation des labels de boutons "+"** : Le préfixe `+` est désormais exclusivement dans le HBS, jamais dans les clés de localisation. Toutes les clés `addWeapon`, `addStorage`, `addAmmo`, `addArmor`, `addEquipment`, `addFeature`, `weaponSheet.addAmmo`, `weaponSheet.addFeature` ont été nettoyées dans `fr.json` et `en.json`.
+
+
 ## [1.2.0] - 2026-04-13
 
 ### Added

@@ -1,0 +1,67 @@
+<div class="{{cssClass}}" data-application-part="form">
+  <header class="storage-sheet-header">
+    <img class="storage-sheet-img" src="{{item.img}}" data-edit="img" title="{{item.name}}">
+    <div class="storage-sheet-title">
+      <input type="text" name="name" value="{{item.name}}" placeholder="{{localize "MERC.UI.items.storageSheet.namePlaceholder"}}">
+      <div class="storage-sheet-subtitle">{{localize "MERC.UI.items.storageSheet.subtitle"}}</div>
+    </div>
+  </header>
+
+  <section class="storage-sheet-body">
+
+    <div class="storage-main-grid">
+      <div class="storage-field">
+        <label>{{localize "MERC.UI.items.storageSheet.rarity"}}</label>
+        <input type="text" name="system.rarity" value="{{item.system.rarity}}">
+      </div>
+      <div class="storage-field">
+        <label>{{localize "MERC.UI.items.storageSheet.price"}}</label>
+        <input type="text" name="system.price" value="{{item.system.price}}">
+      </div>
+      <div class="storage-field">
+        <label>{{localize "MERC.UI.items.storageSheet.weightKg"}}</label>
+        <input type="number" name="system.weightKg" value="{{item.system.weightKg}}" min="0" step="0.1">
+      </div>
+      <div class="storage-field">
+        <label>{{localize "MERC.UI.items.storageSheet.capacityL"}}</label>
+        <input type="number" name="system.capacityL" value="{{item.system.capacityL}}" min="0" step="0.1">
+      </div>
+      <div class="storage-field">
+        <label>{{localize "MERC.UI.items.storageSheet.capacityKg"}}</label>
+        <input type="number" name="system.capacityKg" value="{{item.system.capacityKg}}" min="0" step="0.1">
+      </div>
+      <div class="storage-field {{#if isOverCapacity}}storage-over-capacity{{/if}}">
+        <label>{{localize "MERC.UI.items.storageSheet.usedWeight"}}</label>
+        <span class="storage-weight-display">{{usedWeight}} kg / {{item.system.capacityKg}} kg</span>
+      </div>
+      <div class="storage-field sf-span3">
+        <label>{{localize "MERC.UI.items.storageSheet.description"}}</label>
+        <textarea name="system.description" rows="4">{{item.system.description}}</textarea>
+      </div>
+    </div>
+
+    <div class="storage-contents-section">
+      <h3>{{localize "MERC.UI.items.storageSheet.contents"}}</h3>
+      <div class="storage-contents-drop">
+        {{#if containedItems.length}}
+        <div class="storage-items-list">
+          {{#each containedItems as |ci|}}
+          <div class="storage-item-row item" data-item-id="{{ci._id}}">
+            <img class="storage-item-icon" src="{{ci.img}}" alt="{{ci.name}}">
+            <span class="storage-item-name">{{ci.name}}</span>
+            <span class="storage-item-weight">{{ci.system.weightKg}} kg</span>
+            <div class="storage-item-controls">
+              <button type="button" class="storage-item-edit" title="✎">✎</button>
+              <button type="button" class="storage-item-remove" title="{{localize "MERC.UI.items.storageSheet.removeFromStorage"}}">⤴</button>
+              <button type="button" class="storage-item-delete" title="{{localize "MERC.UI.items.storageSheet.deleteItem"}}"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        <p class="storage-drop-hint">{{localize "MERC.UI.items.storageSheet.dropHint"}}</p>
+      </div>
+    </div>
+
+  </section>
+</div>

@@ -3,6 +3,32 @@
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
 
+## [1.2.1] - 2026-04-14
+
+### Added
+- � **Fiche véhicule — Onglet Équipage** : Nouvel onglet dédié à la gestion de l'équipage. Glisser-déposer d'acteurs (personnages) sur la fiche pour les ajouter. Chaque membre peut avoir plusieurs rôles simultanés (pilote, tireur, passager).
+- 🎯 **Rôles d'équipage multiples** : Un même personnage peut être assigné à plusieurs rôles. Bouton "＋ Ajouter un rôle" par membre, suppression individuelle de chaque assignation. Migration automatique de l'ancien format mono-rôle.
+- 🛞 **Pilote** : Bouton de jet de compétence de pilotage 🛞 par assignation pilote, utilisant la compétence de pilotage définie sur le véhicule.
+- 🎯 **Tireur** : Sélection de l'arme assignée via un menu déroulant. Bouton jet de compétence 🎯 et bouton jet de dégâts 🎲 avec affichage de la formule calculée (balistique ou formule arme).
+- 🚗 **Fiche véhicule — Onglet Cargaison** : Nouvel onglet pour gérer les items transportés par le véhicule. Glisser-déposer d'items depuis la bibliothèque ou le compendium. Boutons de création rapide en bas de zone.
+- 🏷️ **Flag `isCargo`** : Les armes et munitions sont distinguées « armes du véhicule » (onglet Armes) vs « cargo » (`isCargo: true`) pour éviter les doublons dans les listes d'assignation tireur.
+- 📂 **Catégories de cargaison** : Les items cargo sont regroupés par type (Armes, Munitions, Armure, Équipement, Accessoires) et n'apparaissent que si la catégorie est non vide.
+- 🔧 **Compétence de pilotage sur le véhicule** : Nouveau champ `pilotingSkill` sur la fiche véhicule (onglet Détails) — liste déroulante parmi toutes les compétences de conduite/équitation.
+- �📦 **Nouveau type d'item : Stockage** : Nouveau type d'item `storage` (sac, caisse, conteneur…) avec fiche dédiée, compendium de 15 entrées et icônes par catégorie. Champs : rareté, prix, poids propre, capacité (L et kg), description, liste du contenu.
+- 📦 **Stockage standalone** : Un stockage peut être pré-rempli en mode monde (sans acteur) par glisser-déposer d'items. Les items monde sont liés via `parentStorageId`.
+- 📦 **Stockage dans la cargaison des véhicules** : Les conteneurs peuvent être ajoutés à la cargaison d'un véhicule, avec affichage expandable (▸/▾), poids utilisé / capacité, zone de drop imbriquée pour ajouter des items directement dans le conteneur.
+- 📦 **Transfert automatique du contenu** : Lorsqu'un stockage monde est déposé dans la cargaison d'un véhicule, tous ses items monde liés sont automatiquement embarqués en tant qu'items embedded avec le bon `parentStorageId`.
+
+### Fixed
+- 🐛 **Drop item compendium dans stockage standalone** : Les items de compendium ont `parent === null` comme les items monde, ce qui provoquait une tentative de mise à jour dans le compendium verrouillé. Corrigé en vérifiant aussi `item.pack` pour distinguer item monde vs compendium.
+- 🐛 **Contrôle du poids max en mode standalone** : Le contrôle de capacité du stockage n'était pas effectué pour les drops en mode standalone. Corrigé pour les deux chemins (item monde existant et item compendium / copie).
+- 🐛 **Liste du stockage cargo reste ouverte après drop** : La liste rebondissait à l'état fermé après chaque dépôt d'item car l'état expanded n'était pas persisté entre les re-renders. L'état ouvert est maintenant mémorisé dans `this._expandedStorages` (Set) et restauré à chaque `_onRender`.
+
+### Changed
+- 🎨 **Fiche stockage — refonte visuelle** : Harmonisation complète avec les autres fiches d'items (fiche armure comme référence) : variables CSS du thème kraft (`--ts-page`, `--ts-section`, `--ts-border`, `--ts-text-mid`, `--ts-danger`…), suppression de tous les fallbacks hardcodés mode sombre (`#1e1e1e`, `#888`, `#ddd`), layout `flex-direction: column` homogène, section contenu en card `--ts-section`.
+- 🏷️ **Harmonisation des labels de boutons "+"** : Le préfixe `+` est désormais exclusivement dans le HBS, jamais dans les clés de localisation. Toutes les clés `addWeapon`, `addStorage`, `addAmmo`, `addArmor`, `addEquipment`, `addFeature`, `weaponSheet.addAmmo`, `weaponSheet.addFeature` ont été nettoyées dans `fr.json` et `en.json`.
+
+
 ## [1.2.0] - 2026-04-13
 
 ### Added

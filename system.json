@@ -45,7 +45,8 @@
       "ammo": {},
       "armor": {},
       "equipment": {},
-      "feature": {}
+      "feature": {},
+      "storage": {}
     }
   },
   "packs": [
@@ -81,6 +82,13 @@
       "name": "features",
       "label": "Accessoires",
       "path": "packs/features",
+      "type": "Item",
+      "system": "merc"
+    },
+    {
+      "name": "storages",
+      "label": "Stockage",
+      "path": "packs/storages",
       "type": "Item",
       "system": "merc"
     }

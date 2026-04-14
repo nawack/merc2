@@ -4089,6 +4089,32 @@ class MercArmorSheet extends foundry.applications.api.HandlebarsApplicationMixin
 }
 
 // ============================================================
+// ============================================================
+// computeStorageTotalWeight — calcule le poids total (récursif)
+// ============================================================
+function computeStorageTotalWeight(storageItem, allItems) {
+  const ownWeight = storageItem.system?.weightKg ?? 0;
+  const storageId = storageItem.id ?? storageItem._id;
+  const contents = Array.from(allItems || []).filter(i => i.system?.parentStorageId === storageId);
+  const contentsWeight = contents.reduce((sum, i) => {
+    if (i.type === "storage") {
+      return sum + computeStorageTotalWeight(i, allItems);
+    }
+    return sum + (i.system?.weightKg ?? 0);
+  }, 0);
+  return Math.round((ownWeight + contentsWeight) * 1000) / 1000;
+}
+
+// Vérifie si un item peut entrer dans le stockage sans dépasser la capacité
+function _checkStorageCapacity(storageItem, allItems, addedWeight, excludeItemId) {
+  const capacityKg = storageItem.system?.capacityKg ?? 0;
+  if (capacityKg <= 0) return true;
+  const alreadyUsed = Array.from(allItems || [])
+    .filter(i => i.system?.parentStorageId === (storageItem.id ?? storageItem._id) && i.id !== excludeItemId)
+    .reduce((sum, i) => sum + (i.system?.weightKg ?? 0), 0);
+  return (alreadyUsed + addedWeight) <= capacityKg;
+}
+
 // MercEquipmentSheet — Fiche d'objet Équipement
 // ============================================================
 class MercEquipmentSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
@@ -4184,6 +4210,201 @@ class MercFeatureSheet extends foundry.applications.api.HandlebarsApplicationMix
     if (!data.item) data.item = {};
     data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
     return data;
+  }
+
+  _updateFrame(options) {
+    super._updateFrame(options);
+    const itemDoc = this.document ?? this.item;
+    if (this.window?.title && itemDoc?.name) {
+      this.window.title.textContent = itemDoc.name;
+    }
+  }
+}
+
+// ============================================================
+// MercStorageSheet — Fiche d'objet Stockage
+// ============================================================
+class MercStorageSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    classes: ["merc", "sheet", "item", "storage"],
+    width: 480,
+    height: 540,
+    resizable: true,
+    parts: ["form"],
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    }
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/merc/templates/item/storage-sheet.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    const itemDoc = this.document ?? this.item;
+    if (!data.item) {
+      data.item = itemDoc?.toObject?.() ?? itemDoc ?? {};
+    }
+    const systemData = data?.item?.system ?? itemDoc?.system ?? {};
+    const defaults = {
+      rarity: "common",
+      price: 0,
+      weightKg: 0,
+      capacityL: 0,
+      capacityKg: 0,
+      description: "",
+      parentStorageId: "",
+      isCargo: false
+    };
+    data.item.system = foundry.utils.mergeObject(defaults, systemData, { inplace: false, overwrite: true });
+
+    const actor = itemDoc?.parent;
+    const storageId = itemDoc.id;
+    if (actor?.items) {
+      const allItems = actor.items;
+      const contents = Array.from(allItems).filter(i => i.system?.parentStorageId === storageId);
+      data.containedItems = contents.map(i => ({ ...(i.toObject ? i.toObject() : i), _id: i.id }));
+      data.totalWeight = computeStorageTotalWeight(itemDoc, allItems);
+      data.usedWeight = Math.round((data.totalWeight - data.item.system.weightKg) * 1000) / 1000;
+      data.isOverCapacity = (data.item.system.capacityKg ?? 0) > 0 && data.usedWeight > data.item.system.capacityKg;
+      data.hasActor = true;
+    } else {
+      // Standalone storage — look in world items
+      const worldContents = Array.from(game.items ?? []).filter(i => i.system?.parentStorageId === storageId);
+      data.containedItems = worldContents.map(i => ({ ...(i.toObject()), _id: i.id }));
+      data.totalWeight = computeStorageTotalWeight(itemDoc, Array.from(game.items ?? []));
+      data.usedWeight = Math.round((data.totalWeight - data.item.system.weightKg) * 1000) / 1000;
+      data.isOverCapacity = false;
+      data.hasActor = false;
+    }
+    return data;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;
+    if (!html) return;
+
+    const itemDoc = this.document ?? this.item;
+    const actor = itemDoc?.parent;
+
+    // Use Foundry's DragDrop helper — raw addEventListener("dragover") is intercepted by ItemSheetV2
+    const dropZone = html.querySelector(".storage-contents-drop");
+    if (dropZone) {
+      new foundry.applications.ux.DragDrop.implementation({
+        dropSelector: ".storage-contents-drop",
+        permissions: { drop: () => true },
+        callbacks: {
+          drop: this._onDropStorageItem.bind(this),
+          dragenter: (event) => event.currentTarget?.classList?.add("storage-drop-active"),
+          dragleave: (event) => event.currentTarget?.classList?.remove("storage-drop-active")
+        }
+      }).bind(html);
+    }
+
+    html.querySelectorAll(".storage-item-remove").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const itemId = btn.closest("[data-item-id]")?.dataset.itemId;
+        if (!itemId) return;
+        const target = actor ? actor.items.get(itemId) : game.items.get(itemId);
+        if (target) {
+          await target.update({ "system.parentStorageId": "" });
+          this.render();
+        }
+      });
+    });
+
+    html.querySelectorAll(".storage-item-edit").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const itemId = btn.closest("[data-item-id]")?.dataset.itemId;
+        if (!itemId) return;
+        const item = actor ? actor.items.get(itemId) : game.items.get(itemId);
+        if (item) item.sheet.render(true);
+      });
+    });
+
+    html.querySelectorAll(".storage-item-delete").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const itemId = btn.closest("[data-item-id]")?.dataset.itemId;
+        if (!itemId) return;
+        const item = actor ? actor.items.get(itemId) : game.items.get(itemId);
+        if (item) {
+          await item.delete();
+          this.render();
+        }
+      });
+    });
+  }
+
+  async _onDropStorageItem(event) {
+    event.currentTarget?.classList?.remove("storage-drop-active");
+
+    const itemDoc = this.document ?? this.item;
+    const actor = itemDoc?.parent;
+
+    const data = TextEditor.implementation.getDragEventData(event);
+    if (data?.type !== "Item") return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem) return;
+
+    const ALLOWED = ["weapon", "ammo", "armor", "equipment", "feature", "storage"];
+    if (!ALLOWED.includes(droppedItem.type)) return;
+    if (droppedItem.id === itemDoc.id) return; // prevent self-nesting
+
+    if (actor) {
+      // ── Embedded storage: work with actor items ──
+      const existingItem = actor.items.get(droppedItem.id);
+      if (existingItem) {
+        const addedWt = existingItem.system?.weightKg ?? 0;
+        if (!_checkStorageCapacity(itemDoc, actor.items, addedWt, existingItem.id)) {
+          ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+          return;
+        }
+        await existingItem.update({ "system.parentStorageId": itemDoc.id });
+      } else {
+        const itemData = droppedItem.toObject();
+        const addedWt = itemData.system?.weightKg ?? 0;
+        if (!_checkStorageCapacity(itemDoc, actor.items, addedWt, null)) {
+          ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+          return;
+        }
+        itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { parentStorageId: itemDoc.id, isCargo: true });
+        await Item.implementation.create(itemData, { parent: actor });
+      }
+    } else {
+      // ── Standalone storage: work with world-level items ──
+      const worldItems = Array.from(game.items ?? []);
+      const isWorldItem = !droppedItem.parent && !droppedItem.pack; // compendium items also have parent===null
+      if (isWorldItem && droppedItem.id) {
+        // Already a world item — check capacity (exclude itself in case it's already linked)
+        const addedWt = droppedItem.system?.weightKg ?? 0;
+        if (!_checkStorageCapacity(itemDoc, worldItems, addedWt, droppedItem.id)) {
+          ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+          return;
+        }
+        // Just link it
+        await droppedItem.update({ "system.parentStorageId": itemDoc.id });
+      } else {
+        // From compendium or from an actor — create a world-level copy
+        const itemData = droppedItem.toObject();
+        const addedWt = itemData.system?.weightKg ?? 0;
+        if (!_checkStorageCapacity(itemDoc, worldItems, addedWt, null)) {
+          ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+          return;
+        }
+        itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { parentStorageId: itemDoc.id });
+        await Item.implementation.create(itemData);
+      }
+    }
+    this.render();
   }
 
   _updateFrame(options) {
@@ -4333,6 +4554,11 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
     }
   };
 
+  constructor(...args) {
+    super(...args);
+    this._expandedStorages = new Set(); // persist expanded state across re-renders
+  }
+
   async _prepareContext(options) {
     const data = await super._prepareContext(options);
     const actorDoc = this.actor ?? this.document;
@@ -4356,12 +4582,14 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
       maintenance: "",
       nightVision: "headlights",
       nrbc: "open",
+      pilotingSkill: "drive_wheeled",
       trMov: 0,
       comMov: 0,
       fuelCap: 0,
       fuelCons: 0,
       notes: "",
-      description: ""
+      description: "",
+      crewMembers: []
     }, sys, { inplace: false, overwrite: true });
 
     // Labels for weapon skills (used in the template)
@@ -4373,8 +4601,89 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
     }
     data.weaponSkillLabels = weaponSkillLabels;
 
-    // Ballistics map for weapons tab
+    // Ballistics map for weapons tab — built FIRST so it can be used below
     data.weaponBallisticsMap = await buildWeaponBallisticsMap(actorDoc);
+
+    // Helper: extract best damage string + formula from a ballistics entry
+    const extractDamage = (wb) => {
+      if (!wb) return { str: "", formula: "" };
+      if (wb.isMeleeType) {
+        const str = [wb.weaponDamage, wb.baseDamageFormula].filter(Boolean).join("+");
+        return { str, formula: wb.weaponDamage || wb.baseDamageFormula || "" };
+      }
+      if (wb.default?.damage) return { str: wb.default.damage, formula: wb.default.damage };
+      if (wb.ammo?.[0]?.ballistics?.damage) {
+        const d = wb.ammo[0].ballistics.damage;
+        return { str: d, formula: d };
+      }
+      return { str: "", formula: "" };
+    };
+
+    // Resolve crew members for display (multi-assignment model)
+    // Migrates old single-role { role, weaponId } format automatically
+    const rawCrew = data.actor.system.crewMembers || [];
+    data.crewMembers = rawCrew.map(member => {
+      const resolvedActor = game.actors?.get(member.id);
+      let assignments = member.assignments;
+      if (!assignments) {
+        assignments = [{ type: member.role || "passenger", weaponId: member.weaponId || "" }];
+      }
+      const resolvedAssignments = assignments.map(a => {
+        if (a.type !== "gunner") return { type: a.type };
+        const wid = a.weaponId || "";
+        const { str: damage, formula: damageFormula } = extractDamage(data.weaponBallisticsMap[wid]);
+        return { type: "gunner", weaponId: wid, damage, damageFormula };
+      });
+      return {
+        id: member.id,
+        name: resolvedActor?.name || member.name || "?",
+        img: resolvedActor?.img || "icons/svg/mystery-man.svg",
+        assignments: resolvedAssignments
+      };
+    });
+
+    // Vehicle weapons list for crew gunner assignment (excludes cargo weapons)
+    const vehicleWeaponItems = (actorDoc.items || [])
+      .filter(i => i.type === "weapon" && !i.system?.isCargo);
+    data.vehicleWeaponItems = vehicleWeaponItems;
+    data.vehicleWeapons = vehicleWeaponItems
+      .map(i => ({ id: i.id, name: i.name, weaponSkill: i.system?.weaponSkill || "" }));
+
+    // Cargo categories — weapons must be tagged isCargo, other types are always cargo
+    // Items inside a storage (parentStorageId set) are excluded from top-level categories
+    const CARGO_TYPES = [
+      { type: "weapon",    labelKey: "MERC.UI.items.weapons" },
+      { type: "ammo",      labelKey: "MERC.UI.items.ammo" },
+      { type: "armor",     labelKey: "MERC.UI.items.armor" },
+      { type: "equipment", labelKey: "MERC.UI.items.equipment" },
+      { type: "feature",   labelKey: "MERC.UI.items.features" }
+    ];
+    data.cargoCategories = CARGO_TYPES.map(({ type, labelKey }) => ({
+      type,
+      label: game.i18n.localize(labelKey),
+      items: (data.actor.items || []).filter(i => {
+        if (i.type !== type) return false;
+        if (i.system?.parentStorageId) return false; // skip items inside a storage
+        if (type === "weapon" || type === "ammo") return i.system?.isCargo === true;
+        return true;
+      })
+    }));
+
+    // Storage items in cargo (top-level only, not nested in another storage)
+    data.cargoStorages = Array.from(actorDoc.items || [])
+      .filter(i => i.type === "storage" && i.system?.isCargo === true && !i.system?.parentStorageId)
+      .map(s => {
+        const sObj = s.toObject();
+        sObj._id = s.id;
+        const contents = Array.from(actorDoc.items || [])
+          .filter(i => i.system?.parentStorageId === s.id)
+          .map(c => ({ ...(c.toObject()), _id: c.id }));
+        const totalWeight = computeStorageTotalWeight(s, actorDoc.items);
+        const usedWeight = Math.round((totalWeight - (s.system?.weightKg ?? 0)) * 1000) / 1000;
+        const isOverCapacity = (s.system?.capacityKg ?? 0) > 0 && usedWeight > s.system.capacityKg;
+        return { ...sObj, contents, totalWeight, usedWeight, isOverCapacity };
+      });
+
     data.isLimited = actorDoc.limited ?? false;
 
     return data;
@@ -4408,6 +4717,135 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
         if (!card.contains(e.relatedTarget)) card.classList.remove("drop-highlight");
       });
       card.addEventListener("drop", () => card.classList.remove("drop-highlight"));
+    });
+
+    // Cargo drop zone — accept any item
+    const cargoDropZone = html.querySelector(".cargo-drop-zone");
+    if (cargoDropZone) {
+      cargoDropZone.addEventListener("dragover", e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+        cargoDropZone.classList.add("cargo-drop-active");
+      });
+      cargoDropZone.addEventListener("dragleave", e => {
+        if (!cargoDropZone.contains(e.relatedTarget)) cargoDropZone.classList.remove("cargo-drop-active");
+      });
+      cargoDropZone.addEventListener("drop", async e => {
+        e.preventDefault();
+        e.stopPropagation();
+        cargoDropZone.classList.remove("cargo-drop-active");
+        let dropData;
+        try { dropData = JSON.parse(e.dataTransfer.getData("text/plain")); } catch { return; }
+        if (dropData.type !== "Item") return;
+        const droppedItem = await fromUuid(dropData.uuid);
+        if (!droppedItem) return;
+        const CARGO_TYPES = ["weapon", "ammo", "armor", "equipment", "feature", "storage"];
+        if (!CARGO_TYPES.includes(droppedItem.type)) {
+          ui.notifications.warn(game.i18n.localize("MERC.Vehicle.cargoInvalidType"));
+          return;
+        }
+        const itemData = droppedItem.toObject();
+        if (droppedItem.type === "weapon" || droppedItem.type === "ammo" || droppedItem.type === "storage") {
+          itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { isCargo: true });
+        }
+        const createdItem = await Item.implementation.create(itemData, { parent: this.actor });
+        // If storage had world-level contents, embed them too
+        if (droppedItem.type === "storage" && createdItem) {
+          const worldContents = Array.from(game.items ?? []).filter(
+            i => i.system?.parentStorageId === droppedItem.id && !i.parent
+          );
+          for (const worldItem of worldContents) {
+            const wData = worldItem.toObject();
+            wData.system = foundry.utils.mergeObject(wData.system ?? {}, {
+              parentStorageId: createdItem.id,
+              isCargo: true
+            });
+            await Item.implementation.create(wData, { parent: this.actor });
+          }
+        }
+      });
+    }
+
+    // ── Storage cards in cargo: drop zones, toggle, remove-from-storage ──
+    html.querySelectorAll(".storage-inner-drop").forEach(dropZone => {
+      const storageId = dropZone.dataset.storageId;
+      dropZone.addEventListener("dragover", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = "copy";
+        dropZone.classList.add("cargo-drop-active");
+      });
+      dropZone.addEventListener("dragleave", e => {
+        if (!dropZone.contains(e.relatedTarget)) dropZone.classList.remove("cargo-drop-active");
+      });
+      dropZone.addEventListener("drop", async e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove("cargo-drop-active");
+        let dropData;
+        try { dropData = JSON.parse(e.dataTransfer.getData("text/plain")); } catch { return; }
+        if (dropData.type !== "Item") return;
+        const droppedItem = await fromUuid(dropData.uuid);
+        if (!droppedItem) return;
+        const ALLOWED = ["weapon", "ammo", "armor", "equipment", "feature", "storage"];
+        if (!ALLOWED.includes(droppedItem.type)) return;
+        if (droppedItem.id === storageId) return; // prevent nesting into itself
+        const storage = this.actor.items.get(storageId);
+        if (!storage) return;
+        const existingItem = this.actor.items.get(droppedItem.id);
+        if (existingItem) {
+          const addedWt = existingItem.system?.weightKg ?? 0;
+          if (!_checkStorageCapacity(storage, this.actor.items, addedWt, existingItem.id)) {
+            ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+            return;
+          }
+          await existingItem.update({ "system.parentStorageId": storageId, "system.isCargo": true });
+        } else {
+          const itemData = droppedItem.toObject();
+          const addedWt = itemData.system?.weightKg ?? 0;
+          if (!_checkStorageCapacity(storage, this.actor.items, addedWt, null)) {
+            ui.notifications.warn(game.i18n.localize("MERC.UI.items.storageSheet.overCapacity"));
+            return;
+          }
+          itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { parentStorageId: storageId, isCargo: true });
+          await Item.implementation.create(itemData, { parent: this.actor });
+        }
+        // Keep the storage expanded after re-render
+        this._expandedStorages.add(storageId);
+      });
+    });
+
+    // Storage toggle button (expand/collapse contents) — state persisted in this._expandedStorages
+    html.querySelectorAll(".storage-toggle-btn").forEach(btn => {
+      const sid = btn.dataset.storageId;
+      // Restore persisted state
+      const contents = html.querySelector(`.storage-contents[data-storage-id="${sid}"]`);
+      if (contents && this._expandedStorages.has(sid)) {
+        contents.classList.add("storage-expanded");
+        btn.textContent = "▾";
+      }
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const contents = html.querySelector(`.storage-contents[data-storage-id="${sid}"]`);
+        if (contents) {
+          const expanded = contents.classList.toggle("storage-expanded");
+          btn.textContent = expanded ? "▾" : "▸";
+          if (expanded) this._expandedStorages.add(sid);
+          else this._expandedStorages.delete(sid);
+        }
+      });
+    });
+
+    // Remove item from storage (in cargo tab)
+    html.querySelectorAll(".storage-item-remove-btn").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const itemId = btn.dataset.itemId;
+        if (!itemId) return;
+        const item = this.actor.items.get(itemId);
+        if (item) await item.update({ "system.parentStorageId": "" });
+      });
     });
 
     // ── Tab handling (same pattern as MercCharacterSheet) ──
@@ -4497,6 +4935,135 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
       });
     });
 
+    // Crew drop zone — accept Actor drops
+    const crewDropZone = html.querySelector(".crew-drop-zone");
+    if (crewDropZone) {
+      crewDropZone.addEventListener("dragover", e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+        crewDropZone.classList.add("crew-drop-active");
+      });
+      crewDropZone.addEventListener("dragleave", e => {
+        if (!crewDropZone.contains(e.relatedTarget)) {
+          crewDropZone.classList.remove("crew-drop-active");
+        }
+      });
+      crewDropZone.addEventListener("drop", async e => {
+        e.preventDefault();
+        crewDropZone.classList.remove("crew-drop-active");
+        let dropData;
+        try { dropData = JSON.parse(e.dataTransfer.getData("text/plain")); } catch { return; }
+        if (dropData.type !== "Actor") return;
+        const droppedActor = await fromUuid(dropData.uuid);
+        if (!droppedActor) return;
+        const crewMembers = foundry.utils.deepClone(this.actor.system.crewMembers || []);
+        if (crewMembers.some(m => m.id === droppedActor.id)) {
+          ui.notifications.warn(game.i18n.localize("MERC.Vehicle.crewAlreadyAdded"));
+          return;
+        }
+        crewMembers.push({ id: droppedActor.id, name: droppedActor.name, assignments: [{ type: "passenger" }] });
+        await this.actor.update({ "system.crewMembers": crewMembers });
+      });
+    }
+
+    // Crew role change (per assignment)
+    html.querySelectorAll(".crew-role-select").forEach(select => {
+      select.addEventListener("change", async e => {
+        const memberId = e.currentTarget.closest("[data-member-id]")?.dataset.memberId;
+        const idx = parseInt(e.currentTarget.closest("[data-assignment-index]")?.dataset.assignmentIndex ?? "0", 10);
+        if (!memberId) return;
+        const crewMembers = foundry.utils.deepClone(this.actor.system.crewMembers || []);
+        const member = crewMembers.find(m => m.id === memberId);
+        if (!member) return;
+        if (!member.assignments) member.assignments = [{ type: "passenger" }];
+        if (!member.assignments[idx]) return;
+        const newType = e.currentTarget.value;
+        member.assignments[idx] = { type: newType, weaponId: newType === "gunner" ? (member.assignments[idx].weaponId || "") : undefined };
+        if (member.assignments[idx].weaponId === undefined) delete member.assignments[idx].weaponId;
+        await this.actor.update({ "system.crewMembers": crewMembers });
+      });
+    });
+
+    // Crew weapon assignment (per assignment)
+    html.querySelectorAll(".crew-weapon-select").forEach(select => {
+      select.addEventListener("change", async e => {
+        const memberId = e.currentTarget.closest("[data-member-id]")?.dataset.memberId;
+        const idx = parseInt(e.currentTarget.closest("[data-assignment-index]")?.dataset.assignmentIndex ?? "0", 10);
+        if (!memberId) return;
+        const crewMembers = foundry.utils.deepClone(this.actor.system.crewMembers || []);
+        const member = crewMembers.find(m => m.id === memberId);
+        if (!member?.assignments?.[idx]) return;
+        member.assignments[idx].weaponId = e.currentTarget.value;
+        await this.actor.update({ "system.crewMembers": crewMembers });
+      });
+    });
+
+    // Crew skill roll (per assignment)
+    html.querySelectorAll(".crew-skill-roll").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const memberId = e.currentTarget.closest("[data-member-id]")?.dataset.memberId;
+        const idx = parseInt(e.currentTarget.closest("[data-assignment-index]")?.dataset.assignmentIndex ?? "0", 10);
+        if (!memberId) return;
+        await this.rollCrewAssignment(memberId, idx);
+      });
+    });
+
+    // Crew damage roll (per assignment)
+    html.querySelectorAll(".crew-damage-roll").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const memberId = e.currentTarget.closest("[data-member-id]")?.dataset.memberId;
+        const idx = parseInt(e.currentTarget.closest("[data-assignment-index]")?.dataset.assignmentIndex ?? "0", 10);
+        if (!memberId) return;
+        const crewEntry = (this.actor.system.crewMembers || []).find(m => m.id === memberId);
+        const assignment = crewEntry?.assignments?.[idx];
+        if (!assignment?.weaponId) return;
+        const weapon = this.actor.items.get(assignment.weaponId);
+        if (weapon) await this.rollWeaponDamage(weapon, e.currentTarget.dataset.rollFormula || null);
+      });
+    });
+
+    // Add assignment row
+    html.querySelectorAll(".crew-assignment-add").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const memberId = e.currentTarget.closest("[data-member-id]")?.dataset.memberId;
+        if (!memberId) return;
+        const crewMembers = foundry.utils.deepClone(this.actor.system.crewMembers || []);
+        const member = crewMembers.find(m => m.id === memberId);
+        if (!member) return;
+        if (!member.assignments) member.assignments = [];
+        member.assignments.push({ type: "passenger" });
+        await this.actor.update({ "system.crewMembers": crewMembers });
+      });
+    });
+
+    // Remove assignment row
+    html.querySelectorAll(".crew-assignment-remove").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const memberId = e.currentTarget.closest("[data-member-id]")?.dataset.memberId;
+        const idx = parseInt(e.currentTarget.closest("[data-assignment-index]")?.dataset.assignmentIndex ?? "0", 10);
+        if (!memberId) return;
+        const crewMembers = foundry.utils.deepClone(this.actor.system.crewMembers || []);
+        const member = crewMembers.find(m => m.id === memberId);
+        if (!member?.assignments) return;
+        member.assignments.splice(idx, 1);
+        await this.actor.update({ "system.crewMembers": crewMembers });
+      });
+    });
+
+    // Crew member remove
+    html.querySelectorAll(".crew-remove").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        const memberId = e.currentTarget.closest("[data-member-id]")?.dataset.memberId;
+        if (!memberId) return;
+        const crewMembers = (this.actor.system.crewMembers || []).filter(m => m.id !== memberId);
+        await this.actor.update({ "system.crewMembers": crewMembers });
+      });
+    });
+
     // Dedicated blur listeners for description and notes textareas
     for (const fieldName of ["system.description", "system.notes"]) {
       const textarea = html.querySelector(`textarea[name="${fieldName}"]`);
@@ -4568,6 +5135,60 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
       }
     }
     return result ?? null;
+  }
+
+  async rollCrewAssignment(memberId, assignmentIndex) {
+    const crewEntry = (this.actor.system.crewMembers || []).find(m => m.id === memberId);
+    if (!crewEntry) return;
+
+    // Support both old { role, weaponId } and new { assignments: [...] } format
+    let assignment;
+    if (crewEntry.assignments) {
+      assignment = crewEntry.assignments[assignmentIndex];
+    } else {
+      assignment = { type: crewEntry.role || "passenger", weaponId: crewEntry.weaponId || "" };
+    }
+    if (!assignment) return;
+
+    const crewActor = game.actors?.get(memberId);
+    if (!crewActor) {
+      ui.notifications.warn(game.i18n.localize("MERC.Vehicle.crewActorNotFound"));
+      return;
+    }
+
+    let skillKey;
+    if (assignment.type === "pilot") {
+      skillKey = this.actor.system.pilotingSkill || "drive_wheeled";
+    } else if (assignment.type === "gunner") {
+      if (!assignment.weaponId) {
+        ui.notifications.warn(game.i18n.localize("MERC.Vehicle.crewGunnerNoWeapon"));
+        return;
+      }
+      const weapon = this.actor.items.get(assignment.weaponId);
+      skillKey = weapon?.system?.weaponSkill;
+      if (!skillKey) {
+        ui.notifications.warn(game.i18n.localize("MERC.Vehicle.crewWeaponNoSkill"));
+        return;
+      }
+    } else {
+      return;
+    }
+
+    const systemData = crewActor.system || {};
+    const skillData = systemData.skills?.[skillKey];
+    if (!skillData) {
+      ui.notifications.warn(`${game.i18n.localize("MERC.Labels.skillNotFound")}: ${skillKey}`);
+      return;
+    }
+
+    const degree = computeSkillDegreeFromSystem(systemData, skillKey, skillData);
+    const bonus = Number(skillData.bonus ?? 0);
+    const totalModifier = degree + bonus;
+
+    const skillName = game.i18n.localize(CONFIG.MERC?.skills?.[skillKey]?.label) || skillKey;
+    const label = `${crewActor.name} (${this.actor.name}) — ${skillName}`;
+    const breakdown = game.i18n.format("MERC.Labels.breakdownDegree", { degree, bonus, attr: 0 });
+    await this._sendD20RollMessage(label, totalModifier, breakdown);
   }
 
   async rollVehicleWeaponSkill(item) {
@@ -4673,7 +5294,9 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
 
   async createItem(event) {
     const type = event.currentTarget.dataset.type;
-    const newItem = { name: `New ${type}`, type, system: {} };
+    const isCargo = event.currentTarget.dataset.isCargo === "true";
+    const system = isCargo ? { isCargo: true } : {};
+    const newItem = { name: `New ${type}`, type, system };
     const item = await Item.create(newItem, { parent: this.actor });
     item.sheet.render(true);
   }
@@ -4687,6 +5310,14 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
         .map(i => i.id);
       if (linkedAmmoIds.length > 0) {
         await this.actor.deleteEmbeddedDocuments("Item", linkedAmmoIds);
+      }
+    }
+    if (item?.type === "storage") {
+      const contentIds = this.actor.items
+        .filter(i => i.system?.parentStorageId === itemId)
+        .map(i => i.id);
+      if (contentIds.length > 0) {
+        await this.actor.deleteEmbeddedDocuments("Item", contentIds);
       }
     }
     await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
@@ -4854,6 +5485,7 @@ Hooks.once("init", () => {
   foundry.documents.collections.Items.registerSheet("merc", MercArmorSheet, { types: ["armor"], makeDefault: true });
   foundry.documents.collections.Items.registerSheet("merc", MercEquipmentSheet, { types: ["equipment"], makeDefault: true });
   foundry.documents.collections.Items.registerSheet("merc", MercFeatureSheet, { types: ["feature"], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet("merc", MercStorageSheet, { types: ["storage"], makeDefault: true });
 
   Hooks.on("preCreateCombat", (combat, data) => {
     data.flags = data.flags || {};
@@ -5545,6 +6177,7 @@ const getActorMigrationData = (actor) => {
       maintenance: "",
       nightVision: "headlights",
       nrbc: "open",
+      pilotingSkill: "drive_wheeled",
       trMov: 0,
       comMov: 0,
       fuelCap: 0,

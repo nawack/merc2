@@ -796,7 +796,7 @@
       
       <!-- Weapons -->
       <div class="items-section">
-        <h3><div class="items-header"><span>{{localize "MERC.UI.items.weapons"}}</span><button type="button" class="item-create btn" data-type="weapon">{{localize "MERC.UI.items.addWeapon"}}</button></div></h3>
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.weapons"}}</span><button type="button" class="item-create btn" data-type="weapon">+ {{localize "MERC.UI.items.addWeapon"}}</button></div></h3>
         <div class="items-list">
           {{#each (filterItems actor.items "weapon") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
@@ -816,7 +816,7 @@
 
       <!-- Armor -->
       <div class="items-section">
-        <h3><div class="items-header"><span>{{localize "MERC.UI.items.armor"}}</span><button type="button" class="item-create btn" data-type="armor">{{localize "MERC.UI.items.addArmor"}}</button></div></h3>
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.armor"}}</span><button type="button" class="item-create btn" data-type="armor">+ {{localize "MERC.UI.items.addArmor"}}</button></div></h3>
         <div class="items-list">
           {{#each (filterItems actor.items "armor") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
@@ -836,7 +836,7 @@
 
       <!-- Equipment & Features -->
       <div class="items-section">
-        <h3><div class="items-header"><span>{{localize "MERC.UI.items.equipment"}}</span> & <span>{{localize "MERC.UI.items.features"}}</span><button type="button" class="item-create btn" data-type="equipment">{{localize "MERC.UI.items.addEquipment"}}</button><button type="button" class="item-create btn" data-type="feature">{{localize "MERC.UI.items.addFeature"}}</button></div></h3>
+        <h3><div class="items-header"><span>{{localize "MERC.UI.items.equipment"}}</span> & <span>{{localize "MERC.UI.items.features"}}</span><button type="button" class="item-create btn" data-type="equipment">+ {{localize "MERC.UI.items.addEquipment"}}</button><button type="button" class="item-create btn" data-type="feature">+ {{localize "MERC.UI.items.addFeature"}}</button></div></h3>
         <div class="items-list">
           {{#each (filterItems actor.items "equipment") as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">

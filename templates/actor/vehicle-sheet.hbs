@@ -42,6 +42,8 @@
             {{else}}
               <a class="item active" data-tab="details">{{localize "MERC.Vehicle.tabs.details"}}</a>
               <a class="item" data-tab="weapons">{{localize "MERC.Vehicle.tabs.weapons"}}</a>
+              <a class="item" data-tab="crew">{{localize "MERC.Vehicle.tabs.crew"}}</a>
+              <a class="item" data-tab="cargo">{{localize "MERC.Vehicle.tabs.cargo"}}</a>
               <a class="item" data-tab="description">{{localize "MERC.Labels.description"}}</a>
               <a class="item" data-tab="notes">{{localize "MERC.Vehicle.tabs.notes"}}</a>
             {{/if}}
@@ -109,6 +111,19 @@
               <option value="open" {{#eq actor.system.nrbc "open"}}selected{{/eq}}>{{localize "MERC.Vehicle.nrbcTypes.open"}}</option>
               <option value="enclosed" {{#eq actor.system.nrbc "enclosed"}}selected{{/eq}}>{{localize "MERC.Vehicle.nrbcTypes.enclosed"}}</option>
               <option value="protected" {{#eq actor.system.nrbc "protected"}}selected{{/eq}}>{{localize "MERC.Vehicle.nrbcTypes.protected"}}</option>
+            </select>
+          </div>
+
+          <div class="vehicle-field-row">
+            <label>{{localize "MERC.Vehicle.pilotingSkill"}}</label>
+            <select name="system.pilotingSkill">
+              <option value="drive_wheeled" {{#eq actor.system.pilotingSkill "drive_wheeled"}}selected{{/eq}}>{{localize "MERC.Skills.drive_wheeled"}}</option>
+              <option value="drive_motorcycle" {{#eq actor.system.pilotingSkill "drive_motorcycle"}}selected{{/eq}}>{{localize "MERC.Skills.drive_motorcycle"}}</option>
+              <option value="drive_boats" {{#eq actor.system.pilotingSkill "drive_boats"}}selected{{/eq}}>{{localize "MERC.Skills.drive_boats"}}</option>
+              <option value="drive_tracked" {{#eq actor.system.pilotingSkill "drive_tracked"}}selected{{/eq}}>{{localize "MERC.Skills.drive_tracked"}}</option>
+              <option value="drive_planes" {{#eq actor.system.pilotingSkill "drive_planes"}}selected{{/eq}}>{{localize "MERC.Skills.drive_planes"}}</option>
+              <option value="drive_helicopters" {{#eq actor.system.pilotingSkill "drive_helicopters"}}selected{{/eq}}>{{localize "MERC.Skills.drive_helicopters"}}</option>
+              <option value="riding" {{#eq actor.system.pilotingSkill "riding"}}selected{{/eq}}>{{localize "MERC.Skills.riding"}}</option>
             </select>
           </div>
 
@@ -189,6 +204,7 @@
     <div class="tab-content" data-tab="weapons">
 
       <!-- Weapons Quick Access (Combat View) -->
+      <!--
       <div class="weapons-section">
         <h3>{{localize "MERC.Vehicle.weaponsEquipped"}}</h3>
         <div class="items-list">
@@ -245,17 +261,18 @@
           {{/each}}
         </div>
       </div>
+      -->
 
       <!-- Weapons Management List -->
       <div class="items-section">
         <h3>
           <div class="items-header">
             <span>{{localize "MERC.UI.items.weapons"}}</span>
-            <button type="button" class="item-create btn" data-type="weapon">{{localize "MERC.UI.items.addWeapon"}}</button>
+            <button type="button" class="item-create btn" data-type="weapon">+ {{localize "MERC.UI.items.addWeapon"}}</button>
           </div>
         </h3>
         <div class="items-list">
-          {{#each (filterItems actor.items "weapon") as |item|}}
+          {{#each vehicleWeaponItems as |item|}}
           <div class="item-card item" data-item-id="{{item._id}}">
             <div class="item-info">
               <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</div>
@@ -295,6 +312,146 @@
         </div>
       </div>
       -->
+    </div>
+
+    <!-- CREW TAB -->
+    <div class="tab-content" data-tab="crew">
+      <div class="crew-section">
+        <div class="crew-header">
+          <h3>{{localize "MERC.Vehicle.crewTitle"}}</h3>
+        </div>
+        <div class="crew-drop-zone">
+          <p class="crew-drop-hint">{{localize "MERC.Vehicle.crewDropHint"}}</p>
+          <div class="crew-list">
+            {{#each crewMembers as |member|}}
+            <div class="crew-member-card" data-member-id="{{member.id}}">
+              <img class="crew-portrait" src="{{member.img}}" alt="{{member.name}}">
+              <div class="crew-info">
+                <div class="crew-name">{{member.name}}</div>
+                {{#each member.assignments as |assignment|}}
+                <div class="crew-assignment-row" data-assignment-index="{{@index}}">
+                  <select class="crew-role-select">
+                    <option value="pilot" {{#eq assignment.type "pilot"}}selected{{/eq}}>{{localize "MERC.Vehicle.crewRoles.pilot"}}</option>
+                    <option value="gunner" {{#eq assignment.type "gunner"}}selected{{/eq}}>{{localize "MERC.Vehicle.crewRoles.gunner"}}</option>
+                    <option value="passenger" {{#eq assignment.type "passenger"}}selected{{/eq}}>{{localize "MERC.Vehicle.crewRoles.passenger"}}</option>
+                  </select>
+                  {{#eq assignment.type "gunner"}}
+                  <select class="crew-weapon-select" title="{{localize "MERC.Vehicle.crewWeaponSelect"}}">
+                    <option value="">{{localize "MERC.Vehicle.crewWeaponPlaceholder"}}</option>
+                    {{#each ../../vehicleWeapons as |weapon|}}
+                    <option value="{{weapon.id}}" {{#eq weapon.id assignment.weaponId}}selected{{/eq}}>{{weapon.name}}</option>
+                    {{/each}}
+                  </select>
+                  <button type="button" class="crew-skill-roll" title="{{localize "MERC.Vehicle.crewRollSkill"}}">🎯</button>
+                  {{#if assignment.damage}}
+                  <span class="crew-damage-value">{{assignment.damage}}</span>
+                  <button type="button" class="crew-damage-roll" data-roll-formula="{{assignment.damageFormula}}" title="{{localize "MERC.Vehicle.crewRollDamage"}}">🎲</button>
+                  {{/if}}
+                  {{/eq}}
+                  {{#eq assignment.type "pilot"}}
+                  <button type="button" class="crew-skill-roll" title="{{localize "MERC.Vehicle.crewRollSkill"}}">🛞</button>
+                  {{/eq}}
+                  <button type="button" class="crew-assignment-remove" title="{{localize "MERC.Vehicle.crewRemoveAssignment"}}">✕</button>
+                </div>
+                {{/each}}
+                <button type="button" class="crew-assignment-add" title="{{localize "MERC.Vehicle.crewAddRole"}}">+ {{localize "MERC.Vehicle.crewAddRole"}}</button>
+              </div>
+              <button type="button" class="crew-remove" title="{{localize "MERC.Vehicle.crewRemove"}}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARGO TAB -->
+    <div class="tab-content" data-tab="cargo">
+      <div class="cargo-section">
+        <div class="cargo-drop-zone">
+          <p class="cargo-drop-hint">{{localize "MERC.Vehicle.cargoDropHint"}}</p>
+          {{#each cargoCategories as |cat|}}
+          {{#if cat.items.length}}
+          <div class="cargo-category">
+            <div class="cargo-category-header">
+              <span class="cargo-category-label">{{cat.label}}</span>
+            </div>
+            <div class="items-list">
+              {{#each cat.items as |item|}}
+              <div class="item-card item" data-item-id="{{item._id}}">
+                <img class="cargo-item-icon" src="{{item.img}}" alt="{{item.name}}">
+                <div class="item-info">
+                  <div class="item-name">{{item.name}}</div>
+                  {{#if item.system.quantity}}<div class="item-sub">x{{item.system.quantity}}</div>{{/if}}
+                </div>
+                <div class="item-controls">
+                  <button type="button" class="item-edit">✎</button>
+                  <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+          {{/each}}
+
+          {{#if cargoStorages.length}}
+          <div class="cargo-category cargo-storage-category">
+            <div class="cargo-category-header">
+              <span class="cargo-category-label">{{localize "MERC.UI.items.storage"}}</span>
+            </div>
+            {{#each cargoStorages as |stor|}}
+            <div class="storage-card item" data-item-id="{{stor._id}}">
+              <div class="storage-card-header">
+                <img class="cargo-item-icon" src="{{stor.img}}" alt="{{stor.name}}">
+                <span class="storage-card-name">{{stor.name}}</span>
+                <span class="storage-weight-info {{#if stor.isOverCapacity}}over-capacity{{/if}}">
+                  {{stor.usedWeight}} / {{stor.system.capacityKg}} kg
+                </span>
+                <div class="item-controls">
+                  <button type="button" class="storage-toggle-btn" data-storage-id="{{stor._id}}">▸</button>
+                  <button type="button" class="item-edit">✎</button>
+                  <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+                </div>
+              </div>
+              <div class="storage-contents" data-storage-id="{{stor._id}}">
+                <div class="storage-inner-drop" data-storage-id="{{stor._id}}">
+                  {{#if stor.contents.length}}
+                  <div class="items-list">
+                    {{#each stor.contents as |ci|}}
+                    <div class="item-card item" data-item-id="{{ci._id}}">
+                      <img class="cargo-item-icon" src="{{ci.img}}" alt="{{ci.name}}">
+                      <div class="item-info">
+                        <div class="item-name">{{ci.name}}</div>
+                        <div class="item-sub">{{ci.system.weightKg}} kg</div>
+                      </div>
+                      <div class="item-controls">
+                        <button type="button" class="storage-item-remove-btn" data-item-id="{{ci._id}}" title="{{localize "MERC.UI.items.storageSheet.removeFromStorage"}}">⤴</button>
+                        <button type="button" class="item-edit">✎</button>
+                        <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
+                      </div>
+                    </div>
+                    {{/each}}
+                  </div>
+                  {{else}}
+                  <p class="storage-drop-hint">{{localize "MERC.UI.items.storageSheet.dropHint"}}</p>
+                  {{/if}}
+                </div>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
+
+          <div class="cargo-add-buttons">
+            {{#each cargoCategories as |cat|}}
+            <button type="button" class="item-create btn cargo-add-btn" data-type="{{cat.type}}" data-is-cargo="true">+ {{cat.label}}</button>
+            {{/each}}
+            <button type="button" class="item-create btn cargo-add-btn" data-type="storage" data-is-cargo="true">+ {{localize "MERC.UI.items.storage"}}</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- DESCRIPTION TAB -->

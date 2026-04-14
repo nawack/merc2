@@ -12,12 +12,14 @@
       "maintenance": "",
       "nightVision": "headlights",
       "nrbc": "open",
+      "pilotingSkill": "drive_wheeled",
       "trMov": 0,
       "comMov": 0,
       "fuelCap": 0,
       "fuelCons": 0,
       "notes": "",
-      "description": ""
+      "description": "",
+      "crewMembers": []
     },
     "base": {
       "biography": {
@@ -185,7 +187,9 @@
       "defaultAmmoInMag": 0,
       "defaultAmmoMagFull": 0,
       "defaultAmmoMagTotal": 0,
-      "defaultAmmoStock": 0
+      "defaultAmmoStock": 0,
+      "isCargo": false,
+      "parentStorageId": ""
     },
     "ammo": {
       "ammoType": "",
@@ -208,7 +212,9 @@
       "price": 0,
       "rarity": "common",
       "description": "",
-      "parentWeaponId": ""
+      "parentWeaponId": "",
+      "isCargo": false,
+      "parentStorageId": ""
     },
     "armor": {
       "rarity": "common",
@@ -217,6 +223,7 @@
       "year": 0,
       "equipped": false,
       "description": "",
+      "parentStorageId": "",
       "locations": {
         "pied_gch": 0,
         "pied_dr": 0,
@@ -246,7 +253,8 @@
       "weightKg": 0,
       "year": 0,
       "equipped": false,
-      "description": ""
+      "description": "",
+      "parentStorageId": ""
     },
     "feature": {
       "featureType": "",
@@ -263,6 +271,18 @@
       "weightKg": 0,
       "description": "",
       "parentWeaponId": "",
+      "equipped": false,
+      "parentStorageId": ""
+    },
+    "storage": {
+      "rarity": "common",
+      "price": 0,
+      "weightKg": 0,
+      "capacityL": 0,
+      "capacityKg": 0,
+      "description": "",
+      "parentStorageId": "",
+      "isCargo": false,
       "equipped": false
     }
   }

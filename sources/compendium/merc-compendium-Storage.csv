@@ -1,0 +1,16 @@
+Folder;Nom;Rarete;Prix;Poids(kg);Capacite_L;Capacite_Kg;Description
+Sacs;Sac à dos militaire;commun;45;1.2;35;15;Sac à dos réglementaire. Nombreuses poches et sangles.
+Sacs;Sac à dos tactique;peu commun;120;1.8;50;20;Sac MOLLE multi-poches avec porte-hydratation.
+Sacs;Sac de combat;commun;30;0.9;20;8;Petit sac de transport pour le matériel essentiel.
+Sacs;Sac banane tactique;commun;20;0.4;5;2;Ceinture avec pochette. Discret et accessible.
+Sacs;Sac de transport médical;peu commun;80;1.5;25;10;Sac rembourré avec compartiments pour matériel médical.
+Sacs;Fourre-tout;commun;15;0.6;25;10;Grand sac souple polyvalent.
+Valises\Rigides;Valise rigide standard;commun;90;2.5;40;18;Valise à coque dure avec serrure à combinaison.
+Valises\Rigides;Valise militaire robuste;peu commun;180;3.5;55;25;Valise résistante aux chocs et à l'eau.
+Valises\Malettes;Mallette technique;peu commun;70;1.8;15;6;Mallette rigide pour outils ou équipement sensible.
+Valises\Malettes;Mallette médicale;peu commun;95;2.0;20;8;Mallette compartimentée pour matériel médical d'urgence.
+Caisses;Caisse de transport standard;commun;60;4.0;60;25;Caisse plastique robuste. Emboîtable.
+Caisses;Caisse d'arme;peu commun;150;2.8;45;20;Caisse mousse intérieure pour transport d'armes longues.
+Caisses;Malle militaire;peu commun;200;7.5;120;50;Grande malle métallique réglementaire. Cadenas inclus.
+Conteneurs;Conteneur hermétique;peu commun;110;1.6;20;8;Conteneur étanche IP67. Idéal pour matériel électronique.
+Conteneurs;Conteneur frigorifique;peu commun;140;3.5;30;12;Caisse isotherme. Maintient la température 24h.

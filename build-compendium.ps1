@@ -259,8 +259,11 @@ foreach ($row in $acsv) {
     "system" = [ordered]@{
       "ammoType"          = $ammoType
       "caliber"           = $caliber
-      "quantity"          = 0
-      "maxQuantity"       = 0
+      "magCapacity"       = 0
+      "inMag"             = 0
+      "magFull"           = 0
+      "magTotal"          = 0
+      "stock"             = 0
       "mass"              = $mass
       "diameter"          = $diameter
       "coeff_trainee"     = $coeff_trainee
@@ -413,7 +416,7 @@ Write-Host "> Lecture des armures..." -ForegroundColor Cyan
 $arcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Armors.csv") -Delimiter ";" -Encoding UTF8
 $arcols = $arcsv[0].PSObject.Properties.Name
 # Column indices (0-based):
-#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description  6=Année
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Année  6=Description
 #  7=crane  8=visage  9=cou  10=poitrine_gch  11=poitrine_dr
 # 12=abdomen_gch  13=abdomen_dr  14=bas_ventre  15=bras_gch  16=bras_dr
 # 17=av_bras_gch  18=av_bras_dr  19=main_gch  20=main_dr

@@ -909,13 +909,6 @@ async function migrateItem(item, actor = null) {
       }
     }
 
-    // Remove obsolete weapon fields
-    const obsoleteWeapon = ["magazine"];
-    for (const key of obsoleteWeapon) {
-      if (item.system[key] !== undefined) {
-        updateData[`system.-=${key}`] = null;
-      }
-    }
   }
 
   // --- Ammo migration ---

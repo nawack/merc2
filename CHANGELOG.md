@@ -2,12 +2,12 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.2.2] - 2026-04-15
+
+### Fixed
+- 🐛 **Weapon compendium** : fixe pb d'année
 
 ## [1.2.1] - 2026-04-14
-
-### Added
-
-### Changed
 
 ### Added
 - 🖱️ **Drag & drop des stockages** : Les cartes de stockage (sur fiche personnage et fiche véhicule) sont désormais draggables depuis leur en-tête. Un stockage peut être déplacé vers une autre fiche personnage ou vers l'onglet Cargaison d'un véhicule — son contenu est automatiquement copié avec lui.

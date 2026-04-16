@@ -54,7 +54,7 @@ Gestion des difficultés et ajout gestion des coches :
 Gestion des dégats d'armes :
     - dispertion des munitions (en cas de réussite ou d'échet)
     - gestion des dispersions de grenades et explosifs
-    - creer une table aléatoire de localisation
+    ✔ creer une table aléatoire de localisation @done(26-04-16 14:20)
     - ajouter la possibilité suite a un jet de combats proposé dans le chat un bouton pour faire un jet de localisation
 
 Mise en place prise de notes :

@@ -23,7 +23,7 @@ Ces valeurs sont calculées en fonction de la taille, poids et attributs du pers
 - **Utilisation** : Représente les points de santé globaux du personnage
 
 #### Capacité de Charge
-- **Formule** : Force + (Constitution × 2)
+- **Formule** : (Force + Constitution) × 2
 - **Description** : Quantité totale d'équipement que le personnage peut porter
 - **Utilisation** : Gestion de l'encombrement en combat et en exploration
 
@@ -122,13 +122,13 @@ Affichage dynamique des armes du personnage avec accès rapide pour éditer chaq
 ### Table Taille (cm)
 ```
 Index:  -11  -10   -9   -8   -7   -6   -5   -4   -3   -2   -1    0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20
-Taille: 49   57   65   73   81   89   97  105  113  121  129  137  145  153  161  169  177  186  195  206  219  235  253  275  301  332  367  408  455  509  569  600
+Taille:  42   49   57   65   73   81   89   97  105  113  121  129  137  145  153  161  169  177  186  195  206  219  235  253  275  301  332  367  408  455  509  569
 ```
 
 ### Table Poids (kg)
 ```
-Index:  -11   -10   -9   -8   -7   -6   -5   -4   -3   -2   -1   0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20
-Poids:  1.6  2.5  3.7  5.3  7.0  9.0  12  15  19  24  29  34  41  48  56  64  74  85  99 116 140 172 216 277 363 485 658 904 1253 1749 2449 3000
+Index:  -11  -10   -9   -8   -7   -6   -5   -4   -3   -2   -1    0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18    19   20
+Poids:    1  1.6  2.5  3.7  5.3    7    9   12   15   19   24   29   34   41   48   56   64   74   85   99  116  140  172  216  277  363  485  658  904 1253  1749 2449
 ```
 
 ### Table Reptation (m/round)
@@ -185,19 +185,19 @@ Aucune action manuelle n'est nécessaire - le système recalcule automatiquement
 
 **Calcul :**
 
-1. Index taille 177 cm = index 15 (⚠️)
-2. Index poids 74 kg = index 15 (⚠️)
-3. Valeur attribut taille = 15 - 11 = 4
-4. Valeur attribut poids = 15 - 11 = 4
-5. Corpulence moyenne = (4 + 4) / 2 = 4 → arrondi inférieur = 4
-6. Index vitesse = 4 + 1 - 5 + 11 = 11
+1. Index taille 177 cm = index brut 16 (attribut +5)
+2. Index poids 74 kg = index brut 16 (attribut +5)
+3. Valeur attribut taille = 16 - 11 = 5
+4. Valeur attribut poids = 16 - 11 = 5
+5. Corpulence moyenne = (5 + 5) / 2 = 5 → arrondi inférieur = 5
+6. Index vitesse = 5 + 1 - 5 + 11 = 12
 
 **Résultats :**
 - Endurance = ⌊(3 + 2) / 2⌋ = 2
-- Points de Corpulence = 2 + (-2) = 0
+- Points de Corpulence = 2 + ajustementPC[16] = 2 + 0 = 2
 - Capacité de Charge = (4 + 2) × 2 = 12
-- Bonus Discrétion = 3 (table[11])
-- Bonus Dissimulation = 5 (table[11])
-- Reptation = 1.5 m/round
-- Marche = 5 m/round
-- Course = 27 m/round
+- Bonus Discrétion = discretion[corpulenceTableIdx=16] = 0
+- Bonus Dissimulation = dissimulation[corpulenceTableIdx=16] = 0
+- Reptation = 1.5 m/round (table[12])
+- Marche = 6 m/round (table[12])
+- Course = 29 m/round (table[12])

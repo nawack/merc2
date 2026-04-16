@@ -3,26 +3,31 @@
 ## Arborescence Complète
 
 ```
-FoundryVTT-MercenarySystem/
+merc/
 │
 ├── 📄 system.json                    # Manifest Foundry (Configuration du système)
 ├── 📄 template.json                  # Templates des documents (Actor, Item)
 ├── 📄 README.md                      # Documentation utilisateur principale
 ├── 📄 INSTALLATION.md                # Guide d'installation détaillé
-├── 📄 CONTRIBUTING.md                # Guide de contribution pour développeurs
 ├── 📄 CHANGELOG.md                   # Historique des versions
 ├── 📄 LICENSE                        # Licence MIT
-├── 📄 .gitignore                     # Configuration Git
+├── 📄 build-compendium.ps1           # Script PowerShell : génère les packs LevelDB depuis les CSV
+├── 📄 build-release.ps1              # Script PowerShell : crée un ZIP de release
 │
 ├── 📁 scripts/
-│   ├── 📜 system.js                  # JavaScript principal du système
-│   ├── build-release.ps1             # Script de build pour Windows (PowerShell)
-│   └── build-release.sh              # Script de build pour Linux/macOS
+│   └── 📜 system.js                  # JavaScript principal du système
 │
 ├── 📁 templates/
-│   └── 📁 actor/
-│       ├── 📄 character-sheet.hbs    # Template Handlebars de la feuille de personnage (character, npc)
-│       └── 📄 vehicle-sheet.hbs      # Template Handlebars de la feuille de véhicule
+│   ├── 📁 actor/
+│   │   ├── 📄 character-sheet.hbs    # Fiche personnage (character, npc)
+│   │   └── 📄 vehicle-sheet.hbs      # Fiche véhicule
+│   └── 📁 item/
+│       ├── 📄 weapon-sheet.hbs       # Fiche arme
+│       ├── 📄 ammo-sheet.hbs         # Fiche munition
+│       ├── 📄 armor-sheet.hbs        # Fiche armure (SVG corps 20 zones)
+│       ├── 📄 equipment-sheet.hbs    # Fiche équipement
+│       ├── 📄 feature-sheet.hbs      # Fiche accessoire / trait
+│       └── 📄 storage-sheet.hbs      # Fiche stockage (conteneur)
 │
 ├── 📁 css/
 │   └── 📄 style.css                  # Styles CSS du système
@@ -31,12 +36,21 @@ FoundryVTT-MercenarySystem/
 │   ├── 📄 en.json                    # Traductions anglaises
 │   └── 📄 fr.json                    # Traductions françaises
 │
-├── 📁 .github/
-│   └── 📁 workflows/
-│       └── 📄 release.yml            # Workflow GitHub Actions pour les releases
+├── 📁 assets/                        # Icônes pour acteurs et items
+├── 📁 packs/                         # Compendiums LevelDB (générés par build-compendium.ps1)
+│   ├── ammos/
+│   ├── armors/
+│   ├── equipments/
+│   ├── features/
+│   ├── storages/
+│   ├── tables/
+│   └── weapons/
 │
-└── 📁 releases/
-    └── 📦 merc-system-1.0.0.zip      # Package pour distribution (généré)
+├── 📁 sources/
+│   └── 📁 compendium/                # Fichiers CSV sources des compendiums
+│
+├── 📁 _tools/                        # Outils de build (node.exe + pack-leveldb.cjs)
+└── 📁 releases/                      # ZIPs de release (générés)
 ```
 
 ## 📋 Fichiers Clés et Leur Rôle
@@ -64,25 +78,19 @@ FoundryVTT-MercenarySystem/
 - Modifier la structure des données
 
 ### `scripts/system.js`
-**Rôle** : Code JavaScript du système (~4000 lignes)
+**Rôle** : Code JavaScript du système
 - Classe `MercCharacterSheet` (feuille de personnage : character, npc)
 - Classe `MercVehicleSheet` (feuille de véhicule)
 - Classe `MercWeaponSheet` (feuille d'arme)
 - Classe `MercAmmoSheet` (feuille de munition avec calcul physique de dégâts)
+- Classe `MercArmorSheet` (feuille item armure — SVG corps interactif, code couleur live)
+- Classe `MercEquipmentSheet` (feuille item équipement)
+- Classe `MercFeatureSheet` (feuille item accessoire/trait)
+- Classe `MercStorageSheet` (feuille item stockage/conteneur)
 - Tables de degrés et formules
 - Systèmes de jets D20, jets de dégâts, jets critiques
 - Migration des données (`migrateWorld`, `migrateItem`, `getActorMigrationData`)
 - Gestion des événements UI
-
-**Classes principales** :
-- `MercCharacterSheet` : feuille personnage/npc complète
-- `MercVehicleSheet` : feuille véhicule avec armes et jets Fire Control
-- `MercWeaponSheet` : feuille item arme
-- `MercAmmoSheet` : feuille item munition
-- `MercArmorSheet` : feuille item armure (SVG corps interactif, code couleur live)
-- `MercEquipmentSheet` : feuille item équipement
-- `MercFeatureSheet` : feuille item trait/capacité
-- `MercAmmoSheet` : feuille item munition
 
 ### `templates/actor/character-sheet.hbs`
 **Rôle** : Template HTML de la feuille de personnage (character, npc)

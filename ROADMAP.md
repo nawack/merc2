@@ -1,7 +1,7 @@
 # Roadmap - Mercenary System
 
-**Mise à jour :** 2026-04-09  
-**Version courante :** 1.1.7  
+**Mise à jour :** 2026-04-16  
+**Version courante :** 1.2.2  
 **Source :** `.todo`
 
 ---
@@ -71,7 +71,7 @@
 - Synchronisation temps réel des effets de statut token (`dead` / `unconscious`)
 - Incapacité en combat : combattants inconscients/morts sautés et grisés dans le traqueur
 
-**Finitions & Correctifs (v1.1.3 → v1.1.7)**
+**Finitions & Correctifs (v1.1.3 → v1.1.6)**
 - Formule malus de charge revue : différenciée selon course / marche / reptation
 - Contrôle des valeurs de champs (pas de dev négatif, attributs entre 1 et 10)
 - Correction `findTableIndex` (opérateur `>` strict) et recalcul systématique des stats de combat à chaque migration
@@ -83,6 +83,24 @@
 - Token Cone : configuration UI pour cônes de vue et de tir
 - Compendium armures — icônes par catégorie : Gilets → `armor.png`, Casques → `helmet.png`, Membres → `parts.png`, Completes → `full.png`
 
+**Interface & UX (v1.2.0)**
+- Portrait Polaroïd : cadre blanc, ombre portée, légère rotation, nom manuscrit (police Permanent Marker)
+- Portrait par défaut automatique (`portrait-default.png`) à la création d'un personnage ou PNJ
+- Refonte visuelle complète fiche personnage — palette « dossier kraft » (variables CSS `--ts-bg`, `--ts-section`, etc.)
+- Police `Geist Mono` sur tous les champs de saisie, onglets redessinés avec `border-radius` et transitions
+- Optimisation performances : `debouncedRender()` (50 ms), `render: false` sur mises à jour silencieuses, suppression du double-rendu
+
+**Stockages & Véhicule Étendu (v1.2.1)**
+- Nouveau type d'item `storage` (sac, caisse, conteneur…) — fiche dédiée, compendium 15 entrées
+- Drag & drop des stockages entre fiches (perso → perso, perso → cargaison véhicule) — déplacement réel
+- Isolation des items dans un stockage (`parentStorageId`) — invisibles dans listes générales et onglet Combat
+- Poids des stockages équipés (propre + contenu) inclus dans le calcul d'encombrement
+- Fiche véhicule — Onglet Équipage : drag & drop d'acteurs, rôles multiples par membre (pilote, tireur, passager)
+- Jets intégrés équipage : bouton pilotage 🛞, sélection d'arme + jets compétence/dégâts 🎯🎲 par tireur
+- Fiche véhicule — Onglet Cargaison : items et stockages, catégories, zones de drop imbriquées
+- Compétence de pilotage configurable sur la fiche véhicule (liste déroulante)
+- Zones de drop visibles à vide dans l'onglet Équipements (indicateur dragover)
+
 ---
 
 ## 🔜 Planifié
@@ -90,19 +108,9 @@
 ### Finitions & Cohérence
 > Corrections de comportement et attributs manquants.
 
-- [ ] **Attributs secondaires** : Apparence, Taille, Poids, Endurance, Chance (origine / actuel) *(Revoir calcul bonus attributs)*
-- [x] **Malus de charge** : formule revue, différenciée selon course / marche / reptation *(v1.1.3)*
-- [x] **Armes blanches** : suppression de la possibilité de lancer les dégâts depuis la section bonus *(v1.1.5)*
-- [x] **Contrôle des valeurs** : pas de valeur négative pour les dev, valeurs comprises entre 1 et 10 pour les attributs *(v1.1.3)*
+- [ ] **Attributs secondaires** : Apparence, Taille, Poids, Endurance, Chance (origine / actuel)
 - [ ] **Format des dégâts** : validation par regexp `^(0|[1-9](?:[dD]6(?:\+[12])?)?)$`
 - [ ] **Issue #11** : Contrôle des valeurs des bonus de discrétion et dissimulation
-
----
-
-### Impact des Accessoires
-> Prise en compte mécanique des accessoires sur les stats et dégâts.
-
-- [ ] **Features** : gérer l'impact des accessoires sur les items, compétences et dégâts *(Gestion des features)*
 
 ---
 
@@ -125,16 +133,21 @@
 - [ ] Prise en compte du poids des munitions dans la charge totale
 - [ ] Dispersion des munitions (en cas de réussite ou d'échec)
 - [ ] Gestion des dispersions de grenades et explosifs
-- [ ] Gestion des armes autres que les armes à feu *(Gestion des armes)*
+- [ ] Gestion des armes autres que les armes à feu
+- [ ] Bouton « Jet de localisation » dans le chat suite à un jet de combat (table aléatoire)
 
 ---
 
-### v1.6.0 — Conséquences des Blessures
+### Items & Inventaire
+
+- [ ] Gérer une quantité pour les équipements consommables (ex : ×3 grenades, ×5 kits de soin)
+- [ ] Impact automatique des accessoires (`feature`) sur les stats, compétences et dégâts des armes associées
+
+---
+
+### Conséquences des Blessures
 > Application des malus liés aux localisations blessées sur les compétences et attributs (les malus Initiative/Action sont déjà implémentés en v1.1.4).
 
-- [x] Malus Initiative et Action par localisation blessée *(v1.1.4)*
-- [x] Statuts inconscient / coma / mort avec synchronisation token *(v1.1.4)*
-- [x] Membres inutilisables signalés dans le panneau *(v1.1.4)*
 - [ ] Répercussion des malus sur les jets de compétences liées au membre blessé
 - [ ] Répercussion des malus d'action sur le nombre d'actions disponibles en combat
 
@@ -144,6 +157,4 @@
 
 Ces sujets sont identifiés mais n'ont pas encore été assignés à une version :
 
-- Gestion des difficultés dans les rolls (UI, dialog)
-- Contrôle des champs avancé (hooks onChange côté Foundry)
-- Internationalisation complète des nouvelles sections
+- Internationalisation complète des nouvelles sections (stockage, équipage, cargaison)

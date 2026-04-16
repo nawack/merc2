@@ -10,7 +10,8 @@
 | **Armor** | Armures protectrices | Oui |
 | **Equipment** | Équipement général | Oui |
 | **Ammo** | Munitions | Non (lié aux armes) |
-| **Feature** | Traits/capacités spéciales | Non |
+| **Feature** | Accessoires d'armes (lunettes, silencieux…) et traits standalone | Non (lié à une arme ou standalone) |
+| **Storage** | Conteneurs (sacs, caisses…) | Oui (poids propre + contenu dans l'encombrement) |
 
 ### Acteurs
 
@@ -201,23 +202,78 @@ Ces valeurs sont recalculées et affichées en lecture seule sur la fiche muniti
 
 ---
 
-## Feature (Traits/Capacités)
+## Feature (Accessoires & Traits)
 
-Traits spéciaux, augmentations cybernétiques, talents. Non équipables, mais modifient les capacités du personnage.
+Les `feature` servent principalement aux **accessoires d'armes** (lunettes, silencieux, pointeurs, adaptateurs…) et peuvent également être utilisés comme traits standalone dans l'inventaire d'un personnage.
 
 ### Schéma (`system`)
 
 ```json
 {
-  "rarity": "common",   // common | uncommon | rare | epic
-  "price": 0,           // Prix
-  "weightKg": 0,        // Poids en kg
-  "description": ""     // Description libre du trait
+  // Général
+  "featureType": "",      // Type : scope | silencer | bipod | grip | light | laser | adapter | other
+  "parentWeaponId": "",   // ID de l'arme propriétaire (si accessoire lié à une arme)
+  "rarity": "common",     // common | uncommon | rare | epic
+  "price": 0,
+  "weightKg": 0,
+  "description": "",
+
+  // Bonus de tir par portée (modifié au jet de compétence)
+  "bonusShort": 0,        // Bonus portée courte
+  "bonusMedium": 0,       // Bonus portée moyenne
+  "bonusLong": 0,         // Bonus portée longue
+  "bonusExtreme": 0,      // Bonus portée extrême
+
+  // Acoustique (silencieux)
+  "noiseReduction": 0,    // Réduction de bruit (dB)
+  "lateralReduction": 0,  // Réduction latérale (flamme/blast)
+
+  // Dimensions
+  "lengthIncrease": 0     // Augmentation de longueur de l'arme (mm)
 }
 ```
 
 ### Feuille personnalisée
-`templates/item/feature-sheet.hbs`
+`templates/item/feature-sheet.hbs` — 3 sections : **Informations générales**, **Bonus de tir** (4 portées), **Acoustique**
+
+### Liaison arme ⇔ accessoire
+
+- La fiche d'arme dispose d'une section « Accessoires » (drag & drop depuis compendium ou inventaire)
+- L'accessoire est lié via `parentWeaponId`
+- Les bonus de l'accessoire s'affichent dans l'onglet **Combat** (badges colorés : bleu = bonus portée, rouge = réduction bruit, vert = longueur)
+
+> Compendium : 29 entrées (visées rudimentaires, lunettes jour/IL/thermiques, silencieux civils et militaires, addons…)
+
+---
+
+## Storage (Stockages / Conteneurs)
+
+Conteneurs pouvant être ajoutés à un personnage ou à la cargaison d'un véhicule. Les items liés à un stockage (`parentStorageId`) n'apparaissent pas dans les listes générales.
+
+### Schéma (`system`)
+
+```json
+{
+  "rarity": "common",     // common | uncommon | rare | epic
+  "price": 0,
+  "weightKg": 0,          // Poids propre du conteneur (kg)
+  "capacityL": 0,         // Capacité en litres
+  "capacityKg": 0,        // Capacité en kg
+  "description": ""
+}
+```
+
+### Feuille personnalisée
+`templates/item/storage-sheet.hbs` — Sections : **Informations** (Rareté / Prix / Poids / Capacités / Description) + **Contenu** (liste des items liés)
+
+### Comportement
+
+- Drag & drop d'items directement dans le conteneur (zone de drop expandable)
+- Indicateur poids utilisé / capacité (kg et L)
+- Toggle équipé/non-équipé : le poids total (propre + contenu) est inclus ou exclu de l'encombrement
+- Drag & drop d'un stockage vers une autre fiche ou la cargaison d'un véhicule : déplacement réel (source supprimée)
+
+> Compendium : 15 entrées (sacs dos, sacoches, valises, caisses…)
 
 ---
 

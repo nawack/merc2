@@ -1,34 +1,80 @@
-# ✅ Publication du Mercenary System - Prochaines Étapes
+# ✅ Checklist de Release — Mercenary System
 
-## 🎉 Félicitations !
-
-Votre système Mercenary System est maintenant **prêt à être publié** sur Foundry VTT !
-
-## 📋 Checklist Avant Publication
-
-### ✔️ Code et Configuration
-- [x] `system.json` complètement configuré
-- [x] Tous les fichiers scripts et CSS bien structurés
-- [x] Templates Handlebars validés
-- [x] Traductions en place (FR, EN)
-- [x] système de portrait avec FilePicker natif Foundry
-- [x] `.gitignore` créé pour Git
-
-### ✔️ Documentation
-- [x] README.md avec guide utilisateur
-- [x] INSTALLATION.md avec instructions détaillées
-- [x] CONTRIBUTING.md pour les contributeurs
-- [x] CHANGELOG.md pour l'historique
-- [x] PROJECT_STRUCTURE.md pour les développeurs
-
-### ✔️ Automatisation
-- [x] Scripts de build PowerShell et Bash
-- [x] Workflow GitHub Actions pour releases
-- [x] `.github/workflows/release.yml` configuré
+Dépôt : **https://github.com/nawack/merc2**  
+Manifest : `https://raw.githubusercontent.com/nawack/merc2/main/system.json`
 
 ---
 
-## 🚀 Étapes pour Publier
+## Avant chaque release
+
+### Code & Configuration
+
+- [ ] Version mise à jour dans `system.json`
+- [ ] `compatibility.verified` à jour dans `system.json`
+- [ ] `CHANGELOG.md` mis à jour avec les changements de cette version
+- [ ] `ROADMAP.md` mis à jour (items complétés déplacés dans ✅, items planifiés nettoyés)
+
+### Compendiums (si des données CSV ont changé)
+
+```powershell
+.\build-compendium.ps1
+```
+
+- [ ] Compendiums regénérés et testés dans Foundry
+
+### Tests manuels
+
+- [ ] Création d'un personnage — compétences initialisées
+- [ ] Jets d'attributs et de compétences fonctionnels
+- [ ] Drag & drop items (armes, armures, stockages)
+- [ ] Onglet Combat — balistique et mêlée affichés correctement
+- [ ] Onglet Santé — degrés de blessure et soins
+- [ ] Fiche véhicule — équipage et cargaison
+- [ ] Migration des acteurs existants sans perte de données
+
+---
+
+## Créer la release
+
+### 1. Générer le ZIP
+
+```powershell
+.\build-release.ps1 -version "X.Y.Z"
+# → releases/merc-system-X.Y.Z.zip
+```
+
+### 2. Publier sur GitHub
+
+```bash
+git add .
+git commit -m "Release vX.Y.Z"
+git tag vX.Y.Z
+git push origin main --tags
+```
+
+Puis sur **https://github.com/nawack/merc2/releases/new** :
+- Tag : `vX.Y.Z`
+- Titre : `Mercenary System vX.Y.Z`
+- Description : copier les notes du `CHANGELOG.md`
+- Attacher le ZIP `merc-system-X.Y.Z.zip`
+- Publier
+
+### 3. Vérifier l'installation via Manifest
+
+Dans Foundry VTT → Settings → Install System, coller :
+```
+https://raw.githubusercontent.com/nawack/merc2/main/system.json
+```
+
+---
+
+## Messages de commit
+
+- `feat:` — Nouvelle fonctionnalité
+- `fix:` — Correction de bug
+- `docs:` — Documentation uniquement
+- `refactor:` — Refactorisation sans changement fonctionnel
+
 
 ### Phase 1 : Préparation GitHub (15 min)
 

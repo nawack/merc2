@@ -451,4 +451,4 @@ Décrivez :
 
 ## Contribution
 
-Les contributions sont bienvenues ! Consultez le [guide de contribution](CONTRIBUTING.md) pour savoir comment démarrer.
+Pour contribuer : ouvrez une issue ou une pull request sur [github.com/nawack/merc2](https://github.com/nawack/merc2).

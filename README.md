@@ -6,7 +6,6 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
 
 - **Version minimale :** Foundry VTT 13.0
 - **Version testée & vérifiée :** 13.351 (Stable)
-- **Version maximale :** 13.351
 
 ⚠️ **Note :** Le système a été développé et testé sur Foundry VTT 13.351. Les versions antérieures à 13.0 ne sont pas supportées.
 
@@ -21,7 +20,7 @@ Un système custom avancé pour Foundry Virtual Tabletop v13, basé sur 10 attri
   - Degré calculé automatiquement via table de progression (base 4-28, degrés -7 à +33)
 - **Système de Jets** : D20 pour attributs et compétences avec modificateurs dynamiques
 - **Interface Moderne** : Design épuré avec onglets, colonnes multiples et indicateurs visuels
-- **Gestion des Objets** : Armes, Armures, Équipement, Munitions et Traits
+- **Gestion des Objets** : Armes, Armures, Équipement, Munitions, Traits et Stockages (conteneurs)
 - **Véhicules** : Type d'acteur dédié avec armes, équipage, carburant et boutons +/−
 - **Prérequis de compétences** : Certaines compétences avancées nécessitent l'apprentissage préalable
 - **Système de dégâts mêlée** : Table de référence combinant Force et Degré de compétence
@@ -185,9 +184,34 @@ merc/
 │   └── style.css                       # Styles modernes (thème clair)
 ├── scripts/
 │   └── system.js                       # Initialisation, calculs et logique
-└── templates/
-    └── actor/
-        └── character-sheet.hbs         # Template Handlebars pour personnages
+├── templates/
+│   ├── actor/
+│   │   ├── character-sheet.hbs         # Template Handlebars pour personnages
+│   │   └── vehicle-sheet.hbs           # Template Handlebars pour véhicules
+│   └── item/
+│       ├── ammo-sheet.hbs
+│       ├── armor-sheet.hbs
+│       ├── equipment-sheet.hbs
+│       ├── feature-sheet.hbs
+│       ├── storage-sheet.hbs
+│       └── weapon-sheet.hbs
+├── lang/
+│   ├── en.json                         # Traductions anglaises
+│   └── fr.json                         # Traductions françaises
+├── assets/                             # Icônes pour acteurs et items
+├── packs/                              # Compendiums LevelDB (générés)
+│   ├── ammos/
+│   ├── armors/
+│   ├── equipments/
+│   ├── features/
+│   ├── storages/
+│   ├── tables/
+│   └── weapons/
+├── sources/
+│   └── compendium/                     # Sources CSV pour la génération des compendiums
+├── _tools/                             # Outils de build (node.exe, pack-leveldb.cjs)
+├── build-compendium.ps1                # Script PowerShell : génère les packs depuis les CSV
+└── build-release.ps1                   # Script PowerShell : crée une release ZIP
 ```
 
 ## ⚙️ Compatibilité
@@ -195,6 +219,49 @@ merc/
 - **Foundry VTT** : v13.0 et supérieur
 - **Testé sur** : v13.351
 - **API** : ApplicationV2 avec HandlebarsApplicationMixin
+- **Langues** : Français et Anglais (EN/FR)
+
+---
+
+## 🛠️ Développement & Build
+
+### Prérequis
+
+- Windows avec PowerShell 5.1+
+- Les outils de build sont inclus dans `_tools/` (Node.js portable + pack-leveldb.cjs)
+
+### Regénérer les Compendiums
+
+Les compendiums (`packs/`) sont générés à partir des fichiers CSV dans `sources/compendium/`.
+
+```powershell
+.\build-compendium.ps1
+```
+
+Options avancées :
+```powershell
+.\build-compendium.ps1 -CsvDir "C:\mon\dossier\csv"
+```
+
+Les compendiums générés :
+| Pack | Fichier source |
+|------|---------------|
+| `packs/weapons/` | `merc-compendium-Weapons.csv` |
+| `packs/ammos/` | `merc-compendium-Ammo.csv` |
+| `packs/armors/` | `merc-compendium-Armors.csv` |
+| `packs/equipments/` | `merc-compendium-Equipment.csv` |
+| `packs/features/` | `merc-compendium-Feature.csv` |
+| `packs/storages/` | `merc-compendium-Storage.csv` |
+
+### Créer une Release
+
+```powershell
+.\build-release.ps1 -version "1.2.2"
+```
+
+Génère un fichier ZIP dans `releases/merc-system-1.2.2.zip` prêt pour publication GitHub.
+
+---
 
 ## 💡 Conseils
 
@@ -238,29 +305,14 @@ INDEX_TO_DEGREE = [-7, -6, -5, ..., 32, 33]
 
 ## 📦 Installation
 
-### Méthode 1 : Installateur Web Foundry (Recommandé)
+**Via Manifest URL (recommandé)** — dans Foundry VTT → Settings → Install System :
+```
+https://raw.githubusercontent.com/nawack/merc2/main/system.json
+```
 
-1. Ouvrez Foundry VTT
-2. Allez dans **Game Settings** → **System & Module Management**
-3. Cliquez sur **Install System**
-4. Collez cette URL dans le champ **Manifest URL** :
-   ```
-   https://raw.githubusercontent.com/nawack/merc2/main/system.json
-   ```
-5. Cliquez sur **Install**
-6. Attendez la fin de l'installation
-7. Sélectionnez "Mercenary System" lors de la création d'un nouveau monde
+**Manuellement** — copiez le dossier `merc` dans `Data/systems/` et relancez Foundry.
 
-### Méthode 2 : Installation Manuelle
-
-1. Téléchargez le dossier complet `merc`
-2. Placez-le dans `Data/systems/` de votre installation Foundry
-3. Relancez Foundry VTT
-4. Sélectionnez "Mercenary System" lors de la création d'un monde
-
-### Mise à Jour Automatique
-
-Une fois installé via Manifest URL, le système vérifiera automatiquement les mises à jour.
+> Détails et dépannage : [INSTALLATION.md](INSTALLATION.md)
 
 ---
 
@@ -276,7 +328,6 @@ Le système inclut une documentation détaillée couvrant tous les aspects:
 
 ### Pour les Développeurs
 - [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - Architecture du système
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Guide de contribution
 - [INSTALLATION.md](INSTALLATION.md) - Installation détaillée
 - [CHANGELOG.md](CHANGELOG.md) - Historique des versions
 
@@ -287,8 +338,8 @@ Le système inclut une documentation détaillée couvrant tous les aspects:
 
 ---
 
-**Version** : 1.0.9  
-**Auteur** : Game Master  
+**Version** : 1.2.2  
+**Auteur** : Nawack  
 **Système** : Mercenary RPG  
 **Licence** : MIT
 

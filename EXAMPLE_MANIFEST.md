@@ -1,18 +1,93 @@
-# Exemple Concret d'Installation
+# Référence system.json — Mercenary System
 
-## Exemple : Si votre GitHub username est "jerome-dev"
+Dépôt : **https://github.com/nawack/merc2**
 
-### URLs Finales Après Publication
+---
+
+## URLs du projet
+
+```
+Manifest URL (installation Foundry) :
+https://raw.githubusercontent.com/nawack/merc2/main/system.json
+
+Download URL (release ZIP dans system.json) :
+https://github.com/nawack/merc2/releases/download/vX.Y.Z/merc-system-X.Y.Z.zip
+
+Repository :
+https://github.com/nawack/merc2
+```
+
+---
+
+## Contenu de system.json (exemple à jour)
+
+```json
+{
+  "id": "merc",
+  "title": "Mercenary System",
+  "description": "Un système de jeu de rôle basé sur des attributs et des compétences avec des jets de D20. Système simple et flexible pour Foundry VTT.",
+  "version": "1.2.2",
+  "compatibility": {
+    "minimum": "13.0",
+    "verified": "13.351"
+  },
+  "authors": [
+    {
+      "name": "Nawack"
+    }
+  ],
+  "scripts": ["scripts/system.js"],
+  "styles": ["css/style.css"],
+  "languages": [
+    {"lang": "en", "name": "English", "path": "lang/en.json"},
+    {"lang": "fr", "name": "Français", "path": "lang/fr.json"}
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {"templates": ["base"]},
+      "npc": {"templates": ["base"]},
+      "vehicle": {}
+    },
+    "Item": {
+      "weapon": {},
+      "ammo": {},
+      "armor": {},
+      "equipment": {},
+      "feature": {},
+      "storage": {}
+    }
+  },
+  "packs": [
+    {"name": "weapons",    "label": "Armes",       "path": "packs/weapons",    "type": "Item", "system": "merc"},
+    {"name": "ammos",      "label": "Munitions",    "path": "packs/ammos",      "type": "Item", "system": "merc"},
+    {"name": "armors",     "label": "Armures",      "path": "packs/armors",     "type": "Item", "system": "merc"},
+    {"name": "equipments", "label": "Équipements",  "path": "packs/equipments", "type": "Item", "system": "merc"},
+    {"name": "features",   "label": "Accessoires",  "path": "packs/features",   "type": "Item", "system": "merc"},
+    {"name": "storages",   "label": "Stockages",    "path": "packs/storages",   "type": "Item", "system": "merc"},
+    {"name": "tables",     "label": "Tables",       "path": "packs/tables",     "type": "RollTable", "system": "merc"}
+  ],
+  "url": "https://github.com/nawack/merc2",
+  "bugs": "https://github.com/nawack/merc2/issues",
+  "changelog": "https://github.com/nawack/merc2/releases",
+  "manifest": "https://raw.githubusercontent.com/nawack/merc2/main/system.json",
+  "download": "https://github.com/nawack/merc2/releases/download/v1.2.2/merc-system-1.2.2.zip",
+  "license": "MIT",
+  "readme": "README.md"
+}
+```
+
+> Penser à mettre à jour `version` et `download` à chaque release. Voir [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md).
+
 
 ```
 Manifest URL (à coller dans Foundry) :
-https://raw.githubusercontent.com/jerome-dev/FoundryVTT-MercenarySystem/main/system.json
+https://raw.githubusercontent.com/user-dev/FoundryVTT-MercenarySystem/main/system.json
 
 Download URL (dans system.json) :
-https://github.com/jerome-dev/FoundryVTT-MercenarySystem/releases/download/v1.0.0/merc-system-1.0.0.zip
+https://github.com/user-dev/FoundryVTT-MercenarySystem/releases/download/v1.0.0/merc-system-1.0.0.zip
 
 Repository URL :
-https://github.com/jerome-dev/FoundryVTT-MercenarySystem
+https://github.com/user-dev/FoundryVTT-MercenarySystem
 ```
 
 ### Dans system.json, vous auriez :
@@ -30,7 +105,7 @@ https://github.com/jerome-dev/FoundryVTT-MercenarySystem
   },
   "authors": [
     {
-      "name": "jerome-dev",
+      "name": "user-dev",
       "email": "jerome@example.com"
     }
   ],
@@ -52,25 +127,25 @@ https://github.com/jerome-dev/FoundryVTT-MercenarySystem
       "feature": {}
     }
   },
-  "url": "https://github.com/jerome-dev/FoundryVTT-MercenarySystem",
-  "bugs": "https://github.com/jerome-dev/FoundryVTT-MercenarySystem/issues",
-  "changelog": "https://github.com/jerome-dev/FoundryVTT-MercenarySystem/releases",
-  "manifest": "https://raw.githubusercontent.com/jerome-dev/FoundryVTT-MercenarySystem/main/system.json",
-  "download": "https://github.com/jerome-dev/FoundryVTT-MercenarySystem/releases/download/v1.0.0/merc-system-1.0.0.zip",
+  "url": "https://github.com/user-dev/FoundryVTT-MercenarySystem",
+  "bugs": "https://github.com/user-dev/FoundryVTT-MercenarySystem/issues",
+  "changelog": "https://github.com/user-dev/FoundryVTT-MercenarySystem/releases",
+  "manifest": "https://raw.githubusercontent.com/user-dev/FoundryVTT-MercenarySystem/main/system.json",
+  "download": "https://github.com/user-dev/FoundryVTT-MercenarySystem/releases/download/v1.0.0/merc-system-1.0.0.zip",
   "license": "MIT",
   "readme": "README.md",
   "flags": {}
 }
 ```
 
-## Étapes Exactes pour "jerome-dev"
+## Étapes Exactes pour "user-dev"
 
 ### 1. Sur GitHub
 
 ```bash
 # 1. Créer repo "FoundryVTT-MercenarySystem"
 # 2. Cloner localement
-git clone https://github.com/jerome-dev/FoundryVTT-MercenarySystem.git
+git clone https://github.com/user-dev/FoundryVTT-MercenarySystem.git
 cd FoundryVTT-MercenarySystem
 
 # 3. Copier tous les fichiers du système
@@ -98,7 +173,7 @@ git push origin main
 Game Settings → System & Module Management → Install System
 
 Coller :
-https://raw.githubusercontent.com/jerome-dev/FoundryVTT-MercenarySystem/main/system.json
+https://raw.githubusercontent.com/user-dev/FoundryVTT-MercenarySystem/main/system.json
 
 Cliquer : Install
 ```
@@ -115,7 +190,7 @@ Create
 
 **URL Release** :
 ```
-https://github.com/jerome-dev/FoundryVTT-MercenarySystem/releases/tag/v1.0.0
+https://github.com/user-dev/FoundryVTT-MercenarySystem/releases/tag/v1.0.0
 ```
 
 **Contient** :
@@ -134,9 +209,9 @@ Mercenary System for Foundry VTT v13
 A complete RPG system with 10 attributes, 65 skills, and automatic degree calculation.
 
 Install with this Manifest URL:
-https://raw.githubusercontent.com/jerome-dev/FoundryVTT-MercenarySystem/main/system.json
+https://raw.githubusercontent.com/user-dev/FoundryVTT-MercenarySystem/main/system.json
 
-Repository: https://github.com/jerome-dev/FoundryVTT-MercenarySystem
+Repository: https://github.com/user-dev/FoundryVTT-MercenarySystem
 
 Features:
 - 10 main attributes
@@ -150,8 +225,8 @@ Features:
 **Sur Discord** :
 ```
 Just released Mercenary System for Foundry VTT!
-📦 Manifest: https://raw.githubusercontent.com/jerome-dev/FoundryVTT-MercenarySystem/main/system.json
-🚀 GitHub: https://github.com/jerome-dev/FoundryVTT-MercenarySystem
+📦 Manifest: https://raw.githubusercontent.com/user-dev/FoundryVTT-MercenarySystem/main/system.json
+🚀 GitHub: https://github.com/user-dev/FoundryVTT-MercenarySystem
 ```
 
 ## Mises à Jour Futures

@@ -199,58 +199,79 @@ Depuis la v1.0.12, les dégâts des armes à feu sont calculés en temps réel p
 Calcule les propriétés déduites de la munition :
 
 ```
-braking_index     = (Cd × ρ × π × (d/2000)²) / (2 × m/1000)
-sectional_density = (m/1000) / (π × (d/2000)²)
+S                 = π × (d/2000)²            // section droite (m²)
+braking_index     = 0.5 × Cd × ρ × S
+sectional_density = (m/1000) / S
 ```
 
 Où : `m` = masse (g), `d` = diamètre (mm), `Cd` = coefficient de traînée, `ρ` = densité air (kg/m³)
+
+> **Note :** `braking_index` ne contient pas la masse — la correction `/mass_kg` est appliquée dans `calcWeaponBallistics` lors du calcul de la décélération.
 
 #### `calcWeaponBallistics(barrelLength, ammoSystem, ranges)`
 
 Calcule les dégâts et la pénétration pour chaque portée :
 
 ```javascript
-// Pour chaque portée (short, medium, long, extreme) :
-v(x) = v0 × exp(-braking_index × x)   // vitesse à distance x (m/s)
-E(x) = 0.5 × (mass/1000) × v(x)²      // énergie cinétique (J)
+// Ajustement de la vitesse initiale selon la longueur de canon :
+v0 = velocity × (barrelLength / barrelStd) ^ 0.25
 
-damage(x)  = calcDamageFromEnergy(E)   // formule de dégâts
-malus(x)   = calcBlindageMalus(E, pen) // malus pénétration blindage
+// Énergie à la bouche (J) :
+E0 = 0.5 × (mass/1000) × v0²
+
+// Pour chaque portée x (short, medium, long, extreme) :
+expFactor(x) = exp(-(2 × braking_index / mass_kg) × x)
+pen(x)       = 0.0000001 × sectional_density × (2 × E0 / mass_kg) × perforation_index × expFactor(x)
 ```
 
 Retourne :
 ```javascript
 {
   hasData: boolean,
-  damage: string,        // Dégâts à portée courte
-  initialVelocity: number,
-  energy: number,
-  pen: number,
+  initialVelocity: number,   // v0 arrondi à l'entier (m/s)
+  energy: number,            // E0 arrondi à l'entier (J)
+  damage: string,            // calcDamageFromEnergy(E0)
+  pen: {
+    muzzle:  number,         // pénétration à la bouche
+    short:   number,
+    medium:  number,
+    long:    number,
+    extreme: number
+  },
   blindage: {
-    short:   { damage, malus },
-    medium:  { damage, malus },
-    long:    { damage, malus },
-    extreme: { damage, malus }
+    short:   string,         // calcBlindageMalus(E0, pen.muzzle)
+    medium:  string,         // calcBlindageMalus(E0, pen.medium)
+    long:    string,
+    extreme: string
   }
 }
 ```
 
 #### `calcDamageFromEnergy(energy)`
 
-Convertit l'énergie cinétique (J) en formule de dégâts de jeu :
+Convertit l'énergie cinétique (J) en formule de dégâts de jeu via la formule :
 
-| Énergie (J) | Dégâts |
-|-------------|--------|
-| < 100 | `"1"` |
-| < 300 | `"1d6"` |
-| < 700 | `"2d6"` |
-| < 1500 | `"3d6"` |
-| < 3000 | `"4d6"` |
-| ≥ 3000 | `"5d6"` |
+```
+d6    = floor(sqrt(E) / 12)
+bonus = floor(sqrt(E) / 4) % 3
+
+Si d6 == 0 : résultat = String(bonus)     // nombre fixe
+Si d6 > 0 et bonus == 0 : résultat = "${d6}D6"
+Si d6 > 0 et bonus > 0  : résultat = "${d6}D6+${bonus}"
+```
+
+**Exemples :**
+
+| Énergie (J) | sqrt(E) | d6 | bonus | Résultat |
+|-------------|---------|-----|-------|----------|
+| 100 | 10 | 0 | 2 | `"2"` |
+| 500 | 22.4 | 1 | 2 | `"1D6+2"` |
+| 1500 | 38.7 | 3 | 1 | `"3D6+1"` |
+| 5000 | 70.7 | 5 | 2 | `"5D6+2"` |
 
 #### `calcBlindageMalus(energy, pen)`
 
-Calcule le malus appliqué contre un blindage en fonction de l'énergie résiduelle et de l'indice de perforation de la munition.
+Calcule le malus de dégâts face à un blindage. Retourne `"-"` (aucune pénalité) quand `pen ≤ 7` (projectile trop peu pénétrant pour subir de résistance). Quand `pen > 7`, calcule une formule de dégâts réduite basée sur `sqrtE × (7/pen)` via la même logique que `calcDamageFromEnergy`.
 
 ### Affichage
 
@@ -260,5 +281,5 @@ Calcule le malus appliqué contre un blindage en fonction de l'énergie résidue
 
 ---
 
-**Dernière mise à jour :** 2026-04-xx
-**Version du système :** 1.0.14
+**Dernière mise à jour :** 2026-04-16
+**Version du système :** 1.2.2

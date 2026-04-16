@@ -1,7 +1,7 @@
 ﻿# Index de la documentation - Mercenary System
 
-**Version :** 1.1.4
-**Dernière mise à jour :** 2026-04-03
+**Version :** 1.2.2
+**Dernière mise à jour :** 2026-04-16
 
 ---
 
@@ -25,7 +25,7 @@
 | Dégâts à feu (moteur balistique) | [DAMAGE_SYSTEM.md](DAMAGE_SYSTEM.md#moteur-balistique-physique-armes-à-feu) |
 | Mouvements, endurance, corpulence | [COMBAT_SYSTEM.md](COMBAT_SYSTEM.md) |
 | Statistiques de combat (tables détaillées) | [COMBAT_STATISTICS.md](COMBAT_STATISTICS.md) |
-| **Blessures par localisation, soins, stati** | [DAMAGE_SYSTEM.md](DAMAGE_SYSTEM.md#système-de-blessures-par-localisation) |
+| Blessures par localisation, soins, stati | [DAMAGE_SYSTEM.md](DAMAGE_SYSTEM.md#système-de-blessures-par-localisation) |
 | Prérequis compétences | [SKILL_PREREQUISITES.md](SKILL_PREREQUISITES.md) |
 | Schéma munitions et armes | [ITEM_TYPES_GUIDE.md](ITEM_TYPES_GUIDE.md) |
 
@@ -34,7 +34,6 @@
 | Besoin | Document |
 |--------|----------|
 | Vue d'ensemble du projet | [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) |
-| Comment contribuer | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Installer pour le dev | [INSTALLATION.md](INSTALLATION.md) |
 | Historique des versions | [CHANGELOG.md](CHANGELOG.md) |
 | Planification (prochaines versions) | [ROADMAP.md](ROADMAP.md) |
@@ -63,10 +62,9 @@
 ### Documentation développeur
 
 7. [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) — Organisation des dossiers et fichiers
-8. [CONTRIBUTING.md](CONTRIBUTING.md) — Processus de contribution et PR
-9. [INSTALLATION.md](INSTALLATION.md) — Setup local et installation via manifest
-10. [CHANGELOG.md](CHANGELOG.md) — Historique des versions (v1.0.1 → v1.1.4)
-11. [ROADMAP.md](ROADMAP.md) — Planification des prochaines versions (issues, milestones)
+8. [INSTALLATION.md](INSTALLATION.md) — Setup local et installation via manifest
+9. [CHANGELOG.md](CHANGELOG.md) — Historique des versions (v1.0.1 → v1.2.2)
+10. [ROADMAP.md](ROADMAP.md) — Planification des prochaines versions (issues, milestones)
 
 ### Publication
 

@@ -14,7 +14,7 @@ Le système de combat du Mercenary System utilise une série de **statistiques c
 
 **Formule :** Table lookup basée sur hauteur en cm
 
-**Gamme :** 49 cm (min) à 600 cm (max)
+**Gamme :** 42 cm (min) à 569 cm (max)
 
 **Impact :**
 - Affecte la **capacité de charge** du personnage
@@ -23,11 +23,11 @@ Le système de combat du Mercenary System utilise une série de **statistiques c
 
 **Exemples de taille :**
 ```
-Index 0:  49 cm  (enfant/gnome)
-Index 8:  113 cm (petit humain)
-Index 16: 177 cm (humain moyen)
-Index 24: 301 cm (géant)
-Index 31: 600 cm (très grand géant)
+Index 0:  42 cm  (enfant/gnome)
+Index 8:  105 cm (petit humain)
+Index 17: 177 cm (humain moyen)
+Index 25: 301 cm (géant)
+Index 31: 569 cm (très grand géant)
 ```
 
 ---
@@ -36,7 +36,7 @@ Index 31: 600 cm (très grand géant)
 
 **Formule :** Table lookup basée sur poids en kg
 
-**Gamme :** 1.6 kg (min) à 3000 kg (max)
+**Gamme :** 1 kg (min) à 2449 kg (max)
 
 **Impact :**
 - Combiné à la taille = **indice de corpulence**
@@ -45,11 +45,11 @@ Index 31: 600 cm (très grand géant)
 
 **Exemples de poids :**
 ```
-Index 0:  1.6 kg   (très léger)
-Index 8:  19 kg    (enfant)
-Index 16: 74 kg    (adulte moyen)
-Index 24: 363 kg   (très lourd)
-Index 31: 3000 kg  (extrême)
+Index 0:  1 kg     (très léger)
+Index 9:  19 kg    (enfant)
+Index 17: 74 kg    (adulte moyen)
+Index 25: 363 kg   (très lourd)
+Index 31: 2449 kg  (extrême)
 ```
 
 ---
@@ -176,18 +176,17 @@ L'indice de corpulence est **dérivé** de la taille et du poids:
 
 **Fonction :** `findTableIndex(value, table)`
 
-Localisation: [scripts/system.js](scripts/system.js) - ligne ~2600
+Localisation: [scripts/system.js](scripts/system.js) - ligne ~6315
 
 ```javascript
-function findTableIndex(value, table) {
-  // Trouve le plus proche indice dans la table
-  for (let i = 0; i < table.length; i++) {
-    if (value <= table[i]) {
-      return i;
-    }
+const findTableIndex = (value, table) => {
+  // Retourne le dernier indice où value > table[i] (borne inférieure)
+  if (!value || value <= 0) return 0;
+  for (let i = table.length - 1; i >= 0; i--) {
+    if (value > table[i]) return i;
   }
-  return table.length - 1;
-}
+  return 0;
+};
 ```
 
 ---
@@ -200,8 +199,8 @@ function findTableIndex(value, table) {
 
 ```javascript
 const STATS_TABLES = {
-  taille: [49, 57, 65, ..., 600],           // 32 valeurs
-  poids: [1.6, 2.5, 3.7, ..., 3000],       // 32 valeurs
+  taille: [42, 49, 57, ..., 569],           // 32 valeurs
+  poids: [1, 1.6, 2.5, ..., 2449],         // 32 valeurs
   reptation: [0.5, 1, 1, ..., 6.5],        // 32 valeurs
   marche: [2, 2, 3, ..., 25],              // 32 valeurs
   course: [10, 11, 13, ..., 128],          // 32 valeurs
@@ -222,25 +221,27 @@ Chaque table contient **32 entrées**, correspondant aux indices 0-31.
 Les statistiques se **recalculent automatiquement** lors:
 1. ✅ Modification de la hauteur
 2. ✅ Modification du poids
-3. ✅ Modification de la Constitution (pour PC)
-4. ✅ Création du personnage
-5. ✅ Import de personnage
+3. ✅ Modification de la Volonté
+4. ✅ Modification de la Constitution
+5. ✅ Modification de la Force
+6. ✅ Modification de la Vitesse (Rapidité)
 
 ### Hook utilisé
 
 **Événement :** `Hooks.on('updateActor', ...)`
 
-**Localisation :** [scripts/system.js](scripts/system.js) - ligne ~1800
+**Localisation :** [scripts/system.js](scripts/system.js) - ligne ~6693
 
 ```javascript
-Hooks.on('updateActor', async (actor, updateData, options) => {
-  // Vérifier si hauteur, poids, ou constitution a changé
-  if (updateData.system?.biography?.height || 
-      updateData.system?.biography?.weight ||
-      updateData.system?.attributes?.constitution) {
-    // Recalculer toutes les statistiques de combat
-    await actor.update({ "system.movement": {...} });
-  }
+Hooks.on('updateActor', async (actor, changes, options, userId) => {
+  const needsUpdate =
+    changes.system?.biography?.height !== undefined ||
+    changes.system?.biography?.weight !== undefined ||
+    changes.system?.attributes?.will !== undefined ||
+    changes.system?.attributes?.constitution !== undefined ||
+    changes.system?.attributes?.strength !== undefined ||
+    changes.system?.attributes?.speed !== undefined;
+  // Si needsUpdate : recalcule endurance, PC, charge, discrétion, dissimulation, vitesses
 });
 ```
 
@@ -251,32 +252,34 @@ Hooks.on('updateActor', async (actor, updateData, options) => {
 ### Exemple: Combat rapproché
 
 ```
-Combattant: Mercenaire "Brick"
-├─ Hauteur: 185 cm → Index Taille: 16
-├─ Poids: 95 kg → Index Poids: 15
-├─ Corpulence: Normale
+Combattant: Mercenaire "Brick" (Rapidité: 2)
+├─ Hauteur: 185 cm → Index Taille: 17 (attrib +6)
+├─ Poids: 95 kg → Index Poids: 18 (attrib +7)
+├─ Corpulence: corpulence = ceil((6+7)/2) = 7
+├─ Index vitesse: 7 + 2 - 5 + 11 = 15
 ├─ Statistiques:
-│  ├─ Marche: 7 m/round (tactique)
-│  ├─ Course: 34 m/round (rapidement)
-│  ├─ Dissimulation: +1 (légèrement visible)
-│  ├─ Discrétion: 0 (bruit normal)
-│  └─ Ajustement PC: -1 (charge réduite)
-└─ Points de Corpulence: Constitution(6) + Ajustement(-1) = 5
+│  ├─ Marche: 7 m/round (table[15])
+│  ├─ Course: 34 m/round (table[15])
+│  ├─ Dissimulation: -2 (corpulenceTableIdx=18)
+│  ├─ Discrétion: -1 (corpulenceTableIdx=18)
+│  └─ Ajustement PC: 0 (corpulenceTableIdx=18)
+└─ Points de Corpulence: Constitution(6) + Ajustement(0) = 6
 ```
 
 ### Exemple: Agent infiltration
 
 ```
-Agent: "Rook" (léger/petit)
-├─ Hauteur: 165 cm → Index Taille: 12
-├─ Poids: 60 kg → Index Poids: 10
-├─ Corpulence: Petite
+Agent: "Rook" (Rapidité: 1)
+├─ Hauteur: 165 cm → Index Taille: 15 (attrib +4)
+├─ Poids: 60 kg → Index Poids: 15 (attrib +4)
+├─ Corpulence: corpulence = floor((4+4)/2) = 4
+├─ Index vitesse: 4 + 1 - 5 + 11 = 11
 ├─ Statistiques:
-│  ├─ Marche: 5 m/round (silencieux)
-│  ├─ Course: 27 m/round (rapide)
-│  ├─ Dissimulation: +8 (très caché)
-│  ├─ Discrétion: +4 (silencieux)
-│  └─ Ajustement PC: -1 (charge réduite)
+│  ├─ Marche: 5 m/round (table[11])
+│  ├─ Course: 27 m/round (table[11])
+│  ├─ Dissimulation: +1 (corpulenceTableIdx=15)
+│  ├─ Discrétion: 0 (corpulenceTableIdx=15)
+│  └─ Ajustement PC: -1 (corpulenceTableIdx=15)
 └─ Points de Corpulence: Constitution(4) + Ajustement(-1) = 3
 ```
 
@@ -301,33 +304,20 @@ Endurance: ⌊(6 + 5) / 2⌋ = ⌊5.5⌋ = 5
 
 **Définition :** Poids maximal transportable
 
-**Formule :** `Force + (Constitution × 2) + Ajustement`
+**Formule :** `(Force + Constitution) × 2`
 
 **Exemple :**
 ```
 Force: 7
 Constitution: 5
-Ajustement PC: -1
-Capacité: 7 + (5 × 2) + (-1) = 16 kg
+Capacité: (7 + 5) × 2 = 24 kg
 ```
 
-### Initiative (non automatisée)
+### Initiative (automatisée)
 
-**Formule suggérée :** `Rapidité + d20`
+**Compétence :** Réaction (Adaptation + Vitesse)
 
-Pour les jets manuels en combat.
-
-### Parade (non automatisée)
-
-**Formule suggérée :** `(Rapidité + Dextérité) / 2 + Degré Esquive`
-
-Pour réaction défensive.
-
-### Esquive (non automatisée)
-
-**Formule suggérée :** `(Adaptation + Dextérité) / 2 + Degré Esquive`
-
-Pour éviter attaque.
+L'initiative est calculée automatiquement par le système via `getReactionDegreeFromCombatant`, qui lit le degré de la compétence **Réaction** du personnage (ajusté par les malus de blessures). Le résultat est affiché dans le traqueur de combat.
 
 ---
 
@@ -335,36 +325,18 @@ Pour éviter attaque.
 
 ### Encombrement
 
-Si le poids porté > Capacité de charge:
-- Pénalité progressive aux déplacements
-- Pénalité aux compétences d'agilité
-- Fatigue augmentée
+L'encombrement est calculé en temps réel et détermine le **niveau de charge** du personnage, qui réduit automatiquement les vitesses affichées :
 
-### Mutipliers de mouvement
+| Niveau | Condition | Reptation | Marche | Course |
+|--------|-----------|-----------|--------|--------|
+| 1 | poids ≤ capacité / 2 | ×1 | ×1 | ×1 |
+| 2 | ≤ capacité | ÷1,5 | ÷1,2 | ÷1,5 |
+| 3 | ≤ capacité × 2 | ÷2 | ÷1,75 | ÷2,2 |
+| 4 | > capacité × 2 | ÷3 | ÷2,5 | ÷3,2 |
 
-- **Reptation:** 1/5e de la marche (normalement)
-- **Marche:** Vitesse tactique/prudente
-- **Course:** 4-5× la marche (sprint maximal)
-
-### Combat immobilisé
-
-Si incapable de se déplacer:
-- Malus -5 aux Jets de Parade
-- Malus -10 aux Jets d'Esquive
-- Bonus +3 pour les tirs de combattants)
 
 ---
 
-## 🛠️ Extension des statistiques
-
-Pour **ajouter des statistiques** personnalisées:
-
-1. Ajouter une nouvelle table dans `STATS_TABLES`
-2. Ajouter un champ `movement` dans `template.json`
-3. Modifier la fonction de calcul automatique
-
----
-
-**Dernière mise à jour :** 2026-02-05  
-**Version du système :** 1.0.9  
+**Dernière mise à jour :** 2026-04-16  
+**Version du système :** 1.2.2  
 **Statut :** Documenté complètement

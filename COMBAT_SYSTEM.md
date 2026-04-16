@@ -163,15 +163,9 @@ Poids:    1  1.6  2.5  3.7  5.3    7    9   12   15   19   24   29   34   41   4
 
 ## Mise à jour Automatique
 
-Les valeurs calculées se mettent à jour automatiquement lorsque vous modifiez :
-- La taille du personnage
-- Le poids du personnage
-- L'attribut "Volonté"
-- L'attribut "Constitution"
-- L'attribut "Force"
-- L'attribut "Vitesse" (Rapidité)
+Les valeurs calculées se mettent à jour automatiquement (taille, poids, Volonté, Constitution, Force, Vitesse).
 
-Aucune action manuelle n'est nécessaire - le système recalcule automatiquement tous les champs dépendants.
+> Voir les déclencheurs précis et le hook `updateActor` : [COMBAT_STATISTICS.md](COMBAT_STATISTICS.md#-mise-à-jour-automatique)
 
 ## Exemple de Calcul
 

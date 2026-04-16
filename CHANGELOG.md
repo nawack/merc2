@@ -2,10 +2,20 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.2.2] - 2026-04-16
+
+### Update
+- 🖹 **Update doc** : Mise a jour de toute la documentation
+
+### Fixed
+- 🐛 **Item Drag & Drop** : Fixe un problème de duplication d'objet lores d'échange entre joueur en passant par une fiche tiers
+
+
 ## [1.2.2] - 2026-04-15
 
 ### Fixed
-- 🐛 **Weapon compendium** : fixe pb d'année
+- 🐛 **Weapon compendium** : Résou le problème des années non présente dans le compendium pour les armes
+
 
 ## [1.2.1] - 2026-04-14
 

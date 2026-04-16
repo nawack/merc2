@@ -334,7 +334,6 @@ Le système inclut une documentation détaillée couvrant tous les aspects:
 ### Fichiers de Référence
 - [system.json](system.json) - Configuration et métadonnées
 - [template.json](template.json) - Schéma de données
-- [CHANGELOG.md](CHANGELOG.md) - Historique des versions
 
 ---
 

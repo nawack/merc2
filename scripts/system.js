@@ -1704,6 +1704,16 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       }
     }
 
+    // Move semantics: delete from source actor after successful create
+    if (result && item.parent?.documentName === "Actor" && item.parent !== this.actor) {
+      if (item.type === "weapon") {
+        // Also delete linked ammo from source
+        const srcLinkedAmmo = item.parent.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === item.id);
+        for (const a of srcLinkedAmmo) await a.delete();
+      }
+      await item.delete();
+    }
+
     return result ?? null;
   }
 
@@ -2980,9 +2990,9 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             return;
           }
           itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { parentStorageId: storageId });
-          await Item.implementation.create(itemData, { parent: this.actor });
+          const createdItem = await Item.implementation.create(itemData, { parent: this.actor });
           // Delete from source actor (move semantics)
-          if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+          if (createdItem && droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
             await droppedItem.delete();
           }
         }
@@ -3067,7 +3077,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
             }
           }
           // Delete from source actor (move semantics)
-          if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+          if (createdItem && droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
             if (droppedItem.type === "storage") {
               const srcContents = droppedItem.parent.items.filter(i => i.system?.parentStorageId === droppedItem.id);
               for (const ci of srcContents) await ci.delete();
@@ -4957,7 +4967,7 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
           }
         }
         // Delete from source actor (move semantics)
-        if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+        if (createdItem && droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
           if (droppedItem.type === "storage") {
             const srcContents = droppedItem.parent.items.filter(i => i.system?.parentStorageId === droppedItem.id);
             for (const ci of srcContents) await ci.delete();
@@ -5009,9 +5019,9 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
             return;
           }
           itemData.system = foundry.utils.mergeObject(itemData.system ?? {}, { parentStorageId: storageId, isCargo: true });
-          await Item.implementation.create(itemData, { parent: this.actor });
+          const createdItem = await Item.implementation.create(itemData, { parent: this.actor });
           // Delete from source actor (move semantics)
-          if (droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
+          if (createdItem && droppedItem.parent?.documentName === "Actor" && droppedItem.parent !== this.actor) {
             await droppedItem.delete();
           }
         }
@@ -5377,6 +5387,17 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
         await Item.implementation.create(ammoDataArray, { parent: this.actor });
       }
     }
+
+    // Move semantics: delete from source actor after successful create
+    if (result && item.parent?.documentName === "Actor" && item.parent !== this.actor) {
+      if (item.type === "weapon") {
+        // Also delete linked ammo from source
+        const srcLinkedAmmo = item.parent.items.filter(i => i.type === "ammo" && i.system?.parentWeaponId === item.id);
+        for (const a of srcLinkedAmmo) await a.delete();
+      }
+      await item.delete();
+    }
+
     return result ?? null;
   }
 

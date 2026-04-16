@@ -1532,6 +1532,19 @@
   /* margin-right: 10px; */
 }
 
+.item-qty-inline {
+  width: 30px;
+  height: 18px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 11px;
+  padding: 1px 3px;
+  border: 1px solid var(--ts-bg-dark);
+  border-radius: 10px;
+  background: var(--ts-attrib);
+  color: var(--ts-text);
+}
+
 .item-card:hover {
   background-color: var(--ts-page);
 }

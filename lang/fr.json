@@ -219,6 +219,7 @@
         "storage": "Stockage",
         "addStorage": "Ajouter un stockage",
         "equipped": "Équipé",
+        "quantity": "Qté",
         "year": "Année (dispo.)",
         "equipFutureYear": "{item} est une technologie de l'an {itemYear} — personnage en {actorYear} ne peut pas l'utiliser.",
         "compendiumYearFilter": "Année ≤",

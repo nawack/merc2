@@ -863,6 +863,11 @@ async function migrateItem(item, actor = null) {
       updateData["system.weightKg"] = 0;
     }
 
+    // Ensure quantity exists
+    if (item.system.quantity === undefined || item.system.quantity === null) {
+      updateData["system.quantity"] = 1;
+    }
+
     // Ensure rarity and price exist
     if (item.system.rarity === undefined || item.system.rarity === null) {
       updateData["system.rarity"] = "common";
@@ -964,7 +969,7 @@ async function migrateItem(item, actor = null) {
     }
 
     // Remove obsolete fields
-    const obsolete = ["weightAmmo", "damage", "penetration", "quantity", "maxQuantity", "magazines", "magEmpty"];
+    const obsolete = ["weightAmmo", "damage", "penetration", "maxQuantity", "magazines", "magEmpty"];
     for (const key of obsolete) {
       if (item.system[key] !== undefined) {
         updateData[`system.-=${key}`] = null;
@@ -988,6 +993,9 @@ async function migrateItem(item, actor = null) {
     if (item.system.weightKg === undefined || item.system.weightKg === null) {
       updateData["system.weightKg"] = 0;
     }
+    if (item.system.quantity === undefined || item.system.quantity === null) {
+      updateData["system.quantity"] = 1;
+    }
     if (item.system.rarity === undefined || item.system.rarity === null) {
       updateData["system.rarity"] = "common";
     }
@@ -1001,6 +1009,9 @@ async function migrateItem(item, actor = null) {
     if (item.system.weightKg === undefined || item.system.weightKg === null) {
       updateData["system.weightKg"] = 0;
     }
+    if (item.system.quantity === undefined || item.system.quantity === null) {
+      updateData["system.quantity"] = 1;
+    }
     if (item.system.rarity === undefined || item.system.rarity === null) {
       updateData["system.rarity"] = "common";
     }
@@ -1013,6 +1024,9 @@ async function migrateItem(item, actor = null) {
   if (item.type === "feature") {
     if (item.system.weightKg === undefined || item.system.weightKg === null) {
       updateData["system.weightKg"] = 0;
+    }
+    if (item.system.quantity === undefined || item.system.quantity === null) {
+      updateData["system.quantity"] = 1;
     }
   }
 
@@ -1060,6 +1074,76 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       this._renderDebounceTimer = null;
       if (this.rendered) this.render();
     }, 50);
+  }
+
+  // Recalculate encumbrance display directly on the current DOM.
+  // Uses live this.actor.items — safe to call immediately after item.update() resolves.
+  // Includes: weapons (+ linked features) + armors + equipment + free features (equipped only). Excludes: ammo.
+  _recalcEncumbrance() {
+    const html = this.element;
+    if (!html) return;
+    const totalWeightElement = html.querySelector("#total-weight");
+    if (!totalWeightElement) return;
+
+    let totalWeight = 0;
+    if (this.actor?.items) {
+      const featureWeightByWeapon = {};
+      this.actor.items.forEach(item => {
+        if (item.type !== "feature" || !item.system?.parentWeaponId) return;
+        const wid = item.system.parentWeaponId;
+        featureWeightByWeapon[wid] = (featureWeightByWeapon[wid] ?? 0) + ((Number(item.system?.weightKg) || 0) * (Math.max(1, Number(item.system?.quantity) || 1)));
+      });
+      this.actor.items.forEach(item => {
+        if (item.type === "feature") {
+          if (item.system?.parentWeaponId || item.system?.parentStorageId || !item.system?.equipped) return;
+        } else if (item.type === "storage") {
+          if (!item.system?.equipped || item.system?.parentStorageId) return;
+          const sw = computeStorageTotalWeight(item, this.actor.items);
+          if (!Number.isNaN(sw)) totalWeight += sw;
+          return;
+        } else if (!["weapon", "armor", "equipment"].includes(item.type)) {
+          return;
+        } else if (!item.system?.equipped) {
+          return;
+        } else if (item.system?.parentStorageId) {
+          return;
+        }
+        const qty = Math.max(1, Number(item.system?.quantity) || 1);
+        let weight = (Number(item.system?.weightKg ?? 0)) * qty;
+        if (item.type === "weapon") weight += featureWeightByWeapon[item.id] ?? 0;
+        if (!Number.isNaN(weight)) totalWeight += weight;
+      });
+    }
+    totalWeightElement.textContent = totalWeight.toFixed(1);
+
+    const capaciteCharge = this.actor?.system?.combat?.capaciteCharge || 0;
+    let burdenLevel = 1;
+    if (totalWeight > capaciteCharge * 2) burdenLevel = 4;
+    else if (totalWeight > capaciteCharge) burdenLevel = 3;
+    else if (totalWeight > capaciteCharge / 2) burdenLevel = 2;
+
+    totalWeightElement.classList.remove("burden-level-1", "burden-level-2", "burden-level-3", "burden-level-4");
+    totalWeightElement.classList.add(`burden-level-${burdenLevel}`);
+
+    const baseReptation = this.actor?.system?.movement?.reptation || 0;
+    const baseMarche    = this.actor?.system?.movement?.marche    || 0;
+    const baseCourse    = this.actor?.system?.movement?.course    || 0;
+    const diviseurs = [[1,1,1],[1.5,1.2,1.5],[2,1.75,2.2],[3,2.5,3.2]][burdenLevel - 1];
+    const actualReptation = burdenLevel === 1 ? baseReptation : Math.ceil(baseReptation / diviseurs[0]);
+    const actualMarche    = burdenLevel === 1 ? baseMarche    : Math.ceil(baseMarche    / diviseurs[1]);
+    const actualCourse    = burdenLevel === 1 ? baseCourse    : Math.ceil(baseCourse    / diviseurs[2]);
+
+    const speedReptationEl = html.querySelector("#speed-reptation-actual .stat-value-large");
+    const speedMarcheEl    = html.querySelector("#speed-marche-actual .stat-value-large");
+    const speedCourseEl    = html.querySelector("#speed-course-actual .stat-value-large");
+    if (speedReptationEl) speedReptationEl.textContent = actualReptation;
+    if (speedMarcheEl)    speedMarcheEl.textContent    = actualMarche;
+    if (speedCourseEl)    speedCourseEl.textContent    = actualCourse;
+
+    html.querySelectorAll(".burden-speed").forEach(el => {
+      el.classList.remove("burden-level-1", "burden-level-2", "burden-level-3", "burden-level-4");
+      el.classList.add(`burden-level-${burdenLevel}`);
+    });
   }
 
 
@@ -2505,6 +2589,24 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
       });
     });
 
+    // Inline quantity edit on item list
+    html.querySelectorAll(".item-qty-inline").forEach(input => {
+      input.addEventListener("change", async (event) => {
+        event.stopPropagation();
+        const itemId = event.currentTarget.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (!item) return;
+        const qty = Math.max(1, parseInt(event.currentTarget.value) || 1);
+        event.currentTarget.value = qty;
+        await item.update({ "system.quantity": qty });
+        // Recalculate encumbrance immediately (actor.items already up-to-date after await)
+        this._recalcEncumbrance();
+        this.debouncedRender();
+      });
+      // Prevent drag start when clicking inside the input
+      input.addEventListener("mousedown", e => e.stopPropagation());
+    });
+
     // Toggle equipped state on items (weapons, armor, equipment)
     html.querySelectorAll(".item-equip-toggle").forEach(btn => {
       btn.addEventListener("click", async (event) => {
@@ -2534,116 +2636,7 @@ class MercCharacterSheet extends foundry.applications.api.HandlebarsApplicationM
 
     // Calculate and display total weight (encombrement) with burden levels
     // Deferred via setTimeout to keep _onRender out of the rAF frame budget.
-    // Includes: weapons (+ their linked features) + armors + equipment + free features (only equipped). Excludes: ammo.
-    setTimeout(() => {
-    const totalWeightElement = html.querySelector("#total-weight");
-    if (totalWeightElement) {
-      let totalWeight = 0;
-      if (this.actor?.items) {
-        // Pre-compute weight of features grouped by parentWeaponId
-        const featureWeightByWeapon = {};
-        this.actor.items.forEach(item => {
-          if (item.type !== "feature" || !item.system?.parentWeaponId) return;
-          const wid = item.system.parentWeaponId;
-          featureWeightByWeapon[wid] = (featureWeightByWeapon[wid] ?? 0) + (Number(item.system?.weightKg) || 0);
-        });
-
-        this.actor.items.forEach(item => {
-          if (item.type === "feature") {
-            // Only count free features (not linked to a weapon or storage) when equipped
-            if (item.system?.parentWeaponId || item.system?.parentStorageId || !item.system?.equipped) return;
-          } else if (item.type === "storage") {
-            // Count storage total weight (own weight + contents) only when equipped and not inside another storage
-            if (!item.system?.equipped || item.system?.parentStorageId) return;
-            const storageTotalWeight = computeStorageTotalWeight(item, this.actor.items);
-            if (!Number.isNaN(storageTotalWeight)) totalWeight += storageTotalWeight;
-            return;
-          } else if (![ "weapon", "armor", "equipment" ].includes(item.type)) {
-            return;
-          } else if (!item.system?.equipped) {
-            return;
-          } else if (item.system?.parentStorageId) {
-            // Item inside a storage — already counted via the storage's totalWeight
-            return;
-          }
-          let weight = Number(item.system?.weightKg ?? 0);
-          // For weapons, add the weight of all linked features
-          if (item.type === "weapon") {
-            weight += featureWeightByWeapon[item.id] ?? 0;
-          }
-          if (!Number.isNaN(weight)) {
-            totalWeight += weight;
-          }
-        });
-      }
-      totalWeightElement.textContent = totalWeight.toFixed(1);
-      
-      // Calculate burden level
-      const capaciteCharge = this.actor?.system?.combat?.capaciteCharge || 0;
-      let burdenLevel = 1;
-      
-      if (totalWeight >= 0 && totalWeight <= (capaciteCharge / 2)) {
-        burdenLevel = 1;
-      } else if (totalWeight > (capaciteCharge / 2) && totalWeight <= capaciteCharge) {
-        burdenLevel = 2;
-      } else if (totalWeight > capaciteCharge && totalWeight <= capaciteCharge * 2 ) {
-        burdenLevel = 3;
-      } else if (totalWeight > capaciteCharge * 2) {
-        burdenLevel = 4;
-      }
-      
-      // Apply burden styling to weight display
-      totalWeightElement.classList.remove('burden-level-1', 'burden-level-2', 'burden-level-3', 'burden-level-4');
-      totalWeightElement.classList.add(`burden-level-${burdenLevel}`);
-      
-      // Calculate and apply actual movement speeds based on burden level
-      const baseReptation = this.actor?.system?.movement?.reptation || 0;
-      const baseMarche = this.actor?.system?.movement?.marche || 0;
-      const baseCourse = this.actor?.system?.movement?.course || 0;
-      
-      let speedRepationDiviseur = 1;
-      let speedMarcheDiviseur = 1;
-      let speedCourseDiviseur = 1;
-
-      if (burdenLevel === 1) {
-        speedRepationDiviseur = 1;
-        speedMarcheDiviseur = 1;
-        speedCourseDiviseur = 1;
-      } else if (burdenLevel === 2) {
-        speedRepationDiviseur = 1.5;
-        speedMarcheDiviseur = 1.2;
-        speedCourseDiviseur = 1.5;
-      } else if (burdenLevel === 3) {
-        speedRepationDiviseur = 2;
-        speedMarcheDiviseur = 1.75;
-        speedCourseDiviseur = 2.2;
-      } else if (burdenLevel === 4) {
-        speedRepationDiviseur = 3;
-        speedMarcheDiviseur = 2.5;
-        speedCourseDiviseur = 3.2;
-      }
-      
-      const actualReptation = burdenLevel === 1 ? baseReptation : Math.ceil(baseReptation / speedRepationDiviseur);
-      const actualMarche = burdenLevel === 1 ? baseMarche : Math.ceil(baseMarche / speedMarcheDiviseur);
-      const actualCourse = burdenLevel === 1 ? baseCourse : Math.ceil(baseCourse / speedCourseDiviseur);
-      
-      // Update actual speed displays
-      const speedReptationEl = html.querySelector("#speed-reptation-actual .stat-value-large");
-      const speedMarcheEl = html.querySelector("#speed-marche-actual .stat-value-large");
-      const speedCourseEl = html.querySelector("#speed-course-actual .stat-value-large");
-      
-      if (speedReptationEl) speedReptationEl.textContent = actualReptation;
-      if (speedMarcheEl) speedMarcheEl.textContent = actualMarche;
-      if (speedCourseEl) speedCourseEl.textContent = actualCourse;
-      
-      // Apply burden styling to speed displays
-      const speedElements = html.querySelectorAll(".burden-speed");
-      speedElements.forEach(el => {
-        el.classList.remove('burden-level-1', 'burden-level-2', 'burden-level-3', 'burden-level-4');
-        el.classList.add(`burden-level-${burdenLevel}`);
-      });
-    }
-    }, 0); // end setTimeout weight
+    setTimeout(() => { this._recalcEncumbrance(); }, 0); // end setTimeout weight
 
     // Live update of health wound degrees per location and SVG zone colours
     const healthInputs = html.querySelectorAll(".health-inp[data-location]");
@@ -4289,7 +4282,8 @@ function computeStorageTotalWeight(storageItem, allItems) {
     if (i.type === "storage") {
       return sum + computeStorageTotalWeight(i, allItems);
     }
-    return sum + (i.system?.weightKg ?? 0);
+    const qty = Math.max(1, Number(i.system?.quantity) || 1);
+    return sum + ((i.system?.weightKg ?? 0) * qty);
   }, 0);
   return Math.round((ownWeight + contentsWeight) * 1000) / 1000;
 }
@@ -4300,7 +4294,10 @@ function _checkStorageCapacity(storageItem, allItems, addedWeight, excludeItemId
   if (capacityKg <= 0) return true;
   const alreadyUsed = Array.from(allItems || [])
     .filter(i => i.system?.parentStorageId === (storageItem.id ?? storageItem._id) && i.id !== excludeItemId)
-    .reduce((sum, i) => sum + (i.system?.weightKg ?? 0), 0);
+    .reduce((sum, i) => {
+      const qty = Math.max(1, Number(i.system?.quantity) || 1);
+      return sum + ((i.system?.weightKg ?? 0) * qty);
+    }, 0);
   return (alreadyUsed + addedWeight) <= capacityKg;
 }
 
@@ -5049,6 +5046,20 @@ class MercVehicleSheet extends foundry.applications.api.HandlebarsApplicationMix
           else this._expandedStorages.delete(sid);
         }
       });
+    });
+
+    // Inline quantity edit on cargo item cards
+    html.querySelectorAll(".item-qty-inline").forEach(input => {
+      input.addEventListener("change", async (event) => {
+        event.stopPropagation();
+        const itemId = event.currentTarget.dataset.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (!item) return;
+        const qty = Math.max(1, parseInt(event.currentTarget.value) || 1);
+        event.currentTarget.value = qty;
+        await item.update({ "system.quantity": qty });
+      });
+      input.addEventListener("mousedown", e => e.stopPropagation());
     });
 
     // Remove item from storage (in cargo tab)

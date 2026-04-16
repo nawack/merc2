@@ -219,6 +219,7 @@
         "storage": "Storage",
         "addStorage": "Add Storage",
         "equipped": "Equipped",
+        "quantity": "Qty",
         "year": "Year (avail.)",
         "equipFutureYear": "{item} is a technology from year {itemYear} — character in {actorYear} cannot use it.",
         "compendiumYearFilter": "Year ≤",

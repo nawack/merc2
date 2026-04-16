@@ -37,6 +37,7 @@ Les armes supportent deux sous-systèmes selon leur type :
   "rarity": "common",          // Rareté : common | uncommon | rare | epic
   "price": 0,
   "weightKg": 0,
+  "quantity": 1,               // Quantité (stack)
   "weaponSubtype": "",         // Sous-type (pistol, rifle, smg, shotgun, melee…)
   "weaponSkill": "",           // Clé de compétence (powder_projectiles, melee…)
   "proficiency": 0,            // Maîtrise (+3 au jet de compétence si > 0)
@@ -61,7 +62,8 @@ Les armes supportent deux sous-systèmes selon leur type :
   "defaultAmmoInMag": 0,       // Balles dans le chargeur en cours
   "defaultAmmoMagFull": 0,     // Chargeurs pleins en stock
   "defaultAmmoMagTotal": 0,    // Total chargeurs
-  "defaultAmmoStock": 0        // Balles en vrac
+  "defaultAmmoStock": 0,       // Balles en vrac
+  "quantity": 1                 // Quantité (stack)
 }
 ```
 
@@ -88,6 +90,7 @@ La fiche arme affiche les valeurs calculées (en lecture seule) à partir des pr
   "rarity": "common",     // common | uncommon | rare | epic
   "price": 0,             // Prix
   "weightKg": 0,          // Poids en kg
+  "quantity": 1,          // Quantité (stack)
   "description": "",      // Description libre
   "locations": {
     // Points de blindage par zone corporelle (20 zones)
@@ -131,6 +134,7 @@ La fiche arme affiche les valeurs calculées (en lecture seule) à partir des pr
   "rarity": "common",   // common | uncommon | rare | epic
   "price": 0,           // Prix
   "weightKg": 0,        // Poids en kg
+  "quantity": 1,        // Quantité (stack)
   "description": ""     // Description libre
 }
 ```
@@ -229,7 +233,8 @@ Les `feature` servent principalement aux **accessoires d'armes** (lunettes, sile
   "lateralReduction": 0,  // Réduction latérale (flamme/blast)
 
   // Dimensions
-  "lengthIncrease": 0     // Augmentation de longueur de l'arme (mm)
+  "lengthIncrease": 0,    // Augmentation de longueur de l'arme (mm)
+  "quantity": 1         // Quantité (stack)
 }
 ```
 

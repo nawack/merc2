@@ -807,6 +807,7 @@
               <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</div>
               <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
             </div>
+            <!--<input class="item-qty-inline" type="number" value="{{item.system.quantity}}" min="1" step="1" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.quantity'}}">-->
             <div class="item-controls">
               <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
@@ -830,6 +831,7 @@
               <div class="item-name">{{item.name}}</div>
               <div class="item-damage-skill">{{localize "MERC.UI.items.armorClassShort"}} {{item.system.armorClass}}</div>
             </div>
+            <!--<input class="item-qty-inline" type="number" value="{{item.system.quantity}}" min="1" step="1" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.quantity'}}">-->
             <div class="item-controls">
               <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
@@ -852,6 +854,7 @@
             <div class="item-info">
               <div class="item-name">{{item.name}}</div>
             </div>
+            <input class="item-qty-inline" type="number" value="{{item.system.quantity}}" min="1" step="1" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.quantity'}}">
             <div class="item-controls">
               <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
@@ -865,6 +868,7 @@
               <div class="item-name">{{item.name}}</div>
               {{#if item.system.featureType}}<div class="item-damage-skill">{{item.system.featureType}}</div>{{/if}}
             </div>
+            <input class="item-qty-inline" type="number" value="{{item.system.quantity}}" min="1" step="1" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.quantity'}}">
             <div class="item-controls">
               <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>
@@ -908,6 +912,7 @@
                       <div class="item-name">{{ci.name}}</div>
                       <div class="item-sub">{{ci.system.weightKg}} kg</div>
                     </div>
+                    <input class="item-qty-inline" type="number" value="{{ci.system.quantity}}" min="1" step="1" data-item-id="{{ci._id}}" title="{{localize 'MERC.UI.items.quantity'}}">
                     <div class="item-controls">
                       <button type="button" class="storage-item-remove-btn" data-item-id="{{ci._id}}" title="{{localize "MERC.UI.items.storageSheet.removeFromStorage"}}">⤴</button>
                       <button type="button" class="item-edit">✎</button>

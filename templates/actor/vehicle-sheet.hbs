@@ -383,8 +383,8 @@
                 <img class="cargo-item-icon" src="{{item.img}}" alt="{{item.name}}">
                 <div class="item-info">
                   <div class="item-name">{{item.name}}</div>
-                  {{#if item.system.quantity}}<div class="item-sub">x{{item.system.quantity}}</div>{{/if}}
                 </div>
+                <input class="item-qty-inline" type="number" value="{{item.system.quantity}}" min="1" step="1" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.quantity'}}">
                 <div class="item-controls">
                   <button type="button" class="item-edit">✎</button>
                   <button type="button" class="item-delete"><i class="fas fa-trash"></i></button>
@@ -426,6 +426,7 @@
                         <div class="item-name">{{ci.name}}</div>
                         <div class="item-sub">{{ci.system.weightKg}} kg</div>
                       </div>
+                      <input class="item-qty-inline" type="number" value="{{ci.system.quantity}}" min="1" step="1" data-item-id="{{ci._id}}" title="{{localize 'MERC.UI.items.quantity'}}">
                       <div class="item-controls">
                         <button type="button" class="storage-item-remove-btn" data-item-id="{{ci._id}}" title="{{localize "MERC.UI.items.storageSheet.removeFromStorage"}}">⤴</button>
                         <button type="button" class="item-edit">✎</button>

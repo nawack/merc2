@@ -1,13 +1,13 @@
-# =============================================================================
+﻿# =============================================================================
 # build-compendium.ps1
-# Génère les packs compendium LevelDB pour le système Mercenary.
+# GÃ©nÃ¨re les packs compendium LevelDB pour le systÃ¨me Mercenary.
 # Lit les fichiers CSV source et produit :
-#   packs/weapons/    – armes (Item type: weapon)
-#   packs/ammos/      – munitions (Item type: ammo)
-#   packs/armors/     – armures (Item type: armor)
-#   packs/equipments/ – équipements (Item type: equipment)
-#   packs/features/   – accessoires (Item type: feature)
-#   packs/storages/   – stockage (Item type: storage)
+#   packs/weapons/    â€“ armes (Item type: weapon)
+#   packs/ammos/      â€“ munitions (Item type: ammo)
+#   packs/armors/     â€“ armures (Item type: armor)
+#   packs/equipments/ â€“ Ã©quipements (Item type: equipment)
+#   packs/features/   â€“ accessoires (Item type: feature)
+#   packs/storages/   â€“ stockage (Item type: storage)
 #
 # Usage : .\build-compendium.ps1
 #         .\build-compendium.ps1 -CsvDir "C:\mon\dossier"
@@ -21,7 +21,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-# Lire la version du système depuis system.json
+# Lire la version du systÃ¨me depuis system.json
 $_sysJson = Get-Content (Join-Path $PSScriptRoot "system.json") -Raw | ConvertFrom-Json
 $SystemVersion = $_sysJson.version
 
@@ -55,7 +55,7 @@ function TryParseInt([string]$s) {
 
 # Build folder entries from CSV Folder path strings.
 # Returns ordered hashtable: normalizedKey -> folder entry
-function Build-FolderMap([string[]]$rawPaths) {
+function New-FolderMap([string[]]$rawPaths) {
   $map = @{}  # regular Hashtable: normalizedKey -> folder entry
   $paths = $rawPaths | Where-Object { $_ } | Sort-Object -Unique
 
@@ -106,8 +106,8 @@ function Build-FolderMap([string[]]$rawPaths) {
   return $map
 }
 
-# Supprime les diacritiques et met en minuscules – évite tout problème d'encodage
-# entre les littéraux du PS1 (page de code Windows) et les chaînes lues en UTF-8.
+# Supprime les diacritiques et met en minuscules â€“ Ã©vite tout problÃ¨me d'encodage
+# entre les littÃ©raux du PS1 (page de code Windows) et les chaÃ®nes lues en UTF-8.
 function Remove-Diacritics([string]$s) {
   $nfd = $s.Normalize([System.Text.NormalizationForm]::FormD)
   [string]::new(($nfd.ToCharArray() | Where-Object {
@@ -144,7 +144,7 @@ function Get-WeaponImage([string]$subtype) {
 }
 
 # =============================================================================
-# Étape 1 – Node.js portable
+# Ã‰tape 1 â€“ Node.js portable
 # =============================================================================
 if (-not (Test-Path $NodeExe)) {
   Write-Host "> Telechargement de Node.js 20 LTS portable..." -ForegroundColor Cyan
@@ -180,7 +180,7 @@ if (-not (Test-Path $NodeExe)) {
 }
 
 # =============================================================================
-# Étape 2 – classic-level
+# Ã‰tape 2 â€“ classic-level
 # =============================================================================
 $classicLevelDir = [IO.Path]::Combine($ToolsDir, 'node_modules', 'classic-level')
 if (-not (Test-Path $classicLevelDir)) {
@@ -195,7 +195,7 @@ if (-not (Test-Path $classicLevelDir)) {
   # Mettre node.exe dans le PATH pour que node-gyp-build puisse le trouver
   $env:PATH = "$ToolsDir;" + $env:PATH
 
-  # Nettoyer installation incomplète si elle existe
+  # Nettoyer installation incomplÃ¨te si elle existe
   if (Test-Path $classicLevelDir) { Remove-Item $classicLevelDir -Recurse -Force }
 
   $npmCliJs = [IO.Path]::Combine($ToolsDir, 'node_modules', 'npm', 'bin', 'npm-cli.js')
@@ -207,19 +207,19 @@ if (-not (Test-Path $classicLevelDir)) {
 }
 
 # =============================================================================
-# Étape 3 – Parsing du CSV Ammo  (must run before weapons so we can link IDs)
+# Ã‰tape 3 â€“ Parsing du CSV Ammo  (must run before weapons so we can link IDs)
 # =============================================================================
 Write-Host "> Lecture des munitions..." -ForegroundColor Cyan
 $acsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Ammo.csv") -Delimiter ";" -Encoding UTF8
 $acols = $acsv[0].PSObject.Properties.Name
 # Column indices (0-based):
 #  0=Folder  1=Munition  2=Type de munition  3=Calibre  4=type(subtype)
-#  5=Masse(g)  6=Diamètre(mm)  7=Coeff_traînée  8=Rho(kg/m³)
+#  5=Masse(g)  6=DiamÃ¨tre(mm)  7=Coeff_traÃ®nÃ©e  8=Rho(kg/mÂ³)
 #  9=indice_perforation  10=Longueur_Canon_std(pouces)  11=vitesse(m/s)  12=poids_munition(g)
 
 # Build ammo folder hierarchy from all Folder paths in the CSV
 $allAFolderPaths = $acsv | ForEach-Object { $_.($acols[0]).Trim() } | Where-Object { $_ }
-$ammoFolderMap = Build-FolderMap $allAFolderPaths
+$ammoFolderMap = New-FolderMap $allAFolderPaths
 
 $ammoItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
@@ -295,7 +295,7 @@ foreach ($row in $acsv) {
 }
 Write-Host "  OK $($ammoItems.Count) munitions, $($ammoFolderMap.Count) dossiers" -ForegroundColor Green
 
-# Build case-insensitive ammo name → _id and ammo system data lookups for weapon linkage
+# Build case-insensitive ammo name â†’ _id and ammo system data lookups for weapon linkage
 $ammoNameToId     = @{}
 $ammoNameToSystem = @{}
 foreach ($item in $ammoItems) {
@@ -304,20 +304,20 @@ foreach ($item in $ammoItems) {
 }
 
 # =============================================================================
-# Étape 4 – Parsing du CSV Weapons
+# Ã‰tape 4 â€“ Parsing du CSV Weapons
 # =============================================================================
 Write-Host "> Lecture des armes..." -ForegroundColor Cyan
 $wcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Weapons.csv") -Delimiter ";" -Encoding UTF8
 $wcols = $wcsv[0].PSObject.Properties.Name
 # Column indices (0-based):
-#  0=Folder  1=Nom  2=Sous-type  3=Compétence  4=Illustration  5=Munition
-#  6=Calibre  7=Poids_à_vide  8=Canon(pouces)  9=Range_Short  10=Range_Med
+#  0=Folder  1=Nom  2=Sous-type  3=CompÃ©tence  4=Illustration  5=Munition
+#  6=Calibre  7=Poids_Ã _vide  8=Canon(pouces)  9=Range_Short  10=Range_Med
 #  11=Range_Long  12=Range_Extrem  13=Recul_C/C  14=Recul_Burst  15=Chargeur
-#  16=ROF_mode  17=ROF_limited  18=Année
+#  16=ROF_mode  17=ROF_limited  18=AnnÃ©e
 
 # Build weapon folder hierarchy from all Folder paths in the CSV
 $allWFolderPaths = $wcsv | ForEach-Object { $_.($wcols[0]).Trim() } | Where-Object { $_ }
-$weaponFolderMap = Build-FolderMap $allWFolderPaths
+$weaponFolderMap = New-FolderMap $allWFolderPaths
 
 $weaponItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
@@ -346,7 +346,7 @@ foreach ($row in $wcsv) {
   $rofLimited   = TryParseInt $row.($wcols[17])
   $itemYear     = TryParseInt $row.($wcols[18])
 
-  # Resolve default ammo by name — case-insensitive
+  # Resolve default ammo by name â€” case-insensitive
   $defaultAmmoId = if ($ammoNameToId.ContainsKey($munitionName.ToLower())) { $ammoNameToId[$munitionName.ToLower()] } else { "" }
 
   # Select weapon icon: prefer Illustration column, fall back to folder-based lookup
@@ -410,20 +410,20 @@ foreach ($row in $wcsv) {
 Write-Host "  OK $($weaponItems.Count) armes, $($weaponFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
-# Étape 5 – Parsing du CSV Armors
+# Ã‰tape 5 â€“ Parsing du CSV Armors
 # =============================================================================
 Write-Host "> Lecture des armures..." -ForegroundColor Cyan
 $arcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Armors.csv") -Delimiter ";" -Encoding UTF8
 $arcols = $arcsv[0].PSObject.Properties.Name
 # Column indices (0-based):
-#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Année  6=Description
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=AnnÃ©e  6=Description
 #  7=crane  8=visage  9=cou  10=poitrine_gch  11=poitrine_dr
 # 12=abdomen_gch  13=abdomen_dr  14=bas_ventre  15=bras_gch  16=bras_dr
 # 17=av_bras_gch  18=av_bras_dr  19=main_gch  20=main_dr
 # 21=cuisse_gch  22=cuisse_dr  23=jambe_gch  24=jambe_dr  25=pied_gch  26=pied_dr
 
 $allARFolderPaths = $arcsv | ForEach-Object { $_.($arcols[0]).Trim() } | Where-Object { $_ }
-$armorFolderMap   = Build-FolderMap $allARFolderPaths
+$armorFolderMap   = New-FolderMap $allARFolderPaths
 
 $armorItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
@@ -493,16 +493,16 @@ foreach ($row in $arcsv) {
 Write-Host "  OK $($armorItems.Count) armures, $($armorFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
-# Étape 6 – Parsing du CSV Equipment
+# Ã‰tape 6 â€“ Parsing du CSV Equipment
 # =============================================================================
 Write-Host "> Lecture des equipements..." -ForegroundColor Cyan
 $eqcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Equipment.csv") -Delimiter ";" -Encoding UTF8
 $eqcols = $eqcsv[0].PSObject.Properties.Name
 # Column indices (0-based):
-#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description  6=Année
+#  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Description  6=AnnÃ©e
 
 $allEQFolderPaths   = $eqcsv | ForEach-Object { ([string]$_.($eqcols[0])).Trim() } | Where-Object { $_ }
-$equipmentFolderMap = Build-FolderMap $allEQFolderPaths
+$equipmentFolderMap = New-FolderMap $allEQFolderPaths
 
 $equipmentItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
@@ -547,30 +547,30 @@ foreach ($row in $eqcsv) {
     }
   })
 }
-Write-Host "  OK $($equipmentItems.Count) équipements, $($equipmentFolderMap.Count) dossiers" -ForegroundColor Green
+Write-Host "  OK $($equipmentItems.Count) Ã©quipements, $($equipmentFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
-# Étape 7 – Parsing du CSV Feature
+# Ã‰tape 7 â€“ Parsing du CSV Feature
 # =============================================================================
 # Colonnes CSV (0-based) :
 #  0=Folder  1=type feature  2=nom  3=Bonus tir courte  4=Bonus tir moyenne
-#  5=Bonus tir longue  6=Bonus tir extrême  7=Reduction de bruit
-#  8=Reduction de bruit Latérale  9=Augmentation de longueur
+#  5=Bonus tir longue  6=Bonus tir extrÃªme  7=Reduction de bruit
+#  8=Reduction de bruit LatÃ©rale  9=Augmentation de longueur
 # 10=Rarete  11=Prix  12=Poids (kg)  13=Description
 Write-Host "> Lecture des accessoires..." -ForegroundColor Cyan
-# Le CSV Feature a des colonnes dupliquées → lecture manuelle ligne par ligne
+# Le CSV Feature a des colonnes dupliquÃ©es â†’ lecture manuelle ligne par ligne
 $featureCsvPath = Join-Path $CsvDir "merc-compendium-Feature.csv"
 $featureRawLines = [System.IO.File]::ReadAllLines($featureCsvPath, [System.Text.Encoding]::UTF8)
-# Ignorer la ligne d'en-tête (index 0), traiter les lignes suivantes
+# Ignorer la ligne d'en-tÃªte (index 0), traiter les lignes suivantes
 $featureDataLines = $featureRawLines | Select-Object -Skip 1
 
 $allFFolderPaths = $featureDataLines | ForEach-Object {
   $cols = $_ -split ';'
   if ($cols.Count -gt 0) { $cols[0].Trim() }
 } | Where-Object { $_ }
-$featureFolderMap = Build-FolderMap $allFFolderPaths
+$featureFolderMap = New-FolderMap $allFFolderPaths
 
-# Clés en ASCII pur (sans accents, minuscules) pour éviter tout problème d'encodage PS1/UTF-8
+# ClÃ©s en ASCII pur (sans accents, minuscules) pour Ã©viter tout problÃ¨me d'encodage PS1/UTF-8
 $featureIconMap = @{
   'silencieux'         = 'systems/merc/assets/items/features/suppressor.png'
   'visee lunette'      = 'systems/merc/assets/items/features/crosshair.png'
@@ -647,7 +647,7 @@ foreach ($line in $featureDataLines) {
 Write-Host "  OK $($featureItems.Count) accessoires, $($featureFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
-# Étape 7.5 – Parsing du CSV Storage
+# Ã‰tape 7.5 â€“ Parsing du CSV Storage
 # =============================================================================
 Write-Host "> Lecture du stockage..." -ForegroundColor Cyan
 $stcsv  = Import-Csv (Join-Path $CsvDir "merc-compendium-Storage.csv") -Delimiter ";" -Encoding UTF8
@@ -656,7 +656,7 @@ $stcols = $stcsv[0].PSObject.Properties.Name
 #  0=Folder  1=Nom  2=Rarete  3=Prix  4=Poids(kg)  5=Capacite_L  6=Capacite_Kg  7=Description
 
 $allSTFolderPaths = $stcsv | ForEach-Object { ([string]$_.($stcols[0])).Trim() } | Where-Object { $_ }
-$storageFolderMap = Build-FolderMap $allSTFolderPaths
+$storageFolderMap = New-FolderMap $allSTFolderPaths
 
 $storageItems = [System.Collections.Generic.List[hashtable]]::new()
 $sort = 0
@@ -708,9 +708,9 @@ foreach ($row in $stcsv) {
 Write-Host "  OK $($storageItems.Count) stockages, $($storageFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
-# Étape 7b – Parsing du CSV Tables
+# Ã‰tape 7b â€“ Parsing du CSV Tables
 # =============================================================================
-Write-Host "> Lecture des tables aléatoires..." -ForegroundColor Cyan
+Write-Host "> Lecture des tables alÃ©atoires..." -ForegroundColor Cyan
 $tcsv = Import-Csv (Join-Path $CsvDir "merc-compendium-Tables.csv") -Delimiter ";" -Encoding UTF8
 
 # Group rows by TableId to build table + results
@@ -760,7 +760,7 @@ foreach ($g in $tableGroups) {
 Write-Host "  OK $($tableItems.Count) tables" -ForegroundColor Green
 
 # =============================================================================
-# Étape 8 – Sérialisation JSON
+# Ã‰tape 8 â€“ SÃ©rialisation JSON
 # =============================================================================
 $weaponsJsonPath   = Join-Path $ToolsDir "_weapons.json"
 $ammosJsonPath     = Join-Path $ToolsDir "_ammos.json"
@@ -770,7 +770,7 @@ $featuresJsonPath  = Join-Path $ToolsDir "_features.json"
 $storageJsonPath   = Join-Path $ToolsDir "_storages.json"
 $tablesJsonPath    = Join-Path $ToolsDir "_tables.json"
 
-# PowerShell 5 : Set-Content -Encoding UTF8 ajoute un BOM ; JSON.parse() échoue.
+# PowerShell 5 : Set-Content -Encoding UTF8 ajoute un BOM ; JSON.parse() Ã©choue.
 # On utilise System.IO.File::WriteAllText avec UTF8 sans BOM.
 $utf8NoBOM = New-Object System.Text.UTF8Encoding $false
 
@@ -793,7 +793,7 @@ $tablesExport    = [ordered]@{ 'folders' = @();                           'items
 New-Item -ItemType Directory -Path $PacksDir -Force | Out-Null
 
 # =============================================================================
-# Étape 9 – Génération LevelDB
+# Ã‰tape 9 â€“ GÃ©nÃ©ration LevelDB
 # =============================================================================
 Write-Host "> Generation pack Armes..." -ForegroundColor Cyan
 $weaponPackDir = Join-Path $PacksDir "weapons"
@@ -837,7 +837,7 @@ Push-Location $ToolsDir
 if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing storages" }
 Pop-Location
 
-Write-Host "> Generation pack Tables Aléatoires..." -ForegroundColor Cyan
+Write-Host "> Generation pack Tables AlÃ©atoires..." -ForegroundColor Cyan
 $tablesPackDir  = Join-Path $PacksDir "tables"
 Push-Location $ToolsDir
 & $NodeExe $PackerScript $tablesJsonPath $tablesPackDir RollTable
@@ -845,7 +845,7 @@ if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing tables" }
 Pop-Location
 
 # =============================================================================
-# Résumé
+# RÃ©sumÃ©
 # =============================================================================
 Write-Host ""
 Write-Host "======================================" -ForegroundColor Green

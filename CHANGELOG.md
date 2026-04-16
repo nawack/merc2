@@ -9,8 +9,6 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 - ⚖️ **Poids multiplié par la quantité** : Le poids total d'un stack (`weightKg × quantity`) est pris en compte dans le calcul de l'encombrement du personnage, dans `computeStorageTotalWeight` et dans `_checkStorageCapacity`.
 - 🔄 **Migration automatique** : Les items existants sans champ `quantity` reçoivent la valeur par défaut `1` à la prochaine ouverture du monde.
 
-## [1.2.2] - 2026-04-16
-
 ### Update
 - 🖹 **Update doc** : Mise a jour de toute la documentation
 

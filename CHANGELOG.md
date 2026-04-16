@@ -8,6 +8,7 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 - 🔢 **Quantité sur les items** : Les types `weapon`, `armor`, `equipment`, `feature` et `ammo` disposent désormais d'un champ `quantity` (défaut : 1). La quantité est modifiable directement en ligne dans les listes d'items de la fiche personnage et de la fiche véhicule (champ compact `Qté` à côté de chaque carte), ainsi que dans les items au sein des listes de stockage.
 - ⚖️ **Poids multiplié par la quantité** : Le poids total d'un stack (`weightKg × quantity`) est pris en compte dans le calcul de l'encombrement du personnage, dans `computeStorageTotalWeight` et dans `_checkStorageCapacity`.
 - 🔄 **Migration automatique** : Les items existants sans champ `quantity` reçoivent la valeur par défaut `1` à la prochaine ouverture du monde.
+- 🎲 **Tables aléatoire** : ajout dans le compendium d'une table aléatoire de localisation (D20) et de d'éparpillement (D8)
 
 ### Update
 - 🖹 **Update doc** : Mise a jour de toute la documentation

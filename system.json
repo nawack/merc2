@@ -91,6 +91,13 @@
       "path": "packs/storages",
       "type": "Item",
       "system": "merc"
+    },
+    {
+      "name": "tables",
+      "label": "Tables Aléatoires",
+      "path": "packs/tables",
+      "type": "RollTable",
+      "system": "merc"
     }
   ],
   "url": "https://github.com/nawack/merc2",

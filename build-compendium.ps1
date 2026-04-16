@@ -708,6 +708,58 @@ foreach ($row in $stcsv) {
 Write-Host "  OK $($storageItems.Count) stockages, $($storageFolderMap.Count) dossiers" -ForegroundColor Green
 
 # =============================================================================
+# Étape 7b – Parsing du CSV Tables
+# =============================================================================
+Write-Host "> Lecture des tables aléatoires..." -ForegroundColor Cyan
+$tcsv = Import-Csv (Join-Path $CsvDir "merc-compendium-Tables.csv") -Delimiter ";" -Encoding UTF8
+
+# Group rows by TableId to build table + results
+$tableGroups = $tcsv | Group-Object { $_.TableId }
+$tableItems  = [System.Collections.Generic.List[hashtable]]::new()
+
+foreach ($g in $tableGroups) {
+  $firstRow = $g.Group[0]
+  $results  = [System.Collections.Generic.List[hashtable]]::new()
+
+  foreach ($row in $g.Group) {
+    $results.Add([ordered]@{
+      "_id"          = $row.ResultId
+      "type"         = "text"
+      "name"         = $row.ResultName
+      "img"          = "icons/svg/d20-grey.svg"
+      "documentUuid" = $null
+      "weight"       = [int]$row.Weight
+      "range"        = @([int]$row.RangeLow, [int]$row.RangeHigh)
+      "drawn"        = $false
+      "flags"        = [ordered]@{}
+    })
+  }
+
+  $tableItems.Add([ordered]@{
+    "_id"         = $firstRow.TableId
+    "name"        = $firstRow.TableName
+    "img"         = $firstRow.Img
+    "description" = $firstRow.TableDescription
+    "formula"     = $firstRow.Formula
+    "replacement" = $true
+    "displayRoll" = $true
+    "results"     = @($results)
+    "folder"      = $null
+    "sort"        = 0
+    "flags"       = [ordered]@{}
+    "_stats"      = [ordered]@{
+      "systemId"       = "merc"
+      "systemVersion"  = $SystemVersion
+      "coreVersion"    = "13.351"
+      "createdTime"    = $null
+      "modifiedTime"   = $null
+      "lastModifiedBy" = $null
+    }
+  })
+}
+Write-Host "  OK $($tableItems.Count) tables" -ForegroundColor Green
+
+# =============================================================================
 # Étape 8 – Sérialisation JSON
 # =============================================================================
 $weaponsJsonPath   = Join-Path $ToolsDir "_weapons.json"
@@ -716,6 +768,7 @@ $armorsJsonPath    = Join-Path $ToolsDir "_armors.json"
 $equipmentJsonPath = Join-Path $ToolsDir "_equipment.json"
 $featuresJsonPath  = Join-Path $ToolsDir "_features.json"
 $storageJsonPath   = Join-Path $ToolsDir "_storages.json"
+$tablesJsonPath    = Join-Path $ToolsDir "_tables.json"
 
 # PowerShell 5 : Set-Content -Encoding UTF8 ajoute un BOM ; JSON.parse() échoue.
 # On utilise System.IO.File::WriteAllText avec UTF8 sans BOM.
@@ -728,12 +781,14 @@ $armorExport     = [ordered]@{ 'folders' = @($armorFolderMap.Values);     'items
 $equipmentExport = [ordered]@{ 'folders' = @($equipmentFolderMap.Values); 'items' = @($equipmentItems) }
 $featureExport   = [ordered]@{ 'folders' = @($featureFolderMap.Values);   'items' = @($featureItems)   }
 $storageExport   = [ordered]@{ 'folders' = @($storageFolderMap.Values);   'items' = @($storageItems)   }
+$tablesExport    = [ordered]@{ 'folders' = @();                           'items' = @($tableItems)     }
 [System.IO.File]::WriteAllText($weaponsJsonPath,   ($weaponExport    | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($ammosJsonPath,     ($ammoExport      | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($armorsJsonPath,    ($armorExport     | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($equipmentJsonPath, ($equipmentExport | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($featuresJsonPath,  ($featureExport   | ConvertTo-Json -Depth 20), $utf8NoBOM)
 [System.IO.File]::WriteAllText($storageJsonPath,   ($storageExport   | ConvertTo-Json -Depth 20), $utf8NoBOM)
+[System.IO.File]::WriteAllText($tablesJsonPath,    ($tablesExport    | ConvertTo-Json -Depth 20), $utf8NoBOM)
 
 New-Item -ItemType Directory -Path $PacksDir -Force | Out-Null
 
@@ -782,6 +837,13 @@ Push-Location $ToolsDir
 if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing storages" }
 Pop-Location
 
+Write-Host "> Generation pack Tables Aléatoires..." -ForegroundColor Cyan
+$tablesPackDir  = Join-Path $PacksDir "tables"
+Push-Location $ToolsDir
+& $NodeExe $PackerScript $tablesJsonPath $tablesPackDir RollTable
+if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Erreur packing tables" }
+Pop-Location
+
 # =============================================================================
 # Résumé
 # =============================================================================
@@ -795,5 +857,6 @@ Write-Host "  Armures      : $($armorItems.Count) items, $($armorFolderMap.Count
 Write-Host "  Equipements  : $($equipmentItems.Count) items, $($equipmentFolderMap.Count) dossiers -> $equipmentPackDir"
 Write-Host "  Accessoires  : $($featureItems.Count) items, $($featureFolderMap.Count) dossiers -> $featurePackDir"
 Write-Host "  Stockage     : $($storageItems.Count) items, $($storageFolderMap.Count) dossiers -> $storagePackDir"
+  Write-Host "  Tables       : $($tableItems.Count) tables -> $tablesPackDir"
 Write-Host ""
 Write-Host "-> Relancez Foundry VTT pour voir les compendiums." -ForegroundColor Yellow

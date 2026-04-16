@@ -11,16 +11,12 @@ _tools/npm.cmd
 _tools/npx
 _tools/npx.cmd
 _tools/*.json
+_tools/inspect-ldb.cjs
 
 
-# LevelDB metadata – auto-updated by Foundry at every launch (not actual data)
-# Les fichiers *.ldb et CURRENT restent trackés car ils contiennent les vraies données
-packs/**/LOG
-packs/**/LOG.old
-packs/**/LOCK
-packs/**/MANIFEST-*
-packs/**/lost/
-packs/**/CURRENT
+# LevelDB compendium packs â€" entièrement régénérés par build-compendium.ps1
+# Ne pas committer les binaires LDB, uniquement les sources CSV dans sources/compendium/
+packs/
 
 # IDE & Editor
 .vscode/

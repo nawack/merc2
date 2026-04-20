@@ -239,7 +239,7 @@
           "ammoTypePlaceholder": "Select a type",
           "ammoTypes": {
             "bullet": "Bullet",
-            "shell": "Shell",
+            "obus": "Artillery Shell",
             "arrow": "Arrow",
             "bolt": "Bolt",
             "energy": "Energy Cell",

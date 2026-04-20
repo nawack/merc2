@@ -26,8 +26,33 @@
 ## Weapon (Armes)
 
 Les armes supportent deux sous-systèmes selon leur type :
-- **Corps-à-corps / projectiles mécaniques** : dégâts via table `BASE_DAMAGE_TABLE` (Force × Degré)
-- **Armes à feu** : dégâts calculés en temps réel par le moteur balistique physique
+- **Corps-à-corps / armes blanches / lancer / projectiles mécaniques** : dégâts via table `BASE_DAMAGE_TABLE` ou formule fixe (`system.damage`)
+- **Grenades** : sous-type `throwing`, dégâts fixes (ex: `2d6`, `3d6`), champ quantité visible sur la fiche
+- **Armes à feu / armes lourdes** : dégâts calculés en temps réel par le moteur balistique physique
+
+### Sous-types d'armes (`weaponSubtype`)
+
+| Valeur | Catégorie | Moteur dégâts |
+|--------|-----------|---------------|
+| `powder_projectiles` | Armes à feu | Balistique + munition |
+| `mechanical_projectiles` | Arcs, arbalètes | Balistique + munition |
+| `heavy_weapons` | Armes lourdes, canons | Balistique + munition |
+| `electronic_weapons` | Armes électroniques | Balistique + munition |
+| `melee` | Corps-à-corps | Formule fixe + BASE_DAMAGE_TABLE |
+| `bladed_weapons` | Armes blanches | Formule fixe + BASE_DAMAGE_TABLE |
+| `throwing` | Lancer (couteaux, grenades…) | Formule fixe ; quantité affichée |
+
+### Compendium — Structure des dossiers munitions
+
+Limite FoundryVTT : **3 niveaux max** dans un compendium pack.
+
+| Catégorie | Structure | Exemple |
+|-----------|-----------|--------|
+| Balles | `Munition\Balles {d}mm ({cal})\{type}` | `Balles 9mm (9x19)\BO` |
+| Chevrotines | `Munition\Chevrotines {d}mm ({cal})\{type}` | `Chevrotines 18,5mm (18,5x70)\Grenaille` |
+| Flèches | `Munition\Flèches\{type}` | `Flèches\AP` |
+| Carreaux | `Munition\Carreaux\{type}` | `Carreaux\BO` |
+| Obus | `Munition\Obus {calibre}\{type}` | `Obus 120mm\APFSDS` |
 
 ### Schéma (`system`)
 

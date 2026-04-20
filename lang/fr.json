@@ -239,7 +239,7 @@
           "ammoTypePlaceholder": "Sélectionner un type",
           "ammoTypes": {
             "bullet": "Balle",
-            "shell": "Cartouche",
+            "obus": "Obus",
             "arrow": "Flèche",
             "bolt": "Carreau",
             "energy": "Cellule d'énergie",

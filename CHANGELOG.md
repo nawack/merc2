@@ -2,6 +2,21 @@
 
 Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+## [1.2.4] - 2026-04-20
+
+### Added
+- ⚔️ **Compendium armes étendu** : Ajout de 55 nouvelles armes non-à-feu réparties en 6 catégories — corps-à-corps (9), armes blanches (9), lancer (4), grenades (16 : offensives / défensives / spéciales), arcs (5), arbalètes (4) — ainsi que 13 armes lourdes (canons auto, lance-grenades, mortier, canons AT/char).
+- 💥 **Compendium munitions étendu** : Ajout de 23 nouvelles munitions — flèches (4), carreaux (4), obus 20mm–120mm (15) — pour les arcs, arbalètes et armes lourdes.
+- 🖼️ **14 icônes SVG** créées pour les nouveaux types d'armes et munitions.
+- 🎒 **Quantité visible sur les armes de lancé** : Le champ de quantité en ligne s'affiche désormais pour les armes de sous-type `throwing` (grenades, couteaux, javelots…).
+- 🗂️ **Réorganisation du compendium munitions** : Classification par type de projectile (`Balles`, `Chevrotines`, `Flèches`, `Carreaux`, `Obus`) respectant la limite de 3 niveaux de FoundryVTT.
+
+### Fixed
+- 🐛 **Profondeur max des dossiers compendium** : FoundryVTT limite les compendiums à 3 niveaux de dossiers. La précédente structure à 4–5 niveaux rendait les munitions (Balles, Obus, Chevrotines) invisibles. Corrigé en fusionnant catégorie+calibre.
+
+### Update
+- 🖹 **Mise à jour de la documentation** : CHANGELOG, ROADMAP, ITEM_TYPES_GUIDE mis à jour.
+
 ## [1.2.3] - 2026-04-16
 
 ### Added

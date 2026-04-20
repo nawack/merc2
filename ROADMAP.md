@@ -1,7 +1,7 @@
 # Roadmap - Mercenary System
 
-**Mise à jour :** 2026-04-16  
-**Version courante :** 1.2.2  
+**Mise à jour :** 2026-04-20  
+**Version courante :** 1.2.4  
 **Source :** `.todo`
 
 > L'historique des versions complétées est dans [CHANGELOG.md](CHANGELOG.md).
@@ -38,28 +38,13 @@
 - [ ] Prise en compte du poids des munitions dans la charge totale
 - [ ] Dispersion des munitions (en cas de réussite ou d'échec)
 - [ ] Gestion des dispersions de grenades et explosifs
-- [ ] Gestion des armes autres que les armes à feu
 - [ ] Bouton « Jet de localisation » dans le chat suite à un jet de combat (table aléatoire)
 
 ---
 
 ### Items & Inventaire
 
-- [ ] Gérer une quantité pour les équipements consommables (ex : ×3 grenades, ×5 kits de soin)
 - [ ] Impact automatique des accessoires (`feature`) sur les stats, compétences et dégâts des armes associées
 
----
 
-### Conséquences des Blessures
-> Application des malus liés aux localisations blessées sur les compétences et attributs (les malus Initiative/Action sont déjà implémentés en v1.1.4).
 
-- [ ] Répercussion des malus sur les jets de compétences liées au membre blessé
-- [ ] Répercussion des malus d'action sur le nombre d'actions disponibles en combat
-
----
-
-## 💡 Backlog (non versionné)
-
-Ces sujets sont identifiés mais n'ont pas encore été assignés à une version :
-
-- Internationalisation complète des nouvelles sections (stockage, équipage, cargaison)

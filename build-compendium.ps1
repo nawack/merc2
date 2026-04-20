@@ -129,6 +129,7 @@ function Get-ArmorImage([string]$folderPath) {
 
 function Get-WeaponImage([string]$subtype) {
   switch -Wildcard ($subtype.ToLower()) {
+    # Armes à feu
     "*pistolet mitrailleur*"  { return "systems/merc/assets/items/weapons/mitraillette.png" }
     "*pistolet auto*"         { return "systems/merc/assets/items/weapons/gun.png" }
     "*pistolet*"              { return "systems/merc/assets/items/weapons/gun.png" }
@@ -137,9 +138,36 @@ function Get-WeaponImage([string]$subtype) {
     "*sniper*"                { return "systems/merc/assets/items/weapons/sniper.png" }
     "*pompe*"                 { return "systems/merc/assets/items/weapons/pompe.png" }
     "*mitrailleuse*"          { return "systems/merc/assets/items/weapons/mitrailleuse.png" }
-    "*fusil*"                 { return "systems/merc/assets/items/weapons/fusil.png" }
     "*fusil d'assaut*"        { return "systems/merc/assets/items/weapons/fusil.png" }
+    "*fusil*"                 { return "systems/merc/assets/items/weapons/fusil.png" }
+    # Corps-à-corps
+    "*corps-à-corps*"         { return "systems/merc/assets/items/weapons/body-weapon.png" }
+    # Armes blanches
+    "*armes blanches*"        { return "systems/merc/assets/items/weapons/bladed-weapon.png" }
+    # Lancer
+    "*grenades*"              { return "systems/merc/assets/items/weapons/grenade.svg" }
+    "*lancer*"                { return "systems/merc/assets/items/weapons/lancer.png" }
+    # Projectiles mécaniques
+    "*arbal*"                 { return "systems/merc/assets/items/weapons/arbalete.png" }
+    "*arc*"                   { return "systems/merc/assets/items/weapons/arc.png" }
+    # Armes lourdes
+    "*canon de char*"         { return "systems/merc/assets/items/weapons/canon-char.png" }
+    "*canon auto*"            { return "systems/merc/assets/items/weapons/canon-auto.png" }
+    "*canon at*"              { return "systems/merc/assets/items/weapons/canon.png" }
+    "*canon sans recul*"      { return "systems/merc/assets/items/weapons/canon.png" }
+    "*obusier*"               { return "systems/merc/assets/items/weapons/canon.png" }
+    "*mortier*"               { return "systems/merc/assets/items/weapons/mortier.png" }
+    "*lance-grenade*"         { return "systems/merc/assets/items/weapons/lance-grenades.png" }
     default                   { return "systems/merc/assets/items/weapons/gun.png" }
+  }
+}
+
+function Get-AmmoImage([string]$ammoType) {
+  switch ($ammoType.ToLower()) {
+    "arrow"  { return "systems/merc/assets/items/ammo/arrow.png" }
+    "bolt"   { return "systems/merc/assets/items/ammo/arrow.png" }
+    "obus"   { return "systems/merc/assets/items/ammo/obus.png" }
+    default  { return "systems/merc/assets/items/ammo/ammo.png" }
   }
 }
 
@@ -255,7 +283,7 @@ foreach ($row in $acsv) {
     "_id"    = New-FoundryId
     "name"   = $name
     "type"   = "ammo"
-    "img"    = "systems/merc/assets/items/ammo/ammo.png"
+    "img"    = Get-AmmoImage $ammoType
     "system" = [ordered]@{
       "ammoType"          = $ammoType
       "caliber"           = $caliber
@@ -313,7 +341,7 @@ $wcols = $wcsv[0].PSObject.Properties.Name
 #  0=Folder  1=Nom  2=Sous-type  3=CompÃ©tence  4=Illustration  5=Munition
 #  6=Calibre  7=Poids_Ã _vide  8=Canon(pouces)  9=Range_Short  10=Range_Med
 #  11=Range_Long  12=Range_Extrem  13=Recul_C/C  14=Recul_Burst  15=Chargeur
-#  16=ROF_mode  17=ROF_limited  18=AnnÃ©e
+#  16=ROF_mode  17=ROF_limited  18=AnnÃ©e`n#  19=Dégâts
 
 # Build weapon folder hierarchy from all Folder paths in the CSV
 $allWFolderPaths = $wcsv | ForEach-Object { $_.($wcols[0]).Trim() } | Where-Object { $_ }
@@ -345,13 +373,18 @@ foreach ($row in $wcsv) {
   $rofMode      = $row.($wcols[16]).Trim()
   $rofLimited   = TryParseInt $row.($wcols[17])
   $itemYear     = TryParseInt $row.($wcols[18])
+  $damage      = $row.($wcols[19]).Trim()
 
   # Resolve default ammo by name â€” case-insensitive
   $defaultAmmoId = if ($ammoNameToId.ContainsKey($munitionName.ToLower())) { $ammoNameToId[$munitionName.ToLower()] } else { "" }
 
-  # Select weapon icon: prefer Illustration column, fall back to folder-based lookup
+  # Select weapon icon: prefer Illustration column (supports .jpg/.png/.svg), fall back to folder-based lookup
   $imgPath = if ($illustration) {
-    "systems/merc/assets/items/weapons/$illustration.jpg"
+    if ($illustration -match '\.(jpg|png|svg|webp)$') {
+      "systems/merc/assets/items/weapons/$illustration"
+    } else {
+      "systems/merc/assets/items/weapons/$illustration.jpg"
+    }
   } else {
     Get-WeaponImage $folderSubtype
   }
@@ -367,7 +400,7 @@ foreach ($row in $wcsv) {
     "type"   = "weapon"
     "img"    = $imgPath
     "system" = [ordered]@{
-      "damage"          = ""          # computed at runtime from ammo data
+      "damage"          = $damage
       "rarity"          = "common"
       "price"           = 0
       "weightKg"        = $weightKg

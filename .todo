@@ -74,13 +74,13 @@ Gestion des armes:
     - automatisation de la mise a jour du nombre de munitions (diminution en cas de tir, rechargement, etc)
     - prise en compte du poids des munitions dans la charge totale
     ✔ ajouter les champs commun a tous les items (rareté, prix, etc ) @done(26-02-18 19:47)
-    - gestion des armes autres que armes a feu
+    ✔ gestion des armes autres que armes a feu @done(26-04-20 18:07)
 
 Gestion des équipements & armures:
     ✔ creer la fiche d'équipement ==> (poids, prix, rareté, etc) @done(26-03-26 20:32)
     ✔ creer la fiche d'armures ==> besoin liste de types d'armures et ce qui les caractérise (localisation de protection, valeur de protection, etc) @done(26-03-26 20:32)
     ✔ gestion du poids de l'équipement et de l'armure dans la charge totale @done(26-03-27 17:51)
-    - pouvoir gérer une quantité d'un équipement (ex: x grenades, x kits de soin, etc)
+    ✔ pouvoir gérer une quantité d'un équipement (ex: x grenades, x kits de soin, etc) @done(26-04-16 10:51)
 
 Gestion des features:
     ✔ creer fiche features @done(26-04-01 17:36)

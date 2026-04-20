@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Corps de la grenade (ovale avec segments) -->
+  <ellipse cx="50" cy="64" rx="23" ry="29" fill="#6b8e23" stroke="#3d5a16" stroke-width="2.5"/>
+  <!-- Lignes de segmentation horizontales -->
+  <line x1="29" y1="55" x2="71" y2="55" stroke="#3d5a16" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="27" y1="64" x2="73" y2="64" stroke="#3d5a16" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="29" y1="73" x2="71" y2="73" stroke="#3d5a16" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Ligne de segmentation verticale -->
+  <line x1="50" y1="35" x2="50" y2="93" stroke="#3d5a16" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Collerette -->
+  <rect x="43" y="31" width="14" height="9" rx="3" fill="#4a6b1c" stroke="#3d5a16" stroke-width="2"/>
+  <!-- Poignée (cuillère) -->
+  <rect x="44" y="14" width="7" height="19" rx="3" fill="#8b7355" stroke="#6b5c3e" stroke-width="1.5"/>
+  <!-- Anneau de sécurité -->
+  <circle cx="61" cy="20" r="7" fill="none" stroke="#c0c0c0" stroke-width="2.5"/>
+  <line x1="54" y1="20" x2="51" y2="20" stroke="#c0c0c0" stroke-width="2"/>
+</svg>

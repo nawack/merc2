@@ -807,7 +807,9 @@
               <div class="item-name">{{item.name}}{{#if (eq item.system.proficiency 1)}}<span class="proficiency-star">★</span>{{/if}}</div>
               <div class="item-damage-skill">{{localize "MERC.UI.combat.linkedSkill"}} {{#if item.system.weaponSkill}}{{#if (lookup ../weaponSkillLabels item.system.weaponSkill)}}{{lookup ../weaponSkillLabels item.system.weaponSkill}}{{else}}{{item.system.weaponSkill}}{{/if}}{{else}}-{{/if}}</div>
             </div>
-            <!--<input class="item-qty-inline" type="number" value="{{item.system.quantity}}" min="1" step="1" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.quantity'}}">-->
+            {{#if (eq item.system.weaponSubtype "throwing")}}
+            <input class="item-qty-inline" type="number" value="{{item.system.quantity}}" min="1" step="1" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.quantity'}}">
+            {{/if}}
             <div class="item-controls">
               <button type="button" class="item-equip-toggle {{#if item.system.equipped}}is-equipped{{/if}}" data-item-id="{{item._id}}" title="{{localize 'MERC.UI.items.toggleEquipped'}}"><i class="fas fa-backpack"></i></button>
               <button type="button" class="item-edit">✎</button>

@@ -793,12 +793,54 @@ async function migrateWorld() {
       console.error(`Error migrating actor ${actor.name}:`, err);
     }
   }
-  
+
+  // Build lookup maps from the compendiums so that old items in actor inventories
+  // (dragged from a previous build) can have their data restored during migration.
+  //
+  // weaponDamageMap : weapon name → damage formula (for melee/thrown weapons)
+  // ammoBallisticsMap: ammo name  → full ballistic data fields + new compendium ID
+  const weaponDamageMap = {};
+  const ammoBallisticsMap = {};
+  try {
+    const weaponPack = game.packs.get("merc.weapons");
+    if (weaponPack) {
+      const docs = await weaponPack.getDocuments();
+      for (const doc of docs) {
+        if (doc.system?.damage) weaponDamageMap[doc.name] = doc.system.damage;
+      }
+    }
+  } catch (err) {
+    console.warn("MERC Migration: could not load weapons compendium for damage lookup", err);
+  }
+  try {
+    const ammoPack = game.packs.get("merc.ammos");
+    if (ammoPack) {
+      const docs = await ammoPack.getDocuments();
+      for (const doc of docs) {
+        ammoBallisticsMap[doc.name] = {
+          _id:                 doc._id,
+          mass:                doc.system.mass                ?? 0,
+          diameter:            doc.system.diameter            ?? 0,
+          coeff_trainee:       doc.system.coeff_trainee       ?? 0,
+          rho:                 doc.system.rho                 ?? 1.225,
+          perforation_index:   doc.system.perforation_index   ?? 1,
+          barrel_length_std:   doc.system.barrel_length_std   ?? 0,
+          velocity:            doc.system.velocity            ?? 0,
+          weight:              doc.system.weight              ?? 0,
+          braking_index:       doc.system.braking_index       ?? 0,
+          sectional_density:   doc.system.sectional_density   ?? 0
+        };
+      }
+    }
+  } catch (err) {
+    console.warn("MERC Migration: could not load ammos compendium for ballistics lookup", err);
+  }
+
   // Migrate items (weapons, ammo, etc.)
   for (const actor of game.actors) {
     for (const item of actor.items) {
       try {
-        await migrateItem(item, actor);
+        await migrateItem(item, actor, weaponDamageMap, ammoBallisticsMap);
       } catch (err) {
         console.error(`Error migrating item ${item.name}:`, err);
       }
@@ -806,7 +848,7 @@ async function migrateWorld() {
   }
   for (const item of game.items) {
     try {
-      await migrateItem(item);
+      await migrateItem(item, null, weaponDamageMap, ammoBallisticsMap);
     } catch (err) {
       console.error(`Error migrating world item ${item.name}:`, err);
     }
@@ -819,7 +861,7 @@ async function migrateWorld() {
  * Migrate item to new data structure.
  * Handles both weapon and ammo item types.
  */
-async function migrateItem(item, actor = null) {
+async function migrateItem(item, actor = null, weaponDamageMap = {}, ammoBallisticsMap = {}) {
   if (!item.system) return;
   
   const updateData = {};
@@ -876,9 +918,19 @@ async function migrateItem(item, actor = null) {
       updateData["system.price"] = 0;
     }
 
-    // Ensure damage exists
-    if (item.system.damage === undefined || item.system.damage === null) {
-      updateData["system.damage"] = "";
+    // Ensure damage exists.
+    // Only restore from the compendium for subtypes that use a static damage formula
+    // (melee, bladed, throwing, grenades). Firearms/crossbows derive damage from ammo
+    // at runtime so their damage field must stay empty.
+    const STATIC_DAMAGE_SUBTYPES = ["melee", "bladed_weapons", "throwing"];
+    const currentSubtype = updateData["system.weaponSubtype"] ?? item.system.weaponSubtype ?? "";
+    if (!item.system.damage) {
+      if (STATIC_DAMAGE_SUBTYPES.includes(currentSubtype)) {
+        updateData["system.damage"] = weaponDamageMap[item.name] ?? "";
+      } else {
+        // firearms/heavy: leave empty if missing
+        updateData["system.damage"] = "";
+      }
     }
     // Ensure range sub-fields exist
     if (!item.system.range) {
@@ -896,9 +948,21 @@ async function migrateItem(item, actor = null) {
       updateData["system.barrelLength"] = 0;
     }
 
-    // Ensure defaultAmmo fields exist
+    // Ensure defaultAmmo fields exist.
+    // Also fix stale defaultAmmoId: the compendium is rebuilt with new IDs on each
+    // build-compendium run, so any existing defaultAmmoId pointing to the old pack
+    // entry is now broken. Re-resolve by name from ammoBallisticsMap.
     if (item.system.defaultAmmoName === undefined) updateData["system.defaultAmmoName"] = "";
     if (item.system.defaultAmmoId   === undefined) updateData["system.defaultAmmoId"]   = "";
+    {
+      const ammoName = item.system.defaultAmmoName || "";
+      if (ammoName && ammoBallisticsMap[ammoName]) {
+        const freshId = ammoBallisticsMap[ammoName]._id;
+        if (freshId && freshId !== item.system.defaultAmmoId) {
+          updateData["system.defaultAmmoId"] = freshId;
+        }
+      }
+    }
 
     // New default ammo stock fields (added when magazine was moved out of tactical)
     const weaponStockDefaults = {
@@ -976,15 +1040,31 @@ async function migrateItem(item, actor = null) {
       }
     }
 
-    // Recalculate derived ballistic values if mass/diameter are set but braking_index is still 0
-    const mass = updateData["system.mass"] ?? item.system.mass ?? 0;
-    const diameter = item.system.diameter ?? 0;
-    if (mass > 0 && diameter > 0) {
-      const coeffT = item.system.coeff_trainee ?? 0;
-      const rho    = item.system.rho ?? 1.225;
-      const derived = calcAmmoDerived(mass, diameter, coeffT, rho);
-      updateData["system.braking_index"]    = derived.braking_index;
-      updateData["system.sectional_density"] = derived.sectional_density;
+    // Restore ballistic data from compendium if the key fields are missing or zero.
+    // Old ammo items dragged from a previous build often have mass=0 / velocity=0
+    // because those columns were added to the CSV later. Without these values,
+    // calcWeaponBallistics() returns null and firearms show no damage.
+    const currentMass     = updateData["system.mass"]     ?? item.system.mass     ?? 0;
+    const currentVelocity = updateData["system.velocity"] ?? item.system.velocity ?? 0;
+    const compAmmo = ammoBallisticsMap[item.name];
+    if (compAmmo && (!currentMass || !currentVelocity)) {
+      // Full restoration from compendium
+      const ballisticFields = ["mass", "diameter", "coeff_trainee", "rho", "perforation_index",
+                               "barrel_length_std", "velocity", "weight", "braking_index", "sectional_density"];
+      for (const f of ballisticFields) {
+        updateData[`system.${f}`] = compAmmo[f];
+      }
+    } else {
+      // Recalculate derived values from existing mass/diameter if braking_index is still 0
+      const mass     = currentMass;
+      const diameter = item.system.diameter ?? 0;
+      if (mass > 0 && diameter > 0) {
+        const coeffT = item.system.coeff_trainee ?? 0;
+        const rho    = item.system.rho ?? 1.225;
+        const derived = calcAmmoDerived(mass, diameter, coeffT, rho);
+        updateData["system.braking_index"]     = derived.braking_index;
+        updateData["system.sectional_density"] = derived.sectional_density;
+      }
     }
   }
 

@@ -6803,6 +6803,10 @@ Hooks.on("preCreateActor", (actor, data, options, userId) => {
 
 // Hook to update combat statistics when actor data changes
 Hooks.on("updateActor", async (actor, changes, options, userId) => {
+  // Only the GM should perform automatic recalculations to avoid permission
+  // errors on ActorDelta (unlinked tokens) for player-owned actors.
+  if (!game.user.isGM) return;
+
   // Only update for character and npc actors
   if (actor.type !== "character" && actor.type !== "npc") return;
   

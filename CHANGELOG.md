@@ -4,6 +4,12 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 
 ## [1.2.4] - 2026-04-20
 
+### Fixed
+- 🐛 **Fixe acces err ** : correction du hook updatActor qui provoquais lors d'une mise a jour par un client un message d'erreur chez les autres client. 
+- 🐛 **Fixe migration** : Amélioration des migrations pour préserver les équipements des personnages. 
+
+## [1.2.4] - 2026-04-20
+
 ### Added
 - ⚔️ **Compendium armes étendu** : Ajout de 55 nouvelles armes non-à-feu réparties en 6 catégories — corps-à-corps (9), armes blanches (9), lancer (4), grenades (16 : offensives / défensives / spéciales), arcs (5), arbalètes (4) — ainsi que 13 armes lourdes (canons auto, lance-grenades, mortier, canons AT/char).
 - 💥 **Compendium munitions étendu** : Ajout de 23 nouvelles munitions — flèches (4), carreaux (4), obus 20mm–120mm (15) — pour les arcs, arbalètes et armes lourdes.
